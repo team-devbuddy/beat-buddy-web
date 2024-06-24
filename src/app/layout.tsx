@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
-import Header from '@/components/layout/Header';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,9 +32,8 @@ export default function RootLayout({
           <div className="flex h-full w-full items-center justify-center">
             {/* Mobile Container */}
             <div className="flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
-              <Header />
               {/* Content */}
-              <div className="flex flex-1 items-center justify-center">{children}</div>
+              <div className="flex">{children}</div>
               {/* <Footer /> */}
             </div>
           </div>
