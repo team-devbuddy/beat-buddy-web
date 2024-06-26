@@ -1,4 +1,6 @@
 import type { Config } from 'tailwindcss';
+import { PluginAPI } from 'tailwindcss/types/config';
+
 
 const config: Config = {
   content: [
@@ -28,6 +30,22 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }: PluginAPI) {
+      addUtilities({
+        '.custom-club-card': {
+          display: 'flex',
+          width: '20rem',
+          height: '22.5rem',
+          padding: '1.5rem 1.5rem 1.75rem 1.75rem',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          alignItems: 'flex-start',
+          gap: '2.5rem',
+          flexShrink: '0',
+        },
+      });
+    },
+  ],
 };
 export default config;
