@@ -1,7 +1,6 @@
 import type { Config } from 'tailwindcss';
 import { PluginAPI } from 'tailwindcss/types/config';
 
-
 const config: Config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -12,8 +11,8 @@ const config: Config = {
     extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'club-gradient': "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.72) 92.65%)",
       },
       colors: {
         'BG-black': '#17181C',
@@ -30,8 +29,13 @@ const config: Config = {
       },
       borderRadius: {
         md: '0.5rem',
+        sm: '0.25rem',
       },
       fontSize: {
+        'body1': ['1rem', {
+          lineHeight: '1.6rem',
+          letterSpacing: '-0.02rem',
+        }],
         'body2': ['0.9375rem', {
           lineHeight: '1.40625rem',
           letterSpacing: '-0.01875rem',
@@ -56,8 +60,21 @@ const config: Config = {
         '.bg-main-active': {
           background: 'var(--main-active, rgba(238, 17, 113, 0.20))',
         },
+        '.text-ellipsis': {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        },
+        '.hide-scrollbar': {
+          'scrollbar-width': 'none',
+          '-ms-overflow-style': 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+        },
       });
     },
   ],
 };
+
 export default config;

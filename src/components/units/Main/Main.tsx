@@ -4,6 +4,7 @@ import SearchBar from './SearchBar';
 import TrendBar from './TrendBar';
 import BeatBuddyPick from './BeatBuddyPick';
 import LoggedOutBanner from './LoggedOutBanner';
+import HotVenues from './HotVenues';
 
 export default function Main() {
   return (
@@ -17,7 +18,7 @@ export default function Main() {
         <TrendBar />
         <BeatBuddyPick />
         <LoggedOutBanner />
-
+        <HotVenues/>
       </div>
     </div>
   );
