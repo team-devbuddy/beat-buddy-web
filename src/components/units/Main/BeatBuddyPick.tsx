@@ -6,12 +6,12 @@ export default function BeatBuddyPick() {
   return (
     <div className="flex flex-col bg-BG-black pt-[0.44rem]">
       <div className="flex items-center justify-between px-[1rem] py-[1.25rem]">
-        <span className="text-main font-Queensides text-[1.5rem]">BeatBuddy Pick</span>
-        <Image src="/icons/ArrowRight.svg" alt="Arrow right icon" width={24} height={24} />
+        <span className="text-main2 font-Queensides text-[1.5rem]">BeatBuddy Pick</span>
+        <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
       </div>
       <div className="flex overflow-x-auto snap-x snap-mandatory space-x-[0.5rem] px-[1rem]">
         {clubs.map((club) => (
-          <div key={club.id} className="relative custom-club-card min-w-[15rem] mt-[0.5rem] rounded-lg overflow-hidden snap-center">
+          <div key={club.id} className="relative custom-club-card min-w-[15rem] mt-[0.5rem] rounded-md overflow-hidden snap-center">
             <Image src={club.imageUrl} alt={`${club.name} image`} layout="fill" className="object-cover" />
             <div className="absolute top-[1.5rem] right-[1.5rem]">
               <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={32} height={32} />

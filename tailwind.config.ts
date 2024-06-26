@@ -28,6 +28,15 @@ const config: Config = {
         gray500: '#313335',
         gray700: '#28292A',
       },
+      borderRadius: {
+        md: '0.5rem',
+      },
+      fontSize: {
+        'body2': ['0.9375rem', {
+          lineHeight: '1.40625rem',
+          letterSpacing: '-0.01875rem',
+        }],
+      },
     },
   },
   plugins: [
@@ -43,6 +52,9 @@ const config: Config = {
           alignItems: 'flex-start',
           gap: '2.5rem',
           flexShrink: '0',
+        },
+        '.bg-main-active': {
+          background: 'var(--main-active, rgba(238, 17, 113, 0.20))',
         },
       });
     },
