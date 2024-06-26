@@ -25,20 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${pretendard.variable}`}>
-      <html lang="ko" className={`${pretendard.variable}`}>
-        <body className={`${pretendard.className} `}>
-          {/* Full Container */}
-          <div className="flex h-full w-full items-center justify-center">
-            {/* Mobile Container */}
-            <div className="flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
-              {/* Content */}
-              <div className="flex">{children}</div>
-              {/* <Footer /> */}
-            </div>
+    <html lang="ko" className={`${pretendard.variable} bg-[#f5f5f5]`}>
+      <body className={`${pretendard.className} `}>
+        {/* Full Container */}
+        <div className="flex h-full w-full items-center justify-center">
+          {/* Mobile Container */}
+          <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
+            {/* Content */}
+            <div className="flex w-full">{children}</div>
+            {/* <Footer /> */}
           </div>
-        </body>
-      </html>
+        </div>
+      </body>
     </html>
   );
 }
