@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Footer() {
   return (
-    <footer className="relative bg-FooterBlack text-gray100 px-[1rem] py-[1.25rem]">
+    <footer className="relative bg-FooterBlack text-gray100 px-[1rem] py-[1.25rem] mt-10">
       <div className="flex flex-col items-start relative z-10">
         <span className="text-body2-15-medium">이용약관</span>
         <div className="w-[1rem] h-[0.15rem] my-4 relative">
