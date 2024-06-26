@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+        queensides: ['Queensides', 'sans-serif'],
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
@@ -26,19 +30,61 @@ const config: Config = {
         gray400: '#4B4D4F',
         gray500: '#313335',
         gray700: '#28292A',
+        FooterBlack: "#000000"
       },
       borderRadius: {
         md: '0.5rem',
         sm: '0.25rem',
+        xs: '0.13rem',
       },
       fontSize: {
-        'body1': ['1rem', {
-          lineHeight: '1.6rem',
-          letterSpacing: '-0.02rem',
+        'title-32': ['32px', {
+          lineHeight: '150%',
+          fontWeight: '700',
         }],
-        'body2': ['0.9375rem', {
-          lineHeight: '1.40625rem',
-          letterSpacing: '-0.01875rem',
+        'title-24-bold': ['24px', {
+          lineHeight: '150%',
+          fontWeight: '700',
+        }],
+        'title-24-medium': ['24px', {
+          lineHeight: '150%',
+          fontWeight: '500',
+        }],
+        'title-20-bold': ['20px', {
+          lineHeight: '150%',
+          fontWeight: '700',
+        }],
+        'title-20-medium': ['20px', {
+          lineHeight: '150%',
+          fontWeight: '500',
+        }],
+        'button-bold': ['18px', {
+          lineHeight: '150%',
+          fontWeight: '700',
+        }],
+        'body1-16-bold': ['16px', {
+          lineHeight: '160%',
+          fontWeight: '700',
+        }],
+        'body1-16-medium': ['16px', {
+          lineHeight: '160%',
+          fontWeight: '500',
+        }],
+        'body2-15-bold': ['15px', {
+          lineHeight: '150%',
+          fontWeight: '700',
+        }],
+        'body2-15-medium': ['15px', {
+          lineHeight: '150%',
+          fontWeight: '500',
+        }],
+        'body3-12-bold': ['12px', {
+          lineHeight: '160%',
+          fontWeight: '700',
+        }],
+        'body3-12-medium': ['12px', {
+          lineHeight: '160%',
+          fontWeight: '500',
         }],
       },
     },
