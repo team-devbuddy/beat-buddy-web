@@ -89,7 +89,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [
+  plugins: [    
     function ({ addUtilities }: PluginAPI) {
       addUtilities({
         '.custom-club-card': {
@@ -118,6 +118,7 @@ const config: Config = {
             display: 'none',
           },
         },
+        
       });
     },
   ],
