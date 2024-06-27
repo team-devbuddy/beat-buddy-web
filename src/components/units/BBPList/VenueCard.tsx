@@ -1,13 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Club } from '@/lib/data';
+import { ClubProps } from '@/lib/types';
 
-interface VenueCardProps {
-  club: Club;
-}
 
-const VenueCard = ({ club }: VenueCardProps) => {
+const VenueCard = ({ club }: ClubProps) => {
   return (
     <div className="relative flex flex-col">
       <Link href={`/detail/${club.id}`}>

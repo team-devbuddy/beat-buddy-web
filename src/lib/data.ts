@@ -1,4 +1,5 @@
 import { Term } from './types';
+import { Club } from './types';
 
 // 온보딩 - 이용 약관 데이터
 export const termsData: Term[] = [
@@ -8,7 +9,7 @@ export const termsData: Term[] = [
   { id: 4, label: '[선택] 마케팅 수신 동의', isRequired: false },
 ];
 
-export const clubs = [
+export const clubs: Club[] = [
   {
     id: 1,
     name: '아레나',
@@ -17,6 +18,19 @@ export const clubs = [
     genre2: '트렌디',
     imageUrl: '/images/Arena.svg',
     likes: 351,
+    address: '서울특별시 마포구 와우산로 17길',
+    phone: '02-1234-5678',
+    email: '@beatbuddy',
+    website: 'www.beatbuddy.world',
+    hours: {
+      일요일: '22:00 - 07:00',
+      월요일: '휴무',
+      화요일: '22:00 - 07:00',
+      수요일: '22:00 - 07:00',
+      목요일: '22:00 - 07:00',
+      금요일: '22:00 - 07:00',
+      토요일: '22:00 - 07:00',
+    },
   },
   {
     id: 2,
@@ -26,6 +40,19 @@ export const clubs = [
     genre2: '댄스',
     imageUrl: '/images/Awsome.svg',
     likes: 275,
+    address: '서울특별시 마포구 와우산로 17길',
+    phone: '02-1234-5678',
+    email: '@beatbuddy',
+    website: 'www.beatbuddy.world',
+    hours: {
+      일요일: '22:00 - 07:00',
+      월요일: '휴무',
+      화요일: '22:00 - 07:00',
+      수요일: '22:00 - 07:00',
+      목요일: '22:00 - 07:00',
+      금요일: '22:00 - 07:00',
+      토요일: '22:00 - 07:00',
+    },
   },
   {
     id: 3,
@@ -35,6 +62,19 @@ export const clubs = [
     genre2: '고급스러운',
     imageUrl: '/images/Argaseoul.svg',
     likes: 123,
+    address: '서울특별시 마포구 와우산로 17길',
+    phone: '02-1234-5678',
+    email: '@beatbuddy',
+    website: 'www.beatbuddy.world',
+    hours: {
+      일요일: '22:00 - 07:00',
+      월요일: '휴무',
+      화요일: '22:00 - 07:00',
+      수요일: '22:00 - 07:00',
+      목요일: '22:00 - 07:00',
+      금요일: '22:00 - 07:00',
+      토요일: '22:00 - 07:00',
+    },
   },
   {
     id: 4,
@@ -43,7 +83,20 @@ export const clubs = [
     genre1: '하우스',
     genre2: '이국적인',
     imageUrl: '/images/RunClub.svg',
-    likes: '000',
+    likes: 156,
+    address: '서울특별시 마포구 와우산로 17길',
+    phone: '02-1234-5678',
+    email: '@beatbuddy',
+    website: 'www.beatbuddy.world',
+    hours: {
+      일요일: '22:00 - 07:00',
+      월요일: '휴무',
+      화요일: '22:00 - 07:00',
+      수요일: '22:00 - 07:00',
+      목요일: '22:00 - 07:00',
+      금요일: '22:00 - 07:00',
+      토요일: '22:00 - 07:00',
+    },
   },
   {
     id: 5,
@@ -52,7 +105,20 @@ export const clubs = [
     genre1: '디스코',
     genre2: '펑키한',
     imageUrl: '/images/Macaroni.svg',
-    likes: '000',
+    likes: 45,
+    address: '서울특별시 마포구 와우산로 17길',
+    phone: '02-1234-5678',
+    email: '@beatbuddy',
+    website: 'www.beatbuddy.world',
+    hours: {
+      일요일: '22:00 - 07:00',
+      월요일: '휴무',
+      화요일: '22:00 - 07:00',
+      수요일: '22:00 - 07:00',
+      목요일: '22:00 - 07:00',
+      금요일: '22:00 - 07:00',
+      토요일: '22:00 - 07:00',
+    },
   },
   {
     id: 6,
@@ -61,7 +127,20 @@ export const clubs = [
     genre1: '힙합',
     genre2: '힙합',
     imageUrl: '/images/Doze.svg',
-    likes: '000',
+    likes: 11,
+    address: '서울특별시 마포구 와우산로 17길',
+    phone: '02-1234-5678',
+    email: '@beatbuddy',
+    website: 'www.beatbuddy.world',
+    hours: {
+      일요일: '22:00 - 07:00',
+      월요일: '휴무',
+      화요일: '22:00 - 07:00',
+      수요일: '22:00 - 07:00',
+      목요일: '22:00 - 07:00',
+      금요일: '22:00 - 07:00',
+      토요일: '22:00 - 07:00',
+    },
   },
   {
     id: 7,
@@ -70,7 +149,20 @@ export const clubs = [
     genre1: '라틴',
     genre2: '신나는',
     imageUrl: '/images/Vertigo.svg',
-    likes: '000',
+    likes: 75,
+    address: '서울특별시 마포구 와우산로 17길',
+    phone: '02-1234-5678',
+    email: '@beatbuddy',
+    website: 'www.beatbuddy.world',
+    hours: {
+      일요일: '22:00 - 07:00',
+      월요일: '휴무',
+      화요일: '22:00 - 07:00',
+      수요일: '22:00 - 07:00',
+      목요일: '22:00 - 07:00',
+      금요일: '22:00 - 07:00',
+      토요일: '22:00 - 07:00',
+    },
   },
   {
     id: 8,
@@ -79,6 +171,19 @@ export const clubs = [
     genre1: '힙합',
     genre2: '펑키한',
     imageUrl: '/images/DockingAround.svg',
-    likes: '000',
+    likes: 3,
+    address: '서울특별시 마포구 와우산로 17길',
+    phone: '02-1234-5678',
+    email: '@beatbuddy',
+    website: 'www.beatbuddy.world',
+    hours: {
+      일요일: '22:00 - 07:00',
+      월요일: '휴무',
+      화요일: '22:00 - 07:00',
+      수요일: '22:00 - 07:00',
+      목요일: '22:00 - 07:00',
+      금요일: '22:00 - 07:00',
+      토요일: '22:00 - 07:00',
+    },
   },
 ];
