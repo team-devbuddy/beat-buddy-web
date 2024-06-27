@@ -5,8 +5,7 @@ import TrendBar from './TrendBar';
 import BeatBuddyPick from './BeatBuddyPick';
 import LoggedOutBanner from './LoggedOutBanner';
 import HotVenues from './HotVenues';
-import Footer
- from './MainFooter';
+import Footer from './MainFooter';
 export default function Main() {
   return (
     <div className="flex w-full flex-col">

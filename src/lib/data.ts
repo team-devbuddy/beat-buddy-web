@@ -33,7 +33,7 @@ export const clubs = [
         genre1: '하우스',
         genre2: '이국적인',
         imageUrl: '/images/RunClub.svg',
-        likes: '000',
+        likes: 156,
       },
       {
         id: 5,
@@ -42,7 +42,7 @@ export const clubs = [
         genre1: '디스코',
         genre2: '펑키한',
         imageUrl: '/images/Macaroni.svg',
-        likes: '000',
+        likes: 45
       },
       {
         id: 6,
@@ -51,7 +51,7 @@ export const clubs = [
         genre1: '힙합',
         genre2: '힙합',
         imageUrl: '/images/Doze.svg',
-        likes: '000',
+        likes: 11,
       },
       {
         id: 7,
@@ -60,7 +60,7 @@ export const clubs = [
         genre1: '라틴',
         genre2: '신나는',
         imageUrl: '/images/Vertigo.svg',
-        likes: '000',
+        likes: 75,
       },
       {
         id: 8,
@@ -69,6 +69,6 @@ export const clubs = [
         genre1: '힙합',
         genre2: '펑키한',
         imageUrl: '/images/DockingAround.svg',
-        likes: '000',
+        likes: 3,
       },
   ];
