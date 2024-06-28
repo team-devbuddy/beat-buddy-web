@@ -10,8 +10,21 @@ export default function OnBoardingLayout({
 }) {
   const pathname = usePathname();
 
-  // Define a condition based on the URL path
-  const isSpecialPage = pathname === '/onBoarding';
+  // Define a list of special pages
+  const specialPages = ['/onBoarding'];
+
+  // Define a list of pages that should only render children
+  const childrenOnlyPages = ['/onBoarding/myTaste/genre', '/onBoarding/myTaste/mood', '/onBoarding/myTaste/location'];
+
+  // Check if the current pathname is in the list of special pages
+  const isSpecialPage = specialPages.includes(pathname);
+
+  // Check if the current pathname is in the list of children-only pages
+  const isChildrenOnlyPage = childrenOnlyPages.includes(pathname);
+
+  if (isChildrenOnlyPage) {
+    return <>{children}</>;
+  }
 
   return (
     <section className="w-full">
