@@ -13,8 +13,8 @@ export default function OnBoardingLayout({
 
   // Define conditions based on the URL path
   const genrePage = pathname === '/onBoarding/myTaste/genre';
-  const moodPage = pathname === '/onBoarding/myTate/mood';
-  const locationPage = pathname === '/onBoarding/myTate/location';
+  const moodPage = pathname === '/onBoarding/myTaste/mood';
+  const locationPage = pathname === '/onBoarding/myTaste/location';
 
   return (
     <section className="w-full">
@@ -36,7 +36,7 @@ export default function OnBoardingLayout({
         {moodPage && (
           <>
             <div className="flex items-center justify-between p-4">
-              <Link href="/onBoarding">
+              <Link href="/onBoarding/myTaste/genre">
                 <Image src="/icons/backward.svg" alt="logo" width={24} height={24} />
               </Link>
               <Link href="/">
