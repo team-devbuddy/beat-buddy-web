@@ -4,8 +4,6 @@ import localFont from 'next/font/local';
 import './globals.css';
 import ClientOnlyLayout from './appLayout';
 
-const inter = Inter({ subsets: ['latin'] });
-
 const pretendard = localFont({
   src: '../lib/fonts/PretendardVariable.woff2',
   display: 'swap',
