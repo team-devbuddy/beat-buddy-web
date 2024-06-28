@@ -26,6 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${pretendard.variable} bg-[#f5f5f5]`}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className={`${pretendard.className} `}>
         {/* Full Container */}
         <div className="flex h-full w-full items-center justify-center">
