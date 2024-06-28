@@ -60,6 +60,8 @@ export default function OnBoardingLayout({
             {children}
           </>
         )}
+
+        {!genrePage && !moodPage && !locationPage && <>{children}</>}
       </nav>
     </section>
   );

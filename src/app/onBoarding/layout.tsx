@@ -11,7 +11,12 @@ export default function OnBoardingLayout({
   const pathname = usePathname();
 
   const specialPages = ['/onBoarding'];
-  const childrenOnlyPages = ['/onBoarding/myTaste/genre', '/onBoarding/myTaste/mood', '/onBoarding/myTaste/location'];
+  const childrenOnlyPages = [
+    '/onBoarding/myTaste/genre',
+    '/onBoarding/myTaste/mood',
+    '/onBoarding/myTaste/location',
+    '/onBoarding/myTaste/complete',
+  ];
   const isSpecialPage = specialPages.includes(pathname);
 
   const isChildrenOnlyPage = childrenOnlyPages.includes(pathname);

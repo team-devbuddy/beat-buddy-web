@@ -14,7 +14,7 @@ export default function OnBoardingLocation() {
   };
 
   const onClickSubmit = () => {
-    router.push('/onBoarding/myTaste/location');
+    router.push('/onBoarding/myTaste/complete');
   };
 
   return (
