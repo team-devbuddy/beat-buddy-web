@@ -9,9 +9,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      height: {
-        'real-screen': 'calc(var(--vh) * 100)',
-      },
       minHeight: {
         '100vh': '100vh',
         'webkit-fill-available': '-webkit-fill-available',
