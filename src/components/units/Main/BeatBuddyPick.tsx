@@ -5,6 +5,7 @@ import { clubs } from '@/lib/data';
 
 export default function BeatBuddyPick() {
   return (
+
     <div className="mt-[0.44rem] flex flex-col">
       <Link href="/bbp-list" passHref>
         <div className="flex cursor-pointer items-center justify-between px-[1rem] py-[1.25rem]">
@@ -32,6 +33,7 @@ export default function BeatBuddyPick() {
                 </div>
                 <h3 className="text-title-32 text-white">{club.name}</h3>
                 <div className="z-100 mt-[1.03rem] flex items-center space-x-[0.25rem] text-body3-12-medium text-gray300">
+
                   <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={20} />
                   <span>{club.likes}</span>
                 </div>

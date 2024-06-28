@@ -1,3 +1,4 @@
+
 // 온보딩 - 이용약관
 export interface Term {
   id: number;
@@ -27,3 +28,4 @@ export interface ClubProps {
 export interface VenueHoursProps {
   hours: { [day: string]: string };
 }
+

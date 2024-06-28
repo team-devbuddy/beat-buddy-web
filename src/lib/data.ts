@@ -1,3 +1,4 @@
+
 import { Club } from './types';
 import { Term } from './types';
 
@@ -8,6 +9,7 @@ export const termsData: Term[] = [
   { id: 3, label: '[선택] 위치 정보 사용 동의', isRequired: false },
   { id: 4, label: '[선택] 마케팅 수신 동의', isRequired: false },
 ];
+
 
 export const clubs: Club[] = [
   {
@@ -22,6 +24,7 @@ export const clubs: Club[] = [
     email: '@beatbuddy',
     website: 'www.beatbuddy.world',
     hours: {
+
       일요일: '22:00 - 07:00',
       월요일: '휴무',
       화요일: '22:00 - 07:00',
@@ -29,6 +32,7 @@ export const clubs: Club[] = [
       목요일: '22:00 - 07:00',
       금요일: '22:00 - 07:00',
       토요일: '22:00 - 07:00',
+
     },
   },
   {
@@ -43,6 +47,7 @@ export const clubs: Club[] = [
     email: '@beatbuddy',
     website: 'www.beatbuddy.world',
     hours: {
+
       일요일: '22:00 - 07:00',
       월요일: '휴무',
       화요일: '22:00 - 07:00',
@@ -50,6 +55,7 @@ export const clubs: Club[] = [
       목요일: '22:00 - 07:00',
       금요일: '22:00 - 07:00',
       토요일: '22:00 - 07:00',
+
     },
   },
   {
@@ -64,6 +70,7 @@ export const clubs: Club[] = [
     email: '@beatbuddy',
     website: 'www.beatbuddy.world',
     hours: {
+
       일요일: '22:00 - 07:00',
       월요일: '휴무',
       화요일: '22:00 - 07:00',
@@ -71,6 +78,7 @@ export const clubs: Club[] = [
       목요일: '22:00 - 07:00',
       금요일: '22:00 - 07:00',
       토요일: '22:00 - 07:00',
+
     },
   },
   {
@@ -85,6 +93,7 @@ export const clubs: Club[] = [
     email: '@beatbuddy',
     website: 'www.beatbuddy.world',
     hours: {
+
       일요일: '22:00 - 07:00',
       월요일: '휴무',
       화요일: '22:00 - 07:00',
@@ -92,6 +101,7 @@ export const clubs: Club[] = [
       목요일: '22:00 - 07:00',
       금요일: '22:00 - 07:00',
       토요일: '22:00 - 07:00',
+
     },
   },
   {
@@ -106,6 +116,7 @@ export const clubs: Club[] = [
     email: '@beatbuddy',
     website: 'www.beatbuddy.world',
     hours: {
+
       일요일: '22:00 - 07:00',
       월요일: '휴무',
       화요일: '22:00 - 07:00',
@@ -113,6 +124,7 @@ export const clubs: Club[] = [
       목요일: '22:00 - 07:00',
       금요일: '22:00 - 07:00',
       토요일: '22:00 - 07:00',
+
     },
   },
   {
@@ -127,6 +139,7 @@ export const clubs: Club[] = [
     email: '@beatbuddy',
     website: 'www.beatbuddy.world',
     hours: {
+
       일요일: '22:00 - 07:00',
       월요일: '휴무',
       화요일: '22:00 - 07:00',
@@ -134,6 +147,7 @@ export const clubs: Club[] = [
       목요일: '22:00 - 07:00',
       금요일: '22:00 - 07:00',
       토요일: '22:00 - 07:00',
+
     },
   },
   {
@@ -148,6 +162,7 @@ export const clubs: Club[] = [
     email: '@beatbuddy',
     website: 'www.beatbuddy.world',
     hours: {
+
       일요일: '22:00 - 07:00',
       월요일: '휴무',
       화요일: '22:00 - 07:00',
@@ -155,6 +170,7 @@ export const clubs: Club[] = [
       목요일: '22:00 - 07:00',
       금요일: '22:00 - 07:00',
       토요일: '22:00 - 07:00',
+
     },
   },
   {
@@ -169,6 +185,7 @@ export const clubs: Club[] = [
     email: '@beatbuddy',
     website: 'www.beatbuddy.world',
     hours: {
+
       일요일: '22:00 - 07:00',
       월요일: '휴무',
       화요일: '22:00 - 07:00',
@@ -176,6 +193,7 @@ export const clubs: Club[] = [
       목요일: '22:00 - 07:00',
       금요일: '22:00 - 07:00',
       토요일: '22:00 - 07:00',
+
     },
   },
 ];
