@@ -1,3 +1,4 @@
-import { useEffect } from 'react';
-
-export function useVh() {}
+export default function setScreenHeight() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}

@@ -9,8 +9,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      height: {
+        'real-screen': 'calc(var(--vh) * 100)',
+      },
       minHeight: {
-        'webkit-fill-available': '-webkit-fill-available',
+        'real-screen': 'calc(var(--vh) * 100)',
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
