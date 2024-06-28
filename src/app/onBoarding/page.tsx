@@ -12,7 +12,7 @@ export default function onBoardingCustomPage() {
         </h1>
       </div>
 
-      <Link href="/onBoarding/genre">
+      <Link href="/onBoarding/myTaste/genre">
         <button
           className={`absolute bottom-0 flex w-full justify-center bg-[#EE1171] py-4 text-lg font-bold text-BG-black`}>
           추천 받기
