@@ -35,7 +35,9 @@ export default function OnBoardingLayout({
         </nav>
       ) : (
         <nav className="w-full p-4">
-          <Image src="/icons/backward.svg" alt="logo" width={24} height={24} className="cursor-pointer" />
+          <Link href="/">
+            <Image src="/icons/backward.svg" alt="logo" width={24} height={24} className="cursor-pointer" />
+          </Link>
         </nav>
       )}
       {children}
