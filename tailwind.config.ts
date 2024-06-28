@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      minHeight: {
+        'webkit-fill-available': '-webkit-fill-available',
+      },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
         queensides: ['Queensides', 'sans-serif'],
@@ -20,7 +23,6 @@ const config: Config = {
         'club-gradient': 'linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.72) 92.65%)',
         'detail-gradient':
           'linear-gradient(180deg, rgba(0, 0, 0, 0.00) 37.5%, rgba(0, 0, 0, 0.72) 62.7%), var(--club-image) lightgray 50% / cover no-repeat',
-
       },
       colors: {
         'BG-black': '#17181C',
@@ -37,7 +39,6 @@ const config: Config = {
         gray700: '#28292A',
 
         FooterBlack: '#000000',
-
       },
       borderRadius: {
         md: '0.5rem',
@@ -45,7 +46,6 @@ const config: Config = {
         xs: '0.13rem',
       },
       fontSize: {
-
         'title-32': [
           '32px',
           {
@@ -134,7 +134,6 @@ const config: Config = {
     },
   },
   plugins: [
-
     function ({ addUtilities }: PluginAPI) {
       addUtilities({
         '.custom-club-card': {
@@ -163,7 +162,6 @@ const config: Config = {
             display: 'none',
           },
         },
-
       });
     },
   ],
