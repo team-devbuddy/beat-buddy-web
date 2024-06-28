@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 
 export default function ClientOnlyLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-100vh min-h-webkit-fill-available h-fill-available flex h-screen w-full items-center justify-center">
+    <div className="h-fill-available flex h-screen w-full items-center justify-center">
       {/* 모바일 컨테이너 */}
       <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
         {/* 콘텐츠 */}
