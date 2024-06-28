@@ -13,7 +13,8 @@ const config: Config = {
         'real-screen': 'calc(var(--vh) * 100)',
       },
       minHeight: {
-        'real-screen': 'calc(var(--vh) * 100)',
+        '100vh': '100vh',
+        'webkit-fill-available': '-webkit-fill-available',
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
