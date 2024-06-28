@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Term } from '@/lib/types';
 import { termsData } from '@/lib/data';
+import { useRouter } from 'next/navigation';
 
 export default function AgreementTerm() {
   const [terms, setTerms] = useState<Term[]>(termsData);
   const [allChecked, setAllChecked] = useState<boolean>(false);
   const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     const requiredTermsChecked = terms.filter((term) => term.isRequired).every((term) => term.checked);
@@ -27,6 +29,10 @@ export default function AgreementTerm() {
         checked: newState,
       })),
     );
+  };
+
+  const onClickSubmit = () => {
+    router.push('/onBoarding/name');
   };
 
   return (
@@ -71,6 +77,7 @@ export default function AgreementTerm() {
       </div>
 
       <button
+        onClick={onClickSubmit}
         disabled={!buttonEnabled}
         className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
           buttonEnabled ? 'bg-[#EE1171] text-BG-black' : 'bg-gray400 text-gray300'
