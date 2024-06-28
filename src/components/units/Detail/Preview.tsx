@@ -13,7 +13,7 @@ const Preview = ({ club }: ClubProps) => {
           <Image src="/icons/ArrowLeft.svg" alt="back icon" width={24} height={24} />
         </Link>
         <div className="flex items-center space-x-[1.25rem]">
-          <Image src="/icons/Share.svg" alt="share icon" width={32} height={32} />
+          <Image src="/icons/share.svg" alt="share icon" width={32} height={32} />
           <Image src="/icons/PinkHeart.svg" alt="heart icon" width={32} height={32} className="cursor-pointer" />
         </div>
       </div>
