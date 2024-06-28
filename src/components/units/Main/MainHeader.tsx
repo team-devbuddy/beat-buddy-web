@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import LoginModal from '../Login/LoginModal';
 import { AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
 export default function MainHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,8 +18,10 @@ export default function MainHeader() {
 
   return (
     <div className="">
-      <div className="flex bg-main w-full justify-between px-4 py-[0.44rem]">
-        <Image src="/icons/logo.svg" alt="logo" width={42} height={40} />
+      <div className="flex w-full justify-between bg-main px-4 py-[0.44rem]">
+        <Link href="/">
+          <Image src="/icons/Symbol.svg" alt="logo" width={42} height={40} className="cursor-pointer" />
+        </Link>
         <button className="rounded-[0.13rem] bg-black px-2 py-[0.38rem] text-main2" onClick={handleLoginClick}>
           Login
         </button>
