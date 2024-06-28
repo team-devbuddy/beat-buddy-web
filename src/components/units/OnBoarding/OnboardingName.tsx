@@ -1,4 +1,5 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent } from 'react';
 
 export default function OnboardingName() {
@@ -6,6 +7,11 @@ export default function OnboardingName() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+  };
+  const router = useRouter();
+
+  const onClickSubmit = () => {
+    router.push('/onBoarding');
   };
 
   return (
@@ -40,6 +46,7 @@ export default function OnboardingName() {
         </div>
       </div>
       <button
+        onClick={onClickSubmit}
         className={`absolute bottom-0 flex w-full justify-center bg-[#EE1171] py-4 text-lg font-bold text-BG-black`}>
         저장
       </button>
