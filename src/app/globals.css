@@ -31,6 +31,7 @@ html {
   }
 }
 
+/* 사파리 100vh !!!!!!!! */
 @layer utilities {
   @supports (-webkit-touch-callout: none) {
     .h-screen {
