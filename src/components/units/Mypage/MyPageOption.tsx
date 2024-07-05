@@ -1,14 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-// 온보딩 - 이용 약관 데이터
-export const options = [
-  { optionName: '닉네임 수정', url: '/mypage/option/nickname' },
-  { optionName: '공지사항', url: '/mypage/option/notice' },
-  { optionName: '로그아웃' },
-  { optionName: '회원 탈퇴' },
-];
-
 export default function MyPageOption() {
   return (
     <div className="flex flex-col">
