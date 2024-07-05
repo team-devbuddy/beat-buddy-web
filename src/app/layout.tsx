@@ -5,6 +5,7 @@ import './globals.css';
 import ClientOnlyLayout from './appLayout';
 
 const pretendard = localFont({
+
   src: '../assets/fonts/PretendardVariable.woff2',
   display: 'swap',
   weight: '45 920',

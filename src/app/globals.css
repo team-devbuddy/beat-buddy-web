@@ -40,8 +40,10 @@ html {
   }
 }
 
+
 @font-face {
   font-family: 'Queensides';
   font-weight: 500;
   src: url('../assets/fonts/Queensides.ttf');
 }
+
