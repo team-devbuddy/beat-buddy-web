@@ -8,14 +8,14 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    fontFamily: {
+      poppins: ['Poppins', 'sans-serif'],
+      queensides: ['Queensides'],
+    },
     extend: {
       minHeight: {
         '100vh': '100vh',
         'webkit-fill-available': '-webkit-fill-available',
-      },
-      fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],
-        queensides: ['Queensides', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
