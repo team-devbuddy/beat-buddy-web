@@ -5,10 +5,12 @@ export default function MyPageComponent() {
   return (
     <>
       <div className="flex flex-col">
-        <div className="flex gap-1 px-4 py-5">
-          <p className="text-xl font-bold text-white">수빈버디</p>
-          <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
-        </div>
+        <Link href="/mypage/option">
+          <div className="flex gap-1 px-4 py-5">
+            <p className="text-xl font-bold text-white">수빈버디</p>
+            <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
+          </div>
+        </Link>
 
         {/* 구분선 */}
         <div className="flex justify-center py-2">
