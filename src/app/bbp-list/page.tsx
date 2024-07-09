@@ -6,7 +6,7 @@ import Footer from '@/components/units/Main/MainFooter';
 
 function BBPList() {
   return (
-    <div className="flex flex-col min-h-screen w-full bg-BG-black text-white">
+    <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <BBPHeader />
       <main className="px-[1rem] pt-[1.75rem]">
         <div className="grid grid-cols-1 gap-x-[1rem] gap-y-[2.5rem] md:grid-cols-2">
@@ -15,7 +15,7 @@ function BBPList() {
           ))}
         </div>
       </main>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

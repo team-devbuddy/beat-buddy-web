@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { clubs } from '@/lib/data';
@@ -17,11 +17,11 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-BG-black text-white">
+    <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <Preview club={club} />
       <Location club={club} />
       <Info club={club} />
-      <VenueHours hours={club.hours}/>
+      <VenueHours hours={club.hours} />
       <CustomerService />
       <Footer />
     </div>
