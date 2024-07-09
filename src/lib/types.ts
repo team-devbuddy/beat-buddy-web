@@ -1,4 +1,3 @@
-
 // 온보딩 - 이용약관
 export interface Term {
   id: number;
@@ -29,3 +28,16 @@ export interface VenueHoursProps {
   hours: { [day: string]: string };
 }
 
+export interface HotVenuesProps {
+  clubs: Club[];
+  title?: string;
+  description?: string;
+}
+export interface SearchHeaderProps {
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface SearchResultsProps {
+  filteredClubs: Club[];
+}

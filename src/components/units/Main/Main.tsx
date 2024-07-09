@@ -6,20 +6,18 @@ import BeatBuddyPick from './BeatBuddyPick';
 import LoggedOutBanner from './LoggedOutBanner';
 import HotVenues from './HotVenues';
 import Footer from './MainFooter';
+import { clubs } from '@/lib/data';
 export default function Main() {
   return (
     <div className="flex w-full flex-col">
       <div className="flex flex-col bg-BG-black">
-        {/* Header */}
         <MainHeader />
-
-        {/* SearchBar */}
         <SearchBar />
         <TrendBar />
         <BeatBuddyPick />
         <LoggedOutBanner />
-        <HotVenues/>
-        <Footer/>
+        <HotVenues clubs={clubs} />
+        <Footer />
       </div>
     </div>
   );
