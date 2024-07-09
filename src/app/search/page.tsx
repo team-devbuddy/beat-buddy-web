@@ -3,6 +3,7 @@ import MainHeader from '@/components/units/Main/MainHeader';
 import Footer from '@/components/units/Main/MainFooter';
 import SearchBar from '@/components/units/Main/SearchBar';
 import GenreSelector from '@/components/units/Search/GenreSelector';
+import HotClubsList from '@/components/units/Search/HotClubLists';
 
 function SearchPage() {
   return (
@@ -10,6 +11,7 @@ function SearchPage() {
       <MainHeader />
       <SearchBar isInputMode />
       <GenreSelector />
+      <HotClubsList />
       <Footer />
     </div>
   );
