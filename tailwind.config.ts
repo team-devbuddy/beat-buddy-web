@@ -131,6 +131,14 @@ const config: Config = {
             fontWeight: '500',
           },
         ],
+        'now-hot': [
+          '1.25rem',
+          {
+            lineHeight: '1.75rem',
+            fontWeight: '500',
+            letterSpacing: '-0.025rem',
+          },
+        ],
       },
     },
   },

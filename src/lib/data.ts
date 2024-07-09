@@ -210,3 +210,19 @@ export const genres = [
   'EDM',
   '압구정'
 ];
+
+export const hotData = {
+  date: '05.26 기준',
+  clubs: [
+    { name: '홍대 비트버디', rank: 1 },
+    { name: '압구정 비트윤지', rank: 2 },
+    { name: '신사 비트지원', rank: 3 },
+    { name: '홍대 비트수헌', rank: 4 },
+    { name: '홍대 비트동혁', rank: 5 },
+    { name: '이태원 비트수빈', rank: 6 },
+    { name: '이태원 비트형준', rank: 7 },
+    { name: '논현 비트세오스', rank: 8 },
+    { name: '논현 비트세오스', rank: 9 },
+    { name: '논현 비트세오스', rank: 10 },
+  ],
+};
