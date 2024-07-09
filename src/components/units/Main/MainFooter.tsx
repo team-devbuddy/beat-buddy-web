@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-export default function Footer() {
+export default function MainFooter() {
   return (
     <footer className="relative mt-10 bg-FooterBlack px-[1rem] py-[1.25rem] text-gray100">
       <div className="relative z-10 flex flex-col items-start">
