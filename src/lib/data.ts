@@ -1,4 +1,3 @@
-
 import { Club } from './types';
 import { Term } from './types';
 
@@ -196,4 +195,18 @@ export const clubs: Club[] = [
 
     },
   },
+];
+
+//검색!
+export const genres = [
+  '힙합',
+  '홍대',
+  '테크노',
+  '디스코',
+  '신사',
+  '하우스',
+  '이태원',
+  'R&B',
+  'EDM',
+  '압구정'
 ];
