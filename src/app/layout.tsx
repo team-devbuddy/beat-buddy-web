@@ -5,7 +5,6 @@ import './globals.css';
 import ClientOnlyLayout from './appLayout';
 
 const pretendard = localFont({
-
   src: '../assets/fonts/PretendardVariable.woff2',
   display: 'swap',
   weight: '45 920',
@@ -24,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" className={`${pretendard.variable} bg-[#f5f5f5]`}>
       <head>
-        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1 " />
       </head>
       <body className={`${pretendard.className}`}>
         <ClientOnlyLayout>{children}</ClientOnlyLayout>

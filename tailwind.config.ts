@@ -13,6 +13,13 @@ const config: Config = {
       queensides: ['Queensides'],
     },
     extend: {
+      scrollbarHide: {
+        'scrollbar-width': 'none',
+        '-ms-overflow-style': 'none',
+        '&::-webkit-scrollbar': {
+          display: 'none',
+        },
+      },
       minHeight: {
         '100vh': '100vh',
         'webkit-fill-available': '-webkit-fill-available',
@@ -143,6 +150,7 @@ const config: Config = {
     },
   },
   plugins: [
+    require('tailwind-scrollbar-hide'),
     function ({ addUtilities }: PluginAPI) {
       addUtilities({
         '.custom-club-card': {
