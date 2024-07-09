@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { genres } from '@/lib/data';
 import { generateColors, toggleGenre, generateLink } from '@/lib/utils/searchUtils';
 import Link from 'next/link';
@@ -43,9 +43,7 @@ function SearchBoth() {
             value={searchQuery}
             onChange={handleInputChange}
           />
-          <Link
-            href={generateLink('/search/results', searchQuery)}
-            className="absolute bottom-3 right-[1rem] cursor-pointer">
+          <Link href={generateLink('/search/results', searchQuery, selectedGenres)} className="absolute bottom-3 right-[1rem] cursor-pointer">
             <Image src="/icons/red-search.svg" alt="search icon" width={20} height={20} />
           </Link>
         </div>

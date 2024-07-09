@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { clubs } from '@/lib/data';
 import SearchResults from '@/components/units/Search/SearchResults';
 import { Club } from '@/lib/types';
-
+import MainFooter from '@/components/units/Main/MainFooter';
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
@@ -33,7 +33,12 @@ const SearchResultsPage = () => {
     setFilteredClubs(filtered);
   };
 
-  return <SearchResults filteredClubs={filteredClubs} />;
+  return (
+    <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
+      <SearchResults filteredClubs={filteredClubs} />
+      <MainFooter />
+    </div>
+  );
 };
 
 export default SearchResultsPage;
