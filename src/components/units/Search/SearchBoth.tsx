@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { genres } from '@/lib/data';
 import { generateColors, toggleGenre, generateLink } from '@/lib/utils/searchUtils';
-import Link from 'next/link';
 import Image from 'next/image';
+import RecentTerm from './RecentTerm';
+import { addSearchTerm as addSearch } from '@/lib/utils/storage';
 
 function SearchBoth() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,6 +17,11 @@ function SearchBoth() {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleSearchClick = () => {
+    addSearch(searchQuery);
+    window.location.href = generateLink('/search/results', searchQuery, selectedGenres);
   };
 
   const renderGridItems = () => {
@@ -43,11 +49,13 @@ function SearchBoth() {
             value={searchQuery}
             onChange={handleInputChange}
           />
-          <Link href={generateLink('/search/results', searchQuery, selectedGenres)} className="absolute bottom-3 right-[1rem] cursor-pointer">
+          <div onClick={handleSearchClick} className="absolute bottom-3 right-[1rem] cursor-pointer">
             <Image src="/icons/red-search.svg" alt="search icon" width={20} height={20} />
-          </Link>
+          </div>
         </div>
       </div>
+      <RecentTerm addSearchTerm={addSearch} />
+
       <div className="px-[1rem] pb-[2.5rem] pt-[2.25rem]">
         <div className="grid grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(0, 3)}</div>
         <div className="mt-[0.5rem] grid grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(3, 5)}</div>

@@ -41,3 +41,6 @@ export interface SearchHeaderProps {
 export interface SearchResultsProps {
   filteredClubs: Club[];
 }
+export interface RecentTermProps {
+  addSearchTerm: (term: string) => void;
+}
