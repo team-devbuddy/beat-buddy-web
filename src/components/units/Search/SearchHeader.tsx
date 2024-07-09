@@ -42,7 +42,7 @@ const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
         <div className="relative w-full">
           <input
             className="w-full border-b-2 border-white bg-transparent px-2 py-2 text-white placeholder:text-white focus:outline-none"
-            placeholder="지금 가장 인기있는 클럽은?"
+            placeholder={lastSearch || '지금 가장 인기있는 클럽은?'}
             value={searchQuery}
             onChange={handleInputChange}
           />
