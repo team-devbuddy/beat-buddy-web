@@ -1,4 +1,4 @@
-import React from 'react';
+
 import MainHeader from '@/components/units/Main/MainHeader';
 import Footer from '@/components/units/Main/MainFooter';
 import SearchBoth from '@/components/units/Search/SearchBoth';
