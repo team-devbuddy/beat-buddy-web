@@ -2,9 +2,11 @@
 import { useEffect, useRef } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
+
 import { GoogleMapProps } from '@/lib/types';
 
 const GoogleMap = ({ address, minHeight }: GoogleMapProps) => {
+
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,7 +45,9 @@ const GoogleMap = ({ address, minHeight }: GoogleMapProps) => {
       });
   }, [address]);
 
+
   return <div className={`rounded border border-gray400 p-2`} style={{ minHeight }} ref={mapRef} />;
+
 };
 
 export default GoogleMap;
