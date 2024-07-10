@@ -6,8 +6,8 @@ export default function HotClubsList() {
     <div className="px-[1rem] text-gray100">
       <div className="border-t-[1px] border-gray500 pt-[2rem]">
         <div className="flex items-end justify-start gap-[0.5rem]">
-          <h2 className="text-now-hot font-queensides text-main2">NOW HOT</h2>
-          <span className="text-body3-12-medium-bold text-gray300">{hotData.date}</span>
+          <h2 className="font-queensides text-now-hot text-main2">NOW HOT</h2>
+          <span className="text-body3-12-medium text-gray300">{hotData.date}</span>
         </div>
         <div className="mt-[1.25rem] flex justify-between">
           <ul className="flex w-[10rem] list-none flex-col gap-y-[0.5rem]">
