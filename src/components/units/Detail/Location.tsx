@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { ClubProps } from '@/lib/types';
+import GoogleMap from '@/components/common/GoogleMap';
 
 const Location = ({ club }: ClubProps) => {
   return (
@@ -12,7 +12,7 @@ const Location = ({ club }: ClubProps) => {
         <p className="mt-[0.75rem] text-body2-15-medium text-gray200">{club.address}</p>
       </div>
       <div className="relative mt-[1rem] h-[10rem] w-full">
-        <Image src="/images/FakeMap.png" alt="map image" layout="fill" objectFit="cover" />
+        <GoogleMap address={club.address} minHeight="10rem" />
       </div>
     </div>
   );
