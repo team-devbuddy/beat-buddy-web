@@ -1,9 +1,9 @@
-import OnBoardingCustom from '@/components/units/OnBoarding/onBoardingCustom';
+import AgreementTerm from '@/components/units/OnBoarding/AgreementTerm';
 
-export default function onBoardingCustomPage() {
+export default function AgreePage() {
   return (
-    <>
-      <OnBoardingCustom />
-    </>
+    <div className="w-full pt-[1.25rem]">
+      <AgreementTerm />
+    </div>
   );
 }

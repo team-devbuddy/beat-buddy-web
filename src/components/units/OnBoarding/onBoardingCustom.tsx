@@ -6,16 +6,6 @@ import { useRecoilState } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 
 export default function OnBoardingCustomPage() {
-  const searchParams = useSearchParams();
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-
-  useEffect(() => {
-    const access = searchParams.get('access');
-    if (access) {
-      setAccessToken(access);
-    }
-  }, [searchParams]);
-
   return (
     <>
       <div className="flex w-full flex-col px-4">

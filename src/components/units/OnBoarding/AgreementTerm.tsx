@@ -3,13 +3,26 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Term } from '@/lib/types';
 import { termsData } from '@/lib/data';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useRecoilState } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
 
 export default function AgreementTerm() {
   const [terms, setTerms] = useState<Term[]>(termsData);
   const [allChecked, setAllChecked] = useState<boolean>(false);
   const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
   const router = useRouter();
+
+  // access 쿼리 받아오기
+  const searchParams = useSearchParams();
+  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+
+  useEffect(() => {
+    const access = searchParams.get('access');
+    if (access) {
+      setAccessToken(access);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const requiredTermsChecked = terms.filter((term) => term.isRequired).every((term) => term.checked);
