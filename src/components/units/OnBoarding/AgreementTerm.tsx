@@ -6,6 +6,7 @@ import { termsData } from '@/lib/data';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useRecoilState } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
+import { PostAgree } from '@/lib/action';
 
 export default function AgreementTerm() {
   const [terms, setTerms] = useState<Term[]>(termsData);
@@ -22,7 +23,7 @@ export default function AgreementTerm() {
     if (access) {
       setAccessToken(access);
     }
-  }, [searchParams]);
+  }, [searchParams, setAccessToken]);
 
   useEffect(() => {
     const requiredTermsChecked = terms.filter((term) => term.isRequired).every((term) => term.checked);
@@ -44,8 +45,27 @@ export default function AgreementTerm() {
     );
   };
 
-  const onClickSubmit = () => {
-    router.push('/onBoarding/name');
+  const onClickSubmit = async () => {
+    const locationConsent = terms.find((term) => term.id === 3)?.checked || false;
+    const marketingConsent = terms.find((term) => term.id === 4)?.checked || false;
+
+    const requestData = {
+      isLocationConsent: locationConsent,
+      isMarketingConsent: marketingConsent,
+    };
+
+    if (accessToken) {
+      try {
+        const response = await PostAgree(accessToken, requestData);
+        if (response.ok) {
+          router.push('/onBoarding/name');
+        }
+      } catch (error) {
+        console.error('Error submitting terms agreement:', error);
+      }
+    } else {
+      console.error('Access token is not available');
+    }
   };
 
   return (
