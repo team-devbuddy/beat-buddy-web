@@ -49,7 +49,7 @@ export default function OnboardingName() {
   const onClickSubmit = async () => {
     const reponse = await PostNickname(access, inputValue);
     if (reponse.ok) {
-      router.push('/onboarding/custom');
+      router.push('/onBoarding/custom');
     }
   };
 

@@ -1,5 +1,5 @@
 const ACCESS =
-  'Bearer eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MiwiY2F0ZWdvcnkiOiJhY2Nlc3MiLCJ1c2VybmFtZSI6IktBS0FPXzM2MTEzNjY5NjMiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMDg4NjU4NSwiZXhwIjoxNzIwODkzNzg1fQ.u-MqFUGzJElDrIbqA9x0ExsthHbXlqjeRPPm2o-pUg0';
+  'Bearer eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MiwiY2F0ZWdvcnkiOiJhY2Nlc3MiLCJ1c2VybmFtZSI6IktBS0FPXzM2MTEzNjY5NjMiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMDg4ODQ2MiwiZXhwIjoxNzIwODk1NjYyfQ.0N_0CkZdwXEtohM7dZUK00fAv9jm-2yxCqXvESDRra0';
 
 // 약관 동의
 export async function PostAgree(access: string, terms: { isLocationConsent: boolean; isMarketingConsent: boolean }) {
@@ -38,6 +38,20 @@ export async function PostNickname(access: string, nickname: string) {
       Access: ACCESS,
     },
     body: JSON.stringify({ nickname }),
+  });
+
+  return response;
+}
+
+// 온보딩 - 선호 장르
+export async function PostGenre(access: string, genres: { [key: string]: number }) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/member-genre`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: ACCESS,
+    },
+    body: JSON.stringify(genres),
   });
 
   return response;
