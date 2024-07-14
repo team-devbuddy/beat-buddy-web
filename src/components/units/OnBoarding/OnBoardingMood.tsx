@@ -1,20 +1,46 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { PostMood } from '@/lib/action'; // 경로를 적절히 수정하세요.
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
+
+const moodMap: { [key: string]: string } = {
+  신나는: 'EXCITING',
+  힙한: 'HIP',
+  펑키한: 'FUNKY',
+  칠한: 'CHILLY',
+  이국적인: 'EXOTIC',
+  트렌디한: 'TRENDY',
+  트로피컬한: 'TROPICAL',
+  다크한: 'DARK',
+};
+
+const moods = Object.keys(moodMap);
 
 export default function OnBoardingMood() {
-  const genres = ['신나는', '힙한', '펑키한', '칠한', '이국적인', '트렌디한', '트로피컬한', '다크한'];
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const router = useRouter();
+  const access = useRecoilValue(accessTokenState) || '';
 
-  const toggleGenre = (genre: string) => {
-    setSelectedGenres((prevSelected) =>
-      prevSelected.includes(genre) ? prevSelected.filter((g) => g !== genre) : [...prevSelected, genre],
+  const toggleMood = (mood: string) => {
+    setSelectedMoods((prevSelected) =>
+      prevSelected.includes(mood) ? prevSelected.filter((m) => m !== mood) : [...prevSelected, mood],
     );
   };
 
-  const onClickSubmit = () => {
-    router.push('/onBoarding/myTaste/location');
+  const onClickSubmit = async () => {
+    const moodData = moods.reduce<{ [key: string]: number }>((acc, mood) => {
+      acc[moodMap[mood]] = selectedMoods.includes(mood) ? 1.0 : 0.0;
+      return acc;
+    }, {});
+
+    try {
+      await PostMood(access, moodData);
+      router.push('/onBoarding/myTaste/location');
+    } catch (error) {
+      console.error('Error submitting moods:', error);
+    }
   };
 
   return (
@@ -27,23 +53,23 @@ export default function OnBoardingMood() {
         </h1>
 
         <div className="mt-7 flex flex-wrap gap-2">
-          {genres.map((genre, index) => (
+          {moods.map((mood, index) => (
             <div
               key={index}
-              onClick={() => toggleGenre(genre)}
+              onClick={() => toggleMood(mood)}
               className={`flex h-[3.75rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl text-white ${
-                selectedGenres.includes(genre) ? 'border-2 border-main bg-main bg-opacity-20' : 'bg-gray600'
+                selectedMoods.includes(mood) ? 'border-2 border-main bg-main bg-opacity-20' : 'bg-gray600'
               }`}>
-              {genre}
+              {mood}
             </div>
           ))}
         </div>
       </div>
       <button
         onClick={onClickSubmit}
-        disabled={selectedGenres.length === 0}
+        disabled={selectedMoods.length === 0}
         className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
-          selectedGenres.length > 0 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
+          selectedMoods.length > 0 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
         }`}>
         다음
       </button>
