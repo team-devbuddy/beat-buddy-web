@@ -70,3 +70,17 @@ export async function PostMood(access: string, moods: { [key: string]: number })
 
   return response;
 }
+
+// 온보딩 - 선호 장소
+export async function PostLocation(access: string, locations: string): Promise<Response> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/onboarding/regions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: ACCESS,
+    },
+    body: JSON.stringify({ regions: locations }),
+  });
+
+  return response;
+}
