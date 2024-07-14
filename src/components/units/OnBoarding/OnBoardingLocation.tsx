@@ -1,20 +1,39 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { PostLocation } from '@/lib/action'; // 경로를 적절히 수정하세요.
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
+
+const locationMap: { [key: string]: string } = {
+  홍대: 'HONGDAE',
+  이태원: 'ITAEWON',
+  신사: 'SINSA',
+  압구정: 'APGUJEONG',
+};
+
+const locations = Object.keys(locationMap);
 
 export default function OnBoardingLocation() {
-  const genres = ['홍대', '이태원', '신사', '압구정'];
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const router = useRouter();
+  const access = useRecoilValue(accessTokenState) || '';
 
-  const toggleGenre = (genre: string) => {
-    setSelectedGenres((prevSelected) =>
-      prevSelected.includes(genre) ? prevSelected.filter((g) => g !== genre) : [...prevSelected, genre],
+  const toggleLocation = (location: string) => {
+    setSelectedLocations((prevSelected) =>
+      prevSelected.includes(location) ? prevSelected.filter((l) => l !== location) : [...prevSelected, location],
     );
   };
 
-  const onClickSubmit = () => {
-    router.push('/onBoarding/myTaste/complete');
+  const onClickSubmit = async () => {
+    const locationData = selectedLocations.map((location) => locationMap[location]).join(',');
+
+    try {
+      await PostLocation(access, locationData);
+      router.push('/onBoarding/myTaste/complete');
+    } catch (error) {
+      console.error('Error submitting locations:', error);
+    }
   };
 
   return (
@@ -27,23 +46,23 @@ export default function OnBoardingLocation() {
         </h1>
 
         <div className="mt-7 flex flex-wrap gap-2">
-          {genres.map((genre, index) => (
+          {locations.map((location, index) => (
             <div
               key={index}
-              onClick={() => toggleGenre(genre)}
+              onClick={() => toggleLocation(location)}
               className={`flex h-[7.5rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl text-white ${
-                selectedGenres.includes(genre) ? 'border-2 border-main bg-main bg-opacity-20' : 'bg-gray600'
+                selectedLocations.includes(location) ? 'border-2 border-main bg-main bg-opacity-20' : 'bg-gray600'
               }`}>
-              {genre}
+              {location}
             </div>
           ))}
         </div>
       </div>
       <button
         onClick={onClickSubmit}
-        disabled={selectedGenres.length === 0}
+        disabled={selectedLocations.length === 0}
         className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
-          selectedGenres.length > 0 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
+          selectedLocations.length > 0 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
         }`}>
         다음
       </button>
