@@ -6,7 +6,6 @@ import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, authState } from '@/context/recoil-context';
-import { set } from 'react-hook-form';
 
 export default function MainHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
