@@ -1,11 +1,10 @@
 'use client';
-import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
 import Lottie from 'react-lottie-player';
+import loadingLottie from '../../public/loadingLottie.json';
+import { useEffect, useState } from 'react';
 
 const Loading = () => {
   const [isClient, setIsClient] = useState(false);
-
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -14,7 +13,7 @@ const Loading = () => {
     <>
       {isClient && (
         <div className="flex h-screen w-full items-center justify-center">
-          <Lottie loop animationData={require('../../public/loadingLottie.json')} play style={{ width: '140px', height: '60px' }} />
+          <Lottie loop animationData={loadingLottie} play style={{ width: '140px', height: '60px' }} />
         </div>
       )}
     </>
