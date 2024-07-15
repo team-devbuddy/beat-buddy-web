@@ -15,6 +15,15 @@ export default function OnBoardingGenre() {
     'K-POP': 'K-POP',
   };
 
+  const genreImages: { [key: string]: string } = {
+    EDM: '/images/onboarding/background/onboarding-1.png',
+    '힙합_R&B': '/images/onboarding/background/onboarding-2.png',
+    하우스: '/images/onboarding/background/onboarding-3.png',
+    'Soul & Funk': '/images/onboarding/background/onboarding-4.png',
+    테크노: '/images/onboarding/background/onboarding-5.png',
+    'K-POP': '/images/onboarding/background/onboarding-6.png',
+  };
+
   const genres = Object.keys(genreMap);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const router = useRouter();
@@ -59,10 +68,18 @@ export default function OnBoardingGenre() {
             <div
               key={index}
               onClick={() => toggleGenre(genre)}
-              className={`flex h-[6.8rem] w-[31.7%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl text-white ${
-                selectedGenres.includes(genre) ? 'border-2 border-main bg-main bg-opacity-20' : 'bg-gray600'
-              }`}>
-              {genre}
+              className={`relative flex h-[6.8rem] w-[31.7%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl ${
+                selectedGenres.includes(genre) ? 'text-main' : 'text-white'
+              }`}
+              style={{
+                backgroundImage: `url(${genreImages[genre]})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}>
+              {selectedGenres.includes(genre) && (
+                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"></div>
+              )}
+              <span className="relative z-10">{genre}</span>
             </div>
           ))}
         </div>
