@@ -12,6 +12,13 @@ const locationMap: { [key: string]: string } = {
   압구정: 'APGUJEONG',
 };
 
+const locationImages: { [key: string]: string } = {
+  홍대: '/images/onboarding/background/onboarding-4.png',
+  이태원: '/images/onboarding/background/onboarding-2.png',
+  신사: '/images/onboarding/background/onboarding-5.png',
+  압구정: '/images/onboarding/background/onboarding-7.png',
+};
+
 const locations = Object.keys(locationMap);
 
 export default function OnBoardingLocation() {
@@ -50,10 +57,18 @@ export default function OnBoardingLocation() {
             <div
               key={index}
               onClick={() => toggleLocation(location)}
-              className={`flex h-[7.5rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl text-white ${
-                selectedLocations.includes(location) ? 'border-2 border-main bg-main bg-opacity-20' : 'bg-gray600'
-              }`}>
-              {location}
+              className={`relative flex h-[7.5rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl ${
+                selectedLocations.includes(location) ? 'text-main' : 'text-white'
+              }`}
+              style={{
+                backgroundImage: `url(${locationImages[location]})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}>
+              {selectedLocations.includes(location) && (
+                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"></div>
+              )}
+              <span className="relative z-10">{location}</span>
             </div>
           ))}
         </div>
