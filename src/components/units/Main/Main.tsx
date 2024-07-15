@@ -1,5 +1,4 @@
 import React from 'react';
-import MainHeader from './MainHeader';
 import SearchBar from './SearchBar';
 import TrendBar from './TrendBar';
 import BeatBuddyPick from './BeatBuddyPick';
@@ -7,6 +6,9 @@ import LoggedOutBanner from './LoggedOutBanner';
 import HotVenues from './HotVenues';
 import Footer from './MainFooter';
 import { clubs } from '@/lib/data';
+import dynamic from 'next/dynamic';
+
+const MainHeader = dynamic(() => import('./MainHeader'), { ssr: false });
 export default function Main() {
   return (
     <div className="flex w-full flex-col">
