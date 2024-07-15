@@ -44,3 +44,10 @@ export interface SearchResultsProps {
 export interface RecentTermProps {
   addSearchTerm: (term: string) => void;
 }
+
+
+//구글맵
+export interface GoogleMapProps {
+  address: string;
+  minHeight?: string; // minHeight prop 추가
+}
