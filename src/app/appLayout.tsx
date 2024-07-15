@@ -1,6 +1,6 @@
 'use client';
-
-import dynamic from 'next/dynamic';
+import ClientProvider from '@/components/common/provision/ClientProvider';
+import React from 'react';
 import { RecoilRoot } from 'recoil';
 
 export default function ClientOnlyLayout({ children }: { children: React.ReactNode }) {
