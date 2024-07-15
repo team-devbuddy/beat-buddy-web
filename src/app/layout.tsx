@@ -1,5 +1,3 @@
-import React from 'react';
-import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 import ClientOnlyLayout from './appLayout';

@@ -1,13 +1,10 @@
-const ACCESS =
-  'Bearer eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MiwiY2F0ZWdvcnkiOiJhY2Nlc3MiLCJ1c2VybmFtZSI6IktBS0FPXzM2MTEzNjY5NjMiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMDk0MTM2MywiZXhwIjoxNzIwOTQ4NTYzfQ.Ol7XSIeVO_x8aFQfsRxssjjxRRUSTGpS2U0A3jdYFr8';
-
 // 약관 동의
 export async function PostAgree(access: string, terms: { isLocationConsent: boolean; isMarketingConsent: boolean }) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/onboarding/consent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Access: ACCESS,
+      Access: `Bearer ${access}`,
     },
     body: JSON.stringify(terms),
   });
@@ -21,7 +18,7 @@ export async function PostDuplicateCheck(access: string, nickname: string) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Access: ACCESS,
+      Access: `Bearer ${access}`,
     },
     body: JSON.stringify({ nickname }),
   });
@@ -35,7 +32,7 @@ export async function PostNickname(access: string, nickname: string) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Access: ACCESS,
+      Access: `Bearer ${access}`,
     },
     body: JSON.stringify({ nickname }),
   });
@@ -49,7 +46,7 @@ export async function PostGenre(access: string, genres: { [key: string]: number 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Access: ACCESS,
+      Access: `Bearer ${access}`,
     },
     body: JSON.stringify(genres),
   });
@@ -63,7 +60,7 @@ export async function PostMood(access: string, moods: { [key: string]: number })
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Access: ACCESS,
+      Access: `Bearer ${access}`,
     },
     body: JSON.stringify(moods),
   });
@@ -77,7 +74,7 @@ export async function PostLocation(access: string, locations: string): Promise<R
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Access: ACCESS,
+      Access: `Bearer ${access}`,
     },
     body: JSON.stringify({ regions: locations }),
   });

@@ -1,4 +1,3 @@
-// KakaoRedirect.tsx
 'use client';
 import { authState, accessTokenState } from '@/context/recoil-context';
 import { useSearchParams } from 'next/navigation';
@@ -8,56 +7,26 @@ import { useRecoilState } from 'recoil';
 import { motion } from 'framer-motion';
 
 const KakaoRedirect: React.FC = () => {
-  const params = useSearchParams();
-  const code = params.get('code');
+  const searchParams = useSearchParams();
+  const access = searchParams.get('access');
   const router = useRouter();
   const [isAuth, setIsAuth] = useRecoilState(authState);
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-  const [loading, setLoading] = useState(true);
 
+  // 이 컴포넌트 진입시 access token이 있으면 recoil state에 저장 후 auth state를 true로 변경
   useEffect(() => {
-    const kakaoLogin = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_LINKIT_SERVER_URL}/login/kakao`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json;charset=utf-8' },
-          credentials: 'include',
-          body: JSON.stringify({ code }),
-        });
-        if (response.ok) {
-          const responseData = await response.json();
-          setAccessToken(responseData.accessToken);
-          // setIsAuth(true)
+    // 0.5초 뒤에 실행
 
-          if (responseData.existMemberBasicInform === true && responseData.existDefaultProfile === true) {
-            router.push('/');
-          } else if (responseData.existMemberBasicInform === true && responseData.existDefaultProfile === false) {
-            router.push(`/onBoarding/select`);
-          } else {
-            router.push(`/onBoarding`);
-          }
-        }
-      } catch (error) {
-        console.log('로그인 요청에 실패했습니다.', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (code) {
-      kakaoLogin();
+    if (access) {
+      setTimeout(() => {
+        setAccessToken(access);
+        setIsAuth(true);
+        router.push('/');
+      }, 500);
     }
-  }, [code, router, setIsAuth, setAccessToken]);
+  }, [access, setAccessToken, setIsAuth, router]);
 
-  return loading ? (
-    <div className="flex h-screen flex-col items-center justify-center">
-      <motion.div
-        className="h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-500"
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 1 }}
-      />
-      <p className="mt-4 text-lg">Loading...</p>
-    </div>
-  ) : null;
+  return <></>;
 };
 
 export default KakaoRedirect;

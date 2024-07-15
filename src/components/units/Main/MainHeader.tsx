@@ -4,9 +4,13 @@ import { useState } from 'react';
 import LoginModal from '../Login/LoginModal';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { accessTokenState, authState } from '@/context/recoil-context';
+import { set } from 'react-hook-form';
 
 export default function MainHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const isAuth = useRecoilValue(authState);
 
   const handleLoginClick = () => {
     setIsModalOpen(true);
@@ -22,9 +26,16 @@ export default function MainHeader() {
         <Link href="/">
           <Image src="/icons/Symbol.svg" alt="logo" width={42} height={40} className="cursor-pointer" />
         </Link>
-        <button className="rounded-[0.13rem] bg-black px-2 py-[0.38rem] text-main2" onClick={handleLoginClick}>
-          Login
-        </button>
+
+        {isAuth ? (
+          <Link href="/mypage">
+            <Image src="/icons/default_user_icon.svg" alt="profile" width={32} height={32} className="cursor-pointer" />
+          </Link>
+        ) : (
+          <button className="rounded-[0.13rem] bg-black px-2 py-[0.38rem] text-main2" onClick={handleLoginClick}>
+            Login
+          </button>
+        )}
       </div>
       <AnimatePresence>
         {isModalOpen && (
