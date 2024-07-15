@@ -16,6 +16,17 @@ const moodMap: { [key: string]: string } = {
   다크한: 'DARK',
 };
 
+const moodImages: { [key: string]: string } = {
+  신나는: '/images/onBoarding/background/onboarding-3.png',
+  힙한: '/images/onBoarding/background/onboarding-7.png',
+  펑키한: '/images/onBoarding/background/onboarding-1.png',
+  칠한: '/images/onBoarding/background/onboarding-5.png',
+  이국적인: '/images/onBoarding/background/onboarding-2.png',
+  트렌디한: '/images/onBoarding/background/onboarding-6.png',
+  트로피컬한: '/images/onBoarding/background/onboarding-4.png',
+  다크한: '/images/onBoarding/background/onboarding-8.png',
+};
+
 const moods = Object.keys(moodMap);
 
 export default function OnBoardingMood() {
@@ -57,10 +68,18 @@ export default function OnBoardingMood() {
             <div
               key={index}
               onClick={() => toggleMood(mood)}
-              className={`flex h-[3.75rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl text-white ${
-                selectedMoods.includes(mood) ? 'border-2 border-main bg-main bg-opacity-20' : 'bg-gray600'
-              }`}>
-              {mood}
+              className={`relative flex h-[3.75rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl ${
+                selectedMoods.includes(mood) ? 'text-main' : 'text-white'
+              }`}
+              style={{
+                backgroundImage: `url(${moodImages[mood]})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}>
+              {selectedMoods.includes(mood) && (
+                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"></div>
+              )}
+              <span className="relative z-10">{mood}</span>
             </div>
           ))}
         </div>
