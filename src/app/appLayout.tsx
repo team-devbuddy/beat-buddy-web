@@ -1,9 +1,11 @@
+'use client';
 import ClientProvider from '@/components/common/provision/ClientProvider';
 import React from 'react';
+import { RecoilRoot } from 'recoil';
 
 export default function ClientOnlyLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClientProvider>
+    <RecoilRoot>
       <div className="flex h-screen w-full items-center justify-center">
         {/* 모바일 컨테이너 */}
         <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
@@ -12,6 +14,6 @@ export default function ClientOnlyLayout({ children }: { children: React.ReactNo
           {/* <Footer /> */}
         </div>
       </div>
-    </ClientProvider>
+    </RecoilRoot>
   );
 }
