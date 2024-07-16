@@ -6,10 +6,19 @@ import Link from 'next/link';
 import { SearchHeaderProps } from '@/lib/types';
 import { getLocalStorageItem, setLocalStorageItem } from '@/lib/utils/storage';
 import { generateLink } from '@/lib/utils/searchUtils';
+import Dropdown from './SortDropdown';
+
 const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [lastSearch, setLastSearch] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState('');
+
+  const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
+  const locations = ['홍대', '이태원', '신사', '압구정'];
+  const orders = ['가까운 순', '인기순'];
 
   useEffect(() => {
     const storedSearch = getLocalStorageItem('lastSearch');
@@ -52,6 +61,13 @@ const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
             <Image src="/icons/gray-search.svg" alt="search icon" width={20} height={20} />
           </Link>
         </div>
+      </div>
+      <div className="flex items-center justify-between mb-[0.75rem] px-[1rem] py-[0.25rem] w-full space-x-[0.75rem]">
+        <div className="flex space-x-[0.75rem]">
+          <Dropdown options={genres} selectedOption={selectedGenre} setSelectedOption={setSelectedGenre} label="장르" />
+          <Dropdown options={locations} selectedOption={selectedLocation} setSelectedOption={setSelectedLocation} label="위치" />
+        </div>
+        <Dropdown options={orders} selectedOption={selectedOrder} setSelectedOption={setSelectedOrder} label="가까운 순" isThirdDropdown />
       </div>
     </header>
   );

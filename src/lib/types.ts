@@ -51,3 +51,15 @@ export interface GoogleMapProps {
   address: string;
   minHeight?: string; // minHeight prop 추가
 }
+
+export interface HotVenuesProps {
+  title?: string;
+  description?: string;
+}
+
+export interface DropdownProps {
+  options: string[];
+  selectedOption: string;
+  setSelectedOption: (option: string) => void;
+  label: string;
+}

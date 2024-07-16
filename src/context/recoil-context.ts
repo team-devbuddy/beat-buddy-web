@@ -15,3 +15,8 @@ export const authState = atom<boolean>({
   default: false,
   effects_UNSTABLE: [persistAtom],
 });
+
+export const recentSearchState = atom<string[]>({
+  key: 'recentSearchState',
+  default: [],
+});

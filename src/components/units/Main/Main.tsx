@@ -3,7 +3,7 @@ import SearchBar from './SearchBar';
 import TrendBar from './TrendBar';
 import BeatBuddyPick from './BeatBuddyPick';
 import LoggedOutBanner from './LoggedOutBanner';
-import HotVenues from './HotVenues';
+import HotVenues from './Hot-Chart';
 import Footer from './MainFooter';
 import { clubs } from '@/lib/data';
 import dynamic from 'next/dynamic';

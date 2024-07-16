@@ -2,16 +2,19 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ClubProps } from '@/lib/types';
 
 const Preview = ({ club }: ClubProps) => {
+  const router = useRouter();
+
   return (
     <div className="relative w-full h-[17.5rem] flex flex-col justify-between">
       <div className="flex items-start justify-between px-[1rem] py-[1rem] z-10">
-        <Link href="/" className="text-white">
-          <Image src="/icons/ArrowLeft.svg" alt="back icon" width={24} height={24} />
-        </Link>
+      <button onClick={() => router.back()} aria-label="뒤로가기" className="text-white">
+      <Image src="/icons/ArrowLeft.svg" alt="back icon" width={24} height={24} />
+        </button>
         <div className="flex items-center space-x-[1.25rem]">
           <Image src="/icons/share.svg" alt="share icon" width={32} height={32} />
           <Image src="/icons/PinkHeart.svg" alt="heart icon" width={32} height={32} className="cursor-pointer" />
