@@ -6,7 +6,7 @@ export default function MainFooter() {
       <div className="relative z-10 flex flex-col items-start">
         <span className="text-body2-15-medium">이용약관</span>
         <div className="relative my-4 h-[0.15rem] w-[1rem]">
-          <Image src="/icons/FooterVector.svg" alt="Footer Vector" layout="fill" objectFit="cover" />
+          <Image src="/icons/FooterVector.svg" alt="Footer Vector" fill />
         </div>
         <div className="flex flex-col items-start">
           <span className="font-poppins text-lg font-bold leading-[1.40625rem] tracking-[-0.09375rem] text-gray100">
