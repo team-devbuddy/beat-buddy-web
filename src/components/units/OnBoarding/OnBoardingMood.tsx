@@ -1,9 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { PostMood } from '@/lib/action'; // 경로를 적절히 수정하세요.
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { PostMood, PostArchive } from '@/lib/action'; // 경로를 적절히 수정하세요.
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { accessTokenState, memberGenreIdState, memberMoodIdState } from '@/context/recoil-context';
 
 const moodMap: { [key: string]: string } = {
   신나는: 'EXCITING',
@@ -33,6 +33,8 @@ export default function OnBoardingMood() {
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
+  const memberGenreId = useRecoilValue(memberGenreIdState);
+  const setMemberMoodId = useSetRecoilState(memberMoodIdState);
 
   const toggleMood = (mood: string) => {
     setSelectedMoods((prevSelected) =>
@@ -47,8 +49,16 @@ export default function OnBoardingMood() {
     }, {});
 
     try {
-      await PostMood(access, moodData);
-      router.push('/onBoarding/myTaste/location');
+      const response = await PostMood(access, { moodPreferences: moodData });
+      const result = await response.json();
+      setMemberMoodId(result.vectorId);
+
+      if (memberGenreId !== null && result.vectorId !== null) {
+        await PostArchive(access, { memberGenreId, memberMoodId: result.vectorId });
+        router.push('/onBoarding/myTaste/complete');
+      } else {
+        console.error('Error: memberGenreId or memberMoodId is null');
+      }
     } catch (error) {
       console.error('Error submitting moods:', error);
     }

@@ -21,7 +21,7 @@ const KakaoRedirect: React.FC = () => {
       setTimeout(() => {
         setAccessToken(access);
         setIsAuth(true);
-        router.push('/');
+        router.push('/onBoarding');
       }, 500);
     }
   }, [access, setAccessToken, setIsAuth, router]);

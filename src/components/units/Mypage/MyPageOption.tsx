@@ -1,7 +1,18 @@
+'use client';
+import { authState } from '@/context/recoil-context';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useRecoilState } from 'recoil';
 
 export default function MyPageOption() {
+  const [isAuth, setIsAuth] = useRecoilState(authState);
+  const router = useRouter();
+  const onClickLogout = () => {
+    setIsAuth(false);
+    router.push('/');
+  };
+
   return (
     <div className="flex flex-col">
       <div className="px-4 py-2">
@@ -23,7 +34,7 @@ export default function MyPageOption() {
           </div>
         </Link>
 
-        <div className="flex cursor-pointer items-center justify-between px-4 py-5">
+        <div onClick={onClickLogout} className="flex cursor-pointer items-center justify-between px-4 py-5">
           <div className="font-bold text-white">로그아웃</div>
           <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
         </div>
