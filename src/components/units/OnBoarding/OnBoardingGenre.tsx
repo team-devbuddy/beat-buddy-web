@@ -2,8 +2,8 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { PostGenre } from '@/lib/action'; // 경로를 적절히 수정하세요.
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { accessTokenState, memberGenreIdState } from '@/context/recoil-context';
 
 export default function OnBoardingGenre() {
   const genreMap: { [key: string]: string } = {
@@ -28,6 +28,7 @@ export default function OnBoardingGenre() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
+  const setMemberGenreId = useSetRecoilState(memberGenreIdState);
 
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prevSelected) =>
@@ -46,6 +47,8 @@ export default function OnBoardingGenre() {
 
     try {
       const response = await PostGenre(access, { genrePreferences: genreData });
+      const result = await response.json();
+      setMemberGenreId(result.vectorId);
       if (response.ok) {
         router.push('/onBoarding/myTaste/mood');
       }

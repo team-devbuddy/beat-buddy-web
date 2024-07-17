@@ -84,3 +84,30 @@ export async function PostLocation(access: string, locations: string): Promise<R
 
   return response;
 }
+
+// 온보딩 - 아카이브 생성
+export async function PostArchive(access: string, archive: { memberGenreId: number; memberMoodId: number }) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/archive`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+    body: JSON.stringify(archive),
+  });
+
+  return response;
+}
+
+// 마이 페이지 - 내 히스토리 조회
+export async function GetHistory(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/archive/all`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+  });
+
+  return response.json();
+}
