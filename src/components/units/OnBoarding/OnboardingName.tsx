@@ -100,7 +100,7 @@ export default function OnboardingName() {
         저장
       </button>
       {showBanner && (
-        <div className="fixed bottom-20 left-1/2 w-[80%] -translate-x-1/2 transform rounded bg-gray500 px-16 py-3 text-white">
+        <div className="fixed bottom-20 left-1/2 flex w-[20rem] -translate-x-1/2 transform justify-center rounded bg-gray500 px-16 py-3 text-white">
           사용 가능한 닉네임이에요!
         </div>
       )}
