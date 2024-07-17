@@ -7,7 +7,10 @@
 .pnp.js
 .yarn/install-state.gz
 
+
+
 .env
+.yarn.lock
 
 # testing
 /coverage
