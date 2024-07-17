@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import History from './History/History';
 
 export default function MyPageComponent() {
   return (
@@ -48,20 +49,7 @@ export default function MyPageComponent() {
         </Link>
 
         {/* MyHistoy Card */}
-        <div className="ml-4 flex overflow-x-auto hide-scrollbar">
-          <div className="flex h-[15.6rem] w-[20rem] flex-shrink-0 flex-col justify-between rounded-[0.38rem] bg-[#242730] px-4 py-6">
-            <p className="font-queensides text-[2.5rem] font-light text-white">06.19</p>
-            <div className="flex gap-2">
-              <div className="rounded-[0.13rem] bg-gray500 px-[0.38rem] py-[0.12rem] text-gray100">홍대</div>
-            </div>
-          </div>
-          <div className="ml-4 flex h-[15.6rem] w-[20rem] flex-shrink-0 flex-col justify-between rounded-[0.38rem] bg-[#242730] px-4 py-6">
-            <p className="font-queensides text-[2.5rem] font-light text-white">06.19</p>
-            <div className="flex gap-2">
-              <div className="rounded-[0.13rem] bg-gray500 px-[0.38rem] py-[0.12rem] text-gray100">홍대</div>
-            </div>
-          </div>
-        </div>
+        <History />
 
         {/* 구분선 */}
         <div className="flex justify-center pt-[2.5rem]">
