@@ -41,7 +41,7 @@ export async function PostNickname(access: string, nickname: string) {
 }
 
 // 온보딩 - 선호 장르
-export async function PostGenre(access: string, genres: { [key: string]: number }) {
+export async function PostGenre(access: string, genres: { genrePreferences: { [key: string]: number } }) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/member-genre`, {
     method: 'POST',
     headers: {
@@ -55,7 +55,10 @@ export async function PostGenre(access: string, genres: { [key: string]: number 
 }
 
 // 온보딩 - 선호 분위기
-export async function PostMood(access: string, moods: { [key: string]: number }): Promise<Response> {
+export async function PostMood(
+  access: string,
+  moods: { moodPreferences: { [key: string]: number } },
+): Promise<Response> {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/member-mood`, {
     method: 'POST',
     headers: {

@@ -47,7 +47,7 @@ export default function OnBoardingMood() {
     }, {});
 
     try {
-      await PostMood(access, moodData);
+      await PostMood(access, { moodPreferences: moodData });
       router.push('/onBoarding/myTaste/location');
     } catch (error) {
       console.error('Error submitting moods:', error);

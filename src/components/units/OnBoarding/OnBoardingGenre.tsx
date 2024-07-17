@@ -45,7 +45,7 @@ export default function OnBoardingGenre() {
     );
 
     try {
-      const response = await PostGenre(access, genreData);
+      const response = await PostGenre(access, { genrePreferences: genreData });
       if (response.ok) {
         router.push('/onBoarding/myTaste/mood');
       }
