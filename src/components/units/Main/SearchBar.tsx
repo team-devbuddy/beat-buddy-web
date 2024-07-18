@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { fetchVenues } from '@/lib/actions/search/fetchVenues';
+import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
 import { useRecoilState } from 'recoil';
-import { recentSearchState } from '@/context/recoil-context';
+import { recentSearchState, accessTokenState } from '@/context/recoil-context';
 
 export default function SearchBar() {
   const pathname = usePathname();
@@ -14,6 +14,7 @@ export default function SearchBar() {
   const isMainPage = pathname === '/';
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
+  const [accessToken] = useRecoilState(accessTokenState);
 
   useEffect(() => {
     if (isMainPage) {
@@ -33,8 +34,11 @@ export default function SearchBar() {
     });
 
     try {
-      const results = await fetchVenues(searchQuery, 0, 10);
-      router.push(`/search/results?q=${encodeURIComponent(searchQuery)}`);
+      if (!accessToken) {
+        throw new Error('Access token is not available');
+      }
+      await fetchVenues(searchQuery, 0, 10, accessToken);
+      router.push(`/search/results`);
     } catch (error: any) {
       console.error('Failed to fetch search results:', error.message);
     }

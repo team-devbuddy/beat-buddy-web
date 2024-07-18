@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Club } from '@/lib/types';
+import { HotChartProps } from '@/lib/types';
 import ClubsList from './ClubList';
 import { fetchHotVenues } from '@/lib/actions/hearbeat-controller/getHotChart';
 import { HotVenuesProps } from '@/lib/types';
@@ -9,7 +9,7 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 
 function HotVenues({ title = 'Hot', description = '실시간으로 인기있는 베뉴 정보입니다.' }: HotVenuesProps) {
-  const [clubs, setClubs] = useState<Club[]>([]);
+  const [clubs, setClubs] = useState<HotChartProps[]>([]);
   const [error, setError] = useState<string | null>(null);
   const accessToken = useRecoilValue(accessTokenState);
 

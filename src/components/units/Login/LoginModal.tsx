@@ -31,8 +31,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ ease: 'easeInOut', duration: 0.5 }}
         className="relative w-[342px] max-w-[600px] rounded-lg bg-BG-black pb-[2.5rem] pt-[5.25rem]">
-        <button className="absolute right-7 top-7 text-white" onClick={onClose}>
-          <Image src="/icons/grayDelete.svg" alt="close" width={20} height={20} />
+        <button className="absolute right-7 top-7 text-white" onClick={onClose} aria-label="Close">
+        <Image src="/icons/grayDelete.svg" alt="close" width={20} height={20} />
         </button>
         <div className="flex flex-col items-center justify-center">
           <h2 className="mb-3 text-center text-xl font-bold text-white">

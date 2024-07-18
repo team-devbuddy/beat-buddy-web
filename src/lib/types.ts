@@ -63,3 +63,14 @@ export interface DropdownProps {
   setSelectedOption: (option: string) => void;
   label: string;
 }
+export interface HotChartProps {
+  venueId: number;
+  englishName: string;
+  koreanName: string;
+}
+export interface BBPProps {
+  venueId: number;
+  englishName: string;
+  koreanName: string;
+}
+
