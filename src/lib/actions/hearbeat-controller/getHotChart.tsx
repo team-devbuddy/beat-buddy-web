@@ -3,10 +3,13 @@ export async function fetchHotVenues(accessToken: string) {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        Access: `Bearer ${accessToken}`,
       },
     });
   
+    if (!response.ok) {
+      throw new Error('Failed to fetch hot venues');
+    }
     return response.json();
   }
   
