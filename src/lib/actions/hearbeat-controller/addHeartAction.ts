@@ -1,5 +1,5 @@
 export const addHeart = async (clubId: number, accessToken: string): Promise<void> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/${clubId}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/heartbeat/${clubId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

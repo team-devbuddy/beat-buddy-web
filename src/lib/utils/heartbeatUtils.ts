@@ -1,7 +1,6 @@
 import { addHeart } from '@/lib/actions/hearbeat-controller/addHeartAction';
 import { removeHeart } from '@/lib/actions/hearbeat-controller/removeHeartAction';
-import { accessTokenState } from '@/context/recoil-context';
-import { useRecoilState } from 'recoil';
+
 
 export const handleHeartClick = async (
   e: React.MouseEvent,

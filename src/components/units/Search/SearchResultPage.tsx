@@ -1,36 +1,36 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { clubs } from '@/lib/data';
 import SearchResults from '@/components/units/Search/SearchResults';
-import { Club } from '@/lib/types';
 import MainFooter from '@/components/units/Main/MainFooter';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
+import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
+import { Club } from '@/lib/types';
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
+  const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
     const query = searchParams.get('q') || '';
     const genres = (searchParams.get('genres') || '').split(',').filter((genre) => genre);
-    filterClubs(query, genres);
-  }, [searchParams]);
+    fetchClubs(query, genres);
+  }, [searchParams, accessToken]);
 
-  const filterClubs = (query: string, genres: string[]) => {
-    const lowerCaseQuery = query.toLowerCase();
-    const filtered = clubs.filter((club) => {
-      const matchesQuery =
-        club.name.toLowerCase().includes(lowerCaseQuery) ||
-        club.tags.some((tag) => tag.toLowerCase().includes(lowerCaseQuery)) ||
-        club.location.toLowerCase().includes(lowerCaseQuery);
+  const fetchClubs = async (query: string, genres: string[]) => {
+    if (!accessToken) {
+      console.error('Access token is not available');
+      return;
+    }
 
-      const matchesGenres =
-        genres.length === 0 || genres.some((genre) => club.tags.includes(genre) || club.location.includes(genre));
-
-      return matchesQuery && matchesGenres;
-    });
-
-    setFilteredClubs(filtered);
+    try {
+      const data = await fetchVenues(query, 0, 10, accessToken); 
+      setFilteredClubs(data);
+    } catch (error: any) {
+      console.error('Failed to fetch search results:', error.message);
+    }
   };
 
   return (
