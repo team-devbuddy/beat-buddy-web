@@ -1,6 +1,10 @@
 import { SetterOrUpdater } from 'recoil';
 import { addHeart } from '@/lib/actions/hearbeat-controller/addHeartAction';
 import { removeHeart } from '@/lib/actions/hearbeat-controller/removeHeartAction';
+<<<<<<< HEAD
+=======
+
+>>>>>>> af61c6e (feat : hot-chart, bbp 연동...)
 
 export const handleHeartClick = async (
   e: React.MouseEvent,
