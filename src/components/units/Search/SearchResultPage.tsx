@@ -7,7 +7,8 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { Club } from '@/lib/types';
-
+import Link from 'next/link';
+import Image from 'next/image';
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
@@ -37,6 +38,7 @@ const SearchResultsPage = () => {
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <SearchResults filteredClubs={filteredClubs} />
+     
       <MainFooter />
     </div>
   );
