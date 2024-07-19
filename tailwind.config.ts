@@ -53,6 +53,13 @@ const config: Config = {
         xs: '0.13rem',
       },
       fontSize: {
+        'subtitle-20-bold': [
+          '20px',
+          {
+            fontWeight: '700',
+            lineHeight: '150%',
+          },
+        ],
         'title-32': [
           '32px',
           {
@@ -151,8 +158,8 @@ const config: Config = {
             lineHeight: '2.0625rem',
             fontWeight: '500',
             letterSpacing: '-0.0275rem',
-          }
-        ]
+          },
+        ],
       },
     },
   },
