@@ -158,8 +158,13 @@ const config: Config = {
             lineHeight: '2.0625rem',
             fontWeight: '500',
             letterSpacing: '-0.0275rem',
+<<<<<<< HEAD
           },
         ],
+=======
+          }
+        ]
+>>>>>>> 1338629 (feat : heartbeat 컴포넌트)
       },
     },
   },
