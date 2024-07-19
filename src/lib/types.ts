@@ -19,6 +19,14 @@ export interface Club {
   website: string;
   hours: { [day: string]: string };
 }
+export interface Club extends HotChartProps {
+  id: number;
+  name: string;
+  imageUrl: string;
+  tags: string[];
+  likes: number;
+}
+
 
 export interface ClubProps {
   club: Club;
@@ -29,7 +37,6 @@ export interface VenueHoursProps {
 }
 
 export interface HotVenuesProps {
-  clubs: Club[];
   title?: string;
   description?: string;
 }
@@ -64,6 +71,8 @@ export interface DropdownProps {
   label: string;
 }
 export interface HotChartProps {
+  heartbeatNum: number;
+  tagList: any;
   venueId: number;
   englishName: string;
   koreanName: string;
@@ -72,5 +81,15 @@ export interface BBPProps {
   venueId: number;
   englishName: string;
   koreanName: string;
+  tagList: string[];
+  heartbeatNum: number;
 }
 
+
+export interface HeartbeatProps {
+  heartbeatNum: number;
+  venueId: number;
+  venueName: string;
+  venueImageUrl: string;
+  liked: boolean; 
+}
