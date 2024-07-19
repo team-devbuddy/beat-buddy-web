@@ -9,7 +9,7 @@ import { clubs } from '@/lib/data';
 import dynamic from 'next/dynamic';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/context/recoil-context';
-
+import Heartbeat from './HeartBeat';
 const MainHeader = dynamic(() => import('./MainHeader'), { ssr: false });
 export default function Main() {
   const isAuth = useRecoilValue(authState);
@@ -22,6 +22,7 @@ export default function Main() {
         <TrendBar />
         <BeatBuddyPick />
         {!isAuth && <LoggedOutBanner />}
+        <Heartbeat/>
         <HotVenues clubs={clubs} />
         <Footer />
       </div>
