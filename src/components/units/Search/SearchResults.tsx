@@ -39,6 +39,10 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
     console.log('Filtered Clubs:', filteredClubs);
   }, [filteredClubs]);
 
+  useEffect(() => {
+    console.log('Filtered Clubs:', filteredClubs);
+  }, [filteredClubs]);
+
   return (
     <div className="relative flex w-full flex-col">
       <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
@@ -73,12 +77,3 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
     </div>
   );
 }
-/*
-{filteredClubs.length > 0 ? (
-  <ClubList clubs={filteredClubs} />
-) : (
-      <div className="flex flex-col h-full items-center justify-center py-[10rem]">
-        <Image src="/icons/caution.svg" alt='caution image' width={56.679} height={52}/>
-       <p className="text-gray300 mt-[1.25rem]">검색 결과가 없습니다.</p>
-    </div>
-)}*/

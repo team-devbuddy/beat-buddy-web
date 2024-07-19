@@ -6,10 +6,14 @@ import Image from 'next/image';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useRecoilState, useRecoilValue } from 'recoil';
 =======
 import { useRecoilState } from 'recoil';
 >>>>>>> af61c6e (feat : hot-chart, bbp 연동...)
+=======
+import { useRecoilState, useRecoilValue } from 'recoil';
+>>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
 import { recentSearchState, accessTokenState } from '@/context/recoil-context';
 
 export default function SearchBar() {
@@ -19,10 +23,14 @@ export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
 <<<<<<< HEAD
+<<<<<<< HEAD
   const accessToken = useRecoilValue(accessTokenState);
 =======
   const [accessToken] = useRecoilState(accessTokenState);
 >>>>>>> af61c6e (feat : hot-chart, bbp 연동...)
+=======
+  const accessToken = useRecoilValue(accessTokenState);
+>>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
 
   useEffect(() => {
     if (isMainPage) {
@@ -42,10 +50,14 @@ export default function SearchBar() {
     });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
     if (accessToken) {
       router.push(`/search/results?q=${encodeURIComponent(searchQuery)}`);
     } else {
       console.error('Access token is not available');
+<<<<<<< HEAD
 =======
     try {
       if (!accessToken) {
@@ -56,6 +68,8 @@ export default function SearchBar() {
     } catch (error: any) {
       console.error('Failed to fetch search results:', error.message);
 >>>>>>> af61c6e (feat : hot-chart, bbp 연동...)
+=======
+>>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
     }
   };
 

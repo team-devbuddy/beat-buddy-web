@@ -1,4 +1,3 @@
-import { Club } from './types';
 import { Term } from './types';
 
 // 온보딩 - 이용 약관 데이터
