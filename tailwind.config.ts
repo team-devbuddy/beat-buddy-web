@@ -145,6 +145,14 @@ const config: Config = {
             letterSpacing: '-0.025rem',
           },
         ],
+        'main-queen': [
+          '1.375rem',
+          {
+            lineHeight: '2.0625rem',
+            fontWeight: '500',
+            letterSpacing: '-0.0275rem',
+          }
+        ]
       },
     },
   },
