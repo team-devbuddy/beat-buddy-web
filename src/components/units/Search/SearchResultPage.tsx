@@ -15,18 +15,19 @@ const SearchResultsPage = () => {
 
   useEffect(() => {
     const query = searchParams.get('q') || '';
-    const genres = (searchParams.get('genres') || '').split(',').filter((genre) => genre);
-    fetchClubs(query, genres);
+    if (query) {
+      fetchClubs(query);
+    }
   }, [searchParams, accessToken]);
 
-  const fetchClubs = async (query: string, genres: string[]) => {
+  const fetchClubs = async (query: string) => {
     if (!accessToken) {
       console.error('Access token is not available');
       return;
     }
 
     try {
-      const data = await fetchVenues(query, 0, 10, accessToken); 
+      const data = await fetchVenues(query, accessToken);
       setFilteredClubs(data);
     } catch (error: any) {
       console.error('Failed to fetch search results:', error.message);

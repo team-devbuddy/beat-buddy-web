@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import { genres } from '@/lib/data';
-import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { useRouter } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
@@ -11,16 +10,12 @@ function SearchGenre() {
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
 
-  const handleGenreClick = async (genre: string) => {
+  const handleGenreClick = (genre: string) => {
     setSelectedGenre(genre);
-    try {
-      if (!accessToken) {
-        throw new Error('Access token is not available');
-      }
-      await fetchVenues(genre, 0, 10, accessToken);
+    if (accessToken) {
       router.push(`/search/results?q=${encodeURIComponent(genre)}`);
-    } catch (error: any) {
-      console.error('Failed to fetch search results:', error.message);
+    } else {
+      console.error('Access token is not available');
     }
   };
 

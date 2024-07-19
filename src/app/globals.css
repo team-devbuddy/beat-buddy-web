@@ -31,7 +31,7 @@ html {
   }
 }
 
-/* 사파리 100vh !!!!!!!! */
+/* 사파리 100vh !!!!!!!! 이느낌표 내가한건가*/
 @layer utilities {
   @supports (-webkit-touch-callout: none) {
     .h-screen {
