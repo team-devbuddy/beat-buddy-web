@@ -1,7 +1,7 @@
 // recoil-context.ts
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
-
+import { HeartbeatProps } from '@/lib/types';
 const { persistAtom } = recoilPersist();
 
 export const accessTokenState = atom<string | null>({
@@ -9,6 +9,7 @@ export const accessTokenState = atom<string | null>({
   default: null,
   effects_UNSTABLE: [persistAtom],
 });
+
 export const authState = atom<boolean>({
   key: 'authState',
   default: false,
@@ -32,3 +33,13 @@ export const recentSearchState = atom<string[]>({
   default: [],
 });
 
+//하트
+export const likedClubsState = atom<{ [key: number]: boolean }>({
+  key: 'likedClubsState',
+  default: {},
+});
+
+export const heartbeatsState = atom<HeartbeatProps[]>({
+  key: 'heartbeatsState',
+  default: [],
+});

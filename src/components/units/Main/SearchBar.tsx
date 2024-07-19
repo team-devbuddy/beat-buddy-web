@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { recentSearchState, accessTokenState } from '@/context/recoil-context';
 
 export default function SearchBar() {
@@ -14,7 +14,7 @@ export default function SearchBar() {
   const isMainPage = pathname === '/';
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
-  const [accessToken] = useRecoilState(accessTokenState);
+  const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
     if (isMainPage) {
@@ -26,32 +26,28 @@ export default function SearchBar() {
     setSearchQuery(event.target.value);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     setRecentSearches((prevSearches) => {
       const updatedSearches = [searchQuery, ...prevSearches.filter((search) => search !== searchQuery)];
       addSearch(searchQuery);
       return updatedSearches;
     });
 
-    try {
-      if (!accessToken) {
-        throw new Error('Access token is not available');
-      }
-      await fetchVenues(searchQuery, 0, 10, accessToken);
-      router.push(`/search/results`);
-    } catch (error: any) {
-      console.error('Failed to fetch search results:', error.message);
+    if (accessToken) {
+      router.push(`/search/results?q=${encodeURIComponent(searchQuery)}`);
+    } else {
+      console.error('Access token is not available');
     }
   };
 
   return (
-    <div className="flex w-full items-center justify-between bg-main px-4 py-3">
+    <div className="flex w-full items-center justify-between bg-main px-[1rem] pt-[0.75rem] pb-[0.5rem]">
       {isMainPage ? (
         <div className="relative w-full">
           <Link href="/search" className="block w-full">
             <div className="relative w-full">
               <input
-                className="w-full border-b-2 border-black bg-transparent px-2 py-2 text-BG-black placeholder:text-BG-black focus:outline-none"
+                className="w-full border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
                 placeholder="지금 가장 인기있는 클럽은?"
                 readOnly
               />
@@ -68,7 +64,7 @@ export default function SearchBar() {
       ) : (
         <div className="relative w-full">
           <input
-            className="w-full border-b-2 border-black bg-transparent px-2 py-2 text-BG-black placeholder:text-BG-black focus:outline-none"
+            className="w-full border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
             placeholder="지금 가장 인기있는 클럽은?"
             value={searchQuery}
             onChange={handleInputChange}

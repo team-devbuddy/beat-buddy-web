@@ -1,14 +1,4 @@
 
-export const toggleGenre = (
-  genre: string,
-  selectedGenres: string[],
-  setSelectedGenres: React.Dispatch<React.SetStateAction<string[]>>,
-) => {
-  setSelectedGenres((prevSelected) =>
-    prevSelected.includes(genre) ? prevSelected.filter((g) => g !== genre) : [...prevSelected, genre],
-  );
-};
-
 export const generateLink = (pathname: string, searchQuery: string, selectedGenres: string[] = []): string => {
   const queryParams = new URLSearchParams();
   if (searchQuery) {

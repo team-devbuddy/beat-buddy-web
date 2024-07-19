@@ -1,24 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { accessTokenState, heartbeatsState } from '@/context/recoil-context';
 import { getMyHearts } from '@/lib/actions/hearbeat-controller/getMyHearts';
-
-interface HeartbeatProps {
-  venueId: number;
-  venueName: string;
-  venueImageUrl: string;
-}
+import { HeartbeatProps } from '@/lib/types';
 
 function Heartbeat() {
-  const [heartbeats, setHeartbeats] = useState<HeartbeatProps[]>([]);
+  const [heartbeats, setHeartbeats] = useRecoilState(heartbeatsState);
   const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
-    const getHeartbeats = async () => {
+    const fetchHeartbeats = async () => {
       try {
         if (accessToken) {
           const data = await getMyHearts(accessToken);
@@ -29,12 +24,12 @@ function Heartbeat() {
       }
     };
 
-    getHeartbeats();
-  }, [accessToken]);
+    fetchHeartbeats();
+  }, [accessToken, setHeartbeats]);
 
   return (
     <div className="mt-[1.75rem] flex flex-col px-[1rem]">
-      <Link href="/my-heartbeat">
+      <Link href="/my-heart-beat">
         <div className="flex items-center justify-between py-[0.5rem]">
           <div className="flex flex-col">
             <span className="text-main-queen font-queensides text-main2">My Heart Beat</span>
@@ -45,12 +40,12 @@ function Heartbeat() {
           <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
         </div>
       </Link>
-      <div className="mt-[1.5rem] flex space-x-[0.75rem]">
+      <div className="mt-[1.5rem] flex space-x-[0.75rem] overflow-x-auto hide-scrollbar">
         {heartbeats.map((heartbeat) => (
           <Link key={heartbeat.venueId} href={`/detail/${heartbeat.venueId}`}>
             <div className="relative h-16 w-16 cursor-pointer">
               <Image
-                src={/*heartbeat.venueImageUrl*/ '/images/DefaultImage.png'}
+                src={heartbeat.venueImageUrl || '/images/DefaultImage.png'}
                 alt={`${heartbeat.venueName} image`}
                 layout="fill"
                 objectFit="cover"
