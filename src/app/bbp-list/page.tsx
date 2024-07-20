@@ -7,7 +7,7 @@ function BBPList() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <BBPHeader />
-      <main className="px-[1rem] pt-[1.75rem]">
+      <main className="flex-grow px-[1rem] pt-[1.75rem]">
         <div className="grid grid-cols-1 gap-x-[1rem] gap-y-[2.5rem] md:grid-cols-2">
           <VenueCard />
         </div>
