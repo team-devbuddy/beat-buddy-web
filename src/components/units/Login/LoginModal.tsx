@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 // window 객체의 타입을 확장하여 Kakao 객체를 선언합니다.
 declare global {
