@@ -55,7 +55,7 @@ export default function OnBoardingMood() {
 
       if (memberGenreId !== null && result.vectorId !== null) {
         await PostArchive(access, { memberGenreId, memberMoodId: result.vectorId });
-        router.push('/onBoarding/myTaste/complete');
+        router.push('/onBoarding/myTaste/location');
       } else {
         console.error('Error: memberGenreId or memberMoodId is null');
       }

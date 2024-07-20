@@ -1,8 +1,10 @@
+import Prev from '@/components/common/Prev';
 import OnBoardingLocation from '@/components/units/OnBoarding/OnBoardingLocation';
 
 export default function OnBordingLocation() {
   return (
-    <div>
+    <div className="flex w-full flex-col">
+      <Prev url={'/onBoarding/myTaste/complete'} />
       <OnBoardingLocation />
     </div>
   );
