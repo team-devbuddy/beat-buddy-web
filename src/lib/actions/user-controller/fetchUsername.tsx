@@ -1,5 +1,5 @@
-export const getUserName = async (token: string): Promise<string> => { //이것도필요할듯
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/profile`, {
+export const getUserName = async (token: string): Promise<string> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/nickname`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
