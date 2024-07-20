@@ -6,7 +6,7 @@ import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatsState } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { getBBP } from '@/lib/actions/recommend-controller/getBBP';
-import { getUserName } from '@/lib/actions/user-controller/fetchUser';
+import { getUserName } from '@/lib/actions/user-controller/fetchUsername';
 import { getMyHearts } from '@/lib/actions/hearbeat-controller/getMyHearts';
 import { BBPProps } from '@/lib/types';
 
