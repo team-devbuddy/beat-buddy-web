@@ -16,7 +16,6 @@ export default function Landing1() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
   return (
     <div
       id="1"
