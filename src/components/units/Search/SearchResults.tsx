@@ -1,37 +1,51 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { SearchResultsProps } from '@/lib/types';
 import ClubList from '../Main/ClubList';
 import SearchHeader from './SearchHeader';
-import { SearchResultsProps } from '@/lib/types';
-import Image from 'next/image';
-import Link from 'next/link';
+import MapButton from './MapButton';
+import NoResults from './NoResult';
+import MapView from './Map/MapView';
+import DropdownGroup from './DropdownGroup';
 
 export default function SearchResults({ filteredClubs }: SearchResultsProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMapView, setIsMapView] = useState(false);
 
-  useEffect(() => {
-    console.log('Filtered Clubs:', filteredClubs);
-  }, [filteredClubs]);
+  const [selectedGenre, setSelectedGenre] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState('');
+
+  const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
+  const locations = ['홍대', '이태원', '신사', '압구정'];
+  const orders = ['가까운 순', '인기순'];
+
+  const toggleViewMode = () => {
+    setIsMapView((prev) => !prev);
+  };
 
   return (
     <div className="relative flex w-full flex-col">
       <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <div className="flex flex-col bg-BG-black">
-        {filteredClubs.length > 0 ? (
-          <ClubList clubs={filteredClubs} />
-        ) : (
-          <div className="flex h-full flex-col items-center justify-center py-[10rem]">
-            <Image src="/icons/caution.svg" alt="caution image" width={56.679} height={52} />
-            <p className="mt-[1.25rem] text-gray300">검색 결과가 없습니다.</p>
-          </div>
-        )}
-      </div>
-      <Link href="/map" passHref>
-        <div className="absolute bottom-8 left-1/2 z-50 flex -translate-x-1/2 transform cursor-pointer items-center justify-center rounded-full bg-main px-[1.25rem] py-[0.75rem] text-body3-12-bold text-BG-black">
-          <Image src="/icons/map.svg" alt="Map Icon" width={16} height={15.08} />
-          <span className="ml-[0.5rem]">지도 보기</span>
+      {isMapView ? (
+        <MapView filteredClubs={filteredClubs} />
+      ) : (
+        <div className="flex flex-col bg-BG-black">
+          <DropdownGroup
+            genres={genres}
+            locations={locations}
+            orders={orders}
+            selectedGenre={selectedGenre}
+            setSelectedGenre={setSelectedGenre}
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+            selectedOrder={selectedOrder}
+            setSelectedOrder={setSelectedOrder}
+          />
+          {filteredClubs.length > 0 ? <ClubList clubs={filteredClubs} /> : <NoResults />}
         </div>
-      </Link>
+      )}
+      {filteredClubs.length > 0 ? <MapButton toggleViewMode={toggleViewMode} isMapView={isMapView} /> : ''}
     </div>
   );
 }
