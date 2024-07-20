@@ -12,6 +12,10 @@ export const getUserName = async (token: string): Promise<string> => {
     }
   
     const data = await response.json();
+<<<<<<< HEAD
     return data.nickname; 
+=======
+    return data.username; 
+>>>>>>> 1e62c99 (feat : map page, fetch Top10)
   };
   

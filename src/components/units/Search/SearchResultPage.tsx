@@ -8,8 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { Club } from '@/lib/types';
-import Link from 'next/link';
-import Image from 'next/image';
+
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);

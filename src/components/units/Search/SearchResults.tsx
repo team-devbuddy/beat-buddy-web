@@ -19,10 +19,6 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedOrder, setSelectedOrder] = useState('');
 
-  const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
-  const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
-  const accessToken = useRecoilValue(accessTokenState);
-
   const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
   const locations = ['홍대', '이태원', '신사', '압구정'];
   const orders = ['가까운 순', '인기순'];
@@ -30,18 +26,6 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
   const toggleViewMode = () => {
     setIsMapView((prev) => !prev);
   };
-
-  const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
-    await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
-  };
-
-  useEffect(() => {
-    console.log('Filtered Clubs:', filteredClubs);
-  }, [filteredClubs]);
-
-  useEffect(() => {
-    console.log('Filtered Clubs:', filteredClubs);
-  }, [filteredClubs]);
 
   return (
     <div className="relative flex w-full flex-col">
