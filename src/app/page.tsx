@@ -1,5 +1,9 @@
 import HomeSelect from '@/components/units/home/HomeSelect';
 
 export default function MainPage() {
-  return <HomeSelect />;
+  return (
+    <div className="w-full">
+      <HomeSelect />
+    </div>
+  );
 }

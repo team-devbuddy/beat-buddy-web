@@ -15,7 +15,7 @@ export default function Main() {
   const isAuth = useRecoilValue(authState);
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex flex-col">
       <div className="flex flex-col bg-BG-black">
         <MainHeader />
         <SearchBar />
