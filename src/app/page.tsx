@@ -1,5 +1,5 @@
-import Main from '@/components/units/Main/Main';
+import HomeSelect from '@/components/units/home/HomeSelect';
 
 export default function MainPage() {
-  return <Main />;
+  return <HomeSelect />;
 }
