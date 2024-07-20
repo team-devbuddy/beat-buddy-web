@@ -10,7 +10,6 @@ export const fetchTop10 = async (accessToken: string) => {
     if (!response.ok) {
       throw new Error('Failed to fetch venues');
     }
-  
     return response.json();
   };
   
