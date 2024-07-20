@@ -1,8 +1,65 @@
+'use client';
+import { accessTokenState } from '@/context/recoil-context';
+import { CertAdult } from '@/lib/actions/cert/cert-action';
 import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+
+declare global {
+  interface Window {
+    IMP?: any;
+  }
+}
 
 export default function Cert() {
+  const access = useRecoilValue(accessTokenState) || '';
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.IMP) {
+      window.IMP.init('imp25440561'); // 가맹점 식별코드를 입력하세요.
+    } else {
+      console.error('IAMPORT is not loaded.');
+    }
+  }, []);
+
+  const handleCertify = () => {
+    if (typeof window === 'undefined' || !window.IMP) {
+      console.error('IAMPORT is not available.');
+      return;
+    }
+
+    const { IMP } = window;
+
+    /* 본인인증 데이터 정의하기 */
+    const data = {
+      merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
+      company: '아임포트', // 회사명 또는 URL
+      carrier: 'SKT', // 통신사
+      name: '홍길동', // 이름
+      phone: '01012341234', // 전화번호
+    };
+
+    /* 본인인증 창 호출하기 */
+    IMP.certification(data, callback);
+  };
+
+  /* 콜백 함수 정의하기 */
+  const callback = async (response: any) => {
+    const { success, merchant_uid, error_msg } = response;
+
+    if (success) {
+      const certResponse = await CertAdult(access, merchant_uid);
+
+      if (certResponse.ok) {
+        router.push('/onBoarding/name');
+      }
+    } else {
+      alert(`본인인증 실패: ${error_msg}`);
+    }
+  };
+
   return (
     <>
       <div className="flex w-full flex-col px-4">
@@ -18,7 +75,8 @@ export default function Cert() {
       </div>
 
       <button
-        className={`absolute bottom-0 flex w-full justify-center bg-[#EE1171] py-4 text-lg font-bold text-BG-black`}>
+        onClick={handleCertify}
+        className="absolute bottom-0 flex w-full justify-center bg-[#EE1171] py-4 text-lg font-bold text-BG-black">
         인증하기
       </button>
     </>

@@ -1,6 +1,7 @@
 import localFont from 'next/font/local';
 import './globals.css';
 import ClientOnlyLayout from './appLayout';
+import Script from 'next/script';
 
 const pretendard = localFont({
   src: '../assets/fonts/PretendardVariable.woff2',
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" className={`${pretendard.variable} bg-[#f5f5f5]`}>
       <head>
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1 " />
+        <Script src="https://cdn.iamport.kr/v1/iamport.js" strategy="beforeInteractive" />
       </head>
       <body className={`${pretendard.className}`}>
         <ClientOnlyLayout>{children}</ClientOnlyLayout>
