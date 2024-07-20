@@ -53,8 +53,12 @@ export default function Cert() {
       const certResponse = await CertAdult(access, merchant_uid);
 
       if (certResponse.ok) {
+<<<<<<< HEAD
         alert('본인인증 성공하였습니다.');
         router.push('/onBoarding');
+=======
+        router.push('/onBoarding/name');
+>>>>>>> ecc1c39 (feat: 성인인증)
       }
     } else {
       alert(`본인인증 실패: ${error_msg}`);
