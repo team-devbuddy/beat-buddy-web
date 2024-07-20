@@ -1,3 +1,4 @@
+'use client';
 import { accessTokenState, authState } from '@/context/recoil-context';
 import { useRecoilValue } from 'recoil';
 import Main from '../Main/Main';
