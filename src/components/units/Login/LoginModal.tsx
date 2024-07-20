@@ -44,7 +44,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
             <br /> 베뉴를 추천 받아보세요
           </p>
 
-          <Link href="https://beatbuddy.world/oauth2/authorization/kakao">
+          <Link href="https://api.beatbuddy.world/oauth2/authorization/kakao">
             <button
               // onClick={kakaoLoginHandler}
               className="flex items-center rounded-[0.38rem] bg-[#FEE500] py-[1.19rem] pl-[1.25rem] pr-20 text-black">
