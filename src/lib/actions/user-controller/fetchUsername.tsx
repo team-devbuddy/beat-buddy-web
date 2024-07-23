@@ -12,6 +12,6 @@ export const getUserName = async (token: string): Promise<string> => {
     }
   
     const data = await response.json();
-    return data.username; 
+    return data.nickname; 
   };
   

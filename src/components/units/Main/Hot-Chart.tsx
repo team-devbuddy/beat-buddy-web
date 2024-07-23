@@ -1,9 +1,8 @@
 'use client';
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HotChartProps } from '@/lib/types';
 import ClubsList from './ClubList';
-import { fetchHotVenues } from '@/lib/actions/hearbeat-controller/getHotChart';
+import { getHotChart } from '@/lib/actions/hearbeat-controller/getHotChart';
 import { HotVenuesProps } from '@/lib/types';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
@@ -20,7 +19,7 @@ function HotVenues({ title = 'Hot', description = '실시간으로 인기있는 
         return;
       }
       try {
-        const data = await fetchHotVenues(accessToken);
+        const data = await getHotChart(accessToken);
         setClubs(data);
       } catch (error: any) {
         setError(error.message);
@@ -37,7 +36,7 @@ function HotVenues({ title = 'Hot', description = '실시간으로 인기있는 
   return (
     <div className="mt-[1.5rem] flex flex-col">
       <div className="flex flex-col items-start justify-between px-[1rem] py-[0.5rem]">
-        <span className="font-queensides text-main-queen text-main2">{title}</span>
+        <span className="text-main-queen font-queensides text-main2">{title}</span>
         <span className="text-body2-15-medium text-gray200">{description}</span>
       </div>
       <ClubsList clubs={clubs} />
