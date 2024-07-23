@@ -1,9 +1,8 @@
-import React from 'react';
 import Image from 'next/image';
 
 export default function MainFooter() {
   return (
-    <footer className="relative mt-10 bg-FooterBlack px-[1rem] py-[1.25rem] text-gray100">
+    <footer className="relative pt-10 bg-FooterBlack px-[1rem] py-[1.25rem] text-gray100">
       <div className="relative z-10 flex flex-col items-start">
         <span className="text-body2-15-medium">이용약관</span>
         <div className="relative my-4 h-[0.15rem] w-[1rem]">

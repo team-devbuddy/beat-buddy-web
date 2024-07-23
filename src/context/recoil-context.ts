@@ -43,3 +43,7 @@ export const heartbeatsState = atom<HeartbeatProps[]>({
   key: 'heartbeatsState',
   default: [],
 });
+export const heartbeatNumsState = atom<{ [key: number]: number }>({
+  key: 'heartbeatNumsState',
+  default: {},
+});
