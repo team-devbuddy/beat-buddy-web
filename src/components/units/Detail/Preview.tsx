@@ -3,7 +3,6 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { ClubProps } from '@/lib/types';
 
 const Preview = ({ club }: ClubProps) => {
@@ -30,7 +29,7 @@ const Preview = ({ club }: ClubProps) => {
       <div className="z-20 flex flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
         <h1 className="text-title-24-bold">{club.name}</h1>
         <div className="flex space-x-[0.5rem]">
-          {club.tags.map((tag, index) => (
+          {club.tags.map((tag: string, index: number) => (
             <span
               key={index}
               className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
