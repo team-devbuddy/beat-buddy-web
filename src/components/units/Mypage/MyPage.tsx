@@ -19,7 +19,7 @@ export default function MyPageComponent() {
         </div>
 
         {/* My Heart Beat */}
-        <Link href="/my-heart-beat">
+        <Link href="/myheartbeat">
           <div className="flex justify-between px-4 py-2 font-queensides text-xl text-main2">
             <p>My Heart Beat</p>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
@@ -41,7 +41,7 @@ export default function MyPageComponent() {
         </div>
 
         {/* History */}
-        <Link href="/my-heart-beat" className="mb-6">
+        <Link href="/-beat" className="mb-6">
           <div className="flex justify-between px-4 py-2">
             <p className="font-queensides text-xl text-main2">History</p>
             <button className="rounded-[0.13rem] bg-gray500 px-3 py-[0.38rem] text-gray200">취향 수정하기</button>

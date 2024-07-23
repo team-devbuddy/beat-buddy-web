@@ -40,7 +40,7 @@ function Heartbeat() {
 
   return (
     <div className="mt-[1.75rem] flex flex-col px-[1rem]">
-      <Link href="/my-heart-beat">
+      <Link href="/myheartbeat">
         <div className="flex items-center justify-between py-[0.5rem]">
           <div className="flex flex-col">
             <span className="text-main-queen font-queensides text-main2">My Heart Beat</span>
