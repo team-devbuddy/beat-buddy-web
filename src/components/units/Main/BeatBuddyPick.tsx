@@ -76,31 +76,37 @@ export default function BeatBuddyPick() {
       </Link>
       <div className="flex snap-x snap-mandatory space-x-[0.5rem] overflow-x-auto px-[1rem] hide-scrollbar">
         {clubs.map((club) => (
-          <div key={club.venueId} className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card">
-            <Image
-              src={'/images/DefaultImage.png'}
-              alt={`${club.englishName} image`}
-              layout="fill"
-              className="object-cover"
-            />
-            <div
-              className="absolute right-[1.5rem] top-[1.5rem] cursor-pointer"
-              onClick={(e) => handleHeartClickWrapper(e, club.venueId)}>
+          <Link key={club.venueId} href={`/detail/${club.venueId}`} passHref>
+            <div className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card">
               <Image
-                src={likedClubs[club.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
-                alt="pink-heart icon"
-                width={32}
-                height={32}
+                src={'/images/DefaultImage.png'}
+                alt={`${club.englishName} image`}
+                layout="fill"
+                className="object-cover"
               />
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-              <div className="mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
-                {club.tagList.length > 0 ? (
-                  club.tagList.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                      {tag}
+              <div
+                className="absolute right-[1.5rem] top-[1.5rem] cursor-pointer"
+                onClick={(e) => handleHeartClickWrapper(e, club.venueId)}>
+                <Image
+                  src={likedClubs[club.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                  alt="pink-heart icon"
+                  width={32}
+                  height={32}
+                />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+                <div className="mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
+                  {club.tagList.length > 0 ? (
+                    club.tagList.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                        {tag}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                      No Tags
                     </span>
                   )}
                 </div>
@@ -111,7 +117,7 @@ export default function BeatBuddyPick() {
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
