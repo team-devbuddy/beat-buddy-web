@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { SetterOrUpdater } from 'recoil';
 import { addHeart } from '@/lib/actions/hearbeat-controller/addHeartAction';
 import { removeHeart } from '@/lib/actions/hearbeat-controller/removeHeartAction';
@@ -14,6 +15,11 @@ import { addHeart } from '@/lib/actions/hearbeat-controller/addHeartAction';
 import { removeHeart } from '@/lib/actions/hearbeat-controller/removeHeartAction';
 import { HeartbeatProps } from '@/lib/types';
 >>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
+=======
+import { SetterOrUpdater } from 'recoil';
+import { addHeart } from '@/lib/actions/hearbeat-controller/addHeartAction';
+import { removeHeart } from '@/lib/actions/hearbeat-controller/removeHeartAction';
+>>>>>>> f9b3c09 (feat : main 좋아요 기능)
 
 export const handleHeartClick = async (
   e: React.MouseEvent,
@@ -21,10 +27,14 @@ export const handleHeartClick = async (
   likedClubs: { [key: number]: boolean },
   setLikedClubs: React.Dispatch<React.SetStateAction<{ [key: number]: boolean }>>,
 <<<<<<< HEAD
+<<<<<<< HEAD
   setHeartbeatNums: SetterOrUpdater<{ [key: number]: number }>,
 =======
   setHeartbeats: SetterOrUpdater<HeartbeatProps[]>,
 >>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
+=======
+  setHeartbeatNums: SetterOrUpdater<{ [key: number]: number }>,
+>>>>>>> f9b3c09 (feat : main 좋아요 기능)
   accessToken: string | null,
 ): Promise<void> => {
   e.preventDefault();
@@ -41,15 +51,21 @@ export const handleHeartClick = async (
         [clubId]: false,
       }));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f9b3c09 (feat : main 좋아요 기능)
       setHeartbeatNums((prev) => ({
         ...prev,
         [clubId]: (prev[clubId] || 1) - 1,
       }));
+<<<<<<< HEAD
 =======
       setHeartbeats((prev) => 
         prev.filter((heartbeat) => heartbeat.venueId !== clubId)
       );
 >>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
+=======
+>>>>>>> f9b3c09 (feat : main 좋아요 기능)
     } else {
       await addHeart(clubId, accessToken);
       setLikedClubs((prev) => ({
@@ -57,10 +73,14 @@ export const handleHeartClick = async (
         [clubId]: true,
       }));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f9b3c09 (feat : main 좋아요 기능)
       setHeartbeatNums((prev) => ({
         ...prev,
         [clubId]: (prev[clubId] || 0) + 1,
       }));
+<<<<<<< HEAD
 =======
       setHeartbeats((prev) => {
         const existingHeartbeat = prev.find((heartbeat) => heartbeat.venueId === clubId);
@@ -84,6 +104,8 @@ export const handleHeartClick = async (
         }
       });
 >>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
+=======
+>>>>>>> f9b3c09 (feat : main 좋아요 기능)
     }
   } catch (error: any) {
     console.error('Error handling heart click:', error);

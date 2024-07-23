@@ -96,8 +96,7 @@ const VenueCard = () => {
               <div className="club-gradient absolute inset-0"></div>
               <div
                 className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
-                onClick={(e) => handleHeartClickWrapper(e, club.venueId)}
-              >
+                onClick={(e) => handleHeartClickWrapper(e, club.venueId)}>
                 <Image
                   src={likedClubs[club.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                   alt="pink-heart icon"
