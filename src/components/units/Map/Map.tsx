@@ -1,10 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import ClubList from '../Main/ClubList';
 import SearchHeader from '../Search/SearchHeader';
 import { SearchResultsProps } from '@/lib/types';
-import Image from 'next/image';
-import Link from 'next/link';
+
 
 export default function Map({ filteredClubs }: SearchResultsProps) {
   const [searchQuery, setSearchQuery] = useState('');

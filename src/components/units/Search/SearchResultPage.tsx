@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SearchResults from '@/components/units/Search/SearchResults';
@@ -28,6 +29,7 @@ const SearchResultsPage = () => {
 
     try {
       const data = await fetchVenues(query, accessToken);
+      console.log('Fetched Clubs:', data); // 흠
       setFilteredClubs(data);
     } catch (error: any) {
       console.error('Failed to fetch search results:', error.message);
@@ -36,8 +38,9 @@ const SearchResultsPage = () => {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
-      <SearchResults filteredClubs={filteredClubs} />
-
+      <div className="flex-grow">
+        <SearchResults filteredClubs={filteredClubs} />
+      </div>
       <MainFooter />
     </div>
   );

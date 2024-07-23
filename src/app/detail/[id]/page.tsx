@@ -1,20 +1,39 @@
 'use client';
 
-import React from 'react';
-import { clubs } from '@/lib/data';
+import React, { useEffect, useState } from 'react';
 import Footer from '@/components/units/Main/MainFooter';
 import Preview from '@/components/units/Detail/Preview';
 import Location from '@/components/units/Detail/Location';
 import Info from '@/components/units/Detail/Info';
 import VenueHours from '@/components/units/Detail/VenueHours';
 import CustomerService from '@/components/units/Detail/CustomerService';
+import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
-  const club = clubs.find((club) => club.id === parseInt(params.id));
+  const [club, setClub] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const accessToken = useRecoilValue(accessTokenState);
 
-  if (!club) {
-    return <div>Club not found</div>;
-  }
+  useEffect(() => {
+    const getClubDetail = async () => {
+      try {
+        if (accessToken) {
+          const data = await fetchClubDetail(params.id, accessToken);
+          setClub(data);
+        } else {
+          console.error('Access token is not available');
+        }
+      } catch (error) {
+        console.error('Error fetching club data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getClubDetail();
+  }, [params.id, accessToken]);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">

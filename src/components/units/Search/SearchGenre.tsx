@@ -25,16 +25,16 @@ function SearchGenre() {
         key={index}
         onClick={() => handleGenreClick(genre)}
         className={`flex ${
-          index < 3 || (index >= 5 && index < 8) ? 'aspect-square w-full' : 'h-[3.75rem]'
-        } cursor-pointer items-center justify-center rounded-sm text-body1-16-medium text-white bg-cover bg-center ${
+          index < 3 || (index >= 5 && index < 8) ? 'aspect-square w-full' : 'h-[3.75rem] sm:h-[6.25rem]'
+        } cursor-pointer items-center justify-center rounded-sm bg-cover bg-center text-body1-16-medium text-white ${
           selectedGenre === genre ? 'border border-main' : ''
         }`}
         style={{
-          backgroundImage: selectedGenre === genre
-            ? `linear-gradient(0deg, rgba(0, 0, 0, 0.70), rgba(0, 0, 0, 0.70)), url('/images/onBoarding/background/onboarding-${index + 1}.png')`
-            : `url('/images/onBoarding/background/onboarding-${index + 1}.png')`,
-        }}
-      >
+          backgroundImage:
+            selectedGenre === genre
+              ? `linear-gradient(0deg, rgba(0, 0, 0, 0.70), rgba(0, 0, 0, 0.70)), url('/images/onBoarding/background/onboarding-${index + 1}.png')`
+              : `url('/images/onBoarding/background/onboarding-${index + 1}.png')`,
+        }}>
         {genre}
       </div>
     ));

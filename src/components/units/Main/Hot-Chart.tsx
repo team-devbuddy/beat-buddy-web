@@ -1,47 +1,62 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { HotChartProps } from '@/lib/types';
-import ClubsList from './ClubList';
+import React, { useEffect, useState } from 'react';
+import ClubList from '../Main/ClubList';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import { getHotChart } from '@/lib/actions/hearbeat-controller/getHotChart';
-import { HotVenuesProps } from '@/lib/types';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { checkHeart } from '@/lib/actions/hearbeat-controller/checkHeart';
+import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
+import { HotChartProps } from '@/lib/types';
 
-function HotVenues({ title = 'Hot', description = '실시간으로 인기있는 베뉴 정보입니다.' }: HotVenuesProps) {
-  const [clubs, setClubs] = useState<HotChartProps[]>([]);
-  const [error, setError] = useState<string | null>(null);
+export default function HotChart() {
+  const [hotClubs, setHotClubs] = useState<HotChartProps[]>([]);
+  const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
+  const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!accessToken) {
-        setError('Access token is not available');
-        return;
-      }
+    const fetchHotChart = async (token: string) => {
       try {
-        const data = await getHotChart(accessToken);
-        setClubs(data);
-      } catch (error: any) {
-        setError(error.message);
+        const data = await getHotChart(token);
+        setHotClubs(data);
+
+        const likedStatuses = await Promise.all(
+          data.map(async (club: { venueId: number }) => {
+            const isLiked = await checkHeart(club.venueId, token);
+            return { [club.venueId]: isLiked };
+          })
+        );
+
+        const likedStatusesObj = likedStatuses.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+        setLikedClubs(likedStatusesObj);
+
+        setHeartbeatNums(
+          data.reduce((acc: { [key: number]: number }, club: { venueId: number; heartbeatNum: number }) => {
+            acc[club.venueId] = club.heartbeatNum;
+            return acc;
+          }, {})
+        );
+      } catch (error) {
+        console.error('Error fetching hot chart:', error);
       }
     };
 
-    fetchData();
+    if (accessToken) {
+      fetchHotChart(accessToken);
+    }
   }, [accessToken]);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
+    await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
+  };
 
   return (
-    <div className="mt-[1.5rem] flex flex-col">
-      <div className="flex flex-col items-start justify-between px-[1rem] py-[0.5rem]">
-        <span className="text-main-queen font-queensides text-main2">{title}</span>
-        <span className="text-body2-15-medium text-gray200">{description}</span>
-      </div>
-      <ClubsList clubs={clubs} />
+    <div>
+      <ClubList
+        clubs={hotClubs}
+        likedClubs={likedClubs}
+        heartbeatNums={heartbeatNums}
+        handleHeartClickWrapper={handleHeartClickWrapper}
+      />
     </div>
   );
 }
-
-export default HotVenues;
