@@ -9,12 +9,16 @@ export default function BottomSheetComponent() {
   const [isOpen, setOpen] = useState(false);
   const [isGenreDropdownOpen, setGenreDropdownOpen] = useState(false);
   const [isLocationDropdownOpen, setLocationDropdownOpen] = useState(false);
+  const [isSortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [selectedSort, setSelectedSort] = useState<string | null>('가까운 순');
   const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
   const locations = ['홍대', '이태원', '신사', '압구정'];
+  const sorts = ['가까운 순', '인기순'];
   const genreDropdownRef = useRef<HTMLDivElement>(null);
   const locationDropdownRef = useRef<HTMLDivElement>(null);
+  const sortDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function updateSnapPoints() {
@@ -32,10 +36,12 @@ export default function BottomSheetComponent() {
     function handleClickOutside(event: MouseEvent) {
       if (
         (genreDropdownRef.current && !genreDropdownRef.current.contains(event.target as Node)) ||
-        (locationDropdownRef.current && !locationDropdownRef.current.contains(event.target as Node))
+        (locationDropdownRef.current && !locationDropdownRef.current.contains(event.target as Node)) ||
+        (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node))
       ) {
         setGenreDropdownOpen(false);
         setLocationDropdownOpen(false);
+        setSortDropdownOpen(false);
       }
     }
     window.addEventListener('mousedown', handleClickOutside);
@@ -62,14 +68,27 @@ export default function BottomSheetComponent() {
     setLocationDropdownOpen(false);
   };
 
+  const handleSortClick = (sort: string) => {
+    setSelectedSort(sort);
+    setSortDropdownOpen(false);
+  };
+
   const toggleGenreDropdown = () => {
     setGenreDropdownOpen((prev) => !prev);
     if (isLocationDropdownOpen) setLocationDropdownOpen(false);
+    if (isSortDropdownOpen) setSortDropdownOpen(false);
   };
 
   const toggleLocationDropdown = () => {
     setLocationDropdownOpen((prev) => !prev);
     if (isGenreDropdownOpen) setGenreDropdownOpen(false);
+    if (isSortDropdownOpen) setSortDropdownOpen(false);
+  };
+
+  const toggleSortDropdown = () => {
+    setSortDropdownOpen((prev) => !prev);
+    if (isGenreDropdownOpen) setGenreDropdownOpen(false);
+    if (isLocationDropdownOpen) setLocationDropdownOpen(false);
   };
 
   return (
@@ -162,9 +181,31 @@ export default function BottomSheetComponent() {
                     </div>
                   </div>
 
-                  <div className="flex cursor-pointer gap-2 rounded-sm px-[0.5em] py-1">
-                    <div className="text-gray300">가까운 순</div>
+                  <div
+                    className={`bg-gray700' } relative z-50 flex cursor-pointer gap-2 rounded-sm px-[0.5em] py-1`}
+                    onClick={toggleSortDropdown}>
+                    <div className={`'text-main2 text-gray300`}>
+                      {selectedSort === null ? '가까운 순' : selectedSort}
+                    </div>
+
                     <Image src="/icons/underPointer.svg" width={12} height={12} alt="under_point" />
+
+                    {isSortDropdownOpen && (
+                      <div
+                        ref={sortDropdownRef}
+                        className="absolute right-1 top-full mt-2 w-[6.75rem] rounded-md bg-gray700 shadow-lg">
+                        {sorts.map((sort) => (
+                          <div
+                            key={sort}
+                            className={`flex cursor-pointer justify-between rounded-lg p-4 text-white hover:bg-gray500 ${
+                              selectedSort === sort ? 'text-main2' : ''
+                            }`}
+                            onClick={() => handleSortClick(sort)}>
+                            {sort}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
