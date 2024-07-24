@@ -3,22 +3,30 @@ import Image from 'next/image';
 import Link from 'next/link';
 import History from './History/History';
 import { useEffect, useState } from 'react';
-import { GetNickname } from '@/lib/action';
+import { GetHistory, GetMyHeartbeat, GetNickname } from '@/lib/action';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 
 export default function MyPageComponent() {
   const access = useRecoilValue(accessTokenState) || '';
   const [nickname, setNickname] = useState('');
+  const [heartBeat, setHeartBeat] = useState([]);
+  const [history, setHistory] = useState([]);
 
-  // 사용자 닉네임 조회
+  // 사용자 닉네임 조회 & 나의 하트비트 조회
   useEffect(() => {
     const fetchNickname = async () => {
       try {
         const response = await GetNickname(access);
-        if (response.ok) {
+        const heartBeatResponse = await GetMyHeartbeat(access);
+        const historyResponse = await GetHistory(access);
+        if (response.ok && heartBeatResponse.ok && historyResponse.ok) {
           const responseJson = await response.json();
+          const heartBeatResponseJson = await heartBeatResponse.json();
+          const historyResponseJson = await historyResponse.json();
           setNickname(responseJson.nickname);
+          setHeartBeat(heartBeatResponseJson);
+          setHistory(historyResponseJson);
         }
       } catch (error) {
         console.error('Error fetching nickname:', error);
@@ -72,8 +80,14 @@ export default function MyPageComponent() {
           </div>
         </Link>
 
-        {/* MyHistoy Card */}
-        <History />
+        <div className="ml-4 flex gap-3 overflow-x-auto hide-scrollbar">
+          {/* MyHistoy Card */}
+          {history.map((data, index) => (
+            <div key={index}>
+              <History data={data} />
+            </div>
+          ))}
+        </div>
 
         {/* 구분선 */}
         <div className="flex justify-center pt-[2.5rem]">
