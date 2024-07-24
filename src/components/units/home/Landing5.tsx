@@ -3,7 +3,6 @@ import { AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
 import LoginModal from '../Login/LoginModal';
-
 import { clubEffect } from '@/lib/animation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -48,7 +47,6 @@ export default function Landing5() {
           <span className="text-body2-15-bold">비트버디 시작하기</span>
         </motion.div>
       </Link>
-
 
       <AnimatePresence>
         {isModalOpen && (

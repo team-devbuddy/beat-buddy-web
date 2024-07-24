@@ -1,6 +1,6 @@
 import Image from 'next/image';
-
 import { motion } from 'framer-motion';
+
 import { clubEffect } from '@/lib/animation';
 
 export default function Landing4() {

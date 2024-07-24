@@ -1,5 +1,4 @@
 'use client';
-
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -16,6 +15,7 @@ export default function Landing1() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
   return (
     <div
       id="1"
