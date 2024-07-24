@@ -1,14 +1,38 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import History from './History/History';
+import { useEffect, useState } from 'react';
+import { GetNickname } from '@/lib/action';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
 
 export default function MyPageComponent() {
+  const access = useRecoilValue(accessTokenState) || '';
+  const [nickname, setNickname] = useState('');
+
+  // 사용자 닉네임 조회
+  useEffect(() => {
+    const fetchNickname = async () => {
+      try {
+        const response = await GetNickname(access);
+        if (response.ok) {
+          const responseJson = await response.json();
+          setNickname(responseJson.nickname);
+        }
+      } catch (error) {
+        console.error('Error fetching nickname:', error);
+      }
+    };
+    fetchNickname();
+  }, []);
+
   return (
     <>
       <div className="flex flex-col">
         <Link href="/mypage/option">
           <div className="flex gap-1 px-4 py-5">
-            <p className="text-xl font-bold text-white">동혁</p>
+            <p className="text-xl font-bold text-white">{nickname} 버디</p>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
         </Link>

@@ -124,3 +124,16 @@ export async function GetOnBoardingStatus(access: string) {
 
   return response;
 }
+
+// 마이페이지 - 사용자 닉네임 조회
+export async function GetNickname(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/nickname`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+  });
+
+  return response;
+}
