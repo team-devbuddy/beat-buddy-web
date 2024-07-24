@@ -21,6 +21,15 @@ const Info = ({ club }: ClubProps) => {
       });
   };
 
+  const handleInstagramClick = () => {
+    const instaUrl = club.insta.split('\n').pop(); // URL 추출
+    if (instaUrl) {
+      window.open(instaUrl, '_blank'); // 새 창에서 열기
+    }
+  };
+
+  const instaName = club.insta.split('\n')[0]; // 인스타그램 사용자명 추출
+
   return (
     <div className="px-[1rem] py-[1.25rem]">
       <h2 className="text-body1-16-bold">베뉴 정보</h2>
@@ -30,7 +39,9 @@ const Info = ({ club }: ClubProps) => {
       </div>
       <div className="mt-[0.5rem] flex items-center space-x-[0.75rem]">
         <Image src="/icons/instagram.svg" alt="instagram icon" width={16} height={16} />
-        <p className="text-body2-15-medium text-gray200">{club.email}</p>
+        <p className="text-body2-15-medium text-gray200 cursor-pointer" onClick={handleInstagramClick}>
+          {instaName}
+        </p>
       </div>
       <div className="mt-[0.5rem] flex flex-col items-start space-y-[0.5rem]">
         <div className="flex items-center space-x-[0.75rem]">

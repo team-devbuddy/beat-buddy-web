@@ -22,6 +22,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
         if (accessToken) {
           const data = await fetchClubDetail(params.id, accessToken);
           setClub(data);
+          console.log(data);
         } else {
           console.error('Access token is not available');
         }
@@ -35,12 +36,28 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     getClubDetail();
   }, [params.id, accessToken]);
 
+  if (loading) {
+    return (
+      <div className="flex min-h-screen w-full flex-col bg-BG-black text-white justify-center items-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!club) {
+    return (
+      <div className="flex min-h-screen w-full flex-col bg-BG-black text-white justify-center items-center">
+        <p>Club data not found.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <Preview club={club} />
       <Location club={club} />
       <Info club={club} />
-      <VenueHours hours={club.hours} />
+      {/*<VenueHours hours={club.hours} />*/}
       <CustomerService />
       <Footer />
     </div>

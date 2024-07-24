@@ -11,18 +11,19 @@ export interface Club {
   name: string;
   location: string;
   tags: string[];
-  imageUrl: string;
+  logoUrl: string;
   likes: number;
   address: string;
   phone: string;
-  email: string;
+  insta: string;
   website: string;
-  hours: { [day: string]: string };
+  operationHours: { [day: string]: string };
+  backgroundUrl: string[];
 }
 export interface Club extends HotChartProps {
   id: number;
   name: string;
-  imageUrl: string;
+  logoUrl: string;
   tags: string[];
   likes: number;
 }
