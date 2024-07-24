@@ -4,6 +4,7 @@ import BottomSheetComponent from '@/components/common/BottomSheet';
 import GoogleMap from '@/components/common/GoogleMap';
 import { useRef, useEffect } from 'react';
 import { BottomSheet } from 'react-spring-bottom-sheet';
+import { BottomSheet } from 'react-spring-bottom-sheet';
 import type { BottomSheetRef } from 'react-spring-bottom-sheet';
 import 'react-spring-bottom-sheet/dist/style.css';
 
@@ -25,7 +26,6 @@ export default function TestPage() {
       console.error('BottomSheet ref is not assigned');
     }
   }, [sheetRef]);
-
 
   return (
     <div className="flex min-h-screen w-full flex-col justify-between bg-white">
