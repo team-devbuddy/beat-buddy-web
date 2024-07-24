@@ -21,7 +21,6 @@ export default function Landing5() {
   };
   return (
     <div
-
       className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/images/onBoarding/Landing5.png')" }}>
       <motion.div
