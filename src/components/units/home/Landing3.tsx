@@ -4,7 +4,7 @@ export default function Landing3() {
   return (
     <div
       style={{ backgroundImage: `url('/images/onBoarding/Landing3-bg.png')` }}
-      className="flex h-screen w-full flex-col justify-center bg-main px-6 py-[2.5rem]">
+      className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col justify-center bg-main px-6 py-[2.5rem]">
       <div className="flex flex-col">
         <div className="flex flex-col items-end gap-1">
           <p className="text-white">02. 맞춤형 추천</p>

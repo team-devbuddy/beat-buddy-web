@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function Landing2() {
   return (
-    <div className="flex h-screen w-full flex-col justify-center bg-black px-6 py-[2.5rem]">
+    <div className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col justify-center bg-black px-6 py-[2.5rem]">
       <div className="flex flex-col">
         <div className="flex flex-col items-start gap-1">
           <p className="text-xs text-main">01. Beatbuddy Pick</p>
