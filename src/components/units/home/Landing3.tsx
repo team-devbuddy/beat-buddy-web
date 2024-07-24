@@ -1,11 +1,14 @@
 import Image from 'next/image';
+
 import { motion } from 'framer-motion';
 import { clubEffect } from '@/lib/animation';
+
 
 export default function Landing3() {
   return (
     <div
       style={{ backgroundImage: `url('/images/onBoarding/Landing3-bg.png')` }}
+
       className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col justify-center bg-main px-6 py-[2.5rem]">
       <div className="flex flex-col">
         <motion.div
@@ -39,6 +42,7 @@ export default function Landing3() {
           <br />
           음악, 분위기를 가진 베뉴를 추천해드려요
         </motion.div>
+
       </div>
     </div>
   );

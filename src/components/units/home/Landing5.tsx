@@ -3,9 +3,11 @@ import { AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
 import LoginModal from '../Login/LoginModal';
+
 import { clubEffect } from '@/lib/animation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+
 
 export default function Landing5() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +21,7 @@ export default function Landing5() {
   };
   return (
     <div
+
       className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/images/onBoarding/Landing5.png')" }}>
       <motion.div
@@ -46,6 +49,7 @@ export default function Landing5() {
           <span className="text-body2-15-bold">비트버디 시작하기</span>
         </motion.div>
       </Link>
+
 
       <AnimatePresence>
         {isModalOpen && (

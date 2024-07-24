@@ -1,9 +1,11 @@
 'use client';
+
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
 import LoginModal from '../Login/LoginModal';
 import { clubEffect } from '@/lib/animation';
+
 
 export default function Landing1() {
   const [isModalOpen, setIsModalOpen] = useState(false);

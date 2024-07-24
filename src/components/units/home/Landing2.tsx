@@ -1,4 +1,5 @@
 import Image from 'next/image';
+
 import { motion } from 'framer-motion';
 import { clubEffect } from '@/lib/animation';
 
@@ -36,6 +37,7 @@ export default function Landing2() {
           베뉴가 처음인 버디님을 위해 <br />
           비트버디가 베뉴를 추천해드려요
         </motion.div>
+
       </div>
     </div>
   );

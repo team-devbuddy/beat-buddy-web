@@ -1,4 +1,5 @@
 import Image from 'next/image';
+
 import { motion } from 'framer-motion';
 import { clubEffect } from '@/lib/animation';
 
@@ -35,6 +36,7 @@ export default function Landing4() {
           className="leading-12 mt-5 text-center text-xs text-white">
           음악, 분위기, 위치 등 베뉴 정보를 한 눈에 볼 수 있어요
         </motion.div>
+
       </div>
     </div>
   );

@@ -43,7 +43,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
           </p>
 
           <Link href="https://api.beatbuddy.world/oauth2/authorization/kakao">
+
             <button className="flex items-center rounded-[0.38rem] bg-[#FEE500] py-[1.19rem] pl-[1.25rem] pr-20 text-black">
+
               <Image src="/icons/kakao.svg" alt="kakao" width={22} height={22} className="mr-8" />
               카카오톡으로 계속하기
             </button>
