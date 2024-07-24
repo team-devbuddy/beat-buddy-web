@@ -91,3 +91,9 @@ export interface HeartbeatProps {
   venueImageUrl: string;
   liked: boolean;
 }
+
+// 아카이브(히스토리) 페이지
+export interface ArchiveHistoryProps {
+  preferenceList: string[];
+  updatedAt: string;
+}
