@@ -12,7 +12,7 @@ const Location = ({ club }: ClubProps) => {
         <p className="mt-[0.75rem] text-body2-15-medium text-gray200">{club.address}</p>
       </div>
       <div className="relative mt-[1rem] h-[10rem] w-full">
-        <GoogleMap address={club.address} minHeight="10rem" />
+        <GoogleMap addresses={['서울특별시 강남구 테헤란로 521', '서울특별시 강남구 테헤란로 400']} minHeight="10rem" />
       </div>
     </div>
   );
