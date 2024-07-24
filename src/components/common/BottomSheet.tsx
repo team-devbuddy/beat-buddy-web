@@ -1,13 +1,20 @@
 'use client';
 import { Sheet } from 'react-modal-sheet';
-import GoogleMap from '@/components/common/GoogleMap'; // 필요한 경우 경로 조정
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import VenueCardInfo from './component/VenueCardInfo';
 
 export default function BottomSheetComponent() {
   const [height, setHeight] = useState<number>(500);
   const [isOpen, setOpen] = useState(false);
+  const [isGenreDropdownOpen, setGenreDropdownOpen] = useState(false);
+  const [isLocationDropdownOpen, setLocationDropdownOpen] = useState(false);
+  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
+  const locations = ['홍대', '이태원', '신사', '압구정'];
+  const genreDropdownRef = useRef<HTMLDivElement>(null);
+  const locationDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function updateSnapPoints() {
@@ -20,6 +27,51 @@ export default function BottomSheetComponent() {
       window.removeEventListener('resize', updateSnapPoints);
     };
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        (genreDropdownRef.current && !genreDropdownRef.current.contains(event.target as Node)) ||
+        (locationDropdownRef.current && !locationDropdownRef.current.contains(event.target as Node))
+      ) {
+        setGenreDropdownOpen(false);
+        setLocationDropdownOpen(false);
+      }
+    }
+    window.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleGenreClick = (genre: string) => {
+    if (selectedGenre === genre) {
+      setSelectedGenre(null); // 이미 선택된 장르를 다시 클릭하면 선택 해제
+    } else {
+      setSelectedGenre(genre);
+    }
+    setGenreDropdownOpen(false);
+  };
+
+  const handleLocationClick = (location: string) => {
+    if (selectedLocation === location) {
+      setSelectedLocation(null); // 이미 선택된 위치를 다시 클릭하면 선택 해제
+    } else {
+      setSelectedLocation(location);
+    }
+    setLocationDropdownOpen(false);
+  };
+
+  const toggleGenreDropdown = () => {
+    setGenreDropdownOpen((prev) => !prev);
+    if (isLocationDropdownOpen) setLocationDropdownOpen(false);
+  };
+
+  const toggleLocationDropdown = () => {
+    setLocationDropdownOpen((prev) => !prev);
+    if (isGenreDropdownOpen) setGenreDropdownOpen(false);
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col justify-between">
       <div className="pb-32">
@@ -40,13 +92,73 @@ export default function BottomSheetComponent() {
               <div className="flex flex-col text-[0.93rem]">
                 <div className="flex justify-between px-4 py-1">
                   <div className="flex gap-3">
-                    <div className="flex cursor-pointer gap-2 rounded-sm bg-gray700 px-[0.62rem] py-1">
-                      <div className="text-gray300">장르</div>
-                      <Image src="/icons/underPointer.svg" width={12} height={12} alt="under_point" />
+                    <div
+                      className={`relative z-50 flex cursor-pointer gap-2 rounded-sm px-[0.62rem] py-1 ${
+                        selectedGenre === null ? 'bg-gray700' : 'bg-[#480522]'
+                      }`}
+                      onClick={toggleGenreDropdown}>
+                      <div className={`text-gray300 ${selectedGenre === null ? 'text-gray300' : 'text-main2'}`}>
+                        {selectedGenre === null ? '장르' : selectedGenre}
+                      </div>
+                      {selectedGenre === null ? (
+                        <Image src="/icons/underPointer.svg" width={12} height={12} alt="under_point" />
+                      ) : (
+                        <Image src="/icons/pinkUnderPointer.svg" width={12} height={12} alt="under_point" />
+                      )}
+
+                      {isGenreDropdownOpen && (
+                        <div
+                          ref={genreDropdownRef}
+                          className="absolute left-0 top-full mt-2 w-[13.75rem] rounded-md bg-gray700 shadow-lg">
+                          {genres.map((genre) => (
+                            <div
+                              key={genre}
+                              className={`flex cursor-pointer justify-between p-4 text-white hover:bg-gray500 ${
+                                selectedGenre === genre ? 'text-main2' : ''
+                              }`}
+                              onClick={() => handleGenreClick(genre)}>
+                              {genre}
+                              {selectedGenre === genre && (
+                                <Image src="/icons/pinkCheck.svg" width={12} height={12} alt="check" className="" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex cursor-pointer gap-2 rounded-sm bg-gray700 px-[0.62rem] py-1">
-                      <div className="text-gray300">위치</div>
-                      <Image src="/icons/underPointer.svg" width={12} height={12} alt="under_point" />
+                    <div
+                      className={`relative z-50 flex cursor-pointer gap-2 rounded-sm px-[0.62rem] py-1 ${
+                        selectedLocation === null ? 'bg-gray700' : 'bg-[#480522]'
+                      }`}
+                      onClick={toggleLocationDropdown}>
+                      <div className={`text-gray300 ${selectedLocation === null ? 'text-gray300' : 'text-main2'}`}>
+                        {selectedLocation === null ? '위치' : selectedLocation}
+                      </div>
+                      {selectedLocation === null ? (
+                        <Image src="/icons/underPointer.svg" width={12} height={12} alt="under_point" />
+                      ) : (
+                        <Image src="/icons/pinkUnderPointer.svg" width={12} height={12} alt="under_point" />
+                      )}
+
+                      {isLocationDropdownOpen && (
+                        <div
+                          ref={locationDropdownRef}
+                          className="absolute left-0 top-full mt-2 w-[13.75rem] rounded-md bg-gray700 shadow-lg">
+                          {locations.map((location) => (
+                            <div
+                              key={location}
+                              className={`flex cursor-pointer justify-between p-4 text-white hover:bg-gray500 ${
+                                selectedLocation === location ? 'text-main2' : ''
+                              }`}
+                              onClick={() => handleLocationClick(location)}>
+                              {location}
+                              {selectedLocation === location && (
+                                <Image src="/icons/pinkCheck.svg" width={12} height={12} alt="check" className="" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
