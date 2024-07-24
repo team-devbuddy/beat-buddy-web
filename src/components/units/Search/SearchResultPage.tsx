@@ -7,11 +7,11 @@ import MainFooter from '@/components/units/Main/MainFooter';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
-import { Club } from '@/lib/types';
+import { HotChartProps } from '@/lib/types';
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
-  const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
+  const [filteredClubs, setFilteredClubs] = useState<HotChartProps[]>([]);
   const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const SearchResultsPage = () => {
 
     try {
       const data = await fetchVenues(query, accessToken);
-      console.log('Fetched Clubs:', data); // 흠
+      console.log('Fetched Clubs:', data);
       setFilteredClubs(data);
     } catch (error: any) {
       console.error('Failed to fetch search results:', error.message);

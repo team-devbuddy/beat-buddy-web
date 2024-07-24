@@ -69,7 +69,7 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
           )}
         </div>
       )}
-      { <MapButton toggleViewMode={toggleViewMode} isMapView={isMapView} />}
+      {filteredClubs.length > 0 && <MapButton toggleViewMode={toggleViewMode} isMapView={isMapView} />}
     </div>
   );
 }
