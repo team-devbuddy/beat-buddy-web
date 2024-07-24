@@ -1,6 +1,5 @@
 'use client';
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRecoilValue, useRecoilState } from 'recoil';
@@ -17,6 +16,7 @@ const Preview = ({ club }: ClubProps) => {
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
+  const sliderRef = useRef<Slider>(null);
 
   const defaultImage = '/images/DefaultImage.png';
 
@@ -47,10 +47,16 @@ const Preview = ({ club }: ClubProps) => {
 
   useEffect(() => {
     console.log('Filtered Media:', media);
+
+    // 첫 번째 슬라이드의 비디오를 자동 재생
+    const firstSlideVideo = document.querySelector<HTMLVideoElement>('.slick-slide.slick-active video');
+    if (firstSlideVideo) {
+      firstSlideVideo.play();
+    }
   }, [media]);
 
   const handleHeartClickWrapper = async (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     await handleHeartClick(e, club.venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
@@ -63,8 +69,21 @@ const Preview = ({ club }: ClubProps) => {
     autoplay: false,
     arrows: false,
     draggable: true,
+    beforeChange: (current: number, next: number) => {
+      const videos = document.querySelectorAll<HTMLVideoElement>('.slick-slide video');
+      videos.forEach((video) => {
+        if (!video.paused) {
+          video.pause();
+        }
+      });
+    },
+    afterChange: (current: number) => {
+      const video = document.querySelector<HTMLVideoElement>(`.slick-slide[data-index="${current}"] video`);
+      if (video) {
+        video.play();
+      }
+    },
   };
-
   return (
     <div className="relative flex h-[17.5rem] w-full flex-col justify-between">
       <div className="absolute z-20 flex w-full items-start justify-between px-[1rem] py-[1rem]">
@@ -83,13 +102,13 @@ const Preview = ({ club }: ClubProps) => {
           </div>
         </div>
       </div>
-      <Slider {...settings} className="absolute inset-0 z-10 h-full w-full">
+      <Slider ref={sliderRef} {...settings} className="absolute inset-0 z-10 h-full w-full">
         {media.map((url, index) => (
           <div key={index} className="relative h-[17.5rem] w-full">
             {url.match(/\.(jpeg|jpg|gif|png|heic)$/i) ? (
               <Image src={url} alt={`Background ${index}`} fill className="object-cover object-center" />
             ) : url.match(/\.mp4$/i) ? (
-              <video key={`video-${index}`} className="h-full w-full object-cover" controls>
+              <video key={`video-${index}`} className="h-full w-full object-cover" controls muted loop>
                 <source src={url} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
