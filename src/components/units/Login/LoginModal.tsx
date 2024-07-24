@@ -30,7 +30,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         transition={{ ease: 'easeInOut', duration: 0.5 }}
         className="relative w-[342px] max-w-[600px] rounded-lg bg-BG-black pb-[2.5rem] pt-[5.25rem]">
         <button className="absolute right-7 top-7 text-white" onClick={onClose} aria-label="Close">
-        <Image src="/icons/grayDelete.svg" alt="close" width={20} height={20} />
+          <Image src="/icons/grayDelete.svg" alt="close" width={20} height={20} />
         </button>
         <div className="flex flex-col items-center justify-center">
           <h2 className="mb-3 text-center text-xl font-bold text-white">
@@ -43,9 +43,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
           </p>
 
           <Link href="https://api.beatbuddy.world/oauth2/authorization/kakao">
-            <button
-              // onClick={kakaoLoginHandler}
-              className="flex items-center rounded-[0.38rem] bg-[#FEE500] py-[1.19rem] pl-[1.25rem] pr-20 text-black">
+
+            <button className="flex items-center rounded-[0.38rem] bg-[#FEE500] py-[1.19rem] pl-[1.25rem] pr-20 text-black">
+
               <Image src="/icons/kakao.svg" alt="kakao" width={22} height={22} className="mr-8" />
               카카오톡으로 계속하기
             </button>

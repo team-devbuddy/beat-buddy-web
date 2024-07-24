@@ -111,3 +111,16 @@ export async function GetHistory(access: string) {
 
   return response.json();
 }
+
+// 사용자 온보딩 현황 조회
+export async function GetOnBoardingStatus(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/onboarding`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+  });
+
+  return response;
+}

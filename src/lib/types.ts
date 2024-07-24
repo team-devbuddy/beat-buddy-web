@@ -52,10 +52,9 @@ export interface RecentTermProps {
   addSearchTerm: (term: string) => void;
 }
 
-
 //구글맵
 export interface GoogleMapProps {
-  address: string;
+  addresses: string[]; // 여러 주소를 받기 위해 배열로 수정
   minHeight?: string; // minHeight prop 추가
 }
 
@@ -91,5 +90,7 @@ export interface HeartbeatProps {
   venueId: number;
   venueName: string;
   venueImageUrl: string;
-  liked: boolean; 
+
+  liked: boolean;
 }
+
