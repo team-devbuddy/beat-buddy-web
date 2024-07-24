@@ -17,7 +17,11 @@ const VenueCardInfo = () => {
               className="rounded-sm"
             />
             <div className="club-gradient absolute inset-0"></div>
+<<<<<<< HEAD
             <div className="absolute bottom-[0.62rem] right-[0.96rem] cursor-pointer">
+=======
+            <div className="absolute bottom-[0.62rem] left-[7.5rem] cursor-pointer">
+>>>>>>> 478161c (feat: 바텀시트 UI)
               <Image src={'/icons/FilledHeart.svg'} alt="pink-heart icon" width={32} height={32} />
             </div>
           </div>

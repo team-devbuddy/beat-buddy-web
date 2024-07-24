@@ -1,12 +1,18 @@
 'use client';
 import { Sheet } from 'react-modal-sheet';
+<<<<<<< HEAD
 import { useEffect, useState, useRef } from 'react';
+=======
+import GoogleMap from '@/components/common/GoogleMap'; // 필요한 경우 경로 조정
+import { useEffect, useState } from 'react';
+>>>>>>> 478161c (feat: 바텀시트 UI)
 import Image from 'next/image';
 import VenueCardInfo from './component/VenueCardInfo';
 
 export default function BottomSheetComponent() {
   const [height, setHeight] = useState<number>(500);
   const [isOpen, setOpen] = useState(false);
+<<<<<<< HEAD
   const [isGenreDropdownOpen, setGenreDropdownOpen] = useState(false);
   const [isLocationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [isSortDropdownOpen, setSortDropdownOpen] = useState(false);
@@ -19,6 +25,8 @@ export default function BottomSheetComponent() {
   const genreDropdownRef = useRef<HTMLDivElement>(null);
   const locationDropdownRef = useRef<HTMLDivElement>(null);
   const sortDropdownRef = useRef<HTMLDivElement>(null);
+=======
+>>>>>>> 478161c (feat: 바텀시트 UI)
 
   useEffect(() => {
     function updateSnapPoints() {
@@ -31,6 +39,7 @@ export default function BottomSheetComponent() {
       window.removeEventListener('resize', updateSnapPoints);
     };
   }, []);
+<<<<<<< HEAD
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -91,6 +100,8 @@ export default function BottomSheetComponent() {
     if (isLocationDropdownOpen) setLocationDropdownOpen(false);
   };
 
+=======
+>>>>>>> 478161c (feat: 바텀시트 UI)
   return (
     <div className="flex min-h-screen w-full flex-col justify-between">
       <div className="pb-32">
@@ -111,6 +122,7 @@ export default function BottomSheetComponent() {
               <div className="flex flex-col text-[0.93rem]">
                 <div className="flex justify-between px-4 py-1">
                   <div className="flex gap-3">
+<<<<<<< HEAD
                     <div
                       className={`relative z-50 flex cursor-pointer gap-2 rounded-sm px-[0.62rem] py-1 ${
                         selectedGenre === null ? 'bg-gray700' : 'bg-[#480522]'
@@ -206,6 +218,21 @@ export default function BottomSheetComponent() {
                         ))}
                       </div>
                     )}
+=======
+                    <div className="flex cursor-pointer gap-2 rounded-sm bg-gray700 px-[0.62rem] py-1">
+                      <div className="text-gray300">장르</div>
+                      <Image src="/icons/underPointer.svg" width={12} height={12} alt="under_point" />
+                    </div>
+                    <div className="flex cursor-pointer gap-2 rounded-sm bg-gray700 px-[0.62rem] py-1">
+                      <div className="text-gray300">위치</div>
+                      <Image src="/icons/underPointer.svg" width={12} height={12} alt="under_point" />
+                    </div>
+                  </div>
+
+                  <div className="flex cursor-pointer gap-2 rounded-sm px-[0.5em] py-1">
+                    <div className="text-gray300">가까운 순</div>
+                    <Image src="/icons/underPointer.svg" width={12} height={12} alt="under_point" />
+>>>>>>> 478161c (feat: 바텀시트 UI)
                   </div>
                 </div>
 
