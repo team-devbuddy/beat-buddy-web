@@ -6,8 +6,8 @@ export default function Landing3() {
   return (
     <div
       style={{ backgroundImage: `url('/images/onBoarding/Landing3-bg.png')` }}
-      className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col justify-center bg-main px-6 py-[2.5rem]">
-      <div className="flex flex-col">
+      className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col items-center justify-center bg-main px-6 py-[2.5rem]">
+      <div className="flex w-[375px] flex-col p-5">
         <motion.div
           initial="hidden"
           whileInView="visible"

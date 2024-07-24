@@ -4,8 +4,8 @@ import { clubEffect } from '@/lib/animation';
 
 export default function Landing2() {
   return (
-    <div className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col justify-center bg-black px-6 py-[2.5rem]">
-      <div className="flex flex-col">
+    <div className="flex h-screen min-h-screen snap-mandatory snap-start snap-always flex-col items-center justify-center bg-black px-6 py-[2.5rem]">
+      <div className="flex w-[375px] flex-col p-5">
         <motion.div
           initial="hidden"
           whileInView="visible"
