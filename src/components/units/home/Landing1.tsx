@@ -16,7 +16,7 @@ export default function Landing1() {
   };
   return (
     <div
-      className="flex h-screen w-full flex-col items-center justify-center bg-cover bg-center"
+      className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/images/onBoarding/Landing1-bg.png')" }}>
       <div className="mb-[1.25rem] flex w-full justify-center">
         <Image src={'/images/onBoarding/Landing1.png'} alt="colored logo" width={221} height={125} />
