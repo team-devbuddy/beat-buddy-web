@@ -5,13 +5,17 @@ import { useRouter } from 'next/navigation';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
-import { checkHeart } from '@/lib/actions/hearbeat-controller/checkHeart';
-import { ClubProps } from '@/lib/types';
+import { Venue } from '@/lib/types';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const Preview = ({ club }: ClubProps) => {
+interface PreviewProps {
+  venue: Venue;
+  isHeartbeat: boolean;
+}
+
+const Preview = ({ venue, isHeartbeat }: PreviewProps) => {
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
@@ -21,8 +25,8 @@ const Preview = ({ club }: ClubProps) => {
   const defaultImage = '/images/DefaultImage.png';
 
   const media =
-    club.backgroundUrl.length > 0
-      ? club.backgroundUrl.map((url) => {
+    venue.backgroundUrl && venue.backgroundUrl.length > 0
+      ? venue.backgroundUrl.map((url) => {
           if (url.match(/\.(jpeg|jpg|gif|png|heic|mp4)$/i)) {
             return url;
           } else {
@@ -32,23 +36,14 @@ const Preview = ({ club }: ClubProps) => {
       : [defaultImage];
 
   useEffect(() => {
-    const checkClubHeartStatus = async () => {
-      if (accessToken) {
-        const isLiked = await checkHeart(club.venueId, accessToken);
-        setLikedClubs((prevLikedClubs) => ({
-          ...prevLikedClubs,
-          [club.venueId]: isLiked,
-        }));
-      }
-    };
-
-    checkClubHeartStatus();
-  }, [accessToken, club.venueId, setLikedClubs]);
+    // 초기 좋아요 상태 설정
+    setLikedClubs((prevLikedClubs) => ({
+      ...prevLikedClubs,
+      [venue.venueId]: isHeartbeat,
+    }));
+  }, [isHeartbeat, setLikedClubs, venue.venueId]);
 
   useEffect(() => {
-    console.log('Filtered Media:', media);
-
-    // 첫 번째 슬라이드의 비디오를 자동 재생
     const firstSlideVideo = document.querySelector<HTMLVideoElement>('.slick-slide.slick-active video');
     if (firstSlideVideo) {
       firstSlideVideo.play();
@@ -57,7 +52,7 @@ const Preview = ({ club }: ClubProps) => {
 
   const handleHeartClickWrapper = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await handleHeartClick(e, club.venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
+    await handleHeartClick(e, venue.venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
   const settings = {
@@ -84,6 +79,7 @@ const Preview = ({ club }: ClubProps) => {
       }
     },
   };
+
   return (
     <div className="relative flex h-[17.5rem] w-full flex-col justify-between">
       <div className="absolute z-20 flex w-full items-start justify-between px-[1rem] py-[1rem]">
@@ -94,7 +90,7 @@ const Preview = ({ club }: ClubProps) => {
           <Image src="/icons/share.svg" alt="share icon" width={32} height={32} />
           <div onClick={handleHeartClickWrapper} className="cursor-pointer">
             <Image
-              src={likedClubs[club.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+              src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
               alt="heart icon"
               width={32}
               height={32}
@@ -126,15 +122,15 @@ const Preview = ({ club }: ClubProps) => {
         ))}
       </Slider>
       <div className="absolute bottom-0 z-20 flex flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
-        <h1 className="text-title-24-bold">{club.englishName}</h1>
+        <h1 className="text-title-24-bold">{venue.englishName}</h1>
         <div className="flex space-x-[0.5rem]">
-          {/*club.tags.map((tag: string, index: number) => (
+          {/* venue.tags.map((tag: string, index: number) => (
             <span
               key={index}
               className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
               {tag}
             </span>
-          ))*/}
+          )) */}
         </div>
       </div>
     </div>

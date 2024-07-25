@@ -4,7 +4,17 @@ import React from 'react';
 import Image from 'next/image';
 import { VenueHoursProps } from '@/lib/types';
 
-const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
+
+const fullDaysOfWeek: { [key: string]: string } = {
+  일: '일요일',
+  월: '월요일',
+  화: '화요일',
+  수: '수요일',
+  목: '목요일',
+  금: '금요일',
+  토: '토요일',
+};
 
 const VenueHours = ({ hours }: VenueHoursProps) => {
   return (
@@ -15,7 +25,7 @@ const VenueHours = ({ hours }: VenueHoursProps) => {
           {daysOfWeek.map((day) => (
             <div key={day} className="flex items-center space-x-[0.75rem]">
               <p className="text-body2-15-medium text-gray200">
-                {day}: {hours[day]}
+                {fullDaysOfWeek[day]}: {hours[day] || '운영하지 않음'}
               </p>
             </div>
           ))}
