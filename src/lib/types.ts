@@ -28,9 +28,6 @@ export interface Club extends HotChartProps {
   likes: number;
 }
 
-export interface ClubProps {
-  club: Club;
-}
 
 export interface VenueHoursProps {
   hours: { [day: string]: string };
@@ -97,4 +94,24 @@ export interface HeartbeatProps {
 export interface ArchiveHistoryProps {
   preferenceList: string[];
   updatedAt: string;
+}
+export interface Venue {
+  createdAt: string;
+  updatedAt: string;
+  venueId: number;
+  englishName: string;
+  koreanName: string;
+  region: string;
+  description: string | null;
+  address: string;
+  insta: string;
+  operationHours: string;
+  logoUrl: string;
+  backgroundUrl: string[];
+  heartbeatNum: number;
+}
+
+export interface ClubProps {
+  venue: Venue;
+  isHeartbeat: boolean;
 }

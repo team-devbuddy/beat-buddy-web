@@ -1,5 +1,5 @@
 export async function fetchClubDetail(id: string, accessToken: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/venueInfo/${id}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/venue-info/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
