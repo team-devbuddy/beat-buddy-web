@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { GetOnBoardingStatus } from '@/lib/action';
+import { GetOnBoardingStatus, PostRefresh } from '@/lib/action';
 
 const KakaoRedirect: React.FC = () => {
   const searchParams = useSearchParams();
@@ -17,8 +17,15 @@ const KakaoRedirect: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (access) {
+        // 리프레쉬 발급
+        // const refreshTokenResponse = PostRefresh(access);
+        // console.log(refreshTokenResponse);
+
         const response = await GetOnBoardingStatus(access);
         if (response.ok) {
+          // 임시;
+          // setIsAuth(true);
+          // router.push('/');
           // Onboarding status에 따라 다른 페이지로 리디렉션
           setAccessToken(access);
           const responseJson = await response.json();
@@ -33,6 +40,7 @@ const KakaoRedirect: React.FC = () => {
           }
           // 성인 인증 O && 장르, 분위기, 지역 선택 O
           else if (responseJson.adultCert && responseJson.genre && responseJson.mood && responseJson.region) {
+            setIsAuth(true);
             router.push('/');
           }
           // 성인 인증 O && 장르, 분위기, 지역 선택 X

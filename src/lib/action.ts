@@ -1,3 +1,16 @@
+// 액세스 토큰으로 리프레쉬 토큰 발급
+export async function PostRefresh(refresh: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/refresh`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ refreshToken: refresh }),
+  });
+
+  return response;
+}
+
 // 약관 동의
 export async function PostAgree(access: string, terms: { isLocationConsent: boolean; isMarketingConsent: boolean }) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/onboarding/consent`, {
