@@ -3,8 +3,6 @@
 import BottomSheetComponent from '@/components/common/BottomSheet';
 import GoogleMap from '@/components/common/GoogleMap';
 import { useRef, useEffect } from 'react';
-import { BottomSheet } from 'react-spring-bottom-sheet';
-import { BottomSheet } from 'react-spring-bottom-sheet';
 import type { BottomSheetRef } from 'react-spring-bottom-sheet';
 import 'react-spring-bottom-sheet/dist/style.css';
 
