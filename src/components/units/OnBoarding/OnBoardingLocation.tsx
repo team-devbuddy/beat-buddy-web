@@ -2,8 +2,8 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { PostLocation } from '@/lib/action'; // 경로를 적절히 수정하세요.
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { accessTokenState, authState } from '@/context/recoil-context';
 
 const locationMap: { [key: string]: string } = {
   홍대: 'HONGDAE',
@@ -25,6 +25,7 @@ export default function OnBoardingLocation() {
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
+  const [isAuth, setIsAuth] = useRecoilState(authState);
 
   const toggleLocation = (location: string) => {
     setSelectedLocations((prevSelected) =>
@@ -37,6 +38,7 @@ export default function OnBoardingLocation() {
 
     try {
       await PostLocation(access, locationData);
+      setIsAuth(true);
       router.push('/onBoarding/myTaste/complete');
     } catch (error) {
       console.error('Error submitting locations:', error);
