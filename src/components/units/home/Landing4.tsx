@@ -5,8 +5,8 @@ import { clubEffect } from '@/lib/animation';
 
 export default function Landing4() {
   return (
-    <div className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col justify-center bg-black px-6 py-[2.5rem]">
-      <div className="flex flex-col">
+    <div className="flex h-screen min-h-screen w-full snap-mandatory snap-start snap-always flex-col items-center justify-center bg-black px-6 py-[2.5rem]">
+      <div className="flex w-[375px] flex-col p-5">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -36,7 +36,6 @@ export default function Landing4() {
           className="leading-12 mt-5 text-center text-xs text-white">
           음악, 분위기, 위치 등 베뉴 정보를 한 눈에 볼 수 있어요
         </motion.div>
-
       </div>
     </div>
   );

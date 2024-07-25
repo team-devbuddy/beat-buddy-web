@@ -1,14 +1,46 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import History from './History/History';
+import { useEffect, useState } from 'react';
+import { GetHistory, GetMyHeartbeat, GetNickname } from '@/lib/action';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
 
 export default function MyPageComponent() {
+  const access = useRecoilValue(accessTokenState) || '';
+  const [nickname, setNickname] = useState('');
+  const [heartBeat, setHeartBeat] = useState([]);
+  const [history, setHistory] = useState([]);
+
+  // 사용자 닉네임 조회 & 나의 하트비트 조회
+  useEffect(() => {
+    const fetchNickname = async () => {
+      try {
+        const response = await GetNickname(access);
+        const heartBeatResponse = await GetMyHeartbeat(access);
+        const historyResponse = await GetHistory(access);
+        if (response.ok && heartBeatResponse.ok && historyResponse.ok) {
+          const responseJson = await response.json();
+          const heartBeatResponseJson = await heartBeatResponse.json();
+          const historyResponseJson = await historyResponse.json();
+          setNickname(responseJson.nickname);
+          setHeartBeat(heartBeatResponseJson);
+          setHistory(historyResponseJson);
+        }
+      } catch (error) {
+        console.error('Error fetching nickname:', error);
+      }
+    };
+    fetchNickname();
+  }, []);
+
   return (
     <>
       <div className="flex flex-col">
         <Link href="/mypage/option">
           <div className="flex gap-1 px-4 py-5">
-            <p className="text-xl font-bold text-white">동혁</p>
+            <p className="text-xl font-bold text-white">{nickname} 버디</p>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
         </Link>
@@ -48,8 +80,14 @@ export default function MyPageComponent() {
           </div>
         </Link>
 
-        {/* MyHistoy Card */}
-        <History />
+        <div className="ml-4 flex gap-3 overflow-x-auto hide-scrollbar">
+          {/* MyHistoy Card */}
+          {history.map((data, index) => (
+            <div key={index}>
+              <History data={data} />
+            </div>
+          ))}
+        </div>
 
         {/* 구분선 */}
         <div className="flex justify-center pt-[2.5rem]">

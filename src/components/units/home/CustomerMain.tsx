@@ -6,8 +6,7 @@ import Landing5 from './Landing5';
 
 export default function CustomerMain() {
   return (
-
-    <div className="flex h-screen w-full snap-y snap-mandatory flex-col overflow-y-scroll">
+    <div className="flex h-screen snap-y snap-mandatory flex-col overflow-y-scroll">
       <Landing1 />
       <Landing2 />
       <Landing3 />

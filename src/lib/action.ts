@@ -99,9 +99,9 @@ export async function PostArchive(access: string, archive: { memberGenreId: numb
   return response;
 }
 
-// 마이 페이지 - 내 히스토리 조회
-export async function GetHistory(access: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/archive/all`, {
+// 사용자 온보딩 현황 조회
+export async function GetOnBoardingStatus(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/onboarding`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -109,12 +109,38 @@ export async function GetHistory(access: string) {
     },
   });
 
-  return response.json();
+  return response;
 }
 
-// 사용자 온보딩 현황 조회
-export async function GetOnBoardingStatus(access: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/onboarding`, {
+// 마이페이지 - 사용자 닉네임 조회
+export async function GetNickname(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/nickname`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+  });
+
+  return response;
+}
+
+// 마이페이지 - 나의 하트비트 조회
+export async function GetMyHeartbeat(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/heartbeat/all`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+  });
+
+  return response;
+}
+
+// 마이 페이지 - 내 히스토리 조회
+export async function GetHistory(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/archive/all`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

@@ -27,7 +27,6 @@ export interface Club extends HotChartProps {
   likes: number;
 }
 
-
 export interface ClubProps {
   club: Club;
 }
@@ -84,7 +83,6 @@ export interface BBPProps {
   heartbeatNum: number;
 }
 
-
 export interface HeartbeatProps {
   heartbeatNum: number;
   venueId: number;
@@ -94,3 +92,8 @@ export interface HeartbeatProps {
   liked: boolean;
 }
 
+// 아카이브(히스토리) 페이지
+export interface ArchiveHistoryProps {
+  preferenceList: string[];
+  updatedAt: string;
+}
