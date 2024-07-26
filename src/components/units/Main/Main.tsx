@@ -55,7 +55,6 @@ export default function Main() {
     const fetchBBP = async (token: string) => {
       try {
         const data = await getBBP(token);
-        console.log('BBP data:', data); // Log the BBP data
 
         if (data.length > 0) {
           setBbpClubs(data);
@@ -66,7 +65,6 @@ export default function Main() {
           }, {});
 
           setLikedClubs((prev) => ({ ...prev, ...likedStatuses }));
-          console.log('Liked statuses:', likedStatuses); // Log liked statuses
 
           const heartbeatNumbers = data.reduce((acc: { [key: number]: number }, club: { venueId: number; heartbeatNum: number }) => {
             acc[club.venueId] = club.heartbeatNum;
@@ -74,7 +72,6 @@ export default function Main() {
           }, {});
 
           setHeartbeatNums((prev) => ({ ...prev, ...heartbeatNumbers }));
-          console.log('Heartbeat numbers:', heartbeatNumbers); // Log heartbeat numbers
         }
       } catch (error) {
         console.error('Error fetching BBP:', error);
@@ -84,7 +81,6 @@ export default function Main() {
     const fetchUserName = async (token: string) => {
       try {
         const name = await getUserName(token);
-        console.log('User name:', name); // Log the user name
         setUserName(name);
       } catch (error) {
         console.error('Error fetching user name:', error);

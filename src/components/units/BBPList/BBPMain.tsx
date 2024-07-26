@@ -23,7 +23,6 @@ export default function BBPMain() {
       try {
         if (accessToken) {
           const data = await getBBP(accessToken);
-          console.log('BBP data:', data); // Log the BBP data
           setBBPClubs(data);
 
           const heartbeatNumbers = data.reduce(
@@ -45,7 +44,6 @@ export default function BBPMain() {
     const fetchLikedStatuses = async (token: string) => {
       try {
         const heartbeats = await getMyHearts(token);
-        console.log('My Hearts data:', heartbeats); // Log the My Hearts data
         const likedStatuses = heartbeats.reduce(
           (acc, heartbeat) => {
             acc[heartbeat.venueId] = true;

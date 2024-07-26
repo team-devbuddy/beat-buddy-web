@@ -25,7 +25,6 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           const data: ClubProps = await fetchClubDetail(params.id, accessToken);
           setVenue(data.venue);
           setIsHeartbeat(data.isHeartbeat);
-          console.log(data);
         } else {
           console.error('Access token is not available');
         }

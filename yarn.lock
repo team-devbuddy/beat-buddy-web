@@ -138,6 +138,46 @@
   resolved "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-14.2.5.tgz"
   integrity sha512-/9zVxJ+K9lrzSGli1///ujyRfon/ZneeZ+v4ptpiPoOU+GKZnm8Wj8ELWU1Pm7GHltYRBklmXMTUqM/DqQ99FQ==
 
+"@next/swc-darwin-x64@14.2.5":
+  version "14.2.5"
+  resolved "https://registry.yarnpkg.com/@next/swc-darwin-x64/-/swc-darwin-x64-14.2.5.tgz#eb832a992407f6e6352eed05a073379f1ce0589c"
+  integrity sha512-vXHOPCwfDe9qLDuq7U1OYM2wUY+KQ4Ex6ozwsKxp26BlJ6XXbHleOUldenM67JRyBfVjv371oneEvYd3H2gNSA==
+
+"@next/swc-linux-arm64-gnu@14.2.5":
+  version "14.2.5"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-14.2.5.tgz#098fdab57a4664969bc905f5801ef5a89582c689"
+  integrity sha512-vlhB8wI+lj8q1ExFW8lbWutA4M2ZazQNvMWuEDqZcuJJc78iUnLdPPunBPX8rC4IgT6lIx/adB+Cwrl99MzNaA==
+
+"@next/swc-linux-arm64-musl@14.2.5":
+  version "14.2.5"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-14.2.5.tgz#243a1cc1087fb75481726dd289c7b219fa01f2b5"
+  integrity sha512-NpDB9NUR2t0hXzJJwQSGu1IAOYybsfeB+LxpGsXrRIb7QOrYmidJz3shzY8cM6+rO4Aojuef0N/PEaX18pi9OA==
+
+"@next/swc-linux-x64-gnu@14.2.5":
+  version "14.2.5"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-14.2.5.tgz#b8a2e436387ee4a52aa9719b718992e0330c4953"
+  integrity sha512-8XFikMSxWleYNryWIjiCX+gU201YS+erTUidKdyOVYi5qUQo/gRxv/3N1oZFCgqpesN6FPeqGM72Zve+nReVXQ==
+
+"@next/swc-linux-x64-musl@14.2.5":
+  version "14.2.5"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-14.2.5.tgz#cb8a9adad5fb8df86112cfbd363aab5c6d32757b"
+  integrity sha512-6QLwi7RaYiQDcRDSU/os40r5o06b5ue7Jsk5JgdRBGGp8l37RZEh9JsLSM8QF0YDsgcosSeHjglgqi25+m04IQ==
+
+"@next/swc-win32-arm64-msvc@14.2.5":
+  version "14.2.5"
+  resolved "https://registry.yarnpkg.com/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-14.2.5.tgz#81f996c1c38ea0900d4e7719cc8814be8a835da0"
+  integrity sha512-1GpG2VhbspO+aYoMOQPQiqc/tG3LzmsdBH0LhnDS3JrtDx2QmzXe0B6mSZZiN3Bq7IOMXxv1nlsjzoS1+9mzZw==
+
+"@next/swc-win32-ia32-msvc@14.2.5":
+  version "14.2.5"
+  resolved "https://registry.yarnpkg.com/@next/swc-win32-ia32-msvc/-/swc-win32-ia32-msvc-14.2.5.tgz#f61c74ce823e10b2bc150e648fc192a7056422e0"
+  integrity sha512-Igh9ZlxwvCDsu6438FXlQTHlRno4gFpJzqPjSIBZooD22tKeI4fE/YMRoHVJHmrQ2P5YL1DoZ0qaOKkbeFWeMg==
+
+"@next/swc-win32-x64-msvc@14.2.5":
+  version "14.2.5"
+  resolved "https://registry.yarnpkg.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-14.2.5.tgz#ed199a920efb510cfe941cd75ed38a7be21e756f"
+  integrity sha512-tEQ7oinq1/CjSG9uSTerca3v4AZ+dFa+4Yu6ihaG8Ud8ddqLQgFGcnwYls13H5X5CPDPZJdYxyeMui6muOLd4g==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -146,7 +186,7 @@
     "@nodelib/fs.stat" "2.0.5"
     run-parallel "^1.1.9"
 
-"@nodelib/fs.stat@^2.0.2", "@nodelib/fs.stat@2.0.5":
+"@nodelib/fs.stat@2.0.5", "@nodelib/fs.stat@^2.0.2":
   version "2.0.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.stat/-/fs.stat-2.0.5.tgz"
   integrity sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==
@@ -183,14 +223,14 @@
 
 "@react-aria/ssr@^3.9.3":
   version "3.9.5"
-  resolved "https://registry.yarnpkg.com/@react-aria/ssr/-/ssr-3.9.5.tgz#775d84f51f90934ff51ae74eeba3728daac1a381"
+  resolved "https://registry.npmjs.org/@react-aria/ssr/-/ssr-3.9.5.tgz"
   integrity sha512-xEwGKoysu+oXulibNUSkXf8itW0npHHTa6c4AyYeZIJyRoegeteYuFpZUBPtIDE8RfHdNsSmE1ssOkxRnwbkuQ==
   dependencies:
     "@swc/helpers" "^0.5.0"
 
 "@react-aria/utils@3.24.0":
   version "3.24.0"
-  resolved "https://registry.yarnpkg.com/@react-aria/utils/-/utils-3.24.0.tgz#f56ab45fc2dc50938d5857b1f176e81524d651ad"
+  resolved "https://registry.npmjs.org/@react-aria/utils/-/utils-3.24.0.tgz"
   integrity sha512-JAxkPhK5fCvFVNY2YG3TW3m1nTzwRcbz7iyTSkUzLFat4N4LZ7Kzh7NMHsgeE/oMOxd8zLY+XsUxMu/E/2GujA==
   dependencies:
     "@react-aria/ssr" "^3.9.3"
@@ -201,14 +241,14 @@
 
 "@react-stately/utils@^3.10.0":
   version "3.10.2"
-  resolved "https://registry.yarnpkg.com/@react-stately/utils/-/utils-3.10.2.tgz#09377f771592ff537c901aa64178cb3a004a916f"
+  resolved "https://registry.npmjs.org/@react-stately/utils/-/utils-3.10.2.tgz"
   integrity sha512-fh6OTQtbeQC0ywp6LJuuKs6tKIgFvt/DlIZEcIpGho6/oZG229UnIk6TUekwxnDbumuYyan6D9EgUtEMmT8UIg==
   dependencies:
     "@swc/helpers" "^0.5.0"
 
 "@react-types/shared@^3.23.0":
   version "3.24.1"
-  resolved "https://registry.yarnpkg.com/@react-types/shared/-/shared-3.24.1.tgz#fa06cb681d144fce9c515d8bd296d81440a45d25"
+  resolved "https://registry.npmjs.org/@react-types/shared/-/shared-3.24.1.tgz"
   integrity sha512-AUQeGYEm/zDTN6zLzdXolDxz3Jk5dDL7f506F07U8tBwxNNI3WRdhU84G0/AaFikOZzDXhOZDr3MhQMzyE7Ydw==
 
 "@rushstack/eslint-patch@^1.3.3":
@@ -221,19 +261,12 @@
   resolved "https://registry.npmjs.org/@swc/counter/-/counter-0.1.3.tgz"
   integrity sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==
 
-"@swc/helpers@0.5.5":
+"@swc/helpers@0.5.5", "@swc/helpers@^0.5.0":
   version "0.5.5"
   resolved "https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.5.tgz"
   integrity sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==
   dependencies:
     "@swc/counter" "^0.1.3"
-    tslib "^2.4.0"
-
-"@swc/helpers@^0.5.0":
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.12.tgz#37aaca95284019eb5d2207101249435659709f4b"
-  integrity sha512-KMZNXiGibsW9kvZAO1Pam2JPTDBm+KSHMMHWdsyI/1DbIZjT2A6Gy3hblVXUMEDvUAKq+e0vL0X0o54owWji7g==
-  dependencies:
     tslib "^2.4.0"
 
 "@tailwindcss/aspect-ratio@^0.4.2":
@@ -272,7 +305,7 @@
 
 "@types/react-slick@^0.23.13":
   version "0.23.13"
-  resolved "https://registry.npmjs.org/@types/react-slick/-/react-slick-0.23.13.tgz"
+  resolved "https://registry.yarnpkg.com/@types/react-slick/-/react-slick-0.23.13.tgz#037434e73a58063047b121e08565f7185d811f36"
   integrity sha512-bNZfDhe/L8t5OQzIyhrRhBr/61pfBcWaYJoq6UDqFtv5LMwfg4NsVDD2J8N01JqdAdxLjOt66OZEp6PX+dGs/A==
   dependencies:
     "@types/react" "*"
@@ -354,83 +387,7 @@ acorn-jsx@^5.3.2:
   resolved "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-5.3.2.tgz"
   integrity sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
 acorn@^8.9.0:
-=======
-"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.9.0:
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-acorn@^8.9.0:
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
-"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.9.0:
->>>>>>> 617a99e (feat: 성인인증)
-=======
-acorn@^8.9.0:
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
-"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.9.0:
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
-acorn@^8.9.0:
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.9.0:
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
-acorn@^8.9.0:
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
-"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.9.0:
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
-acorn@^8.9.0:
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.9.0:
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
-acorn@^8.9.0:
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
-"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.9.0:
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
   version "8.11.3"
   resolved "https://registry.npmjs.org/acorn/-/acorn-8.11.3.tgz"
   integrity sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==
@@ -735,7 +692,7 @@ clsx@^1.1.1:
 
 clsx@^2.0.0:
   version "2.1.1"
-  resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
+  resolved "https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz"
   integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
 
 color-convert@^2.0.1:
@@ -907,43 +864,12 @@ enhanced-resolve@^5.12.0:
     graceful-fs "^4.2.4"
     tapable "^2.2.0"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 enquire.js@^2.1.6:
   version "2.1.6"
   resolved "https://registry.npmjs.org/enquire.js/-/enquire.js-2.1.6.tgz"
   integrity sha512-/KujNpO+PT63F7Hlpu4h3pE3TokKRHN26JYmQpPyjkRD/N57R7bPDNojMXdi7uveAKjYB7yQnartCxZnFWr0Xw==
 
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
 es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2, es-abstract@^1.23.3:
-=======
-es-abstract@^1.17.5, es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2, es-abstract@^1.23.3:
->>>>>>> ecc1c39 (feat: 성인인증)
-=======
-es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2, es-abstract@^1.23.3:
->>>>>>> 617a99e (feat: 성인인증)
-=======
-es-abstract@^1.17.5, es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2, es-abstract@^1.23.3:
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2, es-abstract@^1.23.3:
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-es-abstract@^1.17.5, es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2, es-abstract@^1.23.3:
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2, es-abstract@^1.23.3:
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-es-abstract@^1.17.5, es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2, es-abstract@^1.23.3:
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
   version "1.23.3"
   resolved "https://registry.npmjs.org/es-abstract/-/es-abstract-1.23.3.tgz"
   integrity sha512-e+HfNH61Bj1X9/jLc5v1owaLYuHdeHHSQlkhCBiTK8rBvKaULl/beGMxwrMXjpYrv4pz22BlY570vVePA2ho4A==
@@ -1108,7 +1034,7 @@ eslint-module-utils@^2.7.4, eslint-module-utils@^2.8.0:
   dependencies:
     debug "^3.2.7"
 
-eslint-plugin-import@*, eslint-plugin-import@^2.28.1:
+eslint-plugin-import@^2.28.1:
   version "2.29.1"
   resolved "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.29.1.tgz"
   integrity sha512-BbPC0cuExzhiMo4Ff1BTVwHpjjv28C5R+btTOGaCRC7UEz801up0JadwkeSk5Ued6TG34uaczuVuH6qyy5YUxw==
@@ -1195,7 +1121,7 @@ eslint-visitor-keys@^3.3.0, eslint-visitor-keys@^3.4.1, eslint-visitor-keys@^3.4
   resolved "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-3.4.3.tgz"
   integrity sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag==
 
-eslint@*, "eslint@^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8", "eslint@^3 || ^4 || ^5 || ^6 || ^7 || ^8", "eslint@^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0", "eslint@^6.0.0 || ^7.0.0 || >=8.0.0", "eslint@^7.23.0 || ^8.0.0", eslint@^8, eslint@^8.56.0:
+eslint@^8:
   version "8.57.0"
   resolved "https://registry.npmjs.org/eslint/-/eslint-8.57.0.tgz"
   integrity sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==
@@ -1441,61 +1367,6 @@ glob-parent@^6.0.2:
   dependencies:
     is-glob "^4.0.3"
 
-glob@^10.3.10:
-  version "10.3.12"
-  resolved "https://registry.npmjs.org/glob/-/glob-10.3.12.tgz"
-  integrity sha512-TCNv8vJ+xz4QiqTpfOJA7HvYv+tNIRHKfUWw/q+v2jdgN4ebz+KY9tGx5J4rHP0o84mNP+ApH66HRX8us3Khqg==
-  dependencies:
-    foreground-child "^3.1.0"
-    jackspeak "^2.3.6"
-    minimatch "^9.0.1"
-    minipass "^7.0.4"
-    path-scurry "^1.10.2"
-
-glob@^7.1.3:
-  version "7.2.3"
-  resolved "https://registry.npmjs.org/glob/-/glob-7.2.3.tgz"
-  integrity sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==
-  dependencies:
-    fs.realpath "^1.0.0"
-    inflight "^1.0.4"
-    inherits "2"
-    minimatch "^3.1.1"
-    once "^1.3.0"
-    path-is-absolute "^1.0.0"
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 6c4f0f0 (feat: 성인인증)
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
 glob@10.3.10:
   version "10.3.10"
   resolved "https://registry.npmjs.org/glob/-/glob-10.3.10.tgz"
@@ -1507,15 +1378,6 @@ glob@10.3.10:
     minipass "^5.0.0 || ^6.0.2 || ^7.0.0"
     path-scurry "^1.10.1"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 glob@^10.3.10:
   version "10.3.12"
   resolved "https://registry.npmjs.org/glob/-/glob-10.3.12.tgz"
@@ -1539,40 +1401,6 @@ glob@^7.1.3:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-=======
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
->>>>>>> 6c4f0f0 (feat: 성인인증)
-=======
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-=======
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
 globals@^13.19.0:
   version "13.24.0"
   resolved "https://registry.npmjs.org/globals/-/globals-13.24.0.tgz"
@@ -1916,70 +1744,14 @@ jackspeak@^2.3.5, jackspeak@^2.3.6:
     "@pkgjs/parseargs" "^0.11.0"
 
 jiti@^1.21.0:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 617a99e (feat: 성인인증)
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-=======
->>>>>>> 950f7a0 (feat: 성인인증)
   version "1.21.0"
   resolved "https://registry.npmjs.org/jiti/-/jiti-1.21.0.tgz"
   integrity sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-jquery@^3.7.1:
-=======
-jquery@>=1.8.0:
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-  version "3.7.1"
-  resolved "https://registry.npmjs.org/jquery/-/jquery-3.7.1.tgz"
-  integrity sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==
-=======
-  version "1.21.6"
-  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.6.tgz#6c7f7398dd4b3142767f9a168af2f317a428d268"
-  integrity sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==
->>>>>>> ecc1c39 (feat: 성인인증)
-=======
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-=======
->>>>>>> 950f7a0 (feat: 성인인증)
 jquery@^3.7.1:
   version "3.7.1"
   resolved "https://registry.npmjs.org/jquery/-/jquery-3.7.1.tgz"
   integrity sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 617a99e (feat: 성인인증)
-=======
-  version "1.21.6"
-  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.6.tgz#6c7f7398dd4b3142767f9a168af2f317a428d268"
-  integrity sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-  version "1.21.6"
-  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.6.tgz#6c7f7398dd4b3142767f9a168af2f317a428d268"
-  integrity sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-  version "1.21.6"
-  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.6.tgz#6c7f7398dd4b3142767f9a168af2f317a428d268"
-  integrity sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
 
 "js-tokens@^3.0.0 || ^4.0.0":
   version "4.0.0"
@@ -2128,101 +1900,13 @@ micromatch@^4.0.4, micromatch@^4.0.5:
     braces "^3.0.2"
     picomatch "^2.3.1"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 478161c (feat: 바텀시트 UI)
 minimatch@9.0.3:
   version "9.0.3"
   resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
   integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
   dependencies:
     brace-expansion "^2.0.1"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
->>>>>>> 617a99e (feat: 성인인증)
-=======
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
 minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz"
@@ -2230,315 +1914,32 @@ minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
   dependencies:
     brace-expansion "^1.1.7"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 617a99e (feat: 성인인증)
-=======
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-=======
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
 minimatch@^9.0.1:
   version "9.0.4"
   resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.4.tgz"
   integrity sha512-KqWh+VchfxcMNRAJjj2tnsSJdNbHsVgnkBhTNrW7AjVo6OvLtxw8zfT9oLw1JSohlFzJ8jCoTgaoXvJ+kHt6fw==
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
-minimatch@^9.0.1, minimatch@^9.0.4:
-  version "9.0.5"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.5.tgz#d74f9dd6b57d83d8e98cfb82133b03978bc929e5"
-  integrity sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
   dependencies:
     brace-expansion "^2.0.1"
 
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
-  integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-  dependencies:
-    brace-expansion "^2.0.1"
-
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
-  integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
->>>>>>> 950f7a0 (feat: 성인인증)
-  dependencies:
-    brace-expansion "^2.0.1"
-
-<<<<<<< HEAD
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
-  integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-  dependencies:
-    brace-expansion "^2.0.1"
-
-<<<<<<< HEAD
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
-  integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
->>>>>>> 5057af5 (feat: 성인인증)
-  dependencies:
-    brace-expansion "^2.0.1"
-
-<<<<<<< HEAD
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
-  integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-  dependencies:
-    brace-expansion "^2.0.1"
-
-<<<<<<< HEAD
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
-  integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
->>>>>>> 617a99e (feat: 성인인증)
-  dependencies:
-    brace-expansion "^2.0.1"
-
-<<<<<<< HEAD
-minimatch@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz"
-  integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-  dependencies:
-    brace-expansion "^2.0.1"
-
-=======
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
->>>>>>> 42c8520 (feat: 바텀시트 UI)
 minimist@^1.2.0, minimist@^1.2.6:
   version "1.2.8"
   resolved "https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 617a99e (feat: 성인인증)
-=======
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-=======
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
 "minipass@^5.0.0 || ^6.0.2 || ^7.0.0", minipass@^7.0.4:
   version "7.1.0"
   resolved "https://registry.npmjs.org/minipass/-/minipass-7.1.0.tgz"
   integrity sha512-oGZRv2OT1lO2UF1zUcwdTb3wqUwI0kBGTgt/T7OdSj6M6N5m3o5uPf0AIW6lVxGGoiWUR7e2AwTE+xiwK8WQig==
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 6c4f0f0 (feat: 성인인증)
-"minipass@^5.0.0 || ^6.0.2 || ^7.0.0", minipass@^7.1.2:
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.1.2.tgz#93a9626ce5e5e66bd4db86849e7515e92340a707"
-  integrity sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==
-<<<<<<< HEAD
-=======
 
->>>>>>> 6c4f0f0 (feat: 성인인증)
-
-<<<<<<< HEAD
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-
-<<<<<<< HEAD
-ms@^2.1.1:
-  version "2.1.3"
-  resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
-  integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-
-=======
->>>>>>> 45b476d (feat: 바텀시트 UI)
 ms@2.1.2:
   version "2.1.2"
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
-=======
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
-"minipass@^5.0.0 || ^6.0.2 || ^7.0.0", minipass@^7.1.2:
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.1.2.tgz#93a9626ce5e5e66bd4db86849e7515e92340a707"
-  integrity sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
-=======
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
 
 ms@^2.1.1:
   version "2.1.3"
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-
-ms@^2.1.1:
-  version "2.1.3"
-  resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
-  integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
->>>>>>> 950f7a0 (feat: 성인인증)
-
-ms@^2.1.1:
-  version "2.1.3"
-  resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
-  integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-
-<<<<<<< HEAD
-ms@^2.1.1:
-  version "2.1.3"
-  resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
-  integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
->>>>>>> 494a9df (feat: 바텀시트 UI)
-
-<<<<<<< HEAD
-ms@^2.1.1:
-  version "2.1.3"
-  resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
-  integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
->>>>>>> 617a99e (feat: 성인인증)
-
-=======
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-ms@2.1.2:
-  version "2.1.2"
-  resolved "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz"
-  integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
 mz@^2.7.0:
   version "2.7.0"
@@ -2805,19 +2206,6 @@ postcss-value-parser@^4.0.0:
   resolved "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 postcss@8.4.31:
   version "8.4.31"
   resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.31.tgz"
@@ -2828,9 +2216,6 @@ postcss@8.4.31:
     source-map-js "^1.0.2"
 
 postcss@^8, postcss@^8.4.23:
-=======
-postcss@^8, postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, postcss@>=8.0.9:
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
   version "8.4.38"
   resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.38.tgz"
   integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
@@ -2838,174 +2223,6 @@ postcss@^8, postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, p
     nanoid "^3.3.7"
     picocolors "^1.0.0"
     source-map-js "^1.2.0"
-
-=======
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
->>>>>>> 6c4f0f0 (feat: 성인인증)
-postcss@8.4.31:
-  version "8.4.31"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.31.tgz#92b451050a9f914da6755af352bdc0192508656d"
-  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8, postcss@^8.4.23:
-<<<<<<< HEAD
-=======
-postcss@^8, postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, postcss@>=8.0.9:
->>>>>>> 617a99e (feat: 성인인증)
-  version "8.4.38"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.38.tgz"
-  integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
-  dependencies:
-    nanoid "^3.3.7"
-    picocolors "^1.0.0"
-    source-map-js "^1.2.0"
-
-=======
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-postcss@8.4.31:
-  version "8.4.31"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.31.tgz#92b451050a9f914da6755af352bdc0192508656d"
-  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8, postcss@^8.4.23:
-=======
-postcss@^8, postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, postcss@>=8.0.9:
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-  version "8.4.38"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.38.tgz"
-  integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
-  dependencies:
-    nanoid "^3.3.7"
-    picocolors "^1.0.0"
-    source-map-js "^1.2.0"
-
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-postcss@8.4.31:
-  version "8.4.31"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.31.tgz#92b451050a9f914da6755af352bdc0192508656d"
-  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8, postcss@^8.4.23:
-=======
-postcss@^8, postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, postcss@>=8.0.9:
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
->>>>>>> 6c4f0f0 (feat: 성인인증)
-=======
-postcss@^8, postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, postcss@>=8.0.9:
->>>>>>> 494a9df (feat: 바텀시트 UI)
-  version "8.4.38"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.38.tgz"
-  integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
-  dependencies:
-    nanoid "^3.3.7"
-    picocolors "^1.0.0"
-    source-map-js "^1.2.0"
-
-=======
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-postcss@8.4.31:
-  version "8.4.31"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.31.tgz#92b451050a9f914da6755af352bdc0192508656d"
-  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8, postcss@^8.4.23:
-=======
-postcss@^8, postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, postcss@>=8.0.9:
->>>>>>> 950f7a0 (feat: 성인인증)
-  version "8.4.38"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.38.tgz"
-  integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
-  dependencies:
-    nanoid "^3.3.7"
-    picocolors "^1.0.0"
-    source-map-js "^1.2.0"
-
-=======
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-postcss@8.4.31:
-  version "8.4.31"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.31.tgz#92b451050a9f914da6755af352bdc0192508656d"
-  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8, postcss@^8.4.23:
-=======
-postcss@^8, postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, postcss@>=8.0.9:
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-  version "8.4.38"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.38.tgz"
-  integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
-  dependencies:
-    nanoid "^3.3.7"
-    picocolors "^1.0.0"
-    source-map-js "^1.2.0"
-
-postcss@8.4.31:
-  version "8.4.31"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.31.tgz#92b451050a9f914da6755af352bdc0192508656d"
-  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8, postcss@^8.4.23:
-  version "8.4.38"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.38.tgz"
-  integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
-  dependencies:
-    nanoid "^3.3.7"
-    picocolors "^1.0.0"
-    source-map-js "^1.2.0"
-
-postcss@8.4.31:
-  version "8.4.31"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.31.tgz#92b451050a9f914da6755af352bdc0192508656d"
-  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8, postcss@^8.4.23:
-  version "8.4.38"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.38.tgz"
-  integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
-  dependencies:
-    nanoid "^3.3.7"
-    picocolors "^1.0.0"
-    source-map-js "^1.2.0"
-
-postcss@8.4.31:
-  version "8.4.31"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.31.tgz"
-  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
 
 prelude-ls@^1.2.1:
   version "1.2.1"
@@ -3017,116 +2234,10 @@ prettier-plugin-tailwindcss@^0.6.5:
   resolved "https://registry.npmjs.org/prettier-plugin-tailwindcss/-/prettier-plugin-tailwindcss-0.6.5.tgz"
   integrity sha512-axfeOArc/RiGHjOIy9HytehlC0ZLeMaqY09mm8YCkMzznKiDkwFzOpBvtuhuv3xG5qB73+Mj7OCe2j/L1ryfuQ==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 prettier@^3.3.2:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-prettier@^3.0, prettier@^3.3.2:
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-prettier@^3.3.2:
->>>>>>> 478161c (feat: 바텀시트 UI)
   version "3.3.2"
   resolved "https://registry.npmjs.org/prettier/-/prettier-3.3.2.tgz"
   integrity sha512-rAVeHYMcv8ATV5d508CFdn+8/pHPpXeIid1DdrPwXnaAdH7cqjVbpJaT5eq4yRAFU/lsbwYwSF/n5iNrdJHPQA==
-=======
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.3.3.tgz#30c54fe0be0d8d12e6ae61dbb10109ea00d53105"
-  integrity sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-prettier@^3.0, prettier@^3.3.2:
-=======
-prettier@^3.3.2:
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-  version "3.3.2"
-  resolved "https://registry.npmjs.org/prettier/-/prettier-3.3.2.tgz"
-  integrity sha512-rAVeHYMcv8ATV5d508CFdn+8/pHPpXeIid1DdrPwXnaAdH7cqjVbpJaT5eq4yRAFU/lsbwYwSF/n5iNrdJHPQA==
->>>>>>> 617a99e (feat: 성인인증)
-=======
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.3.3.tgz#30c54fe0be0d8d12e6ae61dbb10109ea00d53105"
-  integrity sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-prettier@^3.0, prettier@^3.3.2:
-=======
-prettier@^3.3.2:
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-  version "3.3.2"
-  resolved "https://registry.npmjs.org/prettier/-/prettier-3.3.2.tgz"
-  integrity sha512-rAVeHYMcv8ATV5d508CFdn+8/pHPpXeIid1DdrPwXnaAdH7cqjVbpJaT5eq4yRAFU/lsbwYwSF/n5iNrdJHPQA==
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.3.3.tgz#30c54fe0be0d8d12e6ae61dbb10109ea00d53105"
-  integrity sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-prettier@^3.0, prettier@^3.3.2:
-=======
-prettier@^3.3.2:
->>>>>>> 494a9df (feat: 바텀시트 UI)
-  version "3.3.2"
-  resolved "https://registry.npmjs.org/prettier/-/prettier-3.3.2.tgz"
-  integrity sha512-rAVeHYMcv8ATV5d508CFdn+8/pHPpXeIid1DdrPwXnaAdH7cqjVbpJaT5eq4yRAFU/lsbwYwSF/n5iNrdJHPQA==
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.3.3.tgz#30c54fe0be0d8d12e6ae61dbb10109ea00d53105"
-  integrity sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-prettier@^3.0, prettier@^3.3.2:
-=======
-prettier@^3.3.2:
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-  version "3.3.2"
-  resolved "https://registry.npmjs.org/prettier/-/prettier-3.3.2.tgz"
-  integrity sha512-rAVeHYMcv8ATV5d508CFdn+8/pHPpXeIid1DdrPwXnaAdH7cqjVbpJaT5eq4yRAFU/lsbwYwSF/n5iNrdJHPQA==
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.3.3.tgz#30c54fe0be0d8d12e6ae61dbb10109ea00d53105"
-  integrity sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-prettier@^3.0, prettier@^3.3.2:
-=======
-prettier@^3.3.2:
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-  version "3.3.2"
-  resolved "https://registry.npmjs.org/prettier/-/prettier-3.3.2.tgz"
-  integrity sha512-rAVeHYMcv8ATV5d508CFdn+8/pHPpXeIid1DdrPwXnaAdH7cqjVbpJaT5eq4yRAFU/lsbwYwSF/n5iNrdJHPQA==
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.3.3.tgz#30c54fe0be0d8d12e6ae61dbb10109ea00d53105"
-  integrity sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-=======
-prettier@^3.0, prettier@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.npmjs.org/prettier/-/prettier-3.3.2.tgz"
-  integrity sha512-rAVeHYMcv8ATV5d508CFdn+8/pHPpXeIid1DdrPwXnaAdH7cqjVbpJaT5eq4yRAFU/lsbwYwSF/n5iNrdJHPQA==
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
 
 prop-types@^15.5.8, prop-types@^15.8.1:
   version "15.8.1"
@@ -3147,141 +2258,13 @@ queue-microtask@^1.2.2:
   resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 react-dom@^18:
-=======
-"react-dom@^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0", react-dom@^18, react-dom@^18.0.0, react-dom@^18.2.0, "react-dom@>= 16.3.0", "react-dom@>= 16.8.0":
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-react-dom@^18:
-
->>>>>>> ecc1c39 (feat: 성인인증)
-=======
-react-dom@^18:
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-react-dom@^18:
-
->>>>>>> 617a99e (feat: 성인인증)
-=======
-react-dom@^18:
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-react-dom@^18:
-
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
-
-react-dom@^18:
-
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-react-dom@^18:
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-
-react-dom@^18:
-
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
-react-dom@^18:
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-=======
-
-react-dom@^18:
-
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
   version "18.3.1"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.3.1.tgz"
   integrity sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.2"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 45b476d (feat: 바텀시트 UI)
-"react-dom@^16.8.0 || 17.x":
-  version "17.0.2"
-  resolved "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
-  integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
-<<<<<<< HEAD
-=======
-=======
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    scheduler "^0.20.2"
->>>>>>> 45b476d (feat: 바텀시트 UI)
-
-react-dom@^18, react-dom@^18.0.0, react-dom@^18.2.0, "react-dom@>= 16.3.0", "react-dom@>= 16.8.0":
-=======
-react-dom@^18:
->>>>>>> 494a9df (feat: 바텀시트 UI)
-  version "18.3.1"
-  resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.3.1.tgz"
-  integrity sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==
->>>>>>> 5057af5 (feat: 성인인증)
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    scheduler "^0.20.2"
-=======
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-"react-dom@^16.8.0 || 17.x":
-  version "17.0.2"
-  resolved "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
-  integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    scheduler "^0.20.2"
 
 react-draggable@^4.4.6:
   version "4.4.6"
@@ -3310,30 +2293,13 @@ react-lottie-player@^2.0.0:
     lottie-web "^5.12.2"
     rfdc "^1.3.0"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
->>>>>>> 42c8520 (feat: 바텀시트 UI)
 react-modal-sheet@^3.1.0:
   version "3.1.0"
-  resolved "https://registry.yarnpkg.com/react-modal-sheet/-/react-modal-sheet-3.1.0.tgz#02981569b7c4d14acf98b92570fd59f2d030fa9f"
+  resolved "https://registry.npmjs.org/react-modal-sheet/-/react-modal-sheet-3.1.0.tgz"
   integrity sha512-IjmVnNV4O1MXpYv6DFkmKmTQFYMklFig6uYLYz707uOBOO6RQMoG2dOPmQMIs41/psnp2NvHmQNA2pN1+UwgcA==
   dependencies:
     "@react-aria/utils" "3.24.0"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+
 react-slick@^0.30.2:
   version "0.30.2"
   resolved "https://registry.npmjs.org/react-slick/-/react-slick-0.30.2.tgz"
@@ -3344,25 +2310,7 @@ react-slick@^0.30.2:
     json2mq "^0.2.0"
     lodash.debounce "^4.0.8"
     resize-observer-polyfill "^1.5.0"
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
 
-=======
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
-
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
 react-spring-bottom-sheet@^3.4.1:
   version "3.4.1"
   resolved "https://registry.npmjs.org/react-spring-bottom-sheet/-/react-spring-bottom-sheet-3.4.1.tgz"
@@ -3390,101 +2338,7 @@ react-use-gesture@^8.0.1:
   resolved "https://registry.npmjs.org/react-use-gesture/-/react-use-gesture-8.0.1.tgz"
   integrity sha512-CXzUNkulUdgouaAlvAsC5ZVo0fi9KGSBSk81WrE4kOIcJccpANe9zZkAYr5YZZhqpicIFxitsrGVS4wmoMun9A==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 react@^18:
-=======
-"react@^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.14.0 || 17 || 18", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || 17.x", react@^18, react@^18.0.0, react@^18.2.0, react@^18.3.1, "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.13.1, react@17.0.2:
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-react@^18:
-
->>>>>>> ecc1c39 (feat: 성인인증)
-=======
-"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.14.0 || 17 || 18", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || 17.x", react@^18, react@^18.0.0, react@^18.2.0, react@^18.3.1, "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.13.1, react@17.0.2:
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
-react@^18:
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-react@^18:
-
->>>>>>> 617a99e (feat: 성인인증)
-=======
-"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.14.0 || 17 || 18", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || 17.x", react@^18, react@^18.0.0, react@^18.2.0, react@^18.3.1, "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.13.1, react@17.0.2:
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
-react@^18:
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-react@^18:
-
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
-"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.14.0 || 17 || 18", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || 17.x", react@^18, react@^18.0.0, react@^18.2.0, react@^18.3.1, "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.13.1, react@17.0.2:
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-react@^18:
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
-
-react@^18:
-
->>>>>>> 6c4f0f0 (feat: 성인인증)
-=======
-"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.14.0 || 17 || 18", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || 17.x", react@^18, react@^18.0.0, react@^18.2.0, react@^18.3.1, "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.13.1, react@17.0.2:
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
-react@^18:
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-react@^18:
-
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
-"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.14.0 || 17 || 18", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || 17.x", react@^18, react@^18.0.0, react@^18.2.0, react@^18.3.1, "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.13.1, react@17.0.2:
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-react@^18:
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-
-react@^18:
-
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
-"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.14.0 || 17 || 18", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || 17.x", react@^18, react@^18.0.0, react@^18.2.0, react@^18.3.1, "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.13.1, react@17.0.2:
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
-react@^18:
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-=======
-
-react@^18:
-
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
   version "18.3.1"
   resolved "https://registry.npmjs.org/react/-/react-18.3.1.tgz"
   integrity sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==
@@ -3510,95 +2364,7 @@ recoil-persist@^5.1.0:
   resolved "https://registry.npmjs.org/recoil-persist/-/recoil-persist-5.1.0.tgz"
   integrity sha512-sew4k3uBVJjRWKCSFuBw07Y1p1pBOb0UxLJPxn4G2bX/9xNj+r2xlqYy/BRfyofR/ANfqBU04MIvulppU4ZC0w==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 recoil@^0.7.7:
-=======
-recoil@^0.7.2, recoil@^0.7.7:
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-recoil@^0.7.7:
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
-
-recoil@^0.7.7:
-
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-recoil@^0.7.2, recoil@^0.7.7:
->>>>>>> 617a99e (feat: 성인인증)
-=======
-recoil@^0.7.7:
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-=======
-
-recoil@^0.7.7:
-
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-recoil@^0.7.2, recoil@^0.7.7:
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
-recoil@^0.7.7:
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-recoil@^0.7.7:
-
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-recoil@^0.7.2, recoil@^0.7.7:
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
-recoil@^0.7.7:
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
-
-recoil@^0.7.7:
-
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-recoil@^0.7.2, recoil@^0.7.7:
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
-recoil@^0.7.7:
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-recoil@^0.7.7:
-
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-recoil@^0.7.2, recoil@^0.7.7:
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
-recoil@^0.7.7:
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-recoil@^0.7.7:
-
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-=======
-recoil@^0.7.2, recoil@^0.7.7:
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
   version "0.7.7"
   resolved "https://registry.npmjs.org/recoil/-/recoil-0.7.7.tgz"
   integrity sha512-8Og5KPQW9LwC577Vc7Ug2P0vQshkv1y3zG3tSSkWMqkWSwHmE+by06L8JtnGocjW6gcCvfwB3YtrJG6/tWivNQ==
@@ -3784,7 +2550,7 @@ slash@^3.0.0:
 
 slick-carousel@^1.8.1:
   version "1.8.1"
-  resolved "https://registry.npmjs.org/slick-carousel/-/slick-carousel-1.8.1.tgz"
+  resolved "https://registry.yarnpkg.com/slick-carousel/-/slick-carousel-1.8.1.tgz#a4bfb29014887bb66ce528b90bd0cda262cc8f8d"
   integrity sha512-XB9Ftrf2EEKfzoQXt3Nitrt/IPbT+f1fgqBdoxO3W/+JYvtEOW6EgxnWfr9GH6nmULv7Y2tPmEX3koxThVmebA==
 
 source-map-js@^1.0.2, source-map-js@^1.2.0:
@@ -3797,134 +2563,14 @@ streamsearch@^1.1.0:
   resolved "https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz"
   integrity sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
-=======
-
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-"string-width-cjs@npm:string-width@^4.2.0":
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-  version "4.2.3"
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
-=======
 string-convert@^0.2.0:
   version "0.2.1"
   resolved "https://registry.npmjs.org/string-convert/-/string-convert-0.2.1.tgz"
   integrity sha512-u/1tdPl4yQnPBjnVrmdLo9gtuLvELKsAoRapekWggdiQNvvvum+jYF329d84NAa660KQw7pB2n36KrIKVoXa3A==
-=======
->>>>>>> ecc1c39 (feat: 성인인증)
 
-=======
->>>>>>> 478161c (feat: 바텀시트 UI)
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-"string-width-cjs@npm:string-width@^4.2.0":
-=======
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-  version "4.2.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
-=======
-
-=======
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-"string-width-cjs@npm:string-width@^4.2.0":
-  version "4.2.3"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
->>>>>>> 617a99e (feat: 성인인증)
-=======
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
-=======
-
-"string-width-cjs@npm:string-width@^4.2.0":
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
-  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
-  dependencies:
-    emoji-regex "^8.0.0"
-    is-fullwidth-code-point "^3.0.0"
-    strip-ansi "^6.0.1"
-
-string-width@^4.1.0:
-
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
-  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
-  dependencies:
-    emoji-regex "^8.0.0"
-    is-fullwidth-code-point "^3.0.0"
-    strip-ansi "^6.0.1"
-
-string-width@^4.1.0:
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-"string-width-cjs@npm:string-width@^4.2.0":
-=======
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
->>>>>>> 6c4f0f0 (feat: 성인인증)
-=======
 "string-width-cjs@npm:string-width@^4.2.0":
   version "4.2.3"
   resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
->>>>>>> 494a9df (feat: 바텀시트 UI)
-=======
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
-=======
-
-"string-width-cjs@npm:string-width@^4.2.0":
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
-=======
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
-=======
-
-"string-width-cjs@npm:string-width@^4.2.0":
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
-  version "4.2.3"
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
->>>>>>> 950f7a0 (feat: 성인인증)
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
   dependencies:
     emoji-regex "^8.0.0"
@@ -3933,51 +2579,7 @@ string-width@^4.1.0:
 
 string-width@^4.1.0:
   version "4.2.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
   resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
->>>>>>> 950f7a0 (feat: 성인인증)
-  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
-  dependencies:
-    emoji-regex "^8.0.0"
-    is-fullwidth-code-point "^3.0.0"
-    strip-ansi "^6.0.1"
-
-string-width@^4.1.0:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
->>>>>>> 45b476d (feat: 바텀시트 UI)
-  version "4.2.3"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
->>>>>>> 617a99e (feat: 성인인증)
-=======
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-
-=======
->>>>>>> 494a9df (feat: 바텀시트 UI)
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
->>>>>>> 6c4f0f0 (feat: 성인인증)
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
   dependencies:
     emoji-regex "^8.0.0"
@@ -4039,182 +2641,20 @@ string.prototype.trimstart@^1.0.8:
     define-properties "^1.2.1"
     es-object-atoms "^1.0.0"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-=======
 "strip-ansi-cjs@npm:strip-ansi@^6.0.1":
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-
-=======
->>>>>>> 617a99e (feat: 성인인증)
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-
-=======
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-
-=======
->>>>>>> 45b476d (feat: 바텀시트 UI)
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-
-=======
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-
-=======
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
-
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-
-=======
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
   version "6.0.1"
   resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
   dependencies:
     ansi-regex "^5.0.1"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-=======
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
->>>>>>> 478161c (feat: 바텀시트 UI)
   version "6.0.1"
   resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
-=======
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-=======
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-  version "6.0.1"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-  resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
->>>>>>> 617a99e (feat: 성인인증)
-=======
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-=======
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
->>>>>>> 494a9df (feat: 바텀시트 UI)
-  version "6.0.1"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-  resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
->>>>>>> 6c4f0f0 (feat: 성인인증)
-=======
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
   dependencies:
     ansi-regex "^5.0.1"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 5057af5 (feat: 성인인증)
-=======
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-=======
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
 strip-ansi@^7.0.1:
   version "7.1.0"
   resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-7.1.0.tgz"
@@ -4274,116 +2714,10 @@ tailwind-scrollbar-hide@^1.1.7:
   resolved "https://registry.npmjs.org/tailwind-scrollbar-hide/-/tailwind-scrollbar-hide-1.1.7.tgz"
   integrity sha512-X324n9OtpTmOMqEgDUEA/RgLrNfBF/jwJdctaPZDzB3mppxJk7TLIDmOreEDm1Bq4R9LSPu4Epf8VSdovNU+iA==
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 tailwindcss@^3.4.1:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-tailwindcss@^3.4.1, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1":
->>>>>>> 73217cf (feat : 상세페이지 이미지, 동영상 연동)
-=======
-tailwindcss@^3.4.1:
->>>>>>> 478161c (feat: 바텀시트 UI)
   version "3.4.3"
   resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.3.tgz"
   integrity sha512-U7sxQk/n397Bmx4JHbJx/iSOOv5G+II3f1kpLpY2QeUv5DcPdcTsYLlusZfq1NthHS1c1cZoyFmmkex1rzke0A==
-=======
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.6.tgz#41faae16607e0916da1eaa4a3b44053457ba70dd"
-  integrity sha512-1uRHzPB+Vzu57ocybfZ4jh5Q3SdlH7XW23J5sQoM9LhE9eIOlzxer/3XPSsycvih3rboRsvt0QCmzSrqyOYUIA==
->>>>>>> 4a40537 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-tailwindcss@^3.4.1, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1":
-=======
-tailwindcss@^3.4.1:
->>>>>>> 9c76a0e (feat: 바텀시트 UI)
-  version "3.4.3"
-  resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.3.tgz"
-  integrity sha512-U7sxQk/n397Bmx4JHbJx/iSOOv5G+II3f1kpLpY2QeUv5DcPdcTsYLlusZfq1NthHS1c1cZoyFmmkex1rzke0A==
->>>>>>> 617a99e (feat: 성인인증)
-=======
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.6.tgz#41faae16607e0916da1eaa4a3b44053457ba70dd"
-  integrity sha512-1uRHzPB+Vzu57ocybfZ4jh5Q3SdlH7XW23J5sQoM9LhE9eIOlzxer/3XPSsycvih3rboRsvt0QCmzSrqyOYUIA==
->>>>>>> d904630 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-tailwindcss@^3.4.1, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1":
-=======
-tailwindcss@^3.4.1:
->>>>>>> 042eb99 (feat : 상세페이지 이미지, 동영상 연동)
-  version "3.4.3"
-  resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.3.tgz"
-  integrity sha512-U7sxQk/n397Bmx4JHbJx/iSOOv5G+II3f1kpLpY2QeUv5DcPdcTsYLlusZfq1NthHS1c1cZoyFmmkex1rzke0A==
->>>>>>> a640cc3 (feat: 바텀시트 UI)
-=======
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.6.tgz#41faae16607e0916da1eaa4a3b44053457ba70dd"
-  integrity sha512-1uRHzPB+Vzu57ocybfZ4jh5Q3SdlH7XW23J5sQoM9LhE9eIOlzxer/3XPSsycvih3rboRsvt0QCmzSrqyOYUIA==
->>>>>>> 5057af5 (feat: 성인인증)
-=======
-tailwindcss@^3.4.1, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1":
-=======
-tailwindcss@^3.4.1:
->>>>>>> 494a9df (feat: 바텀시트 UI)
-  version "3.4.3"
-  resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.3.tgz"
-  integrity sha512-U7sxQk/n397Bmx4JHbJx/iSOOv5G+II3f1kpLpY2QeUv5DcPdcTsYLlusZfq1NthHS1c1cZoyFmmkex1rzke0A==
->>>>>>> 45b476d (feat: 바텀시트 UI)
-=======
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.6.tgz#41faae16607e0916da1eaa4a3b44053457ba70dd"
-  integrity sha512-1uRHzPB+Vzu57ocybfZ4jh5Q3SdlH7XW23J5sQoM9LhE9eIOlzxer/3XPSsycvih3rboRsvt0QCmzSrqyOYUIA==
->>>>>>> 9754120 (feat : 상세페이지 이미지, 동영상 연동)
-=======
-tailwindcss@^3.4.1, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1":
-=======
-tailwindcss@^3.4.1:
->>>>>>> 4c58980 (feat : 상세페이지 이미지, 동영상 연동)
-  version "3.4.3"
-  resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.3.tgz"
-  integrity sha512-U7sxQk/n397Bmx4JHbJx/iSOOv5G+II3f1kpLpY2QeUv5DcPdcTsYLlusZfq1NthHS1c1cZoyFmmkex1rzke0A==
->>>>>>> 0f3d5bc (feat: 바텀시트 UI)
-=======
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.6.tgz#41faae16607e0916da1eaa4a3b44053457ba70dd"
-  integrity sha512-1uRHzPB+Vzu57ocybfZ4jh5Q3SdlH7XW23J5sQoM9LhE9eIOlzxer/3XPSsycvih3rboRsvt0QCmzSrqyOYUIA==
->>>>>>> 950f7a0 (feat: 성인인증)
-=======
-tailwindcss@^3.4.1, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1":
-=======
-tailwindcss@^3.4.1:
->>>>>>> abe40aa (feat : 상세페이지 이미지, 동영상 연동)
-  version "3.4.3"
-  resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.3.tgz"
-  integrity sha512-U7sxQk/n397Bmx4JHbJx/iSOOv5G+II3f1kpLpY2QeUv5DcPdcTsYLlusZfq1NthHS1c1cZoyFmmkex1rzke0A==
->>>>>>> 42c8520 (feat: 바텀시트 UI)
-=======
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.6.tgz#41faae16607e0916da1eaa4a3b44053457ba70dd"
-  integrity sha512-1uRHzPB+Vzu57ocybfZ4jh5Q3SdlH7XW23J5sQoM9LhE9eIOlzxer/3XPSsycvih3rboRsvt0QCmzSrqyOYUIA==
->>>>>>> 583fbc3 (feat: 바텀시트 UI)
-=======
-tailwindcss@^3.4.1, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1":
-  version "3.4.3"
-  resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.3.tgz"
-  integrity sha512-U7sxQk/n397Bmx4JHbJx/iSOOv5G+II3f1kpLpY2QeUv5DcPdcTsYLlusZfq1NthHS1c1cZoyFmmkex1rzke0A==
->>>>>>> ee8a58c (feat : 상세페이지 이미지, 동영상 연동)
   dependencies:
     "@alloc/quick-lru" "^5.2.0"
     arg "^5.0.2"
@@ -4520,7 +2854,7 @@ typed-array-length@^1.0.6:
     is-typed-array "^1.1.13"
     possible-typed-array-names "^1.0.0"
 
-typescript@^5, typescript@>=3.3.1, typescript@>=4.2.0:
+typescript@^5:
   version "5.4.5"
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.4.5.tgz"
   integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
@@ -4661,7 +2995,7 @@ wrappy@1:
   resolved "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-xstate@^4.11.0, xstate@^4.15.1:
+xstate@^4.15.1:
   version "4.38.3"
   resolved "https://registry.npmjs.org/xstate/-/xstate-4.38.3.tgz"
   integrity sha512-SH7nAaaPQx57dx6qvfcIgqKRXIh4L0A1iYEqim4s1u7c9VoCgzZc+63FY90AKU4ZzOC2cfJzTnpO4zK7fCUzzw==

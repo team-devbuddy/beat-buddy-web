@@ -34,7 +34,7 @@ export default function History({ data }: HistoryProps) {
       case 'SOUL&FUNK':
         return '/images/onBoarding/background/onboarding-8.png';
       default:
-        return '/images/onBoarding/background/default.png'; // 기본 이미지
+        return '/images/DefaultImage.png'; // 기본 이미지
     }
   };
 
