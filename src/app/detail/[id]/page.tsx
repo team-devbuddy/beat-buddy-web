@@ -10,10 +10,10 @@ import CustomerService from '@/components/units/Detail/CustomerService';
 import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-import { ClubProps, Venue, VenueHoursProps } from '@/lib/types';
+import { Club, ClubProps } from '@/lib/types';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
-  const [venue, setVenue] = useState<Venue | null>(null);
+  const [venue, setVenue] = useState<Club | null>(null);
   const [isHeartbeat, setIsHeartbeat] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const accessToken = useRecoilValue(accessTokenState);
@@ -56,7 +56,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   }
 
   // 요일별로 운영 시간 분리
-  const operationHours = parseOperationHours(venue.operationHours);
+  const operationHours = parseOperationHours(venue.operationHours || '');
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
@@ -70,8 +70,8 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   );
 };
 
-// 요일별 운영 시간을 파싱하는 함수 -> 실패 우울..
-const parseOperationHours = (operationHoursString: string) => {
+// 요일별 운영 시간을 파싱하는 함수
+const parseOperationHours = (operationHoursString: string): { [key: string]: string } => {
   const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
   const operationHours: { [key: string]: string } = {
     월: '운영하지 않음',

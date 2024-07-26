@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { ClubProps } from '@/lib/types';
 
-const Info = ({ venue }: ClubProps) => {
+const Info = ({ venue, isHeartbeat }: ClubProps) => {
   const [showMessage, setShowMessage] = useState(false);
 
   const handleCopyToClipboard = (text: string) => {
@@ -22,14 +22,14 @@ const Info = ({ venue }: ClubProps) => {
   };
 
   const handleInstagramClick = () => {
-    const instaDetails = venue.insta.split('*'); //인스타는 * 로 구분하기로 수정
+    const instaDetails = venue.insta ? venue.insta.split('*') : [];
     const instaUrl = instaDetails.length > 1 ? instaDetails[1] : null; // URL 추출
     if (instaUrl) {
       window.open(instaUrl, '_blank'); // 새 창에서 열기
     }
   };
 
-  const instaDetails = venue.insta.split('\n');
+  const instaDetails = venue.insta ? venue.insta.split('\n') : [];
   const instaName = instaDetails.length > 0 ? instaDetails[0] : 'Instagram'; // 인스타아이디 추출
 
   return (
