@@ -2,29 +2,29 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { PostMood, PostArchive } from '@/lib/action'; // 경로를 적절히 수정하세요.
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { accessTokenState, memberGenreIdState, memberMoodIdState } from '@/context/recoil-context';
 
 const moodMap: { [key: string]: string } = {
-  신나는: 'EXCITING',
-  힙한: 'HIP',
-  펑키한: 'FUNKY',
-  칠한: 'CHILLY',
-  이국적인: 'EXOTIC',
-  트렌디한: 'TRENDY',
-  트로피컬한: 'TROPICAL',
-  다크한: 'DARK',
+  펍: 'PUB',
+  클럽: 'CLUB',
+  딥한: 'DEEP',
+  칠한: 'CHILL',
+  가벼운: 'LIGHT',
+  헌팅: 'HUNTING',
+  외래의: 'EXOTIC',
+  루프탑: 'ROOFTOP',
 };
 
 const moodImages: { [key: string]: string } = {
-  신나는: '/images/onBoarding/background/onboarding-3.png',
-  힙한: '/images/onBoarding/background/onboarding-7.png',
-  펑키한: '/images/onBoarding/background/onboarding-1.png',
+  펍: '/images/onBoarding/background/onboarding-3.png',
+  클럽: '/images/onBoarding/background/onboarding-7.png',
+  딥한: '/images/onBoarding/background/onboarding-1.png',
   칠한: '/images/onBoarding/background/onboarding-5.png',
-  이국적인: '/images/onBoarding/background/onboarding-2.png',
-  트렌디한: '/images/onBoarding/background/onboarding-6.png',
-  트로피컬한: '/images/onBoarding/background/onboarding-4.png',
-  다크한: '/images/onBoarding/background/onboarding-8.png',
+  가벼운: '/images/onBoarding/background/onboarding-2.png',
+  헌팅: '/images/onBoarding/background/onboarding-6.png',
+  외래의: '/images/onBoarding/background/onboarding-4.png',
+  루프탑: '/images/onBoarding/background/onboarding-8.png',
 };
 
 const moods = Object.keys(moodMap);
@@ -34,7 +34,7 @@ export default function OnBoardingMood() {
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
   const memberGenreId = useRecoilValue(memberGenreIdState);
-  const setMemberMoodId = useSetRecoilState(memberMoodIdState);
+  const [memberMoodId, setMemberMoodId] = useRecoilState(memberMoodIdState);
 
   const toggleMood = (mood: string) => {
     setSelectedMoods((prevSelected) =>
@@ -50,12 +50,16 @@ export default function OnBoardingMood() {
 
     try {
       const response = await PostMood(access, { moodPreferences: moodData });
-      const result = await response.json();
-      setMemberMoodId(result.vectorId);
+      if (response.ok) {
+        const result = await response.json();
+        setMemberMoodId(result.vectorId);
+      }
 
-      if (memberGenreId !== null && result.vectorId !== null) {
-        await PostArchive(access, { memberGenreId, memberMoodId: result.vectorId });
-        router.push('/onBoarding/myTaste/location');
+      if (memberGenreId !== null && memberMoodId !== null) {
+        const response = await PostArchive(access, { memberGenreId, memberMoodId: memberMoodId });
+        if (response.ok) {
+          router.push('/onBoarding/myTaste/location');
+        }
       } else {
         console.error('Error: memberGenreId or memberMoodId is null');
       }

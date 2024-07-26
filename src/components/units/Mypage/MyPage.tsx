@@ -6,11 +6,12 @@ import { useEffect, useState } from 'react';
 import { GetHistory, GetMyHeartbeat, GetNickname } from '@/lib/action';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
+import { HeartBeat, HeartbeatProps } from '@/lib/types';
 
 export default function MyPageComponent() {
   const access = useRecoilValue(accessTokenState) || '';
   const [nickname, setNickname] = useState('');
-  const [heartBeat, setHeartBeat] = useState([]);
+  const [heartBeat, setHeartBeat] = useState<HeartBeat[]>([]);
   const [history, setHistory] = useState([]);
 
   // 사용자 닉네임 조회 & 나의 하트비트 조회
@@ -60,16 +61,19 @@ export default function MyPageComponent() {
 
         {/* My Heart Beat Icon*/}
         <div className="my-6 flex gap-3 overflow-x-auto px-4 hide-scrollbar">
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
-          <div className="h-14 w-14 flex-shrink-0 rounded-full border border-white bg-black"></div>
+          {heartBeat.map((data, index) => (
+            <Link key={index} href={`/detail/${data.venueId}`}>
+              <div className="relative h-14 w-14 flex-shrink-0 rounded-full">
+                <Image
+                  src={data?.logoUrl}
+                  alt="icon"
+                  layout="fill"
+                  objectFit="cover"
+                  className="cursor-pointer rounded-full"
+                />
+              </div>
+            </Link>
+          ))}
         </div>
 
         {/* History */}

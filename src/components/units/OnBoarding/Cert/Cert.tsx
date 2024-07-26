@@ -54,7 +54,7 @@ export default function Cert() {
 
       if (certResponse.ok) {
         alert('본인인증 성공하였습니다.');
-        router.push('/onBoarding');
+        router.push('/onBoarding/cert/complete');
       }
     } else {
       alert(`본인인증 실패: ${error_msg}`);
