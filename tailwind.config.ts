@@ -161,18 +161,8 @@ const config: Config = {
             lineHeight: '2.0625rem',
             fontWeight: '500',
             letterSpacing: '-0.0275rem',
-<<<<<<< HEAD
-<<<<<<< HEAD
           },
         ],
-=======
-          }
-        ]
->>>>>>> 1338629 (feat : heartbeat 컴포넌트)
-=======
-          },
-        ],
->>>>>>> 7ec0b29 (feat : 하트비트 모달.. 지도버튼..ㅋ (하트비트로직은수정필요ㅠㅠ))
       },
     },
   },

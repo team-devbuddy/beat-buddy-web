@@ -42,17 +42,8 @@ export const likedClubsState = atom<{ [key: number]: boolean }>({
 export const heartbeatsState = atom<HeartbeatProps[]>({
   key: 'heartbeatsState',
   default: [],
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> f9b3c09 (feat : main 좋아요 기능)
 });
 export const heartbeatNumsState = atom<{ [key: number]: number }>({
   key: 'heartbeatNumsState',
   default: {},
-<<<<<<< HEAD
-=======
->>>>>>> e457542 (feat : hearbeat 연동.. searchbar 연동..)
-=======
->>>>>>> f9b3c09 (feat : main 좋아요 기능)
 });
