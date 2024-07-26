@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { HeartbeatProps } from "@/lib/types";
 export async function getMyHearts(accessToken: string): Promise<HeartbeatProps[]> {
 =======
@@ -42,6 +43,10 @@ export async function getMyHearts(accessToken: string): Promise<HeartbeatProps[]
 =======
 import { HeartbeatProps } from '@/lib/types';
 export async function getMyHearts(accessToken: string): Promise<HeartbeatProps[]> {
+=======
+import { HeartbeatProps } from '@/lib/types';
+export async function getMyHearts(accessToken: string): Promise<HeartbeatProps[]> {
+>>>>>>> Shunamo
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/heartbeat/all`, {
     method: 'GET',
     headers: {
@@ -52,7 +57,10 @@ export async function getMyHearts(accessToken: string): Promise<HeartbeatProps[]
 
   if (!response.ok) {
     throw new Error('Failed to fetch heartbeats');
+<<<<<<< HEAD
 >>>>>>> 23a499b (feat : 홈화면 베뉴 연동 끝)
+=======
+>>>>>>> Shunamo
   }
 
   const data = await response.json();

@@ -40,7 +40,7 @@ export default function HotClubsList() {
   }
 
   return (
-    <div className="pb-[2.5rem] px-[1rem] text-gray100">
+    <div className="pb-[2.5rem] px-[1rem] bg-BG-black text-gray100">
       <div className="border-t-[1px] border-gray500 pt-[2rem]">
         <div className="flex items-end justify-start gap-[0.5rem]">
           <h2 className="font-queensides text-now-hot text-main2">NOW HOT</h2>

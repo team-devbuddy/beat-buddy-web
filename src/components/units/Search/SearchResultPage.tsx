@@ -29,7 +29,6 @@ const SearchResultsPage = () => {
 
     try {
       const data = await fetchVenues(query, accessToken);
-      console.log('Fetched Clubs:', data);
       setFilteredClubs(data);
     } catch (error: any) {
       console.error('Failed to fetch search results:', error.message);

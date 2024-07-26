@@ -7,16 +7,18 @@ import { accessTokenState, authState } from '@/context/recoil-context';
 
 const locationMap: { [key: string]: string } = {
   홍대: 'HONGDAE',
-  이태원: 'ITAEWON',
-  신사: 'SINSA',
   압구정: 'APGUJEONG',
+  이태원: 'ITAEWON',
+  '강남-신사': 'GANGNAM/SINSA',
+  기타: 'OTHERS',
 };
 
 const locationImages: { [key: string]: string } = {
   홍대: '/images/onboarding/background/onboarding-4.png',
-  이태원: '/images/onboarding/background/onboarding-2.png',
-  신사: '/images/onboarding/background/onboarding-5.png',
-  압구정: '/images/onboarding/background/onboarding-7.png',
+  압구정: '/images/onboarding/background/onboarding-2.png',
+  이태원: '/images/onboarding/background/onboarding-5.png',
+  '강남-신사': '/images/onboarding/background/onboarding-7.png',
+  기타: '/images/onboarding/background/onboarding-9.png',
 };
 
 const locations = Object.keys(locationMap);
