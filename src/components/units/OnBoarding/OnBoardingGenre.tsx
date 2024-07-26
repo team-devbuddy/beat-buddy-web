@@ -8,20 +8,28 @@ import { accessTokenState, memberGenreIdState } from '@/context/recoil-context';
 export default function OnBoardingGenre() {
   const genreMap: { [key: string]: string } = {
     EDM: 'EDM',
-    '힙합_R&B': 'HIPHOP_R&B',
+    힙합: 'HIPHOP',
     하우스: 'HOUSE',
-    'Soul & Funk': 'SOUL&FUNK',
+    '소울 & 펑크': 'SOUL&FUNK',
     테크노: 'TECHNO',
     'K-POP': 'K-POP',
+    팝: 'POP',
+    라틴: 'LATIN',
+    'R&B': 'R&B',
+    락: 'ROCK',
   };
 
   const genreImages: { [key: string]: string } = {
     EDM: '/images/onboarding/background/onboarding-1.png',
-    '힙합_R&B': '/images/onboarding/background/onboarding-2.png',
+    힙합: '/images/onboarding/background/onboarding-2.png',
     하우스: '/images/onboarding/background/onboarding-3.png',
-    'Soul & Funk': '/images/onboarding/background/onboarding-4.png',
+    '소울 & 펑크': '/images/onboarding/background/onboarding-4.png',
     테크노: '/images/onboarding/background/onboarding-5.png',
     'K-POP': '/images/onboarding/background/onboarding-6.png',
+    팝: '/images/onboarding/background/onboarding-7.png',
+    라틴: '/images/onboarding/background/onboarding-8.png',
+    'R&B': '/images/onboarding/background/onboarding-9.png',
+    락: '/images/onboarding/background/onboarding-10.png',
   };
 
   const genres = Object.keys(genreMap);
