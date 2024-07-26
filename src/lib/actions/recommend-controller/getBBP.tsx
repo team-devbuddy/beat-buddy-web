@@ -1,5 +1,5 @@
 export async function getBBP(accessToken: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/recommend/bb-pick`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/recommend/mood`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

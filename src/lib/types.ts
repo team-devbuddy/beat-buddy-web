@@ -1,4 +1,3 @@
-// 온보딩 - 이용약관
 export interface Term {
   id: number;
   label: string;
@@ -7,27 +6,25 @@ export interface Term {
 }
 
 export interface Club {
-  id: number;
-  name: string;
-  location: string;
-  tags: string[];
+  venueId: number;
+  englishName: string;
+  koreanName: string;
+  location?: string;
+  tagList: string[];
   logoUrl: string;
-  likes: number;
-  address: string;
-  phone: string;
-  insta: string;
-  website: string;
-  operationHours: { [day: string]: string };
-  backgroundUrl: string[];
+  address?: string;
+  phone?: string;
+  insta?: string;
+  website?: string;
+  operationHours?:  string ;
+  backgroundUrl?: string[];
+  heartbeatNum: number;
+  description?: string | null;
 }
-export interface Club extends HotChartProps {
-  id: number;
-  name: string;
-  logoUrl: string;
-  tags: string[];
-  likes: number;
+export interface ClubProps {
+  venue: Club;
+  isHeartbeat: boolean;
 }
-
 
 export interface VenueHoursProps {
   hours: { [day: string]: string };
@@ -37,27 +34,24 @@ export interface HotVenuesProps {
   title?: string;
   description?: string;
 }
+
 export interface SearchHeaderProps {
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface SearchResultsProps {
-  filteredClubs: HotChartProps[];
+  filteredClubs: Club[];
 }
+
 export interface RecentTermProps {
   addSearchTerm: (term: string) => void;
 }
 
-//구글맵
+// 구글맵
 export interface GoogleMapProps {
-  addresses: string[]; // 여러 주소를 받기 위해 배열로 수정
-  minHeight?: string; // minHeight prop 추가
-}
-
-export interface HotVenuesProps {
-  title?: string;
-  description?: string;
+  addresses: string[];
+  minHeight?: string;
 }
 
 export interface DropdownProps {
@@ -66,52 +60,20 @@ export interface DropdownProps {
   setSelectedOption: (option: string) => void;
   label: string;
 }
-export interface HotChartProps {
-  heartbeatNum: number;
-  tagList: any;
-  venueId: number;
-  englishName: string;
-  koreanName: string;
-}
-export interface BBPProps {
+
+export interface HeartbeatProps {
   venueId: number;
   englishName: string;
   koreanName: string;
   tagList: string[];
   heartbeatNum: number;
-}
-
-export interface HeartbeatProps {
-  heartbeatNum: number;
-  venueId: number;
-  venueName: string;
-  venueImageUrl: string;
-
-  liked: boolean;
+  logoUrl: string;
+  isHeartbeat: boolean;
+  backgroundUrl?: string[];
 }
 
 // 아카이브(히스토리) 페이지
 export interface ArchiveHistoryProps {
   preferenceList: string[];
   updatedAt: string;
-}
-export interface Venue {
-  createdAt: string;
-  updatedAt: string;
-  venueId: number;
-  englishName: string;
-  koreanName: string;
-  region: string;
-  description: string | null;
-  address: string;
-  insta: string;
-  operationHours: string;
-  logoUrl: string;
-  backgroundUrl: string[];
-  heartbeatNum: number;
-}
-
-export interface ClubProps {
-  venue: Venue;
-  isHeartbeat: boolean;
 }

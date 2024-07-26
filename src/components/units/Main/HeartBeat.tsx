@@ -63,8 +63,8 @@ function Heartbeat() {
             <Link key={heartbeat.venueId} href={`/detail/${heartbeat.venueId}`}>
               <div className="relative h-16 w-16 cursor-pointer">
                 <Image
-                  src={heartbeat.venueImageUrl || '/images/DefaultImage.png'}
-                  alt={`${heartbeat.venueName} image`}
+                  src={heartbeat.logoUrl || '/images/DefaultImage.png'}
+                  alt={`${heartbeat.koreanName} image`}
                   layout="fill"
                   objectFit="cover"
                   className="rounded-full"

@@ -5,17 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
-import { Venue } from '@/lib/types';
+import { ClubProps } from '@/lib/types';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-interface PreviewProps {
-  venue: Venue;
-  isHeartbeat: boolean;
-}
-
-const Preview = ({ venue, isHeartbeat }: PreviewProps) => {
+const Preview = ({ venue, isHeartbeat }: ClubProps) => {
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
@@ -33,7 +28,7 @@ const Preview = ({ venue, isHeartbeat }: PreviewProps) => {
             return defaultImage;
           }
         })
-      : [defaultImage];
+      : [venue.logoUrl || defaultImage];
 
   useEffect(() => {
     // 초기 좋아요 상태 설정
@@ -124,7 +119,7 @@ const Preview = ({ venue, isHeartbeat }: PreviewProps) => {
       <div className="absolute bottom-0 z-20 flex flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
         <h1 className="text-title-24-bold">{venue.englishName}</h1>
         <div className="flex space-x-[0.5rem]">
-          {/* venue.tags.map((tag: string, index: number) => (
+          {/* venue.tagList.map((tag: string, index: number) => (
             <span
               key={index}
               className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
