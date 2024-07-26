@@ -77,3 +77,15 @@ export interface ArchiveHistoryProps {
   preferenceList: string[];
   updatedAt: string;
 }
+
+// 나의 하트비트
+export interface HeartBeat {
+  venueId: number;
+  englishName: string;
+  koreanName: string;
+  tagList: string[];
+  heartbeatNum: number;
+  logoUrl: string;
+  backgroundUrl: string[];
+  isHeartbeat: boolean;
+}
