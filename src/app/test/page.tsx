@@ -1,6 +1,6 @@
 'use client';
 
-import BottomSheetComponent from '@/components/common/BottomSheet';
+import BottomSheetComponent from '@/components/units/Search/Map/BottomSheet';
 import GoogleMap from '@/components/common/GoogleMap';
 import { useRef, useEffect } from 'react';
 import { BottomSheet } from 'react-spring-bottom-sheet';
@@ -15,7 +15,7 @@ export default function TestPage() {
       sheetRef.current.snapTo(({ maxHeight }) => maxHeight);
     } else {
       console.error('BottomSheet ref is null');
-    } 
+    }
   };
 
   useEffect(() => {
@@ -32,8 +32,7 @@ export default function TestPage() {
         <GoogleMap addresses={['서울특별시 강남구 테헤란로 521', '서울특별시 강남구 테헤란로 400']} minHeight="44rem" />
         <p className="text-white">경계</p>
       </div>
-
-      <BottomSheetComponent />
+      {/*<BottomSheetComponent />*/}
     </div>
   );
 }

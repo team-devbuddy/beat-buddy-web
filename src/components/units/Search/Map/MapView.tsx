@@ -1,6 +1,6 @@
-'use client'
+'use client';
 import { SearchResultsProps } from '@/lib/types';
-import BottomSheetComponent from '@/components/common/BottomSheet';
+import BottomSheetComponent from './BottomSheet';
 import GoogleMap from '@/components/common/GoogleMap';
 import { useRef, useEffect } from 'react';
 import { BottomSheet } from 'react-spring-bottom-sheet';
@@ -27,13 +27,14 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   }, [sheetRef]);
 
   // address가 undefined가 아닌 클럽만 필터링
-  const validAddresses = filteredClubs.map(club => club.address).filter(address => address !== undefined) as string[];
+  const validAddresses = filteredClubs
+    .map((club) => club.address)
+    .filter((address) => address !== undefined) as string[];
 
   return (
     <div className="flex min-h-screen w-full flex-col justify-between bg-white">
-      <div className="">
+      <div className="bg-[#131415]">
         <GoogleMap addresses={validAddresses} minHeight="44rem" />
-        <p className="text-white">경계</p>
       </div>
 
       <BottomSheetComponent filteredClubs={filteredClubs} />
