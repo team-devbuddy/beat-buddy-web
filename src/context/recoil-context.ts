@@ -1,4 +1,3 @@
-// recoil-context.ts
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 import { HeartbeatProps } from '@/lib/types';
@@ -16,7 +15,6 @@ export const authState = atom<boolean>({
   effects_UNSTABLE: [persistAtom],
 });
 
-
 // 아카이브
 export const memberGenreIdState = atom<number | null>({
   key: 'memberGenreIdState',
@@ -31,11 +29,6 @@ export const memberMoodIdState = atom<number | null>({
 export const searchQueryState = atom<string>({
   key: 'searchQueryState',
   default: '',
-});
-
-export const recentSearchState = atom<string[]>({
-  key: 'recentSearchState',
-  default: [],
 });
 
 //하트
@@ -56,4 +49,9 @@ export const heartbeatNumsState = atom<{ [key: number]: number }>({
 export const isMapViewState = atom<boolean>({
   key: 'isMapViewState',
   default: false,
+});
+export const recentSearchState = atom<string[]>({
+  key: 'recentSearchState',
+  default: [],
+  effects_UNSTABLE: [persistAtom], 
 });

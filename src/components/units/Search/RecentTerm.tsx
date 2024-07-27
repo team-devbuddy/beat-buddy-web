@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRecoilState } from 'recoil';
 import { recentSearchState } from '@/context/recoil-context';
-import { removeSearchTerm as removeSearch } from '@/lib/utils/storage';
+import { removeSearchTerm } from '@/lib/utils/storage';
 
 const RecentTerm = () => {
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
@@ -15,14 +15,14 @@ const RecentTerm = () => {
   };
 
   const handleRemoveSearchTerm = (term: string) => {
-    removeSearch(term);
+    removeSearchTerm(term);
     setRecentSearches((prevSearches) => prevSearches.filter((search) => search !== term));
   };
 
   return (
     <div className="flex w-full bg-main pb-[0.75rem] pl-[1rem] pt-[0.25rem]">
-      <div className="flex items-center gap-[0.5rem] overflow-x-auto whitespace-nowrap px-[0.25rem] scrollbar-hide min-h-[1.9375rem]"> {/*이게맞나?*/}
-        <h3 className="flex-shrink-0  text-body3-12-bold text-sub1">최근 검색어</h3>
+      <div className="flex min-h-[1.9375rem] items-center gap-[0.5rem] overflow-x-auto whitespace-nowrap px-[0.25rem] scrollbar-hide">
+        <h3 className="flex-shrink-0 text-body3-12-bold text-sub1">최근 검색어</h3>
         {recentSearches.map((search, index) => (
           <div
             key={index}
