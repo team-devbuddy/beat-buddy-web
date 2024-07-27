@@ -58,7 +58,7 @@ export default function TrendBar() {
   const rankIcons = ['/icons/Rank_1.svg', '/icons/Rank_2.svg', '/icons/Rank_3.svg'];
 
   return (
-    <div className="relative flex w-full bg-main flex-col h-[2.81rem]">
+    <div className="relative flex w-full bg-main flex-col h-[2.92rem]">
       <AnimatePresence>
         {trends.length > 0 && (
           <motion.div
@@ -70,7 +70,7 @@ export default function TrendBar() {
             className="absolute inset-0 flex items-center justify-between"
           >
             <div 
-              className="relative w-full flex mx-[1rem] mb-[0.5rem] items-center space-x-2 cursor-pointer" 
+              className="relative w-full flex mx-[1rem] pb-[1rem] pt-[0.5rem] items-center space-x-2 cursor-pointer" 
               onClick={() => handleTrendClick(trends[currentTrendIndex].rankKeyword)}
             >
               <Image
