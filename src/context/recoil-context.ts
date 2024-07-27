@@ -28,6 +28,11 @@ export const memberMoodIdState = atom<number | null>({
   default: null,
 });
 
+export const searchQueryState = atom<string>({
+  key: 'searchQueryState',
+  default: '',
+});
+
 export const recentSearchState = atom<string[]>({
   key: 'recentSearchState',
   default: [],
@@ -46,4 +51,9 @@ export const heartbeatsState = atom<HeartbeatProps[]>({
 export const heartbeatNumsState = atom<{ [key: number]: number }>({
   key: 'heartbeatNumsState',
   default: {},
+});
+
+export const isMapViewState = atom<boolean>({
+  key: 'isMapViewState',
+  default: false,
 });

@@ -6,6 +6,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, heartbeatsState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import { getMyHearts } from '@/lib/actions/hearbeat-controller/getMyHearts';
 import { motion, AnimatePresence } from 'framer-motion';
+import { modalBackdropVariants, modalVariants, buttonVariants } from '@/lib/animation';
 
 function Heartbeat() {
   const [heartbeats, setHeartbeats] = useRecoilState(heartbeatsState);
@@ -54,15 +55,28 @@ function Heartbeat() {
       </Link>
       <div className="mt-[1.5rem] flex space-x-[0.75rem] overflow-x-auto hide-scrollbar">
         {heartbeats.length === 0 ? (
-          <div className="relative h-16 w-16 cursor-pointer" onClick={handlePlusClick}>
+          <motion.div
+            className="relative h-16 w-16 cursor-pointer"
+            variants={buttonVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onClick={handlePlusClick}
+          >
             <div className="flex h-full w-full items-center justify-center rounded-full border border-gray100 bg-gray400">
               <Image src="/icons/plus.svg" alt="plus icon" width={32} height={32} />
             </div>
-          </div>
+          </motion.div>
         ) : (
           heartbeats.map((heartbeat) => (
             <Link key={heartbeat.venueId} href={`/detail/${heartbeat.venueId}`}>
-              <div className="relative h-16 w-16 cursor-pointer">
+              <motion.div
+                className="relative h-16 w-16 cursor-pointer"
+                variants={buttonVariants}
+                initial="initial"
+                whileHover="hover"
+                whileTap="tap"
+              >
                 <Image
                   src={heartbeat.logoUrl || '/images/DefaultImage.png'}
                   alt={`${heartbeat.koreanName} image`}
@@ -70,7 +84,7 @@ function Heartbeat() {
                   objectFit="cover"
                   className="rounded-full"
                 />
-              </div>
+              </motion.div>
             </Link>
           ))
         )}
@@ -78,16 +92,17 @@ function Heartbeat() {
       <AnimatePresence>
         {showModal && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            variants={modalBackdropVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
           >
             <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              transition={{ duration: 0.3 }}
+              variants={modalVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
               className="w-[18.9rem] bg-BG-black"
             >
               <div className="px-[1.25rem] pb-[2.5rem] pt-4">

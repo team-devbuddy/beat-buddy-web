@@ -4,6 +4,8 @@ import { genres } from '@/lib/data';
 import { useRouter } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
+import { motion } from 'framer-motion';
+import { gridItemVariants } from '@/lib/animation';
 
 function SearchGenre() {
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
@@ -21,7 +23,7 @@ function SearchGenre() {
 
   const renderGridItems = () => {
     return genres.map((genre, index) => (
-      <div
+      <motion.div
         key={index}
         onClick={() => handleGenreClick(genre)}
         className={`flex ${
@@ -34,9 +36,12 @@ function SearchGenre() {
             selectedGenre === genre
               ? `linear-gradient(0deg, rgba(0, 0, 0, 0.70), rgba(0, 0, 0, 0.70)), url('/images/onBoarding/background/onboarding-${index + 1}.png')`
               : `url('/images/onBoarding/background/onboarding-${index + 1}.png')`,
-        }}>
+        }}
+        variants={gridItemVariants}
+        whileHover="hover"
+        whileTap="tap">
         {genre}
-      </div>
+      </motion.div>
     ));
   };
 

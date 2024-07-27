@@ -47,7 +47,7 @@ export default function SearchBar() {
           <Link href="/search" className="block w-full">
             <div className="relative w-full">
               <input
-                className="w-full border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
+                className="w-full border-b-2 cursor-pointer border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
                 placeholder="지금 가장 인기있는 클럽은?"
                 readOnly
               />
