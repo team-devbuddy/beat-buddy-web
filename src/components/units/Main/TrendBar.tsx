@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { fetchTop10 } from '@/lib/actions/search-controller/fetchTop10';
@@ -56,15 +57,17 @@ export default function TrendBar() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0 flex items-center justify-between"
           >
-            <div className="relative w-full flex mx-[1rem] mb-[0.5rem] items-center space-x-2">
-              <Image
-                src={rankIcons[currentTrendIndex % 3]}
-                alt={`Rank ${currentTrendIndex + 1} icon`}
-                width={20}
-                height={20}
-              />
-              <span className="font-medium text-black">{trends[currentTrendIndex].rankKeyword}</span>
-            </div>
+            <Link href={`/search/results?q=${encodeURIComponent(trends[currentTrendIndex].rankKeyword)}`} passHref>
+              <div className="relative w-full flex mx-[1rem] mb-[0.5rem] items-center space-x-2">
+                <Image
+                  src={rankIcons[currentTrendIndex % 3]}
+                  alt={`Rank ${currentTrendIndex + 1} icon`}
+                  width={20}
+                  height={20}
+                />
+                <span className="font-medium text-black">{trends[currentTrendIndex].rankKeyword}</span>
+              </div>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
