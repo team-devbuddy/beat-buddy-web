@@ -26,6 +26,7 @@ export const memberMoodIdState = atom<number | null>({
   default: null,
 });
 
+
 export const searchQueryState = atom<string>({
   key: 'searchQueryState',
   default: '',
