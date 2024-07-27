@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { accessTokenState, recentSearchState } from '@/context/recoil-context';
 import { fetchTop10 } from '@/lib/actions/search-controller/fetchTop10';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { addSearchTerm as addSearch } from '@/lib/utils/storage';
 
 interface TrendItem {
   rankKeyword: string;
@@ -17,6 +18,8 @@ export default function TrendBar() {
   const [trends, setTrends] = useState<TrendItem[]>([]);
   const [currentTrendIndex, setCurrentTrendIndex] = useState(0);
   const accessToken = useRecoilValue(accessTokenState);
+  const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +46,15 @@ export default function TrendBar() {
     }
   }, [trends]);
 
+  const handleTrendClick = (term: string) => {
+    setRecentSearches((prevSearches) => {
+      const updatedSearches = [term, ...prevSearches.filter((search) => search !== term)];
+      addSearch(term);
+      return updatedSearches;
+    });
+    router.push(`/search/results?q=${encodeURIComponent(term)}`);
+  };
+
   const rankIcons = ['/icons/Rank_1.svg', '/icons/Rank_2.svg', '/icons/Rank_3.svg'];
 
   return (
@@ -57,17 +69,18 @@ export default function TrendBar() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0 flex items-center justify-between"
           >
-            <Link href={`/search/results?q=${encodeURIComponent(trends[currentTrendIndex].rankKeyword)}`} passHref>
-              <div className="relative w-full flex mx-[1rem] mb-[0.5rem] items-center space-x-2">
-                <Image
-                  src={rankIcons[currentTrendIndex % 3]}
-                  alt={`Rank ${currentTrendIndex + 1} icon`}
-                  width={20}
-                  height={20}
-                />
-                <span className="font-medium text-black">{trends[currentTrendIndex].rankKeyword}</span>
-              </div>
-            </Link>
+            <div 
+              className="relative w-full flex mx-[1rem] mb-[0.5rem] items-center space-x-2 cursor-pointer" 
+              onClick={() => handleTrendClick(trends[currentTrendIndex].rankKeyword)}
+            >
+              <Image
+                src={rankIcons[currentTrendIndex % 3]}
+                alt={`Rank ${currentTrendIndex + 1} icon`}
+                width={20}
+                height={20}
+              />
+              <span className="font-medium text-black">{trends[currentTrendIndex].rankKeyword}</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
