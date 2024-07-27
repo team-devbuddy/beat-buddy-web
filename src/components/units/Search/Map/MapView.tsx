@@ -33,6 +33,8 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     return club.address ?? '';
   });
 
+  
+
   return (
     <>
       <GoogleMap
