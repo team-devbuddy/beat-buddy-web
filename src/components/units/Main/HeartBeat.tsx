@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, heartbeatsState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import { getMyHearts } from '@/lib/actions/hearbeat-controller/getMyHearts';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function Heartbeat() {
   const [heartbeats, setHeartbeats] = useRecoilState(heartbeatsState);
@@ -74,37 +75,51 @@ function Heartbeat() {
           ))
         )}
       </div>
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-[18.9rem] bg-BG-black">
-            <div className="px-[1.25rem] pb-[2.5rem] pt-4">
-              <div className="flex justify-end">
-                <div onClick={closeModal} className="mb-[1.25rem] text-gray-600 hover:text-gray-800">
-                  <Image src="/icons/Xmark.svg" alt="close" width={28} height={28} />
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          >
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              className="w-[18.9rem] bg-BG-black"
+            >
+              <div className="px-[1.25rem] pb-[2.5rem] pt-4">
+                <div className="flex justify-end">
+                  <div onClick={closeModal} className="mb-[1.25rem] text-gray-600 hover:text-gray-800">
+                    <Image src="/icons/Xmark.svg" alt="close" width={28} height={28} />
+                  </div>
+                </div>
+                <div className="text-center">
+                  <h2 className="text-subtitle-20-bold mb-[0.75rem] text-white">아직 하트비트가 없어요</h2>
+                  <p className="mb-[1.25rem] text-body2-15-medium text-gray300">
+                    하트비트를 눌러서
+                    <br />
+                    관심있는 베뉴를 저장해보세요
+                  </p>
+                  <div className="flex flex-row justify-center gap-[3rem]">
+                    <Image src="/icons/PinkHeart.svg" alt="pink heart" width={48} height={48} />
+                    <Image src="/icons/fullArrow.svg" alt="full arrow" width={24} height={24} />
+                    <Image src="/icons/FilledHeart.svg" alt="filled heart" width={48} height={48} />
+                  </div>
                 </div>
               </div>
-              <div className="text-center">
-                <h2 className="text-subtitle-20-bold mb-[0.75rem] text-white">아직 하트비트가 없어요</h2>
-                <p className="mb-[1.25rem] text-body2-15-medium text-gray300">
-                  하트비트를 눌러서
-                  <br />
-                  관심있는 베뉴를 저장해보세요
-                </p>
-                <div className="flex flex-row justify-center gap-[3rem]">
-                  <Image src="/icons/PinkHeart.svg" alt="pink heart" width={48} height={48} />
-                  <Image src="/icons/fullArrow.svg" alt="full arrow" width={24} height={24} />
-                  <Image src="/icons/FilledHeart.svg" alt="filled heart" width={48} height={48} />
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={closeModal}
-              className="w-full bg-main px-[0.5rem] py-[0.99rem] text-body1-16-bold text-BG-black">
-              확인
-            </button>
-          </div>
-        </div>
-      )}
+              <button
+                onClick={closeModal}
+                className="w-full bg-main px-[0.5rem] py-[0.99rem] text-body1-16-bold text-BG-black"
+              >
+                확인
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
