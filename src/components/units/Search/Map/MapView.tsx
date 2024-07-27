@@ -6,6 +6,7 @@ import { useRef, useEffect } from 'react';
 import { BottomSheet } from 'react-spring-bottom-sheet';
 import type { BottomSheetRef } from 'react-spring-bottom-sheet';
 import 'react-spring-bottom-sheet/dist/style.css';
+import MapSearchButton from './MapSearchButton';
 
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
@@ -31,12 +32,17 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     .map((club) => club.address)
     .filter((address) => address !== undefined) as string[];
 
+  const handleSearch = () => {
+    console.log('현재 지도에서 검색 클릭됨');
+    // 현재 지도 범위 내에서 클럽을 검색하는 로직 추가
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col justify-between bg-white">
-      <div className="bg-[#131415]">
+      <div className="relative bg-[#131415]">
         <GoogleMap addresses={validAddresses} minHeight="44rem" />
+        <MapSearchButton onClick={handleSearch} />
       </div>
-
       <BottomSheetComponent filteredClubs={filteredClubs} />
     </div>
   );

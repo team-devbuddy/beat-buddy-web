@@ -26,7 +26,8 @@
     "recoil": "^0.7.7",
     "recoil-persist": "^5.1.0",
     "slick-carousel": "^1.8.1",
-    "tailwind-scrollbar-hide": "^1.1.7"
+    "tailwind-scrollbar-hide": "^1.1.7",
+    "vue2-google-maps": "^0.10.7"
   },
   "devDependencies": {
     "@types/google.maps": "^3.55.11",

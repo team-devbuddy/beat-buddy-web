@@ -15,14 +15,14 @@ export default function MapButton() {
     <>
       {isMapView ? (
         <div
-          className="fixed bottom-40 left-1/2 z-50 flex -translate-x-1/2 transform cursor-pointer items-center justify-center rounded-full bg-white px-[1.25rem] py-[0.75rem] text-body3-12-bold text-BG-black hover:shadow-[0_0_0_3px_rgba(255,255,255,0.8)]"
+          className="fixed bottom-28 left-1/2 z-5 flex -translate-x-1/2 transform cursor-pointer items-center justify-center rounded-full bg-white px-[1.25rem] py-[0.75rem] text-body3-12-bold text-BG-black hover:shadow-[0_0_0_3px_rgba(255,255,255,0.8)]"
           onClick={toggleViewMode}>
           <Image src="/icons/TextFormatting.svg" alt="List Icon" width={16} height={15.08} />
           <span className="ml-[0.5rem]">목록 보기</span>
         </div>
       ) : (
         <div
-          className="fixed bottom-40 left-1/2 z-50 flex -translate-x-1/2 transform cursor-pointer items-center justify-center rounded-full bg-main px-[1.25rem] py-[0.75rem] text-body3-12-bold text-BG-black hover:shadow-[0_0_0_3px_rgba(255,255,255,0.3)]"
+          className="fixed bottom-28 left-1/2 z-50 flex -translate-x-1/2 transform cursor-pointer items-center justify-center rounded-full bg-main px-[1.25rem] py-[0.75rem] text-body3-12-bold text-BG-black hover:shadow-[0_0_0_3px_rgba(255,255,255,0.3)]"
           onClick={toggleViewMode}>
           <Image src="/icons/map.svg" alt="Map Icon" width={16} height={15.08} />
           <span className="ml-[0.5rem]">지도 보기</span>

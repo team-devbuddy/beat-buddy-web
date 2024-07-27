@@ -6,7 +6,7 @@ import SearchHeader from './SearchHeader';
 import NoResults from './NoResult';
 import MapView from './Map/MapView';
 import DropdownGroup from './DropdownGroup';
-import MapButton from './MapButton'; // Import MapButton without props
+import MapButton from './Map/MapButton'; // Import MapButton without props
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { likedClubsState, heartbeatNumsState, accessTokenState, isMapViewState } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
