@@ -1,5 +1,3 @@
-// src/app/detail/[id]/page.tsx
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -17,6 +15,7 @@ import { Club, ClubProps } from '@/lib/types';
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [venue, setVenue] = useState<Club | null>(null);
   const [isHeartbeat, setIsHeartbeat] = useState<boolean>(false);
+  const [tagList, setTagList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const accessToken = useRecoilValue(accessTokenState);
 
@@ -24,9 +23,10 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     const getClubDetail = async () => {
       try {
         if (accessToken) {
-          const data: ClubProps = await fetchClubDetail(params.id, accessToken);
+          const data = await fetchClubDetail(params.id, accessToken);
           setVenue(data.venue);
           setIsHeartbeat(data.isHeartbeat);
+          setTagList(data.tagList); // tagList를 설정합니다.
         } else {
           console.error('Access token is not available');
         }
@@ -56,16 +56,12 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  const operationHours = typeof venue.operationHours === 'object' && venue.operationHours !== null
-    ? venue.operationHours
-    : {};
-
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
-      <Preview venue={venue} isHeartbeat={isHeartbeat} />
+      <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
       <Location venue={venue} />
-      <Info venue={venue} isHeartbeat={isHeartbeat} />
-      <VenueHours hours={operationHours} />
+      <Info venue={venue} isHeartbeat={isHeartbeat} tagList={[]} />
+      <VenueHours hours={venue.operationHours} />
       <CustomerService />
       <Footer />
     </div>

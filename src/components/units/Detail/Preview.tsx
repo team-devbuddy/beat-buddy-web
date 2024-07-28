@@ -10,7 +10,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const Preview = ({ venue, isHeartbeat }: ClubProps) => {
+const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
@@ -94,7 +94,7 @@ const Preview = ({ venue, isHeartbeat }: ClubProps) => {
         {media.map((url, index) => (
           <div key={index} className="relative h-[17.5rem] w-full">
             {url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i) ? (
-              <Image src={url} alt={`Background ${index}`} layout="fill" className="object-cover object-center" />
+              <Image src={url} alt={`Background ${index}`} fill className="object-cover object-center" />
             ) : url.match(/\.mp4$/i) ? (
               <video key={`video-${index}`} className="h-full w-full object-cover" controls muted loop>
                 <source src={url} type="video/mp4" />
@@ -105,7 +105,7 @@ const Preview = ({ venue, isHeartbeat }: ClubProps) => {
                 key={`default-${index}`}
                 src={defaultImage}
                 alt="Default Image"
-                layout="fill"
+                fill
                 className="object-cover object-center"
               />
             )}
@@ -115,9 +115,9 @@ const Preview = ({ venue, isHeartbeat }: ClubProps) => {
       </Slider>
       <div className="absolute bottom-0 z-20 flex flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
         <h1 className="text-title-24-bold">{venue.englishName}</h1>
-        <div className="flex space-x-[0.5rem]">
-          {venue.tagList && venue.tagList.length > 0 ? (
-            venue.tagList.map((tag: string, index: number) => (
+        <div className="flex w-2/3 flex-wrap gap-2">
+          {tagList && tagList.length > 0 ? (
+            tagList.map((tag: string, index: number) => (
               <span
                 key={index}
                 className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
