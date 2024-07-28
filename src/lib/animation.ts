@@ -26,8 +26,9 @@ export const modalVariants: Variants = {
 };
 //버튼 클릭시 사이즈 줄어듦
 export const buttonVariants = {
-  initial: { scale: 1},
-  hover: { scale: 1},
+
+  initial: { scale: 1 },
+  hover: { scale: 1 },
   tap: { scale: 0.9 },
 };
 //장르 검색 그리드 애니메이션
@@ -67,3 +68,17 @@ export const transitionVariants: Variants = {
     },
   },
 };
+
+
+export const colorPulse: Variants = {
+  animate: {
+    backgroundColor: ['#28292a', '#38393a', '#28292a'], // 색의 명암을 바꾸기 위해 색상 지정
+    transition: {
+      duration: 2.5,
+      repeat: Infinity,
+      repeatType: 'loop',
+      ease: 'easeInOut',
+    },
+  },
+};
+

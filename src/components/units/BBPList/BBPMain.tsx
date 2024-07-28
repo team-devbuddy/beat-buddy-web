@@ -9,6 +9,7 @@ import { Club } from '@/lib/types';
 import MainFooter from '../Main/MainFooter';
 import { getBBP } from '@/lib/actions/recommend-controller/getBBP';
 import VenueCard from './VenueCard';
+import BBPListSkeleton from '@/components/common/skeleton/BBPListSkeleton';
 
 const BBPickHeader = dynamic(() => import('./BBPHeader'), { ssr: false });
 
@@ -17,6 +18,7 @@ export default function BBPMain() {
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const [BBPClubs, setBBPClubs] = useState<Club[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBBPClubs = async () => {
@@ -33,6 +35,7 @@ export default function BBPMain() {
             {},
           );
           setHeartbeatNums(heartbeatNumbers);
+          setLoading(false); // 데이터 로드 완료
         } else {
           console.error('Access token is not available');
         }
@@ -62,6 +65,10 @@ export default function BBPMain() {
       fetchBBPClubs().then(() => fetchLikedStatuses(accessToken));
     }
   }, [accessToken, setLikedClubs, setHeartbeatNums]);
+
+  if (loading) {
+    return <BBPListSkeleton />;
+  }
 
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
