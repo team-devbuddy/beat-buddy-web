@@ -3,7 +3,6 @@ import { SearchResultsProps, Club } from '@/lib/types';
 import BottomSheetComponent from './BottomSheet';
 import GoogleMap from '@/components/common/GoogleMap';
 import { useState, useRef, useEffect } from 'react';
-import { BottomSheet } from 'react-spring-bottom-sheet';
 import type { BottomSheetRef } from 'react-spring-bottom-sheet';
 import 'react-spring-bottom-sheet/dist/style.css';
 import MapSearchButton from './MapSearchButton';
@@ -36,14 +35,6 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   const mapRef = useRef<{ filterAddressesInView: () => void } | null>(null);
   const [currentFilteredClubs, setCurrentFilteredClubs] = useState<Club[]>(filteredClubs);
 
-  const expandToFullHeight = () => {
-    if (sheetRef.current) {
-      sheetRef.current.snapTo(({ maxHeight }) => maxHeight);
-    } else {
-      console.error('BottomSheet ref is null');
-    }
-  };
-
   useEffect(() => {
     if (sheetRef.current) {
       console.log('BottomSheet is ready:', sheetRef.current);
@@ -57,18 +48,22 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     setCurrentFilteredClubs(filtered);
   };
 
+  // 주소 데이터를 콘솔에 출력
+  const addresses = filteredClubs.map(club => {
+    console.log(`클럽 이름: ${club.englishName}, 주소: ${club.address}`);
+    return club.address ?? '';
+  });
+
   return (
-    <div className="flex min-h-screen w-full flex-col justify-between bg-white">
-      <div className="relative bg-[#131415]">
-        <GoogleMap
-          addresses={testClubs.map((club) => club.address ?? '')}
-          minHeight="44rem"
-          onAddressesInBounds={handleSearch}
-          ref={mapRef}
-        />
-        <MapSearchButton onClick={() => mapRef.current?.filterAddressesInView()} />
-      </div>
+    <>
+      <GoogleMap
+        addresses={addresses}
+        minHeight="44rem"
+        onAddressesInBounds={handleSearch}
+        ref={mapRef}
+      />
+      <MapSearchButton onClick={() => mapRef.current?.filterAddressesInView()} />
       <BottomSheetComponent filteredClubs={currentFilteredClubs} />
-    </div>
+    </>
   );
 }
