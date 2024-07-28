@@ -1,11 +1,40 @@
 // 액세스 토큰으로 리프레쉬 토큰 발급
-export async function PostRefresh(refresh: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/refresh`, {
+export async function PostRefresh(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/reissue`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
     },
-    body: JSON.stringify({ refreshToken: refresh }),
+    credentials: 'include',
+  });
+
+  return response;
+}
+
+// 로그아웃
+export async function PostLogout(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/oauth/logout`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+    // credentials: 'include',
+  });
+
+  return response;
+}
+
+// 회원 탈퇴
+export async function PostWithdrawal(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/oauth/resign`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+    // credentials: 'include',
   });
 
   return response;
