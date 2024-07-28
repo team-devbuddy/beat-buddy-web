@@ -161,7 +161,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
                 key={`default-${index}`}
                 src={defaultImage}
                 alt="Default Image"
-                layout="fill"
+                fill
                 className="object-cover object-center"
               />
             )}
