@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Club } from '@/lib/types';
+import { motion } from 'framer-motion';
 
 interface ClubsListProps {
   clubs: Club[];
@@ -17,39 +18,60 @@ const regionTranslations: { [key: string]: string } = {
   ITAEWON: '이태원',
   APGUJEONG: '압구정',
   'GANGNAM/SINSA': '강남/신사',
-  OTHERS: '기타'
+  OTHERS: '기타',
 };
 const genres = [
-  'HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 
-  'LATIN', 'K-POP', 'POP', 'DEEP', 'COMMERCIAL', 'CHILL', 'EXOTIC', 'HUNTING'
+  'HIPHOP',
+  'R&B',
+  'EDM',
+  'HOUSE',
+  'TECHNO',
+  'SOUL&FUNK',
+  'ROCK',
+  'LATIN',
+  'K-POP',
+  'POP',
+  'DEEP',
+  'COMMERCIAL',
+  'CHILL',
+  'EXOTIC',
+  'HUNTING',
 ];
 const getFilteredTags = (tags: string[]) => {
   let selectedTags = [];
 
-  const clubType = tags.find(tag => clubTypes.includes(tag.toLowerCase()));
+  const clubType = tags.find((tag) => clubTypes.includes(tag.toLowerCase()));
   if (clubType) selectedTags.push(clubType);
 
-  const region = tags.find(tag => regions.includes(tag));
+  const region = tags.find((tag) => regions.includes(tag));
   if (region) selectedTags.push(regionTranslations[region] || region);
 
-  const genre = tags.find(tag => genres.includes(tag));
+  const genre = tags.find((tag) => genres.includes(tag));
   if (genre) selectedTags.push(genre);
 
   return selectedTags.slice(0, 3);
 };
 
-
 export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
   return (
     <div className="flex flex-col">
-      <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[1.19rem] gap-y-[2.5rem] sm:grid-cols-2 md:grid-cols-3">
+      <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.3rem] gap-y-[2.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue) => {
-          const firstImageUrl = (venue.backgroundUrl.find(url => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i))) || venue.logoUrl || '/images/DefaultImage.png';
+          const firstImageUrl =
+            venue.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i)) ||
+            venue.logoUrl ||
+            '/images/DefaultImage.png';
           const filteredTags = getFilteredTags(venue.tagList || []);
 
           return (
             <Link key={venue.venueId} href={`/detail/${venue.venueId}`} passHref>
-              <div className="relative flex h-full flex-col">
+              <motion.div
+                whileHover={{
+                  y: -5,
+                  boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                }}
+                className="relative flex h-full flex-col rounded-md p-2">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}
@@ -72,8 +94,8 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                 </div>
                 <div className="mt-[1rem] flex flex-grow flex-col justify-between">
                   <div>
-                  <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
-                    <div className="mb-[1.06rem] w-3/4 mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
+                    <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
+                    <div className="mb-[1.06rem] mt-[0.75rem] flex w-3/4 flex-wrap gap-[0.5rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag: string, index: number) => (
                           <span
@@ -88,7 +110,6 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                         </span>
                       )}
                     </div>
-
                   </div>
                   <div className="flex items-end justify-between">
                     <div className="flex items-center space-x-[0.25rem] text-gray300">
@@ -99,7 +120,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </Link>
           );
         })}
