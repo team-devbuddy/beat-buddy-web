@@ -1,15 +1,39 @@
 'use client';
-import { authState } from '@/context/recoil-context';
+import { accessTokenState, authState } from '@/context/recoil-context';
+import { PostLogout } from '@/lib/action';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRecoilState } from 'recoil';
+import { useState } from 'react';
+import ConfirmLogoutModal from './Logout/ConfirmLogoutModal';
+import LogoutCompleteModal from './Logout/LogoutCompleteModal';
 
 export default function MyPageOption() {
   const [isAuth, setIsAuth] = useRecoilState(authState);
+  const [access, setAccess] = useRecoilState(accessTokenState);
+  const [showConfirmLogout, setShowConfirmLogout] = useState(false);
+  const [showLogoutComplete, setShowLogoutComplete] = useState(false);
   const router = useRouter();
+
   const onClickLogout = () => {
-    setIsAuth(false);
+    setShowConfirmLogout(true);
+  };
+
+  const handleLogout = async () => {
+    if (access) {
+      const response = await PostLogout(access);
+      if (response.ok) {
+        setIsAuth(false);
+        setAccess(null);
+        setShowConfirmLogout(false);
+        setShowLogoutComplete(true);
+      }
+    }
+  };
+
+  const handleCloseLogoutComplete = () => {
+    setShowLogoutComplete(false);
     router.push('/');
   };
 
@@ -39,11 +63,19 @@ export default function MyPageOption() {
           <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
         </div>
 
-        <div className="flex cursor-pointer items-center justify-between px-4 py-5">
-          <div className="font-bold text-white">회원 탈퇴</div>
-          <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
-        </div>
+        <Link href="/mypage/option/withdrawal">
+          <div className="flex cursor-pointer items-center justify-between px-4 py-5">
+            <div className="font-bold text-white">회원 탈퇴</div>
+            <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
+          </div>
+        </Link>
       </div>
+
+      {showConfirmLogout && (
+        <ConfirmLogoutModal onConfirm={handleLogout} onCancel={() => setShowConfirmLogout(false)} />
+      )}
+
+      {showLogoutComplete && <LogoutCompleteModal onClose={handleCloseLogoutComplete} />}
     </div>
   );
 }
