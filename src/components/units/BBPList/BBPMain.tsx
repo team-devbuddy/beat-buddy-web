@@ -20,6 +20,10 @@ import BBPListSkeleton from '@/components/common/skeleton/BBPListSkeleton';
 
 
 
+
+
+
+
 const BBPickHeader = dynamic(() => import('./BBPHeader'), { ssr: false });
 
 export default function BBPMain() {
