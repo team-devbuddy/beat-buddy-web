@@ -14,6 +14,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 import NoResults from '../Search/NoResult';
+import BBPListSkeleton from '@/components/common/skeleton/BBPListSkeleton';
 
 
 
@@ -26,6 +27,7 @@ export default function BBPMain() {
   const [BBPClubs, setBBPClubs] = useState<Club[]>([]);
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   const [showToast, setShowToast] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBBPClubs = async () => {
@@ -74,7 +76,9 @@ export default function BBPMain() {
     }
   }, [accessToken, setLikedClubs, setHeartbeatNums]);
 
-  
+  if (loading) {
+    return <BBPListSkeleton />;
+  }
 
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
