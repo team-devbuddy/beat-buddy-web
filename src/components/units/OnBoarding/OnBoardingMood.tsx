@@ -1,18 +1,22 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import { PostMood, PostArchive } from '@/lib/action'; // 경로를 적절히 수정하세요.
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import React, { useState, useRef } from 'react';
+import { PostMood, PostArchive } from '@/lib/action';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, memberGenreIdState, memberMoodIdState } from '@/context/recoil-context';
+import Image from 'next/image';
+
+import { AnimatePresence } from 'framer-motion';
+import InfoModal from './MoodInfoModal';
 
 const moodMap: { [key: string]: string } = {
   펍: 'PUB',
   클럽: 'CLUB',
   딥한: 'DEEP',
   칠한: 'CHILL',
-  가벼운: 'LIGHT',
+  커머셜한: 'COMMERCIAL',
   헌팅: 'HUNTING',
-  외래의: 'EXOTIC',
+  이국적인: 'EXOTIC',
   루프탑: 'ROOFTOP',
 };
 
@@ -21,9 +25,9 @@ const moodImages: { [key: string]: string } = {
   클럽: '/images/onBoarding/background/onboarding-7.png',
   딥한: '/images/onBoarding/background/onboarding-1.png',
   칠한: '/images/onBoarding/background/onboarding-5.png',
-  가벼운: '/images/onBoarding/background/onboarding-2.png',
+  커머셜한: '/images/onBoarding/background/onboarding-2.png',
   헌팅: '/images/onBoarding/background/onboarding-6.png',
-  외래의: '/images/onBoarding/background/onboarding-4.png',
+  이국적인: '/images/onBoarding/background/onboarding-4.png',
   루프탑: '/images/onBoarding/background/onboarding-8.png',
 };
 
@@ -31,6 +35,7 @@ const moods = Object.keys(moodMap);
 
 export default function OnBoardingMood() {
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
   const memberGenreId = useRecoilValue(memberGenreIdState);
@@ -68,14 +73,31 @@ export default function OnBoardingMood() {
     }
   };
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
     <>
       <div className="flex w-full flex-col px-4">
-        <h1 className="py-5 text-2xl font-bold leading-9 text-white">
-          어떤 분위기를
-          <br />
-          좋아하세요?
-        </h1>
+        <div className="flex items-start justify-between py-5">
+          <h1 className="text-2xl font-bold leading-9 text-white">
+            어떤 분위기를
+            <br />
+            좋아하세요?
+          </h1>
+          <div className="relative">
+            <Image
+              src="/icons/infomationIcon.svg"
+              alt="info"
+              width={24}
+              height={24}
+              onClick={toggleModal}
+              className="cursor-pointer"
+            />
+            <AnimatePresence>{isModalOpen && <InfoModal onClose={toggleModal} />}</AnimatePresence>
+          </div>
+        </div>
 
         <div className="mt-7 flex flex-wrap gap-2">
           {moods.map((mood, index) => (
