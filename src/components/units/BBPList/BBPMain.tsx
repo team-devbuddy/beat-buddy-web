@@ -43,6 +43,7 @@ export default function BBPMain() {
             {},
           );
           setHeartbeatNums(heartbeatNumbers);
+          setLoading(false); // 데이터 로드 완료
         } else {
           console.error('Access token is not available');
         }

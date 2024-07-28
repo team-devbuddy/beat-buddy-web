@@ -11,9 +11,9 @@ interface VenueCardProps {
 }
 
 const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: VenueCardProps) => {
-  if (!clubs || clubs.length === 0) {
-    return <div>No clubs available</div>;
-  }
+  // if (!clubs || clubs.length === 0) {
+  //   return <div>No clubs available</div>;
+  // }
 
   return (
     <div className="bg-BG-black px-4">
