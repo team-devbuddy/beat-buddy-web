@@ -72,7 +72,7 @@ export const colorPulse: Variants = {
   animate: {
     backgroundColor: ['#28292a', '#38393a', '#28292a'], // 색의 명암을 바꾸기 위해 색상 지정
     transition: {
-      duration: 1,
+      duration: 2.5,
       repeat: Infinity,
       repeatType: 'loop',
       ease: 'easeInOut',
