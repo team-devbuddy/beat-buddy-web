@@ -45,26 +45,28 @@ export default function MyPageOption() {
 
       <div className="flex flex-col pt-7">
         <Link href="/mypage/option/nickname">
-          <div className="flex cursor-pointer items-center justify-between px-4 py-5">
+          <div className="flex cursor-pointer items-center justify-between px-4 py-5 hover:bg-gray700">
             <div className="font-bold text-white">닉네임 수정</div>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
         </Link>
 
         <Link href="/mypage/option/notice">
-          <div className="flex cursor-pointer items-center justify-between px-4 py-5">
+          <div className="flex cursor-pointer items-center justify-between px-4 py-5 hover:bg-gray700">
             <div className="font-bold text-white">공지사항</div>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
         </Link>
 
-        <div onClick={onClickLogout} className="flex cursor-pointer items-center justify-between px-4 py-5">
+        <div
+          onClick={onClickLogout}
+          className="flex cursor-pointer items-center justify-between px-4 py-5 hover:bg-gray700">
           <div className="font-bold text-white">로그아웃</div>
           <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
         </div>
 
         <Link href="/mypage/option/withdrawal">
-          <div className="flex cursor-pointer items-center justify-between px-4 py-5">
+          <div className="flex cursor-pointer items-center justify-between px-4 py-5 hover:bg-gray700">
             <div className="font-bold text-white">회원 탈퇴</div>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
