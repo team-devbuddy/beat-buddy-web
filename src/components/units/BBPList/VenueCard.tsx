@@ -11,10 +11,9 @@ interface VenueCardProps {
 }
 
 const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: VenueCardProps) => {
-
-  if (!clubs || clubs.length === 0) {
-    return <div>No clubs available</div>;
-  }
+  // if (!clubs || clubs.length === 0) {
+  //   return <div>No clubs available</div>;
+  // }
 
   return (
     <>
@@ -33,7 +32,7 @@ const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
               <div
                 className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
                 onClick={(e) => {
-                  e.preventDefault(); 
+                  e.preventDefault();
                   handleHeartClickWrapper(e, club.venueId);
                 }}>
                 <Image
