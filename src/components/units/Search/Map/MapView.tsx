@@ -1,15 +1,40 @@
 'use client';
-import { SearchResultsProps } from '@/lib/types';
+import { SearchResultsProps, Club } from '@/lib/types';
 import BottomSheetComponent from './BottomSheet';
 import GoogleMap from '@/components/common/GoogleMap';
-import { useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { BottomSheet } from 'react-spring-bottom-sheet';
 import type { BottomSheetRef } from 'react-spring-bottom-sheet';
 import 'react-spring-bottom-sheet/dist/style.css';
 import MapSearchButton from './MapSearchButton';
 
+const testClubs: Club[] = [
+  {
+    venueId: 1,
+    englishName: 'Club One',
+    koreanName: '클럽 원',
+    location: 'Seongnam-si, Jungwon-gu',
+    tagList: ['hiphop'],
+    logoUrl: '',
+    address: '성남시 중원구 광명로 176',
+    heartbeatNum: 100,
+  },
+  {
+    venueId: 2,
+    englishName: 'Club Two',
+    koreanName: '클럽 투',
+    location: 'Seongnam-si, Jungwon-gu',
+    tagList: ['techno'],
+    logoUrl: '',
+    address: '성남시 중원구 시민로 66',
+    heartbeatNum: 200,
+  },
+];
+
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
+  const mapRef = useRef<{ filterAddressesInView: () => void } | null>(null);
+  const [currentFilteredClubs, setCurrentFilteredClubs] = useState<Club[]>(filteredClubs);
 
   const expandToFullHeight = () => {
     if (sheetRef.current) {
@@ -27,23 +52,23 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     }
   }, [sheetRef]);
 
-  // address가 undefined가 아닌 클럽만 필터링
-  const validAddresses = filteredClubs
-    .map((club) => club.address)
-    .filter((address) => address !== undefined) as string[];
-
-  const handleSearch = () => {
-    console.log('현재 지도에서 검색 클릭됨');
-    // 현재 지도 범위 내에서 클럽을 검색하는 로직 추가
+  const handleSearch = (addressesInView: string[]) => {
+    const filtered = filteredClubs.filter(club => addressesInView.includes(club.address ?? ''));
+    setCurrentFilteredClubs(filtered);
   };
 
   return (
     <div className="flex min-h-screen w-full flex-col justify-between bg-white">
       <div className="relative bg-[#131415]">
-        <GoogleMap addresses={validAddresses} minHeight="44rem" />
-        <MapSearchButton onClick={handleSearch} />
+        <GoogleMap
+          addresses={testClubs.map((club) => club.address ?? '')}
+          minHeight="44rem"
+          onAddressesInBounds={handleSearch}
+          ref={mapRef}
+        />
+        <MapSearchButton onClick={() => mapRef.current?.filterAddressesInView()} />
       </div>
-      <BottomSheetComponent filteredClubs={filteredClubs} />
+      <BottomSheetComponent filteredClubs={currentFilteredClubs} />
     </div>
   );
 }

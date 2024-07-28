@@ -33,14 +33,7 @@ const CurrentLocationButton: React.FC<CurrentLocationButtonProps> = ({ onClick }
         height={40}
         className="current-location-button"
       />
-      <style jsx>{`
-        .current-location-button {
-          transition: opacity 0.3s;
-        }
-        .current-location-button:hover {
-          content: url(${CURRENT_LOCATION_BUTTON_HOVER_URL});
-        }
-      `}</style>
+     
     </div>
   );
 };
