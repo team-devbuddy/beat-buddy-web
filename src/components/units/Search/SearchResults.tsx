@@ -15,7 +15,7 @@ import { transitionVariants } from '@/lib/animation';
 
 export default function SearchResults({ filteredClubs = [] }: SearchResultsProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMapView, setIsMapView] = useRecoilState(isMapViewState); // Use recoil state for isMapView
+  const [isMapView, setIsMapView] = useRecoilState(isMapViewState); 
 
   const [selectedGenre, setSelectedGenre] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -33,9 +33,6 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
-  useEffect(() => {
-    console.log('Filtered Clubs:', filteredClubs);
-  }, [filteredClubs]);
 
   return (
     <div className="relative flex w-full flex-col">

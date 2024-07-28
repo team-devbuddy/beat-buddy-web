@@ -53,5 +53,5 @@ export const isMapViewState = atom<boolean>({
 export const recentSearchState = atom<string[]>({
   key: 'recentSearchState',
   default: [],
-  effects_UNSTABLE: [persistAtom], 
+  effects_UNSTABLE: [persistAtom],
 });

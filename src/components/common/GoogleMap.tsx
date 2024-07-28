@@ -7,7 +7,7 @@ import Image from 'next/image';
 interface GoogleMapProp {
   addresses: string[];
   minHeight?: string;
-  onAddressesInBounds: (addresses: string[]) => void;
+  onAddressesInBounds?: (addresses: string[]) => void;
 }
 
 const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapProp>(
@@ -88,7 +88,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               lng: position.coords.longitude,
             };
             map?.setCenter(pos);
-            map?.setZoom(17);
+            map?.setZoom(15);
 
             if (currentLocationMarker) {
               currentLocationMarker.setPosition(pos);
