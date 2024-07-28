@@ -12,6 +12,34 @@ interface BeatBuddyPickProps {
   heartbeatNums: { [key: number]: number };
   handleHeartClickWrapper: (e: React.MouseEvent, venueId: number) => void;
 }
+const clubTypes = ['club', 'pub', 'rooftop'];
+const regions = ['HONGDAE', 'ITAEWON', 'APGUJEONG', 'GANGNAM/SINSA', 'OTHERS'];
+const regionTranslations: { [key: string]: string } = {
+  HONGDAE: '홍대',
+  ITAEWON: '이태원',
+  APGUJEONG: '압구정',
+  'GANGNAM/SINSA': '강남/신사',
+  OTHERS: '기타'
+};
+const genres = [
+  'HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 
+  'LATIN', 'K-POP', 'POP', 'DEEP', 'COMMERCIAL', 'CHILL', 'EXOTIC', 'HUNTING'
+];
+
+const getFilteredTags = (tags: string[]) => {
+  let selectedTags: string[] = [];
+
+  const clubType = tags.find(tag => clubTypes.includes(tag.toLowerCase()));
+  if (clubType) selectedTags.push(clubType);
+
+  const region = tags.find(tag => regions.includes(tag));
+  if (region) selectedTags.push(regionTranslations[region] || region);
+
+  const genreTags = tags.filter(tag => genres.includes(tag));
+  if (genreTags.length > 0) selectedTags.push(...genreTags.slice(0, 2));
+
+  return selectedTags.slice(0, 3);
+};
 
 export default function BeatBuddyPick({
   clubs,
@@ -34,6 +62,7 @@ export default function BeatBuddyPick({
         className={`flex ${clubs.length > 1 ? 'space-x-[0.5rem]' : ''} snap-x snap-mandatory overflow-x-auto px-[1rem] hide-scrollbar`}>
         {clubs.map((club) => {
           const imageUrl = club.backgroundUrl?.[0] || club.logoUrl || '/images/DefaultImage.png';
+          const filteredTags = getFilteredTags(club.tagList || []);
           return (
             <Link key={club.venueId} href={`/detail/${club.venueId}`} passHref>
               <div className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card">
@@ -50,8 +79,8 @@ export default function BeatBuddyPick({
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                   <div className="mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
-                    {club.tagList.length > 0 ? (
-                      club.tagList.map((tag:string, index:number) => (
+                  {filteredTags.length > 0 ? (
+                      filteredTags.map((tag: string, index: number) => (
                         <span
                           key={index}
                           className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">

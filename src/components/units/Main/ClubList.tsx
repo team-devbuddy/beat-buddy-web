@@ -9,6 +9,35 @@ interface ClubsListProps {
   heartbeatNums: { [key: number]: number };
   handleHeartClickWrapper: (e: React.MouseEvent, venueId: number) => void;
 }
+//태그필터링!! 히히
+const clubTypes = ['club', 'pub', 'rooftop'];
+const regions = ['hongdae', 'ITAEWON', 'APGUJEONG', 'GANGNAM/SINSA', 'OTHERS'];
+const regionTranslations: { [key: string]: string } = {
+  hongdae: '홍대',
+  ITAEWON: '이태원',
+  APGUJEONG: '압구정',
+  'GANGNAM/SINSA': '강남/신사',
+  OTHERS: '기타'
+};
+const genres = [
+  'HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 
+  'LATIN', 'K-POP', 'POP', 'DEEP', 'COMMERCIAL', 'CHILL', 'EXOTIC', 'HUNTING'
+];
+const getFilteredTags = (tags: string[]) => {
+  let selectedTags = [];
+
+  const clubType = tags.find(tag => clubTypes.includes(tag.toLowerCase()));
+  if (clubType) selectedTags.push(clubType);
+
+  const region = tags.find(tag => regions.includes(tag));
+  if (region) selectedTags.push(regionTranslations[region] || region);
+
+  const genre = tags.find(tag => genres.includes(tag));
+  if (genre) selectedTags.push(genre);
+
+  return selectedTags.slice(0, 3);
+};
+
 
 export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
   return (
@@ -16,6 +45,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
       <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[1.19rem] gap-y-[2.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue) => {
           const firstImageUrl = (venue.backgroundUrl || []).find(url => url.match(/\.(jpeg|jpg|gif|png|heic)$/i)) || venue.logoUrl || '/images/DefaultImage.png';
+          const filteredTags = getFilteredTags(venue.tagList || []);
 
           return (
             <Link key={venue.venueId} href={`/detail/${venue.venueId}`} passHref>
@@ -42,10 +72,10 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                 </div>
                 <div className="mt-[1rem] flex flex-grow flex-col justify-between">
                   <div>
-                    <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
-                    <div className="mb-[1.06rem] mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
-                      {venue.tagList?.length > 0 ? (
-                        venue.tagList.map((tag: string, index: number) => (
+                  <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
+                    <div className="mb-[1.06rem] w-4/5 mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
+                      {filteredTags.length > 0 ? (
+                        filteredTags.map((tag: string, index: number) => (
                           <span
                             key={index}
                             className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
@@ -58,6 +88,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                         </span>
                       )}
                     </div>
+
                   </div>
                   <div className="flex items-end justify-between">
                     <div className="flex items-center space-x-[0.25rem] text-gray300">
