@@ -41,7 +41,7 @@ export default function MyPageComponent() {
       <div className="flex flex-col">
         <Link href="/mypage/option">
           <div className="flex gap-1 px-4 py-5">
-            <p className="text-xl font-bold text-white">{nickname} 버디</p>
+            <p className="text-xl font-bold text-white hover:text-main2">{nickname} 버디</p>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
         </Link>
@@ -103,7 +103,7 @@ export default function MyPageComponent() {
           <div className="flex justify-between px-4 py-5">
             <div className="flex flex-col gap-1">
               <div className="text-[0.93rem] font-bold text-white">잘못된 정보가 있나요?</div>
-              <div className="text-xs text-gray300">수정이 필요하거나 폐점한 매장이라면 알려주세요!</div>
+              <div className="text-xs text-gray300">수정이 필요하거나 폐업한 업장이라면 알려주세요!</div>
             </div>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
