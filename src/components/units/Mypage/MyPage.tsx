@@ -99,12 +99,13 @@ export default function MyPageComponent() {
         </div>
 
         {/* 정보 수정 */}
-        <Link href="/" className="mt-6">
-          <div className="flex justify-between px-4 py-5">
+        <Link href="https://forms.gle/rcSfxUegbNykLnZD7" className="mt-6">
+          <div className="flex justify-between px-4 py-5 hover:bg-gray700">
             <div className="flex flex-col gap-1">
               <div className="text-[0.93rem] font-bold text-white">잘못된 정보가 있나요?</div>
               <div className="text-xs text-gray300">수정이 필요하거나 폐업한 업장이라면 알려주세요!</div>
             </div>
+
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
         </Link>
