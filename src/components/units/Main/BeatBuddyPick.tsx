@@ -19,23 +19,36 @@ const regionTranslations: { [key: string]: string } = {
   ITAEWON: '이태원',
   APGUJEONG: '압구정',
   'GANGNAM/SINSA': '강남/신사',
-  OTHERS: '기타'
+  OTHERS: '기타',
 };
 const genres = [
-  'HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 
-  'LATIN', 'K-POP', 'POP', 'DEEP', 'COMMERCIAL', 'CHILL', 'EXOTIC', 'HUNTING'
+  'HIPHOP',
+  'R&B',
+  'EDM',
+  'HOUSE',
+  'TECHNO',
+  'SOUL&FUNK',
+  'ROCK',
+  'LATIN',
+  'K-POP',
+  'POP',
+  'DEEP',
+  'COMMERCIAL',
+  'CHILL',
+  'EXOTIC',
+  'HUNTING',
 ];
 
 const getFilteredTags = (tags: string[]) => {
   let selectedTags: string[] = [];
 
-  const clubType = tags.find(tag => clubTypes.includes(tag.toLowerCase()));
+  const clubType = tags.find((tag) => clubTypes.includes(tag.toLowerCase()));
   if (clubType) selectedTags.push(clubType);
 
-  const region = tags.find(tag => regions.includes(tag));
+  const region = tags.find((tag) => regions.includes(tag));
   if (region) selectedTags.push(regionTranslations[region] || region);
 
-  const genreTags = tags.filter(tag => genres.includes(tag));
+  const genreTags = tags.filter((tag) => genres.includes(tag));
   if (genreTags.length > 0) selectedTags.push(...genreTags.slice(0, 2));
 
   return selectedTags.slice(0, 3);
@@ -51,7 +64,7 @@ export default function BeatBuddyPick({
   return (
     <div className="mt-[0.44rem] flex flex-col bg-BG-black">
       <Link href="/bbp-list" passHref>
-        <div className="flex cursor-pointer items-center justify-between px-[1rem] py-[1.25rem]">
+        <div className="flex cursor-pointer items-center justify-between px-4 py-[1.25rem] hover:bg-gray700">
           <span className="font-queensides text-[1.5rem] text-main2">
             {userName ? `Venue for ${userName}버디` : 'BeatBuddy Pick'}
           </span>
@@ -79,7 +92,7 @@ export default function BeatBuddyPick({
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                   <div className="mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
-                  {filteredTags.length > 0 ? (
+                    {filteredTags.length > 0 ? (
                       filteredTags.map((tag: string, index: number) => (
                         <span
                           key={index}

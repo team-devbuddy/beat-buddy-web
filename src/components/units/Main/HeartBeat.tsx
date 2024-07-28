@@ -43,9 +43,9 @@ function Heartbeat() {
   return (
     <div className="my-[1.75rem] flex flex-col px-[1rem]">
       <Link href="/myheartbeat">
-        <div className="flex items-center justify-between py-[0.5rem]">
+        <div className="flex items-center justify-between rounded-md px-2 py-[0.5rem] hover:bg-gray700">
           <div className="flex flex-col">
-            <span className="text-main-queen font-queensides text-main2">My Heart Beat</span>
+            <span className="font-queensides text-main-queen text-main2">My Heart Beat</span>
             <div className="mt-[0.25rem] cursor-pointer text-body2-15-medium text-gray200">
               내가 관심있는 베뉴들의 정보를 확인하세요.
             </div>
@@ -53,7 +53,7 @@ function Heartbeat() {
           <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
         </div>
       </Link>
-      <div className="mt-[1.5rem] flex space-x-[0.75rem] overflow-x-auto hide-scrollbar">
+      <div className="flex space-x-[0.75rem] overflow-x-auto pt-[1.5rem] hide-scrollbar">
         {heartbeats.length === 0 ? (
           <motion.div
             className="relative h-16 w-16 cursor-pointer"
@@ -61,8 +61,7 @@ function Heartbeat() {
             initial="initial"
             whileHover="hover"
             whileTap="tap"
-            onClick={handlePlusClick}
-          >
+            onClick={handlePlusClick}>
             <div className="flex h-full w-full items-center justify-center rounded-full border border-gray100 bg-gray400">
               <Image src="/icons/plus.svg" alt="plus icon" width={32} height={32} />
             </div>
@@ -73,10 +72,7 @@ function Heartbeat() {
               <motion.div
                 className="relative h-16 w-16 cursor-pointer"
                 variants={buttonVariants}
-                initial="initial"
-                whileHover="hover"
-                whileTap="tap"
-              >
+                whileHover={{ y: -5, boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.3)' }}>
                 <Image
                   src={heartbeat.logoUrl || '/images/DefaultImage.png'}
                   alt={`${heartbeat.koreanName} image`}
@@ -96,15 +92,13 @@ function Heartbeat() {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          >
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <motion.div
               variants={modalVariants}
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-[18.9rem] bg-BG-black"
-            >
+              className="w-[18.9rem] bg-BG-black">
               <div className="px-[1.25rem] pb-[2.5rem] pt-4">
                 <div className="flex justify-end">
                   <div onClick={closeModal} className="mb-[1.25rem] text-gray-600 hover:text-gray-800">
@@ -112,7 +106,7 @@ function Heartbeat() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <h2 className="text-subtitle-20-bold mb-[0.75rem] text-white">아직 하트비트가 없어요</h2>
+                  <h2 className="mb-[0.75rem] text-subtitle-20-bold text-white">아직 하트비트가 없어요</h2>
                   <p className="mb-[1.25rem] text-body2-15-medium text-gray300">
                     하트비트를 눌러서
                     <br />
@@ -127,8 +121,7 @@ function Heartbeat() {
               </div>
               <button
                 onClick={closeModal}
-                className="w-full bg-main px-[0.5rem] py-[0.99rem] text-body1-16-bold text-BG-black"
-              >
+                className="w-full bg-main px-[0.5rem] py-[0.99rem] text-body1-16-bold text-BG-black">
                 확인
               </button>
             </motion.div>
