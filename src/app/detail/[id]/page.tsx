@@ -59,8 +59,8 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
-      <Location venue={venue} />
       <Info venue={venue} isHeartbeat={isHeartbeat} tagList={[]} />
+      <Location venue={venue} />
       <VenueHours hours={venue.operationHours} />
       <CustomerService />
       <Footer />

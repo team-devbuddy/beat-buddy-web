@@ -28,26 +28,23 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
   };
 
   return (
-    <div className="px-[1rem] py-[1.25rem] bg-BG-black">
-      <div className="flex justify-around border-b border-gray600 pb-[1.25rem]">
+    <div className="px-[1rem] py-[2rem] bg-BG-black">
+      <div className="flex justify-around ">
         <div className="flex flex-col items-center">
-          <Image src="/icons/phone.svg" alt="phone icon" width={24} height={24} />
+          <Image src="/icons/phone.fill.svg" alt="phone icon" width={24} height={24} />
           <p className="text-body2-15-medium text-gray200 mt-[0.5rem]">전화</p>
         </div>
         <div className="flex flex-col items-center cursor-pointer" onClick={handleInstagramClick}>
-          <Image src="/icons/instagram.svg" alt="instagram icon" width={24} height={24} />
+          <Image src="/icons/insta.fill.svg" alt="instagram icon" width={24} height={24} />
           <p className="text-body2-15-medium text-gray200 mt-[0.5rem]">SNS</p>
         </div>
         <div className="flex flex-col items-center">
-          <Image src="/icons/smoking.svg" alt="smoking icon" width={24} height={24} />
+          <Image src="/icons/smoke.fill.svg" alt="smoking icon" width={24} height={24} />
           <p className="text-body2-15-medium text-gray200 mt-[0.5rem]">흡연 가능</p>
         </div>
       </div>
 
-      <div className="mt-[1.25rem]">
-        <h2 className="text-body1-16-bold">위치</h2>
-        <p className="mt-[0.75rem] text-body2-15-medium text-gray200">{venue.address}</p>
-      </div>
+      
     </div>
   );
 };

@@ -12,7 +12,7 @@ const Location = ({ venue }: LocationProps) => {
   const address = venue.address || '';
 
   return (
-    <div className="py-[1.25rem]">
+    <div className="pb-[1.25rem]">
       <div className="px-[1rem]">
         <p className="text-body1-16-bold">위치</p>
         <p className="mt-[0.75rem] text-body2-15-medium text-gray200">{address}</p>
