@@ -77,15 +77,13 @@ export default function BBPMain() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <BBPickHeader />
-      <main className="flex-grow px-[1rem] pt-[1.75rem]">
-        <div className="grid grid-cols-1 gap-x-[1rem] gap-y-[2.5rem] sm:grid-cols-2 sm:px-0">
-          <VenueCard
-            clubs={BBPClubs}
-            likedClubs={likedClubs}
-            heartbeatNums={heartbeatNums}
-            handleHeartClickWrapper={handleHeartClickWrapper}
-          />
-        </div>
+      <main className="pt-[1.75rem]">
+        <VenueCard
+          clubs={BBPClubs}
+          likedClubs={likedClubs}
+          heartbeatNums={heartbeatNums}
+          handleHeartClickWrapper={handleHeartClickWrapper}
+        />
       </main>
       <MainFooter />
     </div>

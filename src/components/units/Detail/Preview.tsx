@@ -115,7 +115,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
       </Slider>
       <div className="absolute bottom-0 z-20 flex flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
         <h1 className="text-title-24-bold">{venue.englishName}</h1>
-        <div className="flex w-2/3 flex-wrap gap-2">
+        <div className="flex w-4/5 flex-wrap gap-2">
           {tagList && tagList.length > 0 ? (
             tagList.map((tag: string, index: number) => (
               <span
