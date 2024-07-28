@@ -44,6 +44,10 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
       window.removeEventListener('resize', updateSnapPoints);
     };
   }, []);
+  useEffect(() => {
+    console.log("Filtered Clubs:", filteredClubs);
+  }, [filteredClubs]);
+  
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -96,8 +100,8 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
                   />
                 </div>
                 <div className="bg-#131415 flex flex-col text-[0.93rem]">
-                  {!isMapView && (
-                    <div className="flex w-full flex-wrap justify-between gap-4 p-5">
+                  {isMapView && (
+                    <div className="flex w-full flex-wrap justify-between gap-4 ">
                       <ClubList
                         clubs={filteredClubs}
                         likedClubs={likedClubs}
