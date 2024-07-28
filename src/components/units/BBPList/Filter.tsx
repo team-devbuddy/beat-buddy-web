@@ -2,8 +2,18 @@ import { useEffect, useState } from 'react';
 import { GetHistory } from '@/lib/action';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
+import { postFilter } from '@/lib/actions/recommend-controller/postFilter';
 
-const Filter = () => {
+const regionTags = ['HONGDAE', 'ITAEWON', 'GANGNAM/SINSA', 'APGUJEONG', 'OTHERS'];
+const genreTags = ['HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 'LATIN', 'K-POP', 'POP'];
+const moodTags = ['CLUB', 'PUB', 'ROOFTOP', 'DEEP', 'COMMERCIAL', 'CHILL', 'EXOTIC', 'HUNTING'];
+
+interface FilterProps {
+  setFilteredClubs: (clubs: any[]) => void;
+  BBPClubs: any[];
+}
+
+const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
   const [preferences, setPreferences] = useState<string[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const accessToken = useRecoilValue(accessTokenState);
@@ -16,7 +26,7 @@ const Filter = () => {
           const history = await response.json();
           const recentArchive = history[0];
           if (recentArchive && recentArchive.preferenceList) {
-            setPreferences(recentArchive.preferenceList);
+            setPreferences([...recentArchive.preferenceList]);
           }
         } catch (error) {
           console.error('Error fetching preferences:', error);
@@ -27,31 +37,37 @@ const Filter = () => {
     fetchPreferences();
   }, [accessToken]);
 
+  useEffect(() => {
+    const fetchFilteredClubs = async () => {
+      if (selectedFilters.length > 0) {
+        const filters = {
+          regionTags: selectedFilters.filter(tag => regionTags.includes(tag)),
+          moodTags: selectedFilters.filter(tag => moodTags.includes(tag)),
+          genreTags: selectedFilters.filter(tag => genreTags.includes(tag)),
+        };
+
+        try {
+          const clubs = await postFilter(filters, accessToken);
+          setFilteredClubs(clubs);
+        } catch (error) {
+          console.error('Error fetching filtered clubs:', error);
+        }
+      } else {
+        setFilteredClubs(BBPClubs);
+      }
+    };
+
+    fetchFilteredClubs();
+  }, [selectedFilters, accessToken, setFilteredClubs, BBPClubs]);
+
   const handleFilterClick = (filter: string) => {
     setSelectedFilters((prevFilters) =>
-      prevFilters.includes(filter) ? prevFilters.filter((item) => item !== filter) : [...prevFilters, filter],
+      prevFilters.includes(filter) ? prevFilters.filter(f => f !== filter) : [...prevFilters, filter]
     );
-  };
-
-  const handleAllFilterClick = () => {
-    if (selectedFilters.length === preferences.length) {
-      setSelectedFilters([]);
-    } else {
-      setSelectedFilters(preferences);
-    }
   };
 
   return (
     <div className="mt-[1.75rem] flex flex-wrap gap-[0.5rem] bg-BG-black px-[1rem] text-body2-15-medium">
-      <button
-        className={`box-border rounded-sm border px-[0.62rem] py-[0.25rem] ${
-          selectedFilters.length === preferences.length
-            ? 'border-main2 bg-gray500 text-main2'
-            : 'border-transparent bg-gray500 text-gray400'
-        }`}
-        onClick={handleAllFilterClick}>
-        전체
-      </button>
       {preferences.length > 0 ? (
         preferences.map((filter, index) => (
           <button

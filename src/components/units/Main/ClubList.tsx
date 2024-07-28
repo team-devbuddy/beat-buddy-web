@@ -44,7 +44,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
     <div className="flex flex-col">
       <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[1.19rem] gap-y-[2.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue) => {
-          const firstImageUrl = (venue.backgroundUrl || []).find(url => url.match(/\.(jpeg|jpg|gif|png|heic)$/i)) || venue.logoUrl || '/images/DefaultImage.png';
+          const firstImageUrl = (venue.backgroundUrl.find(url => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i))) || venue.logoUrl || '/images/DefaultImage.png';
           const filteredTags = getFilteredTags(venue.tagList || []);
 
           return (
