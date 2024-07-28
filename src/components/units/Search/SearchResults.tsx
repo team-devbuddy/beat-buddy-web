@@ -33,6 +33,10 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 리스트 뷰가 표시되도록 설정
+    setIsMapView(false);
+  }, [setIsMapView]);
 
   return (
     <div className="relative flex w-full flex-col">

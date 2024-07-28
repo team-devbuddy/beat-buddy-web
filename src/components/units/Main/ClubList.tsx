@@ -11,9 +11,9 @@ interface ClubsListProps {
 }
 //태그필터링!! 히히
 const clubTypes = ['club', 'pub', 'rooftop'];
-const regions = ['hongdae', 'ITAEWON', 'APGUJEONG', 'GANGNAM/SINSA', 'OTHERS'];
+const regions = ['HONGDAE', 'ITAEWON', 'APGUJEONG', 'GANGNAM/SINSA', 'OTHERS'];
 const regionTranslations: { [key: string]: string } = {
-  hongdae: '홍대',
+  HONGDAE: '홍대',
   ITAEWON: '이태원',
   APGUJEONG: '압구정',
   'GANGNAM/SINSA': '강남/신사',
@@ -73,7 +73,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                 <div className="mt-[1rem] flex flex-grow flex-col justify-between">
                   <div>
                   <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
-                    <div className="mb-[1.06rem] w-4/5 mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
+                    <div className="mb-[1.06rem] w-3/4 mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag: string, index: number) => (
                           <span
