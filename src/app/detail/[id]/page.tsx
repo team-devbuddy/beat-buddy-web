@@ -1,3 +1,5 @@
+// src/app/detail/[id]/page.tsx
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -55,6 +57,10 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
       </div>
     );
   }
+
+  const operationHours = typeof venue.operationHours === 'object' && venue.operationHours !== null
+    ? venue.operationHours
+    : {};
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">

@@ -58,6 +58,9 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
     venue.backgroundUrl && venue.backgroundUrl.length > 0 ? venue.backgroundUrl : [venue.logoUrl || defaultImage];
 
   useEffect(() => {
+    console.log('Media:', media); // media 배열이 올바르게 설정되었는지 확인
+    console.log('Venue:', venue); // venue 객체가 올바르게 전달되었는지 확인
+
     // 초기 좋아요 상태 설정
     setLikedClubs((prevLikedClubs) => ({
       ...prevLikedClubs,
@@ -158,7 +161,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
                 key={`default-${index}`}
                 src={defaultImage}
                 alt="Default Image"
-                fill
+                layout="fill"
                 className="object-cover object-center"
               />
             )}
