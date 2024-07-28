@@ -13,8 +13,6 @@ import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { SearchResultsProps } from '@/lib/types';
 import DropdownGroup from '../DropdownGroup';
 import ClubList from '../../Main/ClubList';
-import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
 
@@ -29,7 +27,7 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState); 
+  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
 
   const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
   const locations = ['홍대', '이태원', '신사', '압구정'];
@@ -66,56 +64,54 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col justify-between">
-      <div className="bg-[#131415] pb-32">
-        <AnimatePresence>
-          {isOpen && (
-            <Sheet
-              className="!z-10 mx-auto w-full min-w-[360px] max-w-[600px]"
-              isOpen={true}
-              onClose={() => setOpen(false)}
-              initialSnap={1}
-              snapPoints={[height, 362, 76]}
-              onSnap={handleSnap} // 스냅 포인트 변경 시 호출되는 콜백 함수
-            >
-              <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
-                <Sheet.Header className="relative flex h-[2rem] w-full justify-center rounded-t-lg bg-[#131415] pt-[6px]">
-                  <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
-                </Sheet.Header>
-                <Sheet.Content
-                  className="relative z-10 h-full w-full !grow-0 overflow-y-scroll bg-[#131415]"
-                  disableDrag={true}>
-                  <div className="mb-[1.25rem] mt-[0.25rem]">
-                    <DropdownGroup
-                      genres={genres}
-                      locations={locations}
-                      orders={sorts}
-                      selectedGenre={selectedGenre}
-                      setSelectedGenre={setSelectedGenre}
-                      selectedLocation={selectedLocation}
-                      setSelectedLocation={setSelectedLocation}
-                      selectedOrder={selectedSort}
-                      setSelectedOrder={setSelectedSort}
-                    />
-                  </div>
-                  <div className="bg-#131415 flex flex-col text-[0.93rem]">
-                    {!isMapView && (
-                      <div className="flex w-full flex-wrap justify-between gap-4 p-5">
-                        <ClubList
-                          clubs={filteredClubs}
-                          likedClubs={likedClubs}
-                          heartbeatNums={heartbeatNums}
-                          handleHeartClickWrapper={handleHeartClickWrapper}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </Sheet.Content>
-              </Sheet.Container>
-            </Sheet>
-          )}
-        </AnimatePresence>
-      </div>
+    <div className="flex w-full flex-col justify-between">
+      <AnimatePresence>
+        {isOpen && (
+          <Sheet
+            className="!z-10 mx-auto w-full min-w-[360px] max-w-[600px]"
+            isOpen={true}
+            onClose={() => setOpen(false)}
+            initialSnap={1}
+            snapPoints={[height, 362, 76]}
+            onSnap={handleSnap} // 스냅 포인트 변경 시 호출되는 콜백 함수
+          >
+            <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
+              <Sheet.Header className="relative flex h-[2rem] w-full justify-center rounded-t-lg bg-[#131415] pt-[6px]">
+                <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
+              </Sheet.Header>
+              <Sheet.Content
+                className="relative z-10 h-full w-full !grow-0 overflow-y-scroll bg-[#131415]"
+                disableDrag={true}>
+                <div className="mb-[1.25rem] mt-[0.25rem]">
+                  <DropdownGroup
+                    genres={genres}
+                    locations={locations}
+                    orders={sorts}
+                    selectedGenre={selectedGenre}
+                    setSelectedGenre={setSelectedGenre}
+                    selectedLocation={selectedLocation}
+                    setSelectedLocation={setSelectedLocation}
+                    selectedOrder={selectedSort}
+                    setSelectedOrder={setSelectedSort}
+                  />
+                </div>
+                <div className="bg-#131415 flex flex-col text-[0.93rem]">
+                  {!isMapView && (
+                    <div className="flex w-full flex-wrap justify-between gap-4 p-5">
+                      <ClubList
+                        clubs={filteredClubs}
+                        likedClubs={likedClubs}
+                        heartbeatNums={heartbeatNums}
+                        handleHeartClickWrapper={handleHeartClickWrapper}
+                      />
+                    </div>
+                  )}
+                </div>
+              </Sheet.Content>
+            </Sheet.Container>
+          </Sheet>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
