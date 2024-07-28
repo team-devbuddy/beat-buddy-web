@@ -21,16 +21,13 @@ const Preview = ({ venue, isHeartbeat }: ClubProps) => {
 
   const media =
     venue.backgroundUrl && venue.backgroundUrl.length > 0
-      ? venue.backgroundUrl.map((url) => {
-          if (url.match(/\.(jpeg|jpg|gif|png|heic|mp4)$/i)) {
-            return url;
-          } else {
-            return defaultImage;
-          }
-        })
+      ? venue.backgroundUrl
       : [venue.logoUrl || defaultImage];
 
   useEffect(() => {
+    console.log('Media:', media); // media 배열이 올바르게 설정되었는지 확인
+    console.log('Venue:', venue); // venue 객체가 올바르게 전달되었는지 확인
+
     // 초기 좋아요 상태 설정
     setLikedClubs((prevLikedClubs) => ({
       ...prevLikedClubs,
@@ -96,8 +93,8 @@ const Preview = ({ venue, isHeartbeat }: ClubProps) => {
       <Slider ref={sliderRef} {...settings} className="absolute inset-0 z-10 h-full w-full">
         {media.map((url, index) => (
           <div key={index} className="relative h-[17.5rem] w-full">
-            {url.match(/\.(jpeg|jpg|gif|png|heic)$/i) ? (
-              <Image src={url} alt={`Background ${index}`} fill className="object-cover object-center" />
+            {url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i) ? (
+              <Image src={url} alt={`Background ${index}`} layout="fill" className="object-cover object-center" />
             ) : url.match(/\.mp4$/i) ? (
               <video key={`video-${index}`} className="h-full w-full object-cover" controls muted loop>
                 <source src={url} type="video/mp4" />
@@ -108,7 +105,7 @@ const Preview = ({ venue, isHeartbeat }: ClubProps) => {
                 key={`default-${index}`}
                 src={defaultImage}
                 alt="Default Image"
-                fill
+                layout="fill"
                 className="object-cover object-center"
               />
             )}
@@ -119,13 +116,17 @@ const Preview = ({ venue, isHeartbeat }: ClubProps) => {
       <div className="absolute bottom-0 z-20 flex flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
         <h1 className="text-title-24-bold">{venue.englishName}</h1>
         <div className="flex space-x-[0.5rem]">
-          {/* venue.tagList.map((tag: string, index: number) => (
-            <span
-              key={index}
-              className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-              {tag}
-            </span>
-          )) */}
+          {venue.tagList && venue.tagList.length > 0 ? (
+            venue.tagList.map((tag: string, index: number) => (
+              <span
+                key={index}
+                className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                {tag}
+              </span>
+            ))
+          ) : (
+            <span className="text-body3-12-medium text-gray100">No tags available</span>
+          )}
         </div>
       </div>
     </div>
