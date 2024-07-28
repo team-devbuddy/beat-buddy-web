@@ -1,12 +1,13 @@
 'use client';
 
 import { RecoilRoot, useRecoilState } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { accessTokenState, authState } from '@/context/recoil-context';
 import { PostRefresh } from '@/lib/action';
 import { useEffect, useState } from 'react';
 
 function ClientLayout({ children }: { children: React.ReactNode }) {
   const [access, setAccess] = useRecoilState(accessTokenState);
+  const [isAuth, setIsAuth] = useRecoilState(authState);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -18,14 +19,22 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
       if (access) {
         const response = await PostRefresh(access);
         if (response.ok) {
-          // handle successful refresh
+          const data = await response.json();
+          setAccess(data.accessToken);
+          setIsAuth(true);
         } else {
-          // handle failed refresh
+          alert('로그인이 필요합니다.');
+          setAccess(null);
+          setIsAuth(false);
         }
       }
     };
     if (isHydrated) {
-      refreshToken();
+      if (access) {
+        refreshToken();
+      } else {
+        setIsAuth(false);
+      }
     }
   }, [access, isHydrated]);
 
