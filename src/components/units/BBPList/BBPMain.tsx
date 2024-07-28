@@ -10,6 +10,13 @@ import MainFooter from '../Main/MainFooter';
 import { getBBP } from '@/lib/actions/recommend-controller/getBBP';
 import VenueCard from './VenueCard';
 import Filter from './Filter';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import styled from 'styled-components';
+import NoResults from '../Search/NoResult';
+
+
+
 const BBPickHeader = dynamic(() => import('./BBPHeader'), { ssr: false });
 
 export default function BBPMain() {
@@ -17,6 +24,8 @@ export default function BBPMain() {
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const [BBPClubs, setBBPClubs] = useState<Club[]>([]);
+  const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
+  const [showToast, setShowToast] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchBBPClubs = async () => {
@@ -24,6 +33,7 @@ export default function BBPMain() {
         if (accessToken) {
           const data = await getBBP(accessToken);
           setBBPClubs(data);
+          setFilteredClubs(data); 
 
           const heartbeatNumbers = data.reduce(
             (acc: { [key: number]: number }, club: { venueId: number; heartbeatNum: number }) => {
@@ -63,6 +73,8 @@ export default function BBPMain() {
     }
   }, [accessToken, setLikedClubs, setHeartbeatNums]);
 
+  
+
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
@@ -70,14 +82,18 @@ export default function BBPMain() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <BBPickHeader />
-      <Filter/>
+      <Filter setFilteredClubs={setFilteredClubs} BBPClubs={BBPClubs} />
       <main className="pt-[1.75rem]">
-        <VenueCard
-          clubs={BBPClubs}
-          likedClubs={likedClubs}
-          heartbeatNums={heartbeatNums}
-          handleHeartClickWrapper={handleHeartClickWrapper}
-        />
+        {filteredClubs.length === 0 && filteredClubs !== BBPClubs ? (
+          <NoResults />
+        ) : (
+          <VenueCard
+            clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}
+            likedClubs={likedClubs}
+            heartbeatNums={heartbeatNums}
+            handleHeartClickWrapper={handleHeartClickWrapper}
+          />
+        )}
       </main>
       <MainFooter />
     </div>
