@@ -33,7 +33,7 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
   const instaName = instaDetails.length > 0 ? instaDetails[0] : 'Instagram'; // 인스타아이디 추출
 
   return (
-    <div className="px-[1rem] py-[1.25rem]">
+    <div className="px-[1rem] py-[1.25rem] bg-BG-black">
       <h2 className="text-body1-16-bold">베뉴 정보</h2>
 
       <div className="mt-[0.5rem] flex items-center space-x-[0.75rem]">

@@ -1,3 +1,5 @@
+// src/app/detail/[id]/page.tsx
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -54,8 +56,9 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  // 요일별로 운영 시간 분리
-  const operationHours = parseOperationHours(venue.operationHours || '');
+  const operationHours = typeof venue.operationHours === 'object' && venue.operationHours !== null
+    ? venue.operationHours
+    : {};
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
@@ -67,35 +70,6 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
       <Footer />
     </div>
   );
-};
-
-// 요일별 운영 시간을 파싱하는 함수
-const parseOperationHours = (operationHoursString: string): { [key: string]: string } => {
-  const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
-  const operationHours: { [key: string]: string } = {
-    월: '운영하지 않음',
-    화: '운영하지 않음',
-    수: '운영하지 않음',
-    목: '운영하지 않음',
-    금: '운영하지 않음',
-    토: '운영하지 않음',
-    일: '운영하지 않음',
-  };
-
-  const hoursEntries = operationHoursString.split('/');
-  hoursEntries.forEach((entry) => {
-    const [daysPart, hoursPart] = entry.trim().split(' ');
-    const days = daysPart.split(',');
-
-    days.forEach((day) => {
-      const trimmedDay = day.trim().replace(/\*|\(.+\)/g, ''); 
-      if (daysOfWeek.includes(trimmedDay)) {
-        operationHours[trimmedDay] = hoursPart.trim();
-      }
-    });
-  });
-
-  return operationHours;
 };
 
 export default DetailPage;
