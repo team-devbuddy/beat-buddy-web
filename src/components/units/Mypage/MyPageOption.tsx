@@ -51,7 +51,7 @@ export default function MyPageOption() {
           </div>
         </Link>
 
-        <Link href="/mypage/option/notice">
+        <Link href="https://admitted-xenon-54c.notion.site/ed33911b690249999ffb559bcf972c1d" target="_blank">
           <div className="flex cursor-pointer items-center justify-between px-4 py-5 hover:bg-gray700">
             <div className="font-bold text-white">공지사항</div>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
