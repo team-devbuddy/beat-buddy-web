@@ -21,7 +21,7 @@ export default function BeatBuddyPick({
   handleHeartClickWrapper,
 }: BeatBuddyPickProps) {
   return (
-    <div className="mt-[0.44rem] flex flex-col">
+    <div className="mt-[0.44rem] flex flex-col bg-BG-black">
       <Link href="/bbp-list" passHref>
         <div className="flex cursor-pointer items-center justify-between px-[1rem] py-[1.25rem]">
           <span className="font-queensides text-[1.5rem] text-main2">
@@ -51,7 +51,7 @@ export default function BeatBuddyPick({
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                   <div className="mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
                     {club.tagList.length > 0 ? (
-                      club.tagList.map((tag, index) => (
+                      club.tagList.map((tag:string, index:number) => (
                         <span
                           key={index}
                           className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">

@@ -1,4 +1,3 @@
-
 export interface Term {
   id: number;
   label: string;
@@ -6,26 +5,34 @@ export interface Term {
   checked?: boolean;
 }
 
+// src/lib/types.ts
 export interface Club {
+  tagList: any;
+  createdAt: string;
+  updatedAt: string;
   venueId: number;
   englishName: string;
   koreanName: string;
-  location?: string;
-  tagList: string[];
-  logoUrl: string;
-  address?: string;
-  phone?: string;
-  insta?: string;
-  website?: string;
-  operationHours?:  string ;
-  backgroundUrl?: string[];
+  region: string;
+  description: string | null;
+  address: string;
+  instaId: string;
+  instaUrl: string;
+  operationHours: {
+    [key: string]: string;
+  };
+  logoUrl: string | null;
+  backgroundUrl: string[];
   heartbeatNum: number;
-  description?: string | null;
+  smokingAllowed: boolean;
 }
+
 export interface ClubProps {
   venue: Club;
   isHeartbeat: boolean;
+  tagList: string[];
 }
+
 
 export interface VenueHoursProps {
   hours: { [day: string]: string };
@@ -38,7 +45,7 @@ export interface HotVenuesProps {
 
 export interface SearchHeaderProps {
   searchQuery: string;
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  setSearchQuery: React.Dispatch;
 }
 
 export interface SearchResultsProps {

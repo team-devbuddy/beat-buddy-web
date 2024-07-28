@@ -7,28 +7,7 @@ import type { BottomSheetRef } from 'react-spring-bottom-sheet';
 import 'react-spring-bottom-sheet/dist/style.css';
 import MapSearchButton from './MapSearchButton';
 
-const testClubs: Club[] = [
-  {
-    venueId: 1,
-    englishName: 'Club One',
-    koreanName: '클럽 원',
-    location: 'Seongnam-si, Jungwon-gu',
-    tagList: ['hiphop'],
-    logoUrl: '',
-    address: '성남시 중원구 광명로 176',
-    heartbeatNum: 100,
-  },
-  {
-    venueId: 2,
-    englishName: 'Club Two',
-    koreanName: '클럽 투',
-    location: 'Seongnam-si, Jungwon-gu',
-    tagList: ['techno'],
-    logoUrl: '',
-    address: '성남시 중원구 시민로 66',
-    heartbeatNum: 200,
-  },
-];
+
 
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
