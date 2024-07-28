@@ -11,6 +11,7 @@ import { getBBP } from '@/lib/actions/recommend-controller/getBBP';
 import VenueCard from './VenueCard';
 import BBPListSkeleton from '@/components/common/skeleton/BBPListSkeleton';
 
+import Filter from './Filter';
 const BBPickHeader = dynamic(() => import('./BBPHeader'), { ssr: false });
 
 export default function BBPMain() {
@@ -77,6 +78,7 @@ export default function BBPMain() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <BBPickHeader />
+      <Filter/>
       <main className="pt-[1.75rem]">
         <VenueCard
           clubs={BBPClubs}
