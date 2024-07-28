@@ -21,16 +21,15 @@ import { AnimatePresence } from 'framer-motion';
 export default function BottomSheetComponent({ filteredClubs }: SearchResultsProps) {
   const [height, setHeight] = useState<number>(500);
   const [isOpen, setOpen] = useState(true);
-  const [isMapView, setIsMapView] = useRecoilState(isMapViewState); // isMapView 상태를 Recoil에서 가져옴
+  const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
   const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedSort, setSelectedSort] = useState<string>('가까운 순');
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState); // searchQuery 상태를 Recoil에서 가져옴
+  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState); 
 
   const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
   const locations = ['홍대', '이태원', '신사', '압구정'];
@@ -39,7 +38,7 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
   useEffect(() => {
     function updateSnapPoints() {
       const calculateHeight = window.innerHeight - 122;
-      setHeight(calculateHeight);
+      setHeight(Math.max(200, calculateHeight));
     }
     updateSnapPoints();
     window.addEventListener('resize', updateSnapPoints);
@@ -57,18 +56,6 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
 
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setSearchQuery(value);
-    router.push(generateLink('/search/results', value));
-  };
-
-  const generateLink = (path: string, query: string) => `${path}?q=${encodeURIComponent(query)}`;
-
-  const handleSearch = () => {
-    router.push(generateLink('/search/results', searchQuery));
   };
 
   const handleSnap = (index: number) => {
@@ -112,8 +99,6 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
                     />
                   </div>
                   <div className="bg-#131415 flex flex-col text-[0.93rem]">
-                    
-
                     {!isMapView && (
                       <div className="flex w-full flex-wrap justify-between gap-4 p-5">
                         <ClubList
