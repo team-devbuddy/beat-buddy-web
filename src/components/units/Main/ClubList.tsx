@@ -110,6 +110,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                         </span>
                       )}
                     </div>
+
                   </div>
                   <div className="flex items-end justify-between">
                     <div className="flex items-center space-x-[0.25rem] text-gray300">
