@@ -70,7 +70,14 @@ export default function OnBoardingMood() {
 
   return (
     <>
-      <div className="flex w-full flex-col px-4">
+      <div className="relative flex w-full flex-col px-4">
+        <Image
+          src="/icons/landing_step_2.svg"
+          alt="prev"
+          width={55}
+          height={24}
+          className="absolute right-5 top-[-32px]"
+        />
         <div className="flex items-start justify-between py-5">
           <h1 className="text-2xl font-bold leading-9 text-white">
             어떤 분위기를
