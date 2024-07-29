@@ -54,7 +54,7 @@ const getFilteredTags = (tags: string[]) => {
 
 export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex w-full flex-col">
       <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.3rem] gap-y-[2.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue) => {
           const firstImageUrl =

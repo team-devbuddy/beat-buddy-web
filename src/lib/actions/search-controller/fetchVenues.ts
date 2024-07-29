@@ -1,4 +1,5 @@
-export const fetchVenues = async (query: string, accessToken: string) => {
+export const fetchVenues = async (query: string,   accessToken: string | null,
+) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/search`, {
     method: 'POST',
     headers: {

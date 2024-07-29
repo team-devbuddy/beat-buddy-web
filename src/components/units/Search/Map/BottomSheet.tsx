@@ -1,6 +1,6 @@
 'use client';
+import { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
 import { Sheet } from 'react-modal-sheet';
-import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   likedClubsState,
@@ -16,7 +16,7 @@ import ClubList from '../../Main/ClubList';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
 
-export default function BottomSheetComponent({ filteredClubs }: SearchResultsProps) {
+const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProps>(({ filteredClubs }, ref) => {
   const [height, setHeight] = useState<number>(500);
   const [isOpen, setOpen] = useState(true);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
@@ -33,6 +33,10 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
   const locations = ['홍대', '이태원', '신사', '압구정'];
   const sorts = ['가까운 순', '인기순'];
 
+  useImperativeHandle(ref, () => ({
+    close: () => setOpen(false),
+  }));
+
   useEffect(() => {
     function updateSnapPoints() {
       const calculateHeight = window.innerHeight - 122;
@@ -44,10 +48,10 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
       window.removeEventListener('resize', updateSnapPoints);
     };
   }, []);
+
   useEffect(() => {
     console.log("Filtered Clubs:", filteredClubs);
   }, [filteredClubs]);
-  
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -62,7 +66,6 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
 
   const handleSnap = (index: number) => {
     if (index === 0) {
-      // 바텀시트가 전체 높이에 도달하면 isMapView를 false로 설정
       setIsMapView(false);
     }
   };
@@ -77,15 +80,13 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
             onClose={() => setOpen(false)}
             initialSnap={1}
             snapPoints={[height, 362, 76]}
-            onSnap={handleSnap} // 스냅 포인트 변경 시 호출되는 콜백 함수
+            onSnap={handleSnap}
           >
             <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
               <Sheet.Header className="relative flex h-[2rem] w-full justify-center rounded-t-lg bg-[#131415] pt-[6px]">
                 <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
               </Sheet.Header>
-              <Sheet.Content
-                className="relative z-10 h-full w-full !grow-0 overflow-y-scroll bg-[#131415]"
-                disableDrag={true}>
+              <Sheet.Content className="relative z-10 h-full w-full !grow-0 overflow-y-scroll bg-[#131415]" disableDrag={true}>
                 <div className="mb-[1.25rem] mt-[0.25rem]">
                   <DropdownGroup
                     genres={genres}
@@ -118,4 +119,6 @@ export default function BottomSheetComponent({ filteredClubs }: SearchResultsPro
       </AnimatePresence>
     </div>
   );
-}
+});
+
+export default BottomSheetComponent;

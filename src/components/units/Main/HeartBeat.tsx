@@ -99,10 +99,9 @@ function Heartbeat() {
               animate="animate"
               exit="exit"
               className="w-[18.9rem] bg-BG-black">
-              <div className="px-[1.25rem] pb-[2.5rem] pt-4">
+              <div className="px-[1.25rem] pb-[1.5rem] pt-4">
                 <div className="flex justify-end">
-                  <div onClick={closeModal} className="mb-[1.25rem] text-gray-600 hover:text-gray-800">
-                    <Image src="/icons/Xmark.svg" alt="close" width={28} height={28} />
+                  <div  className="mb-[1.25rem] text-gray-600 hover:text-gray-800">
                   </div>
                 </div>
                 <div className="text-center">
