@@ -11,6 +11,7 @@ import {
   selectedGenreState,
   selectedLocationState,
   selectedOrderState,
+  clickedClubState,
 } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { SearchResultsProps } from '@/lib/types';
@@ -18,6 +19,7 @@ import DropdownGroup from '../DropdownGroup';
 import ClubList from '../../Main/ClubList';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
+import ClickedClubDetails from './ClickedClub';
 
 const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProps>(({ filteredClubs }, ref) => {
   const [isOpen, setOpen] = useState(true);
@@ -30,14 +32,11 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
   const accessToken = useRecoilValue(accessTokenState);
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
+  const clickedClub = useRecoilValue(clickedClubState);
 
   const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
   const locations = ['홍대', '이태원', '신사', '압구정'];
   const sorts = ['가까운 순', '인기순'];
-
-  useImperativeHandle(ref, () => ({
-    close: () => setOpen(false),
-  }));
 
   useImperativeHandle(ref, () => ({
     close: () => setOpen(false),
@@ -79,6 +78,10 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
     };
   }, []);
 
+  const snapPoints = clickedClub
+    ? [window.innerHeight * 0.9, 280, 82]
+    : [window.innerHeight * 0.9, window.innerHeight * 0.5, 82];
+
   return (
     <div className="flex w-full flex-col justify-between">
       <AnimatePresence>
@@ -88,10 +91,10 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
             isOpen={true}
             onClose={() => setOpen(false)}
             initialSnap={1}
-            snapPoints={[window.innerHeight * 0.9, window.innerHeight * 0.5, 82]} // 비율과 픽셀로 snapPoints 설정
+            snapPoints={snapPoints} // 동적으로 snapPoints 설정
             onSnap={handleSnap}>
             <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
-              <Sheet.Header className="relative flex w-full flex-col justify-center rounded-t-lg bg-[#131415] pt-[6px]">
+              <Sheet.Header className="relative flex w-full flex-col justify-center rounded-t-lg bg-BG-black pt-[6px]">
                 <div className="flex justify-center">
                   <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
                 </div>
@@ -110,18 +113,28 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                 </div>
               </Sheet.Header>
               <Sheet.Content
-                className="relative z-10 h-full w-full grow overflow-y-auto bg-[#131415]"
+                className="relative z-10 h-full w-full grow overflow-y-auto bg-BG-black"
                 disableDrag={true}>
-                <div className="club-list-container flex flex-col bg-[#131415] text-[0.93rem]">
+                <div className="club-list-container flex flex-col text-[0.93rem]">
                   <div className="flex w-full flex-wrap justify-between gap-4">
-                    <ClubList
-                      clubs={filteredClubs}
-                      likedClubs={likedClubs}
-                      heartbeatNums={heartbeatNums}
-                      handleHeartClickWrapper={handleHeartClickWrapper}
-                    />
+                    {clickedClub ? (
+                      <ClickedClubDetails
+                        likedClubs={likedClubs}
+                        heartbeatNums={heartbeatNums}
+                        handleHeartClickWrapper={handleHeartClickWrapper}
+                      />
+                    ) : (
+                      <>
+                        <ClubList
+                          clubs={filteredClubs}
+                          likedClubs={likedClubs}
+                          heartbeatNums={heartbeatNums}
+                          handleHeartClickWrapper={handleHeartClickWrapper}
+                        />
+                        <div style={{ height: `${paddingHeight}px` }} />
+                      </>
+                    )}
                   </div>
-                  <div style={{ height: `${paddingHeight}px` }} />
                 </div>
               </Sheet.Content>
             </Sheet.Container>
