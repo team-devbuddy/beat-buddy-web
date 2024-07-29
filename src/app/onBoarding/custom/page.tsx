@@ -1,12 +1,9 @@
-import Prev from '@/components/common/Prev';
-import OnBoardingLottie from '@/components/units/OnBoarding/OnBoardingLottie';
+import OnBoardingCustom from '@/components/units/OnBoarding/onBoardingCustom';
 
 export default function onBoardingCustomPage() {
   return (
     <>
-      <Prev url={'/onBoarding/name'} />
-      <OnBoardingLottie />
-      {/* <OnBoardingCustom /> */}
+      <OnBoardingCustom />
     </>
   );
 }

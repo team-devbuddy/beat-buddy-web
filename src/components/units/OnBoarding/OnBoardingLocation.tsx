@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { PostLocation } from '@/lib/action'; // 경로를 적절히 수정하세요.
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, authState } from '@/context/recoil-context';
+import Image from 'next/image';
 
 const locationMap: { [key: string]: string } = {
   홍대: 'HONGDAE',
@@ -49,7 +50,14 @@ export default function OnBoardingLocation() {
 
   return (
     <>
-      <div className="flex w-full flex-col px-4">
+      <div className="relative flex w-full flex-col px-4">
+        <Image
+          src="/icons/landing_step_3.svg"
+          alt="prev"
+          width={55}
+          height={24}
+          className="absolute right-5 top-[-32px]"
+        />
         <h1 className="py-5 text-2xl font-bold leading-9 text-white">
           관심 지역을
           <br />

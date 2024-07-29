@@ -34,7 +34,7 @@ export async function PostWithdrawal(access: string) {
       'Content-Type': 'application/json',
       Access: `Bearer ${access}`,
     },
-    // credentials: 'include',
+    credentials: 'include',
   });
 
   return response;
