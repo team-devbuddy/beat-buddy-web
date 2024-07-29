@@ -39,6 +39,10 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
     close: () => setOpen(false),
   }));
 
+  useImperativeHandle(ref, () => ({
+    close: () => setOpen(false),
+  }));
+
   useEffect(() => {
     const query = searchParams.get('q');
     if (query && query !== searchQuery) {
@@ -87,11 +91,11 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
             snapPoints={[window.innerHeight * 0.9, window.innerHeight * 0.5, 82]} // 비율과 픽셀로 snapPoints 설정
             onSnap={handleSnap}>
             <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
-              <Sheet.Header className="relative flex flex-col w-full justify-center rounded-t-lg bg-[#131415] pt-[6px]">
+              <Sheet.Header className="relative flex w-full flex-col justify-center rounded-t-lg bg-[#131415] pt-[6px]">
                 <div className="flex justify-center">
                   <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
                 </div>
-                <div className="pt-[1.25rem] pb-[0.5rem] w-full">
+                <div className="w-full pb-[0.5rem] pt-[1.25rem]">
                   <DropdownGroup
                     genres={genres}
                     locations={locations}
@@ -108,7 +112,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
               <Sheet.Content
                 className="relative z-10 h-full w-full grow overflow-y-auto bg-[#131415]"
                 disableDrag={true}>
-                <div className="flex flex-col bg-[#131415] text-[0.93rem] club-list-container">
+                <div className="club-list-container flex flex-col bg-[#131415] text-[0.93rem]">
                   <div className="flex w-full flex-wrap justify-between gap-4">
                     <ClubList
                       clubs={filteredClubs}
