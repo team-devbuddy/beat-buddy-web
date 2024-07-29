@@ -46,7 +46,7 @@ function SearchGenre() {
   };
 
   return (
-    <div className="px-[1rem] pb-[2.5rem] pt-[2.25rem]">
+    <div className="px-[1rem] pb-[2.5rem] pt-[2.25rem] bg-BG-black">
       <div className="grid grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(0, 3)}</div>
       <div className="mt-[0.5rem] grid grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(3, 5)}</div>
       <div className="mt-[0.5rem] grid grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(5, 8)}</div>

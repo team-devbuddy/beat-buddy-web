@@ -12,10 +12,28 @@ import { likedClubsState, heartbeatNumsState, accessTokenState, isMapViewState }
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { transitionVariants } from '@/lib/animation';
+import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
+import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 
-export default function SearchResults({ filteredClubs = [] }: SearchResultsProps) {
+const genresMap: { [key: string]: string } = {
+  '힙합': 'HIPHOP',
+  '디스코': 'DISCO',
+  'R&B': 'R&B',
+  '테크노': 'TECHNO',
+  'EDM': 'EDM',
+  '하우스': 'HOUSE'
+};
+
+const locationsMap: { [key: string]: string } = {
+  '홍대': 'HONGDAE',
+  '이태원': 'ITAEWON',
+  '신사': 'SINSA',
+  '압구정': 'APGUJEONG'
+};
+
+export default function SearchResults({ filteredClubs: initialFilteredClubs = [] }: SearchResultsProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMapView, setIsMapView] = useRecoilState(isMapViewState); 
+  const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
 
   const [selectedGenre, setSelectedGenre] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -29,12 +47,38 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
   const locations = ['홍대', '이태원', '신사', '압구정'];
   const orders = ['가까운 순', '인기순'];
 
+  const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
+
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
+  const fetchFilteredClubs = async () => {
+    if (searchQuery && !selectedGenre && !selectedLocation) {
+      // searchQuery만 있을 때
+      const clubs = await fetchVenues(searchQuery, accessToken);
+      setFilteredClubs(clubs);
+    } else if (selectedGenre || selectedLocation) {
+      // 드롭다운 필터가 활성화되었을 때
+      const filters = {
+        keyword: searchQuery ? [searchQuery] : [],
+        genreTag: genresMap[selectedGenre] || '',
+        regionTag: locationsMap[selectedLocation] || '',
+      };
+
+      const clubs = await filterDropdown(filters, accessToken);
+      setFilteredClubs(clubs);
+    } else {
+      // 필터가 모두 비활성화된 경우 초기 데이터를 사용
+      setFilteredClubs(initialFilteredClubs);
+    }
+  };
+
   useEffect(() => {
-    // 컴포넌트가 마운트될 때 리스트 뷰가 표시되도록 설정
+    fetchFilteredClubs();
+  }, [searchQuery, selectedGenre, selectedLocation]);
+
+  useEffect(() => {
     setIsMapView(false);
   }, [setIsMapView]);
 
@@ -43,13 +87,7 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
       <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <AnimatePresence mode="wait">
         {isMapView ? (
-          <motion.div
-            key="map"
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={transitionVariants}
-          >
+          <motion.div key="map" initial="initial" animate="animate" exit="exit" variants={transitionVariants}>
             <MapView filteredClubs={filteredClubs} />
           </motion.div>
         ) : (
@@ -59,8 +97,7 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
             animate="animate"
             exit="exit"
             variants={transitionVariants}
-            className="flex flex-col flex-grow bg-BG-black"
-          >
+            className="flex flex-grow flex-col bg-BG-black">
             <DropdownGroup
               genres={genres}
               locations={locations}
@@ -85,7 +122,7 @@ export default function SearchResults({ filteredClubs = [] }: SearchResultsProps
           </motion.div>
         )}
       </AnimatePresence>
-      <MapButton /> 
+      <MapButton />
     </div>
   );
 }
