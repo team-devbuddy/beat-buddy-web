@@ -82,7 +82,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
             isOpen={true}
             onClose={() => setOpen(false)}
             initialSnap={1}
-            snapPoints={[height, 362, 76]}
+            snapPoints={[height, 372, 76]}
             onSnap={handleSnap}
           >
             <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
@@ -90,7 +90,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                 <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
               </Sheet.Header>
               <Sheet.Content className="relative z-10 h-full w-full !grow-0 overflow-y-scroll bg-[#131415]" disableDrag={true}>
-                <div className="mb-[1.25rem] mt-[0.25rem]">
+                <div className=" mt-[0.25rem]">
                   <DropdownGroup
                     genres={genres}
                     locations={locations}

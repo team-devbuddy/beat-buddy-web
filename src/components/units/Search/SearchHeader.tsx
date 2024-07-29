@@ -3,15 +3,17 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useRecoilValue } from 'recoil';
 import { SearchHeaderProps } from '@/lib/types';
 import { getLocalStorageItem, setLocalStorageItem } from '@/lib/utils/storage';
 import { generateLink } from '@/lib/utils/searchUtils';
+import { isMapViewState } from '@/context/recoil-context';
 
 const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [lastSearch, setLastSearch] = useState('');
-
+  const isMapView = useRecoilValue(isMapViewState);
 
   useEffect(() => {
     const storedSearch = getLocalStorageItem('lastSearch');
@@ -40,22 +42,23 @@ const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
           <Image src="/icons/person.svg" alt="프로필이미지" width={32} height={32} />
         </div>
       </div>
-      <div className="flex w-full items-center justify-between bg-BG-black px-4 py-3">
-        <div className="relative w-full">
-          <input
-            className="w-full border-b-2 border-white bg-transparent px-2 py-2 text-white placeholder:text-white focus:outline-none"
-            placeholder="지금 가장 인기있는 클럽은?"
-            value={searchQuery}
-            onChange={handleInputChange}
-          />
-          <Link
-            href={generateLink('/search/results', searchQuery)}
-            className="absolute bottom-3 right-[1rem] cursor-pointer">
-            <Image src="/icons/gray-search.svg" alt="search icon" width={20} height={20} />
-          </Link>
+      {!isMapView && (
+        <div className="flex w-full items-center justify-between bg-BG-black px-4 py-3">
+          <div className="relative w-full">
+            <input
+              className="w-full border-b-2 border-white bg-transparent px-2 py-2 text-white placeholder:text-white focus:outline-none"
+              placeholder="지금 가장 인기있는 클럽은?"
+              value={searchQuery}
+              onChange={handleInputChange}
+            />
+            <Link
+              href={generateLink('/search/results', searchQuery)}
+              className="absolute bottom-3 right-[1rem] cursor-pointer">
+              <Image src="/icons/gray-search.svg" alt="search icon" width={20} height={20} />
+            </Link>
+          </div>
         </div>
-      </div>
-      
+      )}
     </header>
   );
 };

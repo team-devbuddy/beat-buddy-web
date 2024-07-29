@@ -1,17 +1,18 @@
 'use client';
-import { forwardRef, useImperativeHandle, useEffect, useRef, useState, SetStateAction } from 'react';
+import { forwardRef, useImperativeHandle, useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
 import Image from 'next/image';
+import { Club } from '@/lib/types';
 
 interface GoogleMapProp {
-  addresses: string[];
+  clubs: Club[];
   minHeight?: string;
   onAddressesInBounds?: (addresses: string[]) => void;
 }
 
 const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapProp>(
-  ({ addresses, minHeight, onAddressesInBounds }, ref) => {
+  ({ clubs, minHeight, onAddressesInBounds }, ref) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
@@ -51,16 +52,27 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             setMap(mapInstance);
             let geocodeOperations = 0;
 
-            addresses.forEach((address) => {
+            clubs.forEach((club) => {
               geocodeOperations++;
-              geocoder.geocode({ address }, (results, status) => {
+              geocoder.geocode({ address: club.address }, (results, status) => {
                 if (status === 'OK' && results) {
                   const location = results[0].geometry.location;
                   initialBounds.extend(location);
                   const marker = new google.maps.Marker({
                     map: mapInstance,
                     position: location,
-                    icon: MARKER_ICON_URL,
+                    icon: {
+                      url: MARKER_ICON_URL,
+                      scaledSize: new google.maps.Size(24, 24),
+                      labelOrigin: new google.maps.Point(12, -10), // 레이블 위치 조정
+                    },
+                    label: {
+                      text: club.englishName,
+                      color: '#FF4493',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      className: 'marker-label',
+                    },
                   });
                   markers.push(marker);
                 }
@@ -77,7 +89,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
         });
 
       return () => markers.forEach((marker) => marker.setMap(null)); // Cleanup markers
-    }, [addresses]);
+    }, [clubs]);
 
     const handleCurrentLocation = () => {
       if (navigator.geolocation) {
@@ -118,17 +130,28 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           markers.forEach((marker) => marker.setMap(null));
           setMarkers([]);
 
-          const newMarkers: google.maps.Marker[] = []; // 여기를 변경
-          addresses.forEach((address) => {
+          const newMarkers: google.maps.Marker[] = [];
+          clubs.forEach((club) => {
             const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ address }, (results, status) => {
+            geocoder.geocode({ address: club.address }, (results, status) => {
               if (status === 'OK' && results) {
                 const location = results[0].geometry.location;
                 if (bounds.contains(location)) {
                   const marker = new google.maps.Marker({
                     map,
                     position: location,
-                    icon: MARKER_ICON_URL,
+                    icon: {
+                      url: MARKER_ICON_URL,
+                      scaledSize: new google.maps.Size(24, 24),
+                      labelOrigin: new google.maps.Point(12, -10), // 레이블 위치 조정
+                    },
+                    label: {
+                      text: club.englishName,
+                      color: '#FF4493',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      className: 'marker-label',
+                    },
                   });
                   newMarkers.push(marker);
                 }
@@ -158,6 +181,13 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           }
           .current-location-button:hover {
             content: url(${CURRENT_LOCATION_BUTTON_HOVER_URL});
+          }
+          .marker-label {
+            color: #ff4493;
+            font-size: 14px;
+            font-weight: bold;
+            background: transparent;
+            white-space: nowrap;
           }
           .gmnoprint,
           .gm-bundled-control {

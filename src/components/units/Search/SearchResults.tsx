@@ -85,7 +85,7 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     setSelectedLocation('');
     setSelectedOrder('');
   }, []);
-  
+
   useEffect(() => {
     fetchFilteredClubs();
   }, [searchQuery, selectedGenre, selectedLocation]);
@@ -134,7 +134,7 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
           </motion.div>
         )}
       </AnimatePresence>
-      <MapButton />
+      {filteredClubs.length > 0 ? <MapButton /> : ''}
     </div>
   );
 }
