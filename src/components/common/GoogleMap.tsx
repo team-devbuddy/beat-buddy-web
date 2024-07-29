@@ -4,6 +4,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
 import Image from 'next/image';
 import { Club } from '@/lib/types';
+import { MarkerClusterer } from '@googlemaps/markerclusterer';
 
 interface GoogleMapProp {
   clubs: Club[];
@@ -17,6 +18,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
     const [currentLocationMarker, setCurrentLocationMarker] = useState<google.maps.Marker | null>(null);
+    const [markerCluster, setMarkerCluster] = useState<MarkerClusterer | null>(null);
 
     const MARKER_ICON_URL = '/icons/map_marker.svg';
     const CURRENT_LOCATION_MARKER_URL = '/icons/menow.svg';
@@ -26,6 +28,24 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     useImperativeHandle(ref, () => ({
       filterAddressesInView,
     }));
+
+    const createCustomMarker = (club: Club, position: google.maps.LatLng) => {
+      return new google.maps.Marker({
+        position,
+        icon: {
+          url: MARKER_ICON_URL,
+          scaledSize: new google.maps.Size(24, 24),
+          labelOrigin: new google.maps.Point(12, -10), // 레이블 위치 조정
+        },
+        label: {
+          text: club.englishName,
+          color: '#FF4493',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          className: 'marker-label',
+        },
+      });
+    };
 
     useEffect(() => {
       const loader = new Loader({
@@ -51,6 +71,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
 
             setMap(mapInstance);
             let geocodeOperations = 0;
+            const markersArray: google.maps.Marker[] = [];
 
             clubs.forEach((club) => {
               geocodeOperations++;
@@ -58,27 +79,20 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                 if (status === 'OK' && results) {
                   const location = results[0].geometry.location;
                   initialBounds.extend(location);
-                  const marker = new google.maps.Marker({
-                    map: mapInstance,
-                    position: location,
-                    icon: {
-                      url: MARKER_ICON_URL,
-                      scaledSize: new google.maps.Size(24, 24),
-                      labelOrigin: new google.maps.Point(12, -10), // 레이블 위치 조정
-                    },
-                    label: {
-                      text: club.englishName,
-                      color: '#FF4493',
-                      fontSize: '14px',
-                      fontWeight: 'bold',
-                      className: 'marker-label',
-                    },
-                  });
-                  markers.push(marker);
+                  const marker = createCustomMarker(club, location);
+                  markersArray.push(marker);
+                  marker.setMap(mapInstance);
                 }
                 geocodeOperations--;
                 if (geocodeOperations === 0) {
                   mapInstance.fitBounds(initialBounds);
+                  const markerClusterer = new MarkerClusterer({ map: mapInstance, markers: markersArray });
+
+                  google.maps.event.addListener(markerClusterer, 'clusterclick', (cluster: { getBounds: () => google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral; }) => {
+                    mapInstance.fitBounds(cluster.getBounds());
+                  });
+
+                  setMarkerCluster(markerClusterer);
                 }
               });
             });
@@ -88,7 +102,10 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           console.error('Error loading Google Maps JavaScript API', error);
         });
 
-      return () => markers.forEach((marker) => marker.setMap(null)); // Cleanup markers
+      return () => {
+        markers.forEach((marker) => marker.setMap(null));
+        markerCluster?.clearMarkers();
+      }; // Cleanup markers and cluster
     }, [clubs]);
 
     const handleCurrentLocation = () => {
@@ -126,8 +143,8 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       if (map) {
         const bounds = map.getBounds();
         if (bounds) {
-          // Remove all markers
           markers.forEach((marker) => marker.setMap(null));
+          markerCluster?.clearMarkers();
           setMarkers([]);
 
           const newMarkers: google.maps.Marker[] = [];
@@ -137,23 +154,9 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               if (status === 'OK' && results) {
                 const location = results[0].geometry.location;
                 if (bounds.contains(location)) {
-                  const marker = new google.maps.Marker({
-                    map,
-                    position: location,
-                    icon: {
-                      url: MARKER_ICON_URL,
-                      scaledSize: new google.maps.Size(24, 24),
-                      labelOrigin: new google.maps.Point(12, -10), // 레이블 위치 조정
-                    },
-                    label: {
-                      text: club.englishName,
-                      color: '#FF4493',
-                      fontSize: '14px',
-                      fontWeight: 'bold',
-                      className: 'marker-label',
-                    },
-                  });
+                  const marker = createCustomMarker(club, location);
                   newMarkers.push(marker);
+                  marker.setMap(map);
                 }
               }
             });
