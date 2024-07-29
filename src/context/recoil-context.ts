@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom, selector } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 import { HeartbeatProps } from '@/lib/types';
 const { persistAtom } = recoilPersist();
@@ -54,4 +54,32 @@ export const recentSearchState = atom<string[]>({
   key: 'recentSearchState',
   default: [],
   effects_UNSTABLE: [persistAtom],
+});
+
+export const selectedGenreState = atom<string>({
+  key: 'selectedGenreState',
+  default: '',
+});
+
+export const selectedLocationState = atom<string>({
+  key: 'selectedLocationState',
+  default: '',
+});
+
+export const selectedOrderState = atom<string>({
+  key: 'selectedOrderState',
+  default: '',
+});
+export const filterState = selector({
+  key: 'filterState',
+  get: ({ get }) => ({
+    genre: get(selectedGenreState),
+    location: get(selectedLocationState),
+    order: get(selectedOrderState),
+  }),
+  set: ({ set }, newValue) => {
+    set(selectedGenreState, newValue.genre);
+    set(selectedLocationState, newValue.location);
+    set(selectedOrderState, newValue.order);
+  },
 });

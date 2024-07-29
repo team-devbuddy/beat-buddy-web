@@ -8,6 +8,9 @@ import {
   accessTokenState,
   isMapViewState,
   searchQueryState,
+  selectedGenreState,
+  selectedLocationState,
+  selectedOrderState,
 } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { SearchResultsProps } from '@/lib/types';
@@ -20,9 +23,9 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
   const [height, setHeight] = useState<number>(500);
   const [isOpen, setOpen] = useState(true);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
-  const [selectedGenre, setSelectedGenre] = useState<string>('');
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
-  const [selectedSort, setSelectedSort] = useState<string>('가까운 순');
+  const [selectedGenre, setSelectedGenre] = useRecoilState(selectedGenreState);
+  const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState);
+  const [selectedSort, setSelectedSort] = useRecoilState(selectedOrderState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
