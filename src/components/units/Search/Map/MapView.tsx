@@ -7,8 +7,6 @@ import type { BottomSheetRef } from 'react-spring-bottom-sheet';
 import 'react-spring-bottom-sheet/dist/style.css';
 import MapSearchButton from './MapSearchButton';
 
-
-
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
   const mapRef = useRef<{ filterAddressesInView: () => void } | null>(null);
@@ -23,25 +21,18 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   }, [sheetRef]);
 
   const handleSearch = (addressesInView: string[]) => {
-    const filtered = filteredClubs.filter(club => addressesInView.includes(club.address ?? ''));
+    const filtered = filteredClubs.filter((club) => addressesInView.includes(club.address ?? ''));
     setCurrentFilteredClubs(filtered);
   };
-
-  // 주소 데이터를 콘솔에 출력
-  const addresses = filteredClubs.map(club => {
-    return club.address ?? '';
-  });
+  useEffect(() => {
+    setCurrentFilteredClubs(filteredClubs);
+  }, [filteredClubs]);
 
   return (
     <>
-      <GoogleMap
-        addresses={addresses}
-        minHeight="44rem"
-        onAddressesInBounds={handleSearch}
-        ref={mapRef}
-      />
+      <GoogleMap clubs={filteredClubs} minHeight="44rem" onAddressesInBounds={handleSearch} ref={mapRef} />
       <MapSearchButton onClick={() => mapRef.current?.filterAddressesInView()} />
-      <BottomSheetComponent filteredClubs={currentFilteredClubs} />
+      <BottomSheetComponent filteredClubs={filteredClubs} />
     </>
   );
 }
