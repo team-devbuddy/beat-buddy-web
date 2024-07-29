@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { PostGenre } from '@/lib/action'; // 경로를 적절히 수정하세요.
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { accessTokenState, memberGenreIdState } from '@/context/recoil-context';
+import Image from 'next/image';
 
 export default function OnBoardingGenre() {
   const genreMap: { [key: string]: string } = {
@@ -67,7 +68,14 @@ export default function OnBoardingGenre() {
 
   return (
     <>
-      <div className="flex w-full flex-col px-4">
+      <div className="relative flex w-full flex-col px-4">
+        <Image
+          src="/icons/landing_step_1.svg"
+          alt="prev"
+          width={55}
+          height={24}
+          className="absolute right-5 top-[-32px]"
+        />
         <h1 className="py-5 text-2xl font-bold leading-9 text-white">
           선호 장르를
           <br />
