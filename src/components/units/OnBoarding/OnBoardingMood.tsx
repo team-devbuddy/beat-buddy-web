@@ -38,7 +38,6 @@ export default function OnBoardingMood() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
-  const memberGenreId = useRecoilValue(memberGenreIdState);
   const [memberMoodId, setMemberMoodId] = useRecoilState(memberMoodIdState);
 
   const toggleMood = (mood: string) => {
@@ -58,15 +57,7 @@ export default function OnBoardingMood() {
       if (response.ok) {
         const result = await response.json();
         setMemberMoodId(result.vectorId);
-      }
-
-      if (memberGenreId !== null && memberMoodId !== null) {
-        const response = await PostArchive(access, { memberGenreId, memberMoodId: memberMoodId });
-        if (response.ok) {
-          router.push('/onBoarding/myTaste/location');
-        }
-      } else {
-        console.error('Error: memberGenreId or memberMoodId is null');
+        router.push('/onBoarding/myTaste/location');
       }
     } catch (error) {
       console.error('Error submitting moods:', error);
