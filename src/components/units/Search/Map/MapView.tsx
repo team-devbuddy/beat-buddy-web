@@ -29,7 +29,6 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
 
   // 주소 데이터를 콘솔에 출력
   const addresses = filteredClubs.map(club => {
-    console.log(`클럽 이름: ${club.englishName}, 주소: ${club.address}`);
     return club.address ?? '';
   });
 

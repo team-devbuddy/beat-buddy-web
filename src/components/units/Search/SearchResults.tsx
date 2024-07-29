@@ -6,9 +6,18 @@ import SearchHeader from './SearchHeader';
 import NoResults from './NoResult';
 import MapView from './Map/MapView';
 import DropdownGroup from './DropdownGroup';
-import MapButton from './Map/MapButton'; // Import MapButton without props
+import MapButton from './Map/MapButton';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { likedClubsState, heartbeatNumsState, accessTokenState, isMapViewState } from '@/context/recoil-context';
+import {
+  likedClubsState,
+  heartbeatNumsState,
+  accessTokenState,
+  isMapViewState,
+  selectedGenreState,
+  selectedLocationState,
+  selectedOrderState,
+  searchQueryState,
+} from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { transitionVariants } from '@/lib/animation';
@@ -16,29 +25,27 @@ import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 
 const genresMap: { [key: string]: string } = {
-  '힙합': 'HIPHOP',
-  '디스코': 'DISCO',
+  힙합: 'HIPHOP',
+  디스코: 'DISCO',
   'R&B': 'R&B',
-  '테크노': 'TECHNO',
-  'EDM': 'EDM',
-  '하우스': 'HOUSE'
+  테크노: 'TECHNO',
+  EDM: 'EDM',
+  하우스: 'HOUSE',
 };
 
 const locationsMap: { [key: string]: string } = {
-  '홍대': 'HONGDAE',
-  '이태원': 'ITAEWON',
-  '신사': 'SINSA',
-  '압구정': 'APGUJEONG'
+  홍대: 'HONGDAE',
+  이태원: 'ITAEWON',
+  신사: 'SINSA',
+  압구정: 'APGUJEONG',
 };
 
 export default function SearchResults({ filteredClubs: initialFilteredClubs = [] }: SearchResultsProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
-
-  const [selectedGenre, setSelectedGenre] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState('');
-
+  const [selectedGenre, setSelectedGenre] = useRecoilState(selectedGenreState);
+  const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState);
+  const [selectedOrder, setSelectedOrder] = useRecoilState(selectedOrderState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
@@ -73,7 +80,12 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
       setFilteredClubs(initialFilteredClubs);
     }
   };
-
+  useEffect(() => {
+    setSelectedGenre('');
+    setSelectedLocation('');
+    setSelectedOrder('');
+  }, []);
+  
   useEffect(() => {
     fetchFilteredClubs();
   }, [searchQuery, selectedGenre, selectedLocation]);
