@@ -206,7 +206,6 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           // 초기화
           markerCluster?.clearMarkers();
           markers.forEach((marker) => marker.setMap(null));
-          markerCluster?.clearMarkers();
           setMarkers([]);
 
           const newMarkers: google.maps.Marker[] = [];
