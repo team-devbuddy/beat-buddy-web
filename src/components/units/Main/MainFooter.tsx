@@ -1,9 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function MainFooter() {
   return (
-    <footer className="relative pt-10 bg-FooterBlack px-[1rem] py-[1.25rem] text-gray100">
+    <footer className="relative bg-FooterBlack px-[1rem] py-[1.25rem] pt-10 text-gray100">
       <div className="relative z-10 flex flex-col items-start">
         <span className="text-body2-15-medium">이용약관</span>
         <div className="relative my-4 h-[0.15rem] w-[1rem]">
@@ -18,7 +19,15 @@ export default function MainFooter() {
           </span>
         </div>
         <div className="mt-4">
-          <Image src="/icons/instagram.svg" alt="Instagram icon" width={24} height={24} />
+          <Link href="https://www.instagram.com/beatbuddy.kr/" target="_blank">
+            <Image
+              src="/icons/instagram.svg"
+              alt="Instagram icon"
+              width={24}
+              height={24}
+              className="cursor-pointer hover:brightness-75"
+            />
+          </Link>
         </div>
       </div>
     </footer>
