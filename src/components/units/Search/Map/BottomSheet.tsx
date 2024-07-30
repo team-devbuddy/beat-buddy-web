@@ -56,6 +56,25 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
     }
   };
 
+  const calculatePaddingHeight = () => {
+    const viewportHeight = window.innerHeight;
+    const paddingHeight = viewportHeight * 0.4; // 화면 40%만큼 패딩 추가 - 이렇게밖에할수없엇던나를용서하시오
+    return paddingHeight;
+  };
+
+  const [paddingHeight, setPaddingHeight] = useState(calculatePaddingHeight());
+
+  useEffect(() => {
+    const handleResize = () => {
+      setPaddingHeight(calculatePaddingHeight());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className="flex w-full flex-col justify-between">
       <AnimatePresence>
@@ -65,14 +84,14 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
             isOpen={true}
             onClose={() => setOpen(false)}
             initialSnap={1}
-            snapPoints={[window.innerHeight * 0.9, window.innerHeight * 0.5, 76]} // 비율과 픽셀로 snapPoints 설정
+            snapPoints={[window.innerHeight * 0.9, window.innerHeight * 0.5, 82]} // 비율과 픽셀로 snapPoints 설정
             onSnap={handleSnap}>
             <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
               <Sheet.Header className="relative flex flex-col w-full justify-center rounded-t-lg bg-[#131415] pt-[6px]">
                 <div className="flex justify-center">
                   <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
                 </div>
-                <div className="mt-[0.25rem] w-full">
+                <div className="pt-[1.25rem] pb-[0.5rem] w-full">
                   <DropdownGroup
                     genres={genres}
                     locations={locations}
@@ -87,9 +106,9 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                 </div>
               </Sheet.Header>
               <Sheet.Content
-                className="relative z-10 h-full w-full !grow-0 overflow-y-auto bg-[#131415]"
+                className="relative z-10 h-full w-full grow overflow-y-auto bg-[#131415]"
                 disableDrag={true}>
-                <div className="flex flex-col bg-[#131415] text-[0.93rem]">
+                <div className="flex flex-col bg-[#131415] text-[0.93rem] club-list-container">
                   <div className="flex w-full flex-wrap justify-between gap-4">
                     <ClubList
                       clubs={filteredClubs}
@@ -98,6 +117,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                       handleHeartClickWrapper={handleHeartClickWrapper}
                     />
                   </div>
+                  <div style={{ height: `${paddingHeight}px` }} />
                 </div>
               </Sheet.Content>
             </Sheet.Container>
