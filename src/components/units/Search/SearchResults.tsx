@@ -84,11 +84,12 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
       setFilteredClubs(clubs);
     }
   };
+
   useEffect(() => {
-    setSelectedGenre('');
-    setSelectedLocation('');
-    setSelectedOrder('');
-  }, []);
+    resetSelectedGenre();
+    resetSelectedLocation();
+    resetSelectedOrder();
+  }, [resetSelectedGenre, resetSelectedLocation, resetSelectedOrder]);
 
   useEffect(() => {
     fetchFilteredClubs();
