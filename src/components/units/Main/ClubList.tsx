@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ interface ClubsListProps {
   heartbeatNums: { [key: number]: number };
   handleHeartClickWrapper: (e: React.MouseEvent, venueId: number) => void;
 }
+
 //태그필터링!! 히히
 const clubTypes = ['club', 'pub', 'rooftop'];
 const regions = ['HONGDAE', 'ITAEWON', 'APGUJEONG', 'GANGNAM/SINSA', 'OTHERS'];
@@ -83,7 +85,10 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   <div className="club-gradient absolute inset-0"></div>
                   <div
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
-                    onClick={(e) => handleHeartClickWrapper(e, venue.venueId)}>
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent the default link click behavior
+                      handleHeartClickWrapper(e, venue.venueId);
+                    }}>
                     <Image
                       src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                       alt="pink-heart icon"

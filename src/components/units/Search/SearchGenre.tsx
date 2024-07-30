@@ -7,7 +7,7 @@ import { accessTokenState, searchQueryState, selectedGenreState, selectedLocatio
 import { motion } from 'framer-motion';
 import { gridItemVariants } from '@/lib/animation';
 
-const locationList = ['신사', '홍대', '이태원', '압구정'];
+const locationList = ['강남/신사', '홍대', '이태원', '압구정'];
 
 function SearchGenre() {
   const [selectedGenre, setSelectedGenre] = useRecoilState(selectedGenreState); // Use Recoil state for selectedGenre
