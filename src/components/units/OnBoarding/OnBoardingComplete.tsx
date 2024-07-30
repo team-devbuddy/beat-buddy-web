@@ -41,7 +41,7 @@ export default function OnBoardingComplete() {
 
         <button
           onClick={onClickSubmit}
-          className={`absolute bottom-0 flex w-full justify-center bg-main py-4 text-lg font-bold text-BG-black`}>
+          className={`absolute bottom-0 flex w-full justify-center bg-main py-4 text-lg font-bold text-BG-black hover:brightness-105`}>
           확인하러 가기
         </button>
       </div>

@@ -10,7 +10,7 @@ export default function OnBoardingNamePage() {
         <br />
         닉네임을 입력해주세요
       </h1>
-      <PutNickName />
+      <PutNickName buttonText="다음" redirectUrl="/onBoarding/custom" />
     </div>
   );
 }
