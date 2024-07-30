@@ -28,7 +28,13 @@ export default function MainHeader() {
 
         {isAuth ? (
           <Link href="/mypage">
-            <Image src="/icons/default_user_icon.svg" alt="profile" width={32} height={32} className="cursor-pointer" />
+            <Image
+              src="/icons/default_user_icon.svg"
+              alt="profile"
+              width={32}
+              height={32}
+              className="cursor-pointer hover:brightness-125"
+            />
           </Link>
         ) : (
           <button className="rounded-[0.13rem] bg-black px-2 py-[0.38rem] text-main2" onClick={handleLoginClick}>

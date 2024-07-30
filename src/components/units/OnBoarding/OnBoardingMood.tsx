@@ -91,7 +91,7 @@ export default function OnBoardingMood() {
               width={24}
               height={24}
               onClick={toggleModal}
-              className="cursor-pointer"
+              className="cursor-pointer hover:brightness-75"
             />
             <AnimatePresence>{isModalOpen && <InfoModal onClose={toggleModal} />}</AnimatePresence>
           </div>
@@ -102,7 +102,7 @@ export default function OnBoardingMood() {
             <div
               key={index}
               onClick={() => toggleMood(mood)}
-              className={`relative flex h-[3.75rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl ${
+              className={`relative flex h-[3.75rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
                 selectedMoods.includes(mood) ? 'text-main' : 'text-white'
               }`}
               style={{
@@ -122,7 +122,7 @@ export default function OnBoardingMood() {
         onClick={onClickSubmit}
         disabled={selectedMoods.length === 0}
         className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
-          selectedMoods.length > 0 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
+          selectedMoods.length > 0 ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
         }`}>
         다음
       </button>

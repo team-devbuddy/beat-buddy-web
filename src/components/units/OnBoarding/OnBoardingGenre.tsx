@@ -87,7 +87,7 @@ export default function OnBoardingGenre() {
             <div
               key={index}
               onClick={() => toggleGenre(genre)}
-              className={`relative flex h-[6.8rem] w-[31.7%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl ${
+              className={`relative flex h-[6.8rem] w-[31.7%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
                 selectedGenres.includes(genre) ? 'text-main' : 'text-white'
               }`}
               style={{
@@ -107,7 +107,7 @@ export default function OnBoardingGenre() {
         onClick={onClickSubmit}
         disabled={selectedGenres.length === 0}
         className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
-          selectedGenres.length > 0 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
+          selectedGenres.length > 0 ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
         }`}>
         다음
       </button>
