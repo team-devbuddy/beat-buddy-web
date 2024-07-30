@@ -6,6 +6,7 @@ import GoogleMap from '@/components/common/GoogleMap';
 
 interface LocationProps {
   venue: Club;
+  
 }
 
 const Location = ({ venue }: LocationProps) => {
@@ -18,7 +19,7 @@ const Location = ({ venue }: LocationProps) => {
         <p className="mt-[0.75rem] text-body2-15-medium text-gray200">{address}</p>
       </div>
       <div className="relative mt-[1rem] h-[10rem] w-full">
-        <GoogleMap addresses={[address]} minHeight="10rem" />
+        <GoogleMap clubs={[venue]} minHeight="10rem" zoom={30}/>
       </div>
     </div>
   );

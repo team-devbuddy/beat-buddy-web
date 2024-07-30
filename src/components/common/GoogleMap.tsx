@@ -4,16 +4,17 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
 import Image from 'next/image';
 import { Club } from '@/lib/types';
-import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import { MarkerClusterer, DefaultRenderer } from '@googlemaps/markerclusterer';
 
 interface GoogleMapProp {
   clubs: Club[];
   minHeight?: string;
   onAddressesInBounds?: (addresses: string[]) => void;
+  zoom?: number;
 }
 
 const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapProp>(
-  ({ clubs, minHeight, onAddressesInBounds }, ref) => {
+  ({ clubs, minHeight, onAddressesInBounds,zoom = 300 }, ref) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
@@ -24,6 +25,8 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     const CURRENT_LOCATION_MARKER_URL = '/icons/menow.svg';
     const CURRENT_LOCATION_BUTTON_URL = '/icons/currentLocation.png';
     const CURRENT_LOCATION_BUTTON_HOVER_URL = '/icons/currentLocationHover.png';
+    const CLUSTER_ICON_URL = '/icons/clustering.svg';
+
 
     useImperativeHandle(ref, () => ({
       filterAddressesInView,
@@ -86,8 +89,40 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                 geocodeOperations--;
                 if (geocodeOperations === 0) {
                   mapInstance.fitBounds(initialBounds);
-                  const markerClusterer = new MarkerClusterer({ map: mapInstance, markers: markersArray });
+                  const customRenderer = {
+                    render: ({ count, position }: any, stats: any, map: any) => {
+                      const color =
+                        count > Math.max(10, stats.clusters.markers.mean)
+                          ? "#EE1171"
+                          : "#8F0B48";
 
+                      const svg = window.btoa(`
+                        <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+                          <circle cx="120" cy="120" opacity="1" r="70" />
+                          <circle cx="120" cy="120" opacity=".5" r="90" />
+                        </svg>`);
+
+                      return new google.maps.Marker({
+                        position,
+                        icon: {
+                          url: `data:image/svg+xml;base64,${svg}`,
+                          scaledSize: new google.maps.Size(45, 45),
+                        },
+                        label: {
+                          text: String(count),
+                          color: "#fff",
+                          fontSize: "12px",
+                        },
+                        zIndex: 1000 + count,
+                      });
+                    },
+                  };
+
+                  const markerClusterer = new MarkerClusterer({
+                    map: mapInstance,
+                    markers: markersArray,
+                    renderer: customRenderer,
+                  });
                   google.maps.event.addListener(markerClusterer, 'clusterclick', (cluster: { getBounds: () => google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral; }) => {
                     mapInstance.fitBounds(cluster.getBounds());
                   });
@@ -105,7 +140,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       return () => {
         markers.forEach((marker) => marker.setMap(null));
         markerCluster?.clearMarkers();
-      }; // Cleanup markers and cluster
+      }; 
     }, [clubs]);
 
     const handleCurrentLocation = () => {
@@ -117,7 +152,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               lng: position.coords.longitude,
             };
             map?.setCenter(pos);
-            map?.setZoom(15);
+            map?.setZoom(zoom);
 
             if (currentLocationMarker) {
               currentLocationMarker.setPosition(pos);
