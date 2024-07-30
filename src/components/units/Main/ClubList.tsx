@@ -56,8 +56,8 @@ const getFilteredTags = (tags: string[]) => {
 
 export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
   return (
-    <div className="flex w-full bg-[#131415] border-[#131415] flex-col">
-      <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[1rem] gap-y-[2.5rem] sm:grid-cols-2 md:grid-cols-3">
+    <div className="flex w-full flex-col bg-BG-black">
+      <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue) => {
           const firstImageUrl =
             venue.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i)) ||
@@ -73,7 +73,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
                   backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
-                className="relative flex h-full flex-col rounded-md ">
+                className="relative flex h-full flex-col rounded-md p-2">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}
@@ -86,7 +86,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   <div
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
                     onClick={(e) => {
-                      e.preventDefault(); 
+                      e.preventDefault();
                       handleHeartClickWrapper(e, venue.venueId);
                     }}>
                     <Image

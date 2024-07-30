@@ -5,6 +5,8 @@ import { MapStyles } from '@/assets/map_styles/dark';
 import Image from 'next/image';
 import { Club } from '@/lib/types';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import { useRecoilState } from 'recoil';
+import { clickedClubState } from '@/context/recoil-context';
 
 interface GoogleMapProp {
   clubs: Club[];
@@ -20,6 +22,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
     const [currentLocationMarker, setCurrentLocationMarker] = useState<google.maps.Marker | null>(null);
     const [markerCluster, setMarkerCluster] = useState<MarkerClusterer | null>(null);
+    const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
 
     const MARKER_ICON_URL = '/icons/map_marker.svg';
     const CURRENT_LOCATION_MARKER_URL = '/icons/menow.svg';
@@ -31,7 +34,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     }));
 
     const createCustomMarker = (club: Club, position: google.maps.LatLng) => {
-      return new google.maps.Marker({
+      const marker = new google.maps.Marker({
         position,
         icon: {
           url: MARKER_ICON_URL,
@@ -46,6 +49,16 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           className: 'marker-label',
         },
       });
+
+      marker.addListener('click', () => {
+        setClickedClub({
+          venue: club,
+          isHeartbeat: false,
+          tagList: club.tagList || [],
+        });
+      });
+
+      return marker;
     };
 
     const createCustomClusterIcon = (count: number, color: string) => {
@@ -125,8 +138,13 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                     markers: markersArray,
                     renderer: customRenderer,
                   });
+
                   google.maps.event.addListener(markerClusterer, 'clusterclick', (cluster: { getBounds: () => google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral; }) => {
                     mapInstance.fitBounds(cluster.getBounds());
+                  });
+
+                  mapInstance.addListener('click', () => {
+                    setClickedClub(null);
                   });
 
                   setMarkerCluster(markerClusterer);
@@ -144,6 +162,10 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
         markerCluster?.clearMarkers();
       };
     }, [clubs]);
+
+    useEffect(() => {
+      setClickedClub(null);
+    }, [setClickedClub]);
 
     const handleCurrentLocation = () => {
       if (navigator.geolocation) {
@@ -184,7 +206,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           markerCluster?.clearMarkers();
           markers.forEach((marker) => marker.setMap(null));
           setMarkers([]);
-          
+
           const newMarkers: google.maps.Marker[] = [];
           const geocodePromises: Promise<void>[] = clubs.map((club) => {
             return new Promise((resolve) => {
@@ -201,17 +223,17 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               });
             });
           });
-    
+
           Promise.all(geocodePromises).then(() => {
             newMarkers.forEach((marker) => marker.setMap(map));
-    
+
             const customRenderer = {
               render: ({ count, position }: any, stats: any, map: any) => {
                 const color =
                   count > Math.max(5, stats.clusters.markers.mean)
                     ? "#EE1171"
                     : "#8F0B48";
-    
+
                 return new google.maps.Marker({
                   position,
                   icon: {
@@ -227,13 +249,13 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                 });
               },
             };
-    
+
             const newMarkerClusterer = new MarkerClusterer({
               map: map,
               markers: newMarkers,
               renderer: customRenderer,
             });
-    
+
             setMarkers(newMarkers);
             setMarkerCluster(newMarkerClusterer);
           });
