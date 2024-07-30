@@ -29,6 +29,7 @@ export const memberMoodIdState = atom<number | null>({
 export const searchQueryState = atom<string>({
   key: 'searchQueryState',
   default: '',
+  effects_UNSTABLE: [persistAtom],
 });
 
 //하트
