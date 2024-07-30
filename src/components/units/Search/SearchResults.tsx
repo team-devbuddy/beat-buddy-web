@@ -7,7 +7,7 @@ import NoResults from './NoResult';
 import MapView from './Map/MapView';
 import DropdownGroup from './DropdownGroup';
 import MapButton from './Map/MapButton';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import {
   likedClubsState,
   heartbeatNumsState,
@@ -46,6 +46,9 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   const [selectedGenre, setSelectedGenre] = useRecoilState(selectedGenreState);
   const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState);
   const [selectedOrder, setSelectedOrder] = useRecoilState(selectedOrderState);
+  const resetSelectedGenre = useResetRecoilState(selectedGenreState);
+  const resetSelectedLocation = useResetRecoilState(selectedLocationState);
+  const resetSelectedOrder = useResetRecoilState(selectedOrderState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
@@ -80,11 +83,12 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
       setFilteredClubs(initialFilteredClubs);
     }
   };
+
   useEffect(() => {
-    setSelectedGenre('');
-    setSelectedLocation('');
-    setSelectedOrder('');
-  }, []);
+    resetSelectedGenre();
+    resetSelectedLocation();
+    resetSelectedOrder();
+  }, [resetSelectedGenre, resetSelectedLocation, resetSelectedOrder]);
 
   useEffect(() => {
     fetchFilteredClubs();
