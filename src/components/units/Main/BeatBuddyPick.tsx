@@ -78,7 +78,7 @@ export default function BeatBuddyPick({
           const filteredTags = getFilteredTags(club.tagList || []);
           return (
             <Link key={club.venueId} href={`/detail/${club.venueId}`} passHref>
-              <div className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card">
+              <div className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card hover:brightness-75">
                 <Image src={imageUrl} alt={`${club.englishName} image`} layout="fill" className="object-cover" />
                 <div
                   className="absolute right-[1.5rem] top-[1.5rem] cursor-pointer"
