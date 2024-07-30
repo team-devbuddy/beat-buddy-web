@@ -59,6 +59,29 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
     }
   };
 
+  const calculatePaddingHeight = () => {
+    const viewportHeight = window.innerHeight;
+    const paddingHeight = viewportHeight * 0.4; // 화면 40%만큼 패딩 추가 - 이렇게밖에할수없엇던나를용서하시오
+    return paddingHeight;
+  };
+
+  const [paddingHeight, setPaddingHeight] = useState(calculatePaddingHeight());
+
+  useEffect(() => {
+    const handleResize = () => {
+      setPaddingHeight(calculatePaddingHeight());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const snapPoints = clickedClub
+    ? [window.innerHeight * 0.9, 280, 82]
+    : [window.innerHeight * 0.9, window.innerHeight * 0.5, 82];
+
   return (
     <div className="flex w-full flex-col justify-between">
       <AnimatePresence>
