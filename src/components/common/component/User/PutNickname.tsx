@@ -6,7 +6,7 @@ import { PostDuplicateCheck, PostNickname } from '@/lib/action'; // API 요청 �
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 
-export default function OptionNickName() {
+export default function PutNickName() {
   const [inputValue, setInputValue] = useState<string>('');
   const [isDuplicateChecked, setIsDuplicateChecked] = useState<boolean>(false);
   const [isDuplicateValid, setIsDuplicateValid] = useState<boolean>(false);
@@ -76,8 +76,6 @@ export default function OptionNickName() {
   return (
     <>
       <div className="flex w-full flex-col px-4">
-        <h1 className="py-5 text-2xl font-bold leading-9 text-white">닉네임 수정</h1>
-
         <div className="mt-3">
           <div className="flex flex-col py-3">
             <div className="relative flex">
