@@ -53,7 +53,7 @@ export default function MyPageComponent() {
 
         {/* My Heart Beat */}
         <Link href="/myheartbeat">
-          <div className="flex justify-between px-4 py-2 font-queensides text-xl text-main2">
+          <div className="flex justify-between px-4 py-2 font-queensides text-xl text-main2 hover:brightness-75">
             <p>My Heart Beat</p>
             <Image src="/icons/gray-right-arrow.svg" alt="edit" width={24} height={24} />
           </div>
@@ -77,17 +77,16 @@ export default function MyPageComponent() {
         </div>
 
         {/* History */}
-        <Link href="/-beat" className="mb-6">
-          <div className="flex justify-between px-4 py-2">
-            <p className="font-queensides text-xl text-main2">History</p>
-            <button className="rounded-[0.13rem] bg-gray500 px-3 py-[0.38rem] text-gray200">취향 수정하기</button>
-          </div>
-        </Link>
+
+        <div className="mb-6 flex justify-between px-4 py-2">
+          <p className="font-queensides text-xl text-main2">History</p>
+          <button className="rounded-[0.13rem] bg-gray500 px-3 py-[0.38rem] text-gray200">취향 수정하기</button>
+        </div>
 
         <div className="ml-4 flex gap-3 overflow-x-auto hide-scrollbar">
           {/* MyHistoy Card */}
           {history.map((data, index) => (
-            <div key={index}>
+            <div key={index} className="cursor-pointer hover:brightness-75">
               <History data={data} />
             </div>
           ))}
@@ -100,7 +99,7 @@ export default function MyPageComponent() {
 
         {/* 정보 수정 */}
         <Link href="https://forms.gle/rcSfxUegbNykLnZD7" className="mt-6">
-          <div className="flex justify-between px-4 py-5 hover:bg-gray700">
+          <div className="flex justify-between px-4 py-5 hover:brightness-75">
             <div className="flex flex-col gap-1">
               <div className="text-[0.93rem] font-bold text-white">잘못된 정보가 있나요?</div>
               <div className="text-xs text-gray300">수정이 필요하거나 폐업한 업장이라면 알려주세요!</div>
