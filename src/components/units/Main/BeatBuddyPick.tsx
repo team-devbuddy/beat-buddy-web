@@ -64,7 +64,7 @@ export default function BeatBuddyPick({
   return (
     <div className="mt-[0.44rem] flex flex-col bg-BG-black">
       <Link href="/bbp-list" passHref>
-        <div className="flex cursor-pointer items-center justify-between px-4 py-[1.25rem] hover:bg-gray700">
+        <div className="flex cursor-pointer items-center justify-between px-4 py-[1.25rem] hover:brightness-75">
           <span className="font-queensides text-[1.5rem] text-main2">
             {userName ? `Venue for ${userName}버디` : 'BeatBuddy Pick'}
           </span>
