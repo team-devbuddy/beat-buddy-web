@@ -30,23 +30,23 @@ const KakaoRedirect: React.FC = () => {
           setAccessToken(access);
           const responseJson = await response.json();
           // 성인 인증 X
-          if (responseJson.adultCert === false) {
-            router.push('/onBoarding/cert');
-          }
+          // if (responseJson.adultCert === false) {
+          //   router.push('/onBoarding/cert');
+          // }
           // 성인 인증 X && 장르, 분위기, 지역 선택 X
-          else if (responseJson.genre === false || responseJson.mood === false || responseJson.region === false) {
+          if (responseJson.genre === false || responseJson.mood === false || responseJson.region === false) {
             alert('온보딩을 진행해주세요');
             router.push('/onBoarding');
           }
-          // 성인 인증 O && 장르, 분위기, 지역 선택 O
-          else if (responseJson.adultCert && responseJson.genre && responseJson.mood && responseJson.region) {
+          // 성인 인증 O && 장르, 분위기, 지역 선택 O responseJson.adultCert &&
+          else if (responseJson.genre && responseJson.mood && responseJson.region) {
             setIsAuth(true);
             router.push('/');
           }
           // 성인 인증 O && 장르, 분위기, 지역 선택 X
-          else if (responseJson.adultCert && (!responseJson.genre || !responseJson.mood || !responseJson.region)) {
-            router.push('/onBoarding');
-          }
+          // else if (responseJson.adultCert && (!responseJson.genre || !responseJson.mood || !responseJson.region)) {
+          //   router.push('/onBoarding');
+          // }
         } else {
           // Onboarding 상태를 가져오는 데 실패하면 홈으로 리디렉션
           // router.push('/');
