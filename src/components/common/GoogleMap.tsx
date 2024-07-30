@@ -4,7 +4,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
 import Image from 'next/image';
 import { Club } from '@/lib/types';
-import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import { MarkerClusterer, DefaultRenderer } from '@googlemaps/markerclusterer';
 
 interface GoogleMapProp {
   clubs: Club[];
@@ -25,6 +25,8 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     const CURRENT_LOCATION_MARKER_URL = '/icons/menow.svg';
     const CURRENT_LOCATION_BUTTON_URL = '/icons/currentLocation.png';
     const CURRENT_LOCATION_BUTTON_HOVER_URL = '/icons/currentLocationHover.png';
+    const CLUSTER_ICON_URL = '/icons/clustering.svg';
+
 
     useImperativeHandle(ref, () => ({
       filterAddressesInView,
