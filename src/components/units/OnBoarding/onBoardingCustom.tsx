@@ -17,7 +17,7 @@ export default function OnBoardingCustom() {
       </div>
 
       <Link href="/onBoarding/myTaste/genre" className="">
-        <button className="absolute bottom-0 left-0 flex w-full justify-center bg-[#EE1171] py-4 text-lg font-bold text-BG-black">
+        <button className="absolute bottom-0 left-0 flex w-full justify-center bg-[#EE1171] py-4 text-lg font-bold text-BG-black hover:brightness-105">
           추천 받기
         </button>
       </Link>

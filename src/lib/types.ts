@@ -3,6 +3,7 @@ export interface Term {
   label: string;
   isRequired: boolean;
   checked?: boolean;
+  url: string;
 }
 
 // src/lib/types.ts
@@ -32,7 +33,6 @@ export interface ClubProps {
   isHeartbeat: boolean;
   tagList: string[];
 }
-
 
 export interface VenueHoursProps {
   hours: { [day: string]: string };

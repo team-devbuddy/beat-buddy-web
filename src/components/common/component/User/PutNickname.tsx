@@ -6,7 +6,12 @@ import { PostDuplicateCheck, PostNickname } from '@/lib/action'; // API 요청 �
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 
-export default function PutNickName() {
+interface PutNickNameProps {
+  buttonText: string;
+  redirectUrl: string;
+}
+
+export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProps) {
   const [inputValue, setInputValue] = useState<string>('');
   const [isDuplicateChecked, setIsDuplicateChecked] = useState<boolean>(false);
   const [isDuplicateValid, setIsDuplicateValid] = useState<boolean>(false);
@@ -66,7 +71,7 @@ export default function PutNickName() {
   const onClickSubmit = async () => {
     const response = await PostNickname(access, inputValue);
     if (response.ok) {
-      router.push('/mypage/option');
+      router.push(redirectUrl);
     } else {
       const responseJson = await response.json();
       setErrorMessage(responseJson.message || '닉네임 저장 중 오류가 발생했습니다.');
@@ -109,9 +114,11 @@ export default function PutNickName() {
         onClick={onClickSubmit}
         disabled={!isDuplicateChecked || !isDuplicateValid}
         className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
-          isDuplicateChecked && isDuplicateValid ? 'bg-[#EE1171] text-BG-black' : 'bg-gray400 text-gray300'
+          isDuplicateChecked && isDuplicateValid
+            ? 'bg-[#EE1171] text-BG-black hover:brightness-105'
+            : 'bg-gray400 text-gray300'
         }`}>
-        저장
+        {buttonText}
       </button>
       {showBanner && (
         <div className="fixed bottom-20 left-1/2 flex w-[20rem] -translate-x-1/2 transform justify-center rounded bg-gray500 px-16 py-3 text-white">
