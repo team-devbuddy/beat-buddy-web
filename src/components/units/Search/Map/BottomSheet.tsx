@@ -89,7 +89,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
               <Sheet.Header className="relative flex h-[2rem] w-full justify-center rounded-t-lg bg-[#131415] pt-[6px]">
                 <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
               </Sheet.Header>
-              <Sheet.Content className="relative z-10 h-full w-full !grow-0 overflow-y-scroll bg-[#131415]" disableDrag={true}>
+              <Sheet.Content className="relative z-10 h-full w-full !grow-0 overflow-y-auto bg-[#131415]" disableDrag={true}>
                 <div className=" mt-[0.25rem]">
                   <DropdownGroup
                     genres={genres}

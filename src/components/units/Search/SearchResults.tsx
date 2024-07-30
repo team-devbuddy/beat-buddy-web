@@ -22,7 +22,6 @@ import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { transitionVariants } from '@/lib/animation';
 import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
-import { filterCriteria } from '@/lib/actions/search-controller/filterCriteria';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 
 const genresMap: { [key: string]: string } = {
@@ -43,16 +42,6 @@ const locationsMap: { [key: string]: string } = {
 const criteriaMap: { [key: string]: string } = {
   '관련도 순': '관련도순',
   인기순: '인기순',
-};
-
-const debounce = (func: Function, delay: number) => {
-  let timer: NodeJS.Timeout;
-  return (...args: any[]) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
 };
 
 export default function SearchResults({ filteredClubs: initialFilteredClubs = [] }: SearchResultsProps) {
@@ -79,27 +68,15 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   };
 
   const fetchFilteredClubs = async () => {
-    if (searchQuery && !selectedGenre && !selectedLocation && !selectedOrder) {
-      const clubs = await fetchVenues(searchQuery, accessToken);
-      setFilteredClubs(clubs);
-    } else if (selectedGenre || selectedLocation) {
-      const filters = {
-        keyword: searchQuery ? [searchQuery] : [],
-        genreTag: genresMap[selectedGenre] || '',
-        regionTag: locationsMap[selectedLocation] || '',
-      };
+    const filters = {
+      keyword: searchQuery ? [searchQuery] : [],
+      genreTag: genresMap[selectedGenre] || '',
+      regionTag: locationsMap[selectedLocation] || '',
+      sortCriteria: criteriaMap[selectedOrder] || '관련도순',
+    };
 
-      const clubs = await filterDropdown(filters, accessToken);
-      setFilteredClubs(clubs);
-    } else {
-      const filters = {
-        keyword: searchQuery ? [searchQuery] : [],
-      };
-
-      const sortOrder = criteriaMap[selectedOrder] || '관련도순';
-      const clubs = await filterCriteria(filters, accessToken, sortOrder);
-      setFilteredClubs(clubs);
-    }
+    const clubs = await filterDropdown(filters, accessToken);
+    setFilteredClubs(clubs);
   };
 
   useEffect(() => {
