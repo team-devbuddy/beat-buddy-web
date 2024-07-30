@@ -4,7 +4,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
 import Image from 'next/image';
 import { Club } from '@/lib/types';
-import { MarkerClusterer, DefaultRenderer } from '@googlemaps/markerclusterer';
+import { MarkerClusterer } from '@googlemaps/markerclusterer';
 
 interface GoogleMapProp {
   clubs: Club[];
@@ -14,7 +14,7 @@ interface GoogleMapProp {
 }
 
 const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapProp>(
-  ({ clubs, minHeight, onAddressesInBounds,zoom = 300 }, ref) => {
+  ({ clubs, minHeight, onAddressesInBounds, zoom = 300 }, ref) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
@@ -25,8 +25,6 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     const CURRENT_LOCATION_MARKER_URL = '/icons/menow.svg';
     const CURRENT_LOCATION_BUTTON_URL = '/icons/currentLocation.png';
     const CURRENT_LOCATION_BUTTON_HOVER_URL = '/icons/currentLocationHover.png';
-    const CLUSTER_ICON_URL = '/icons/clustering.svg';
-
 
     useImperativeHandle(ref, () => ({
       filterAddressesInView,
@@ -38,7 +36,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
         icon: {
           url: MARKER_ICON_URL,
           scaledSize: new google.maps.Size(24, 24),
-          labelOrigin: new google.maps.Point(12, -10), // 레이블 위치 조정
+          labelOrigin: new google.maps.Point(12, -10),
         },
         label: {
           text: club.englishName,
@@ -48,6 +46,16 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           className: 'marker-label',
         },
       });
+    };
+
+    const createCustomClusterIcon = (count: number, color: string) => {
+      const svg = window.btoa(`
+        <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+          <circle cx="120" cy="120" opacity="1" r="70" />
+          <circle cx="120" cy="120" opacity=".5" r="90" />
+        </svg>`);
+
+      return `data:image/svg+xml;base64,${svg}`;
     };
 
     useEffect(() => {
@@ -92,20 +100,14 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                   const customRenderer = {
                     render: ({ count, position }: any, stats: any, map: any) => {
                       const color =
-                        count > Math.max(10, stats.clusters.markers.mean)
+                        count > Math.max(5, stats.clusters.markers.mean)
                           ? "#EE1171"
                           : "#8F0B48";
-
-                      const svg = window.btoa(`
-                        <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
-                          <circle cx="120" cy="120" opacity="1" r="70" />
-                          <circle cx="120" cy="120" opacity=".5" r="90" />
-                        </svg>`);
 
                       return new google.maps.Marker({
                         position,
                         icon: {
-                          url: `data:image/svg+xml;base64,${svg}`,
+                          url: createCustomClusterIcon(count, color),
                           scaledSize: new google.maps.Size(45, 45),
                         },
                         label: {
@@ -140,7 +142,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       return () => {
         markers.forEach((marker) => marker.setMap(null));
         markerCluster?.clearMarkers();
-      }; 
+      };
     }, [clubs]);
 
     const handleCurrentLocation = () => {
@@ -178,29 +180,67 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       if (map) {
         const bounds = map.getBounds();
         if (bounds) {
-          markers.forEach((marker) => marker.setMap(null));
+          // 초기화
           markerCluster?.clearMarkers();
+          markers.forEach((marker) => marker.setMap(null));
           setMarkers([]);
-
+          
           const newMarkers: google.maps.Marker[] = [];
-          clubs.forEach((club) => {
-            const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ address: club.address }, (results, status) => {
-              if (status === 'OK' && results) {
-                const location = results[0].geometry.location;
-                if (bounds.contains(location)) {
-                  const marker = createCustomMarker(club, location);
-                  newMarkers.push(marker);
-                  marker.setMap(map);
+          const geocodePromises: Promise<void>[] = clubs.map((club) => {
+            return new Promise((resolve) => {
+              const geocoder = new google.maps.Geocoder();
+              geocoder.geocode({ address: club.address }, (results, status) => {
+                if (status === 'OK' && results) {
+                  const location = results[0].geometry.location;
+                  if (bounds.contains(location)) {
+                    const marker = createCustomMarker(club, location);
+                    newMarkers.push(marker);
+                  }
                 }
-              }
+                resolve();
+              });
             });
           });
-          setMarkers(newMarkers);
+    
+          Promise.all(geocodePromises).then(() => {
+            newMarkers.forEach((marker) => marker.setMap(map));
+    
+            const customRenderer = {
+              render: ({ count, position }: any, stats: any, map: any) => {
+                const color =
+                  count > Math.max(5, stats.clusters.markers.mean)
+                    ? "#EE1171"
+                    : "#8F0B48";
+    
+                return new google.maps.Marker({
+                  position,
+                  icon: {
+                    url: createCustomClusterIcon(count, color),
+                    scaledSize: new google.maps.Size(45, 45),
+                  },
+                  label: {
+                    text: String(count),
+                    color: "#fff",
+                    fontSize: "12px",
+                  },
+                  zIndex: 1000 + count,
+                });
+              },
+            };
+    
+            const newMarkerClusterer = new MarkerClusterer({
+              map: map,
+              markers: newMarkers,
+              renderer: customRenderer,
+            });
+    
+            setMarkers(newMarkers);
+            setMarkerCluster(newMarkerClusterer);
+          });
         }
       }
     };
-
+    
     return (
       <div className="relative">
         <div className="absolute right-4 top-12 z-10 cursor-pointer" onClick={handleCurrentLocation}>
@@ -232,6 +272,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             display: none !important;
           }
         `}</style>
+
       </div>
     );
   },
