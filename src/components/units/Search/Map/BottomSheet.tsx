@@ -123,7 +123,6 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                         heartbeatNums={heartbeatNums}
                         handleHeartClickWrapper={handleHeartClickWrapper}
                       />
-                      
                     ) : (
                       <>
                         <ClubList
