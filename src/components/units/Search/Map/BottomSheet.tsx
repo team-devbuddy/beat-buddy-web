@@ -20,7 +20,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
 
 const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProps>(({ filteredClubs }, ref) => {
-  const [height, setHeight] = useState<number>(500);
   const [isOpen, setOpen] = useState(true);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
   const [selectedGenre, setSelectedGenre] = useRecoilState(selectedGenreState);
@@ -39,22 +38,6 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
   useImperativeHandle(ref, () => ({
     close: () => setOpen(false),
   }));
-
-  useEffect(() => {
-    function updateSnapPoints() {
-      const calculateHeight = window.innerHeight - 122;
-      setHeight(Math.max(200, calculateHeight));
-    }
-    updateSnapPoints();
-    window.addEventListener('resize', updateSnapPoints);
-    return () => {
-      window.removeEventListener('resize', updateSnapPoints);
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log("Filtered Clubs:", filteredClubs);
-  }, [filteredClubs]);
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -82,15 +65,14 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
             isOpen={true}
             onClose={() => setOpen(false)}
             initialSnap={1}
-            snapPoints={[height, 372, 76]}
-            onSnap={handleSnap}
-          >
+            snapPoints={[window.innerHeight * 0.9, window.innerHeight * 0.5, 76]} // 비율과 픽셀로 snapPoints 설정
+            onSnap={handleSnap}>
             <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
-              <Sheet.Header className="relative flex h-[2rem] w-full justify-center rounded-t-lg bg-[#131415] pt-[6px]">
-                <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
-              </Sheet.Header>
-              <Sheet.Content className="relative z-10 h-full w-full !grow-0 overflow-y-auto bg-[#131415]" disableDrag={true}>
-                <div className=" mt-[0.25rem]">
+              <Sheet.Header className="relative flex flex-col w-full justify-center rounded-t-lg bg-[#131415] pt-[6px]">
+                <div className="flex justify-center">
+                  <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
+                </div>
+                <div className="mt-[0.25rem] w-full">
                   <DropdownGroup
                     genres={genres}
                     locations={locations}
@@ -103,17 +85,19 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                     setSelectedOrder={setSelectedSort}
                   />
                 </div>
-                <div className="bg-#131415 flex flex-col text-[0.93rem]">
-                  {isMapView && (
-                    <div className="flex w-full flex-wrap justify-between gap-4 ">
-                      <ClubList
-                        clubs={filteredClubs}
-                        likedClubs={likedClubs}
-                        heartbeatNums={heartbeatNums}
-                        handleHeartClickWrapper={handleHeartClickWrapper}
-                      />
-                    </div>
-                  )}
+              </Sheet.Header>
+              <Sheet.Content
+                className="relative z-10 h-full w-full !grow-0 overflow-y-auto bg-[#131415]"
+                disableDrag={true}>
+                <div className="flex flex-col bg-[#131415] text-[0.93rem]">
+                  <div className="flex w-full flex-wrap justify-between gap-4">
+                    <ClubList
+                      clubs={filteredClubs}
+                      likedClubs={likedClubs}
+                      heartbeatNums={heartbeatNums}
+                      handleHeartClickWrapper={handleHeartClickWrapper}
+                    />
+                  </div>
                 </div>
               </Sheet.Content>
             </Sheet.Container>
