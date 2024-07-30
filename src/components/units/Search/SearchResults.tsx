@@ -22,6 +22,7 @@ import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { transitionVariants } from '@/lib/animation';
 import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
+import { filterCriteria } from '@/lib/actions/search-controller/filterCriteria';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 
 const genresMap: { [key: string]: string } = {
@@ -85,6 +86,17 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     }
   };
 
+  const fetchSortedClubs = async () => {
+    const filters = {
+      keyword: searchQuery ? [searchQuery] : [],
+    };
+
+    const sortOrder = criteriaMap[selectedOrder] || '관련도순';
+
+    const clubs = await filterCriteria(filters, accessToken, sortOrder);
+    setFilteredClubs(clubs);
+  };
+
   useEffect(() => {
     resetSelectedGenre();
     resetSelectedLocation();
@@ -104,6 +116,14 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   useEffect(() => {
     setIsMapView(false);
   }, [setIsMapView]);
+
+  useEffect(() => {
+    if (searchQuery && selectedOrder) {
+      fetchSortedClubs();
+    } else {
+      fetchFilteredClubs();
+    }
+  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder]);
 
   return (
     <div className="relative flex w-full flex-col">
