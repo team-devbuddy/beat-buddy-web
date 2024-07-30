@@ -35,7 +35,7 @@ const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
     if (isMapView) {
       setIsMapView(false);
     } else {
-      router.back();
+      router.push('/search');
     }
   };
 

@@ -5,7 +5,7 @@ import Dropdown from './SortDropdown';
 interface DropdownGroupProps {
   genres: string[];
   locations: string[];
-  orders: string[];
+  criteria: string[];
   selectedGenre: string;
   setSelectedGenre: React.Dispatch<React.SetStateAction<string>>;
   selectedLocation: string;
@@ -17,7 +17,7 @@ interface DropdownGroupProps {
 const DropdownGroup = ({
   genres,
   locations,
-  orders,
+  criteria,
   selectedGenre,
   setSelectedGenre,
   selectedLocation,
@@ -31,7 +31,7 @@ const DropdownGroup = ({
         <Dropdown options={genres} selectedOption={selectedGenre} setSelectedOption={setSelectedGenre} label="장르" />
         <Dropdown options={locations} selectedOption={selectedLocation} setSelectedOption={setSelectedLocation} label="위치" />
       </div>
-      <Dropdown options={orders} selectedOption={selectedOrder} setSelectedOption={setSelectedOrder} label="가까운 순" isThirdDropdown />
+      <Dropdown options={criteria} selectedOption={selectedOrder} setSelectedOption={setSelectedOrder} label="관련도 순" isThirdDropdown />
     </div>
   );
 };
