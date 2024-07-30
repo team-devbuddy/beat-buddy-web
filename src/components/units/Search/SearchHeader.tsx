@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { SearchHeaderProps } from '@/lib/types';
 import { getLocalStorageItem, setLocalStorageItem } from '@/lib/utils/storage';
 import { generateLink } from '@/lib/utils/searchUtils';
@@ -14,6 +14,7 @@ const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
   const searchParams = useSearchParams();
   const [lastSearch, setLastSearch] = useState('');
   const isMapView = useRecoilValue(isMapViewState);
+  const setIsMapView = useSetRecoilState(isMapViewState);
 
   useEffect(() => {
     const storedSearch = getLocalStorageItem('lastSearch');
@@ -31,7 +32,11 @@ const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
   };
 
   const handleBackClick = () => {
-    router.back();
+    if (isMapView) {
+      setIsMapView(false);
+    } else {
+      router.back();
+    }
   };
 
   return (

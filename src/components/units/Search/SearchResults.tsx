@@ -26,7 +26,6 @@ import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 
 const genresMap: { [key: string]: string } = {
   힙합: 'HIPHOP',
-  디스코: 'DISCO',
   'R&B': 'R&B',
   테크노: 'TECHNO',
   EDM: 'EDM',
@@ -36,7 +35,7 @@ const genresMap: { [key: string]: string } = {
 const locationsMap: { [key: string]: string } = {
   홍대: 'HONGDAE',
   이태원: 'ITAEWON',
-  신사: 'SINSA',
+  '강남/신사': 'GANGNAM/SINSA',
   압구정: 'APGUJEONG',
 };
 
@@ -53,8 +52,8 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
 
-  const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
-  const locations = ['홍대', '이태원', '신사', '압구정'];
+  const genres = ['힙합', 'R&B', '테크노', 'EDM', '하우스'];
+  const locations = ['홍대', '이태원', '강남/신사', '압구정'];
   const orders = ['가까운 순', '인기순'];
 
   const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
