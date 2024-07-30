@@ -94,7 +94,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                   <DropdownGroup
                     genres={genres}
                     locations={locations}
-                    orders={sorts}
+                    criteria={sorts}
                     selectedGenre={selectedGenre}
                     setSelectedGenre={setSelectedGenre}
                     selectedLocation={selectedLocation}
