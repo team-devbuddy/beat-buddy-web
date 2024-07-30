@@ -26,7 +26,7 @@ export default function TrendBar() {
       try {
         if (accessToken) {
           const data = await fetchTop10(accessToken);
-          setTrends(data.slice(0, 3));  // 탑3만 배너에
+          setTrends(data.slice(0, 3)); // 탑3만 배너에
         }
       } catch (error) {
         console.error('Error fetching top 10 search ranks:', error);
@@ -58,7 +58,7 @@ export default function TrendBar() {
   const rankIcons = ['/icons/Rank_1.svg', '/icons/Rank_2.svg', '/icons/Rank_3.svg'];
 
   return (
-    <div className="relative flex w-full bg-main flex-col h-[2.92rem]">
+    <div className="relative flex h-[2.92rem] w-full flex-col bg-main">
       <AnimatePresence>
         {trends.length > 0 && (
           <motion.div
@@ -67,19 +67,17 @@ export default function TrendBar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0 flex items-center justify-between"
-          >
-            <div 
-              className="relative w-full flex mx-[1rem] pb-[1rem] pt-[0.5rem] items-center space-x-2 cursor-pointer" 
-              onClick={() => handleTrendClick(trends[currentTrendIndex].rankKeyword)}
-            >
+            className="absolute inset-0 flex items-center justify-between">
+            <div
+              className="relative mx-[1rem] flex w-full cursor-pointer items-center space-x-2 pb-[1rem] pt-[0.5rem]"
+              onClick={() => handleTrendClick(trends[currentTrendIndex].rankKeyword)}>
               <Image
                 src={rankIcons[currentTrendIndex % 3]}
                 alt={`Rank ${currentTrendIndex + 1} icon`}
                 width={20}
                 height={20}
               />
-              <span className="font-medium text-black">{trends[currentTrendIndex].rankKeyword}</span>
+              <span className="font-medium text-black hover:text-main2">{trends[currentTrendIndex].rankKeyword}</span>
             </div>
           </motion.div>
         )}
