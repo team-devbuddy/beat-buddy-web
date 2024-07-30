@@ -1,46 +1,65 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { genres } from '@/lib/data';
 import { useRouter } from 'next/navigation';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { accessTokenState, searchQueryState, selectedGenreState, selectedLocationState } from '@/context/recoil-context';
 import { motion } from 'framer-motion';
 import { gridItemVariants } from '@/lib/animation';
 
+const locationList = ['신사', '홍대', '이태원', '압구정'];
+
 function SearchGenre() {
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [selectedGenre, setSelectedGenre] = useRecoilState(selectedGenreState); // Use Recoil state for selectedGenre
+  const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState); // Use Recoil state for selectedLocation
+  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState); // Use Recoil state for searchQuery
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
 
-  const handleGenreClick = (genre: string) => {
-    setSelectedGenre(genre);
+  const resetSelectedGenre = useResetRecoilState(selectedGenreState);
+  const resetSelectedLocation = useResetRecoilState(selectedLocationState);
+
+  useEffect(() => {
+    resetSelectedGenre();
+    resetSelectedLocation();
+  }, [resetSelectedGenre, resetSelectedLocation]);
+
+  const handleGenreClick = (item: string) => {
+    if (locationList.includes(item)) {
+      setSelectedLocation(item);
+      setSelectedGenre('');
+    } else {
+      setSelectedGenre(item);
+      setSelectedLocation('');
+    }
+    setSearchQuery(item); // Set the search query state with the selected item
     if (accessToken) {
-      router.push(`/search/results?q=${encodeURIComponent(genre)}`);
+      router.push(`/search/results?q=${encodeURIComponent(item)}`);
     } else {
       console.error('Access token is not available');
     }
   };
 
   const renderGridItems = () => {
-    return genres.map((genre, index) => (
+    return genres.map((item, index) => (
       <motion.div
         key={index}
-        onClick={() => handleGenreClick(genre)}
+        onClick={() => handleGenreClick(item)}
         className={`flex ${
           index < 3 || (index >= 5 && index < 8) ? 'aspect-square w-full' : 'h-[3.75rem] sm:h-[6.25rem]'
         } cursor-pointer items-center justify-center rounded-sm bg-cover bg-center text-body1-16-medium text-white ${
-          selectedGenre === genre ? 'border border-main' : ''
+          selectedGenre === item || selectedLocation === item ? 'border border-main' : ''
         }`}
         style={{
           backgroundImage:
-            selectedGenre === genre
+            selectedGenre === item || selectedLocation === item
               ? `linear-gradient(0deg, rgba(0, 0, 0, 0.70), rgba(0, 0, 0, 0.70)), url('/images/onBoarding/background/onboarding-${index + 1}.png')`
               : `url('/images/onBoarding/background/onboarding-${index + 1}.png')`,
         }}
         variants={gridItemVariants}
         whileHover="hover"
         whileTap="tap">
-        {genre}
+        {item}
       </motion.div>
     ));
   };
