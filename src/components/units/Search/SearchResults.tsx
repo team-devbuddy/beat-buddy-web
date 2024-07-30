@@ -45,6 +45,16 @@ const criteriaMap: { [key: string]: string } = {
   인기순: '인기순',
 };
 
+const debounce = (func: Function, delay: number) => {
+  let timer: NodeJS.Timeout;
+  return (...args: any[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
+
 export default function SearchResults({ filteredClubs: initialFilteredClubs = [] }: SearchResultsProps) {
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
@@ -69,7 +79,7 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   };
 
   const fetchFilteredClubs = async () => {
-    if (searchQuery && !selectedGenre && !selectedLocation) {
+    if (searchQuery && !selectedGenre && !selectedLocation && !selectedOrder) {
       const clubs = await fetchVenues(searchQuery, accessToken);
       setFilteredClubs(clubs);
     } else if (selectedGenre || selectedLocation) {
@@ -82,46 +92,23 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
       const clubs = await filterDropdown(filters, accessToken);
       setFilteredClubs(clubs);
     } else {
-      setFilteredClubs(initialFilteredClubs);
+      const filters = {
+        keyword: searchQuery ? [searchQuery] : [],
+      };
+
+      const sortOrder = criteriaMap[selectedOrder] || '관련도순';
+      const clubs = await filterCriteria(filters, accessToken, sortOrder);
+      setFilteredClubs(clubs);
     }
   };
 
-  const fetchSortedClubs = async () => {
-    const filters = {
-      keyword: searchQuery ? [searchQuery] : [],
-    };
-
-    const sortOrder = criteriaMap[selectedOrder] || '관련도순';
-
-    const clubs = await filterCriteria(filters, accessToken, sortOrder);
-    setFilteredClubs(clubs);
-  };
-
-  useEffect(() => {
-    resetSelectedGenre();
-    resetSelectedLocation();
-    resetSelectedOrder();
-  }, [resetSelectedGenre, resetSelectedLocation, resetSelectedOrder]);
-
   useEffect(() => {
     fetchFilteredClubs();
-  }, [searchQuery, selectedGenre, selectedLocation]);
-
-  useEffect(() => {
-    fetchSortedClubs();
-  }, [selectedOrder]);
+  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder]);
 
   useEffect(() => {
     setIsMapView(false);
   }, [setIsMapView]);
-
-  useEffect(() => {
-    if (searchQuery && selectedOrder) {
-      fetchSortedClubs();
-    } else {
-      fetchFilteredClubs();
-    }
-  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder]);
 
   return (
     <div className="relative flex w-full flex-col">

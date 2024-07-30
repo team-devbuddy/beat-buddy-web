@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { recentSearchState, accessTokenState } from '@/context/recoil-context';
