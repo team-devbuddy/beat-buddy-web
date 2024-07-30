@@ -252,7 +252,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             className="current-location-button"
           />
         </div>
-        <div className={`rounded border border-gray400 p-2`} style={{ minHeight }} ref={mapRef} />
+        <div className={`p-2`} style={{ minHeight }} ref={mapRef} />
         <style jsx>{`
           .current-location-button {
             transition: opacity 0.3s;
