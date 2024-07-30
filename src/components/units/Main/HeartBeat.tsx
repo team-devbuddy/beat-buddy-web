@@ -43,7 +43,7 @@ function Heartbeat() {
   return (
     <div className="my-[1.75rem] flex flex-col px-[1rem]">
       <Link href="/myheartbeat">
-        <div className="flex items-center justify-between rounded-md  py-[0.5rem] hover:brightness-75">
+        <div className="flex items-center justify-between rounded-md py-[0.5rem] hover:brightness-75">
           <div className="flex flex-col">
             <span className="font-queensides text-main-queen text-main2">My Heart Beat</span>
             <div className="mt-[0.25rem] cursor-pointer text-body2-15-medium text-gray200">
@@ -101,8 +101,7 @@ function Heartbeat() {
               className="w-[18.9rem] bg-BG-black">
               <div className="px-[1.25rem] pb-[1.5rem] pt-4">
                 <div className="flex justify-end">
-                  <div  className="mb-[1.25rem] text-gray-600 hover:text-gray-800">
-                  </div>
+                  <div className="mb-[1.25rem] text-gray-600 hover:text-gray-800"></div>
                 </div>
                 <div className="text-center">
                   <h2 className="mb-[0.75rem] text-subtitle-20-bold text-white">아직 하트비트가 없어요</h2>
