@@ -68,20 +68,32 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   };
 
   const fetchFilteredClubs = async () => {
-    const filters = {
-      keyword: searchQuery ? [searchQuery] : [],
-      genreTag: genresMap[selectedGenre] || '',
-      regionTag: locationsMap[selectedLocation] || '',
-      sortCriteria: criteriaMap[selectedOrder] || '관련도순',
-    };
-
-    const clubs = await filterDropdown(filters, accessToken);
-    setFilteredClubs(clubs);
+    if (!selectedGenre && !selectedLocation && !selectedOrder) {
+      if (searchQuery) {
+        const clubs = await fetchVenues(searchQuery, accessToken);
+        setFilteredClubs(clubs);
+      }
+    } else {
+      const filters = {
+        keyword: searchQuery ? [searchQuery] : [],
+        genreTag: genresMap[selectedGenre] || '',
+        regionTag: locationsMap[selectedLocation] || '',
+        sortCriteria: criteriaMap[selectedOrder] || '관련도순',
+      };
+      const clubs = await filterDropdown(filters, accessToken);
+      setFilteredClubs(clubs);
+    }
   };
 
   useEffect(() => {
     fetchFilteredClubs();
-  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder]);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (selectedGenre || selectedLocation || selectedOrder) {
+      fetchFilteredClubs();
+    }
+  }, [selectedGenre, selectedLocation, selectedOrder]);
 
   useEffect(() => {
     setIsMapView(false);
