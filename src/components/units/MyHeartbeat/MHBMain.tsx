@@ -5,7 +5,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import { getMyHearts } from '@/lib/actions/hearbeat-controller/getMyHearts';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
-import { Club } from '@/lib/types';
+import { Club, HeartbeatProps } from '@/lib/types';
 import MainFooter from '../Main/MainFooter';
 import MyHeartbeat from './MHBVenues';
 import MyHeartBeatSkeleton from '@/components/common/skeleton/MyHeartBeatSkeleton';
@@ -23,8 +23,28 @@ export default function MyHeartbeatMain() {
     const fetchMyHeartbeatClubs = async () => {
       try {
         if (accessToken) {
-          const data = await getMyHearts(accessToken);
-          setMyHeartbeatClubs(data);
+          const data: HeartbeatProps[] = await getMyHearts(accessToken);
+          
+          const clubs: Club[] = data.map((club) => ({
+            tagList: club.tagList,
+            createdAt: '',
+            updatedAt: '',
+            venueId: club.venueId,
+            englishName: club.englishName,
+            koreanName: club.koreanName,
+            region: '',
+            description: null,
+            address: '',
+            instaId: '',
+            instaUrl: '',
+            operationHours: {},
+            logoUrl: club.logoUrl,
+            backgroundUrl: club.backgroundUrl || [],
+            heartbeatNum: club.heartbeatNum,
+            smokingAllowed: false,
+          }));
+
+          setMyHeartbeatClubs(clubs);
 
           const likedStatuses = data.reduce(
             (acc: { [key: number]: boolean }, club: { venueId: number; isHeartbeat: boolean }) => {

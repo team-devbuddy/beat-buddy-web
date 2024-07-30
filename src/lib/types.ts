@@ -45,7 +45,7 @@ export interface HotVenuesProps {
 
 export interface SearchHeaderProps {
   searchQuery: string;
-  setSearchQuery: React.Dispatch;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface SearchResultsProps {
