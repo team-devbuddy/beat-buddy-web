@@ -1,4 +1,6 @@
 'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRecoilValue, useRecoilState } from 'recoil';
@@ -8,7 +10,6 @@ import { ClubProps } from '@/lib/types';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { useEffect, useRef } from 'react';
 import { CustomToast, CustomToastContainer } from '@/components/common/toast/CustomToastContainer';
 import { toast } from 'react-toastify';
 
@@ -18,6 +19,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const sliderRef = useRef<Slider>(null);
+  const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드를 추적하는 상태 추가
 
   const defaultImage = '/images/DefaultImage.png';
 
@@ -74,11 +76,49 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
       });
     },
     afterChange: (current: number) => {
+      setCurrentSlide(current); // 현재 슬라이드를 업데이트
       const video = document.querySelector<HTMLVideoElement>(`.slick-slide[data-index="${current}"] video`);
       if (video) {
         video.play();
       }
     },
+  };
+
+  const atmosphereMap: { [key: string]: string } = {
+    Club: '클럽',
+    Pub: '펍',
+    Rooftop: '루프탑',
+    Deep: '딥한',
+    Commercial: '커머셜한',
+    Chill: '칠한',
+    Exotic: '이국적인',
+    Hunting: '헌팅',
+  };
+
+  const genresMap: { [key: string]: string } = {
+    HIPHOP: '힙합',
+    'R&B': 'R&B',
+    EDM: 'EDM',
+    HOUSE: '하우스',
+    TECHNO: '테크노',
+    'SOUL&FUNK': '소울&펑크',
+    ROCK: '록',
+    LATIN: '라틴',
+    'K-POP': 'K-팝',
+    POP: '팝',
+  };
+
+  const locationsMap: { [key: string]: string } = {
+    HONGDAE: '홍대',
+    ITAEWON: '이태원',
+    'GANGNAM/SINSA': '강남/신사',
+    APGUJEONG: '압구정',
+    OTHERS: '기타',
+  };
+
+  const translateTag = (tag: string) => {
+    const translatedTag = atmosphereMap[tag] || genresMap[tag] || locationsMap[tag] || tag;
+    return translatedTag;
   };
 
   return (
@@ -125,20 +165,31 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
           </div>
         ))}
       </Slider>
-      <div className="absolute bottom-0 z-20 flex flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
-        <h1 className="text-title-24-bold w-4/5">{venue.englishName} {venue.koreanName}</h1>
-        <div className="flex w-5/6 flex-wrap gap-2">
-          {tagList && tagList.length > 0 ? (
-            tagList.map((tag: string, index: number) => (
-              <span
-                key={index}
-                className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                {tag}
-              </span>
-            ))
-          ) : (
-            <span className="text-body3-12-medium text-gray100">No tags available</span>
-          )}
+      <div className="absolute bottom-0 z-20 flex w-full flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
+        <h1 className="w-4/5 text-title-24-bold">
+          {venue.englishName} {venue.koreanName}
+        </h1>
+        <div className="flex w-full items-end justify-between">
+          <div className="flex w-5/6 flex-wrap gap-2">
+            {tagList && tagList.length > 0 ? (
+              tagList.map((tag: string, index: number) => {
+                const translatedTag = translateTag(tag);
+                return (
+                  <span
+                    key={index}
+                    className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                    {translatedTag}
+                  </span>
+                );
+              })
+            ) : (
+              <span className="text-body3-12-medium text-gray100">No tags available</span>
+            )}
+          </div>
+
+          <div className="rounded-[1rem] bg-gray700 px-[0.75rem] py-[0.25rem] text-body3-12-bold text-white">
+            {currentSlide + 1}&nbsp; /&nbsp; {media.length}
+          </div>
         </div>
       </div>
     </div>
