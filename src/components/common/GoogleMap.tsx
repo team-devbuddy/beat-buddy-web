@@ -21,6 +21,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
     const [markerCluster, setMarkerCluster] = useState<MarkerClusterer | null>(null);
     const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
+    const [visibleClubs, setVisibleClubs] = useState<Club[]>([]);
 
     const MARKER_ICON_URL = '/icons/map_marker.svg';
 
@@ -205,7 +206,6 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             const customRenderer = {
               render: ({ count, position }: any, stats: any, map: any) => {
                 const color = count > Math.max(5, stats.clusters.markers.mean) ? '#EE1171' : '#8F0B48';
-
                 return new google.maps.Marker({
                   position,
                   icon: {

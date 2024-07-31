@@ -35,9 +35,10 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
   const clickedClub = useRecoilValue(clickedClubState);
   const [height, setHeight] = useState<number>(834);
 
-  const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
-  const locations = ['홍대', '이태원', '신사', '압구정'];
-  const sorts = ['가까운 순', '인기순'];
+
+  const genres = ['힙합', 'R&B', '테크노', 'EDM', '하우스'];
+  const locations = ['홍대', '이태원', '강남/신사', '압구정'];
+  const sorts = ['관련도 순', '인기순'];
 
   useImperativeHandle(ref, () => ({
     close: () => setOpen(false),
