@@ -39,6 +39,10 @@ function Heartbeat() {
   const closeModal = () => {
     setShowModal(false);
   };
+  const getDefaultImageIfInvalid = (url: string) => {
+    const imagePattern = /\.(jpeg|jpg|gif|png|heic|jfif)$/i;
+    return imagePattern.test(url) ? url : '/images/DefaultImage.png';
+  };
 
   return (
     <div className="my-[1.75rem] flex flex-col px-[1rem]">
@@ -74,7 +78,7 @@ function Heartbeat() {
                 variants={buttonVariants}
                 whileHover={{ y: -5, boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.3)' }}>
                 <Image
-                  src={heartbeat.logoUrl || '/images/DefaultImage.png'}
+                  src={getDefaultImageIfInvalid(heartbeat.logoUrl)}
                   alt={`${heartbeat.koreanName} image`}
                   layout="fill"
                   objectFit="cover"

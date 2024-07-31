@@ -53,6 +53,11 @@ export default function MyPageComponent() {
     setShowModal(true);
   };
 
+  const getDefaultImageIfInvalid = (url: string) => {
+    const imagePattern = /\.(jpeg|jpg|gif|png|heic|jfif)$/i;
+    return imagePattern.test(url) ? url : '/images/DefaultImage.png';
+  };
+
   const handleConfirm = async () => {
     if (selectedArchiveId !== null) {
       try {
@@ -100,7 +105,7 @@ export default function MyPageComponent() {
             <Link key={index} href={`/detail/${data.venueId}`}>
               <div className="relative h-14 w-14 flex-shrink-0 rounded-full">
                 <Image
-                  src={data?.logoUrl}
+                  src={getDefaultImageIfInvalid(data?.logoUrl)}
                   alt="icon"
                   layout="fill"
                   objectFit="cover"
