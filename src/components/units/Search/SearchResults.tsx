@@ -68,7 +68,14 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
-  const fetchFilteredClubs = async () => {
+  const fetchFilteredClubsByQuery = async () => {
+    if (searchQuery) {
+      const clubs = await fetchVenues(searchQuery, accessToken);
+      setFilteredClubs(clubs);
+    }
+  };
+
+  const fetchFilteredClubsByFilters = async () => {
     const filters = {
       keyword: searchQuery ? [searchQuery] : [],
       genreTag: genresMap[selectedGenre] || '',
@@ -80,11 +87,11 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   };
 
   useEffect(() => {
-    fetchFilteredClubs();
+    fetchFilteredClubsByQuery();
   }, [searchQuery]);
 
   useEffect(() => {
-    fetchFilteredClubs();
+    fetchFilteredClubsByFilters();
   }, [selectedGenre, selectedLocation, selectedOrder]);
 
   useEffect(() => {
