@@ -24,6 +24,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
     setInputValue(e.target.value);
     setIsDuplicateChecked(false); // 닉네임이 변경되면 중복 확인 상태 초기화
     setErrorMessage(''); // 에러 메시지 초기화
+    setShowBanner(false); // 배너 숨김
   };
 
   // 입력 값 검증 함수
@@ -54,7 +55,6 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
 
         if (isValid) {
           setShowBanner(true);
-          setTimeout(() => setShowBanner(false), 3000); // 3초 후 배너 숨김
         } else {
           setErrorMessage('닉네임이 중복이에요. 다른 닉네임을 입력해주세요.');
         }
