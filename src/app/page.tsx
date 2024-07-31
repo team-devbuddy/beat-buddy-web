@@ -1,10 +1,9 @@
 import HomeSelect from '@/components/units/home/HomeSelect';
-import { Suspense } from 'react';
-import HomeLoading from './123123loading';
+
 
 export default function MainPage() {
   return (
-    <div className="w-full">
+    <div className="w-full bg-BG-black">
       <HomeSelect />
     </div>
   );

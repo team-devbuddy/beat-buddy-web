@@ -40,13 +40,13 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
         </div>
         <div className="flex flex-col items-center">
           <Image
-            src={venue.smokingAllowed ? "/icons/smoke.fill.svg" : "/icons/smoke.svg"}
+            src={venue.smokingAllowed ? "/icons/smoke.fill.svg" : "/icons/icon-nonsmoking.svg"}
             alt="smoking icon"
             width={24}
             height={24}
           />
           <p className="text-body2-15-medium text-gray200 mt-[0.5rem]">
-            {venue.smokingAllowed ? "흡연 가능" : "흡연 불가능"}
+            {venue.smokingAllowed ? "흡연 가능" : "흡연 불가"}
           </p>
         </div>
       </div>
