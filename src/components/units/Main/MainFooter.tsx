@@ -11,7 +11,7 @@ export default function MainFooter() {
           <Image src="/icons/FooterVector.svg" alt="Footer Vector" fill />
         </div>
         <div className="flex flex-col items-start">
-          <span className="font-poppins text-lg font-bold leading-[1.40625rem] tracking-[-0.09375rem] text-gray100">
+          <span className="font-poppins text-lg font-bold leading-[1.40625rem] tracking-[-0.10375rem] text-gray100">
             Beat Buddy
           </span>
           <span className="mt-[0.25rem] text-body3-12-medium text-gray100">
