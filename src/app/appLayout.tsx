@@ -23,7 +23,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
           const response = await PostRefresh(access);
           if (response.ok) {
             const data = await response.json();
-            setAccess(data.accessToken);
+            setAccess(data.access);
             setIsAuth(true);
           } else {
             alert('로그인이 필요합니다.');
