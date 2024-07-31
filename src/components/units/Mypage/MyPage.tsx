@@ -141,7 +141,7 @@ export default function MyPageComponent() {
         </div>
 
         {/* 정보 수정 */}
-        <Link href="https://forms.gle/rcSfxUegbNykLnZD7" className="mt-6">
+        <Link href="https://forms.gle/rcSfxUegbNykLnZD7" target="_blank" className="mt-6">
           <div className="flex justify-between px-4 py-5 hover:brightness-75">
             <div className="flex flex-col gap-1">
               <div className="text-[0.93rem] font-bold text-white">잘못된 정보가 있나요?</div>
