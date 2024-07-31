@@ -56,8 +56,10 @@ const getFilteredTags = (tags: string[]) => {
 
 export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
   return (
-    <div className="flex w-full flex-col border-[#131415] bg-[#131415]">
-      <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[1rem] gap-y-[2.5rem] sm:grid-cols-2 md:grid-cols-3">
+
+    <div className="flex w-full flex-col bg-BG-black">
+      <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
+
         {clubs.map((venue) => {
           const firstImageUrl =
             venue.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i)) ||
