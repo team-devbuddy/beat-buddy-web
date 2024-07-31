@@ -82,6 +82,8 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
       };
       const clubs = await filterDropdown(filters, accessToken);
       setFilteredClubs(clubs);
+
+
     }
   };
 

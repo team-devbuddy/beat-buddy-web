@@ -3,16 +3,27 @@ import Image from 'next/image';
 import Link from 'next/link';
 import History from './History/History';
 import { useEffect, useState } from 'react';
-import { GetHistory, GetMyHeartbeat, GetNickname } from '@/lib/action';
+import { GetHistory, GetMyHeartbeat, GetNickname, PutArchive } from '@/lib/action';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-import { HeartBeat, HeartbeatProps } from '@/lib/types';
+import { HeartBeat } from '@/lib/types';
+import RecommendationModal from './RecommendationModal';
+import { toast } from '@/components/common/toast/CustomToastContainer';
+import { CustomToast, CustomToastContainer } from '@/components/common/toast/CustomToastContainer';
+
+export interface HistoryData {
+  archiveId: number;
+  preferenceList: string[];
+  updatedAt: string;
+}
 
 export default function MyPageComponent() {
   const access = useRecoilValue(accessTokenState) || '';
   const [nickname, setNickname] = useState('');
   const [heartBeat, setHeartBeat] = useState<HeartBeat[]>([]);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<HistoryData[]>([]); // 타입 지정
+  const [showModal, setShowModal] = useState(false);
+  const [selectedArchiveId, setSelectedArchiveId] = useState<number | null>(null);
 
   // 사용자 닉네임 조회 & 나의 하트비트 조회
   useEffect(() => {
@@ -25,6 +36,7 @@ export default function MyPageComponent() {
           const responseJson = await response.json();
           const heartBeatResponseJson = await heartBeatResponse.json();
           const historyResponseJson = await historyResponse.json();
+
           setNickname(responseJson.nickname);
           setHeartBeat(heartBeatResponseJson);
           setHistory(historyResponseJson);
@@ -34,7 +46,30 @@ export default function MyPageComponent() {
       }
     };
     fetchNickname();
-  }, []);
+  }, [access]);
+
+  const onClickHistory = (archiveId: number) => {
+    setSelectedArchiveId(archiveId);
+    setShowModal(true);
+  };
+
+  const handleConfirm = async () => {
+    if (selectedArchiveId !== null) {
+      try {
+        const response = await PutArchive(access, selectedArchiveId);
+        if (response.ok) {
+          toast(<CustomToast>변경되었습니다!</CustomToast>);
+        } else {
+          toast(<CustomToast>다시 시도해주세요.</CustomToast>);
+        }
+      } catch (error) {
+        console.error('Error putting archive:', error);
+        toast(<CustomToast>추천 요청 중 오류가 발생했습니다.</CustomToast>);
+      } finally {
+        setShowModal(false);
+      }
+    }
+  };
 
   return (
     <>
@@ -86,7 +121,10 @@ export default function MyPageComponent() {
         <div className="ml-4 flex gap-3 overflow-x-auto hide-scrollbar">
           {/* MyHistoy Card */}
           {history.map((data, index) => (
-            <div key={index} className="cursor-pointer hover:brightness-75">
+            <div
+              onClick={() => onClickHistory(data.archiveId)}
+              key={index}
+              className="cursor-pointer hover:brightness-75">
               <History data={data} />
             </div>
           ))}
@@ -109,6 +147,14 @@ export default function MyPageComponent() {
           </div>
         </Link>
       </div>
+      {showModal && selectedArchiveId !== null && (
+        <RecommendationModal
+          archiveId={selectedArchiveId}
+          onClose={() => setShowModal(false)}
+          onConfirm={handleConfirm}
+        />
+      )}
+      <CustomToastContainer />
     </>
   );
 }

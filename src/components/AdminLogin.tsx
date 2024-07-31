@@ -1,6 +1,60 @@
+'use client';
+import { useRouter } from 'next/navigation';
 import Prev from './common/Prev';
+import { accessTokenState, authState } from '@/context/recoil-context';
+import { useRecoilState } from 'recoil';
+import { useState } from 'react';
+import { GetOnBoardingStatus } from '@/lib/action';
 
 export default function AdminLogin() {
+  const router = useRouter();
+  const [id, setId] = useState('');
+  const [isAuth, setIsAuth] = useRecoilState(authState);
+  const [access, setAccess] = useRecoilState(accessTokenState);
+
+  const onClickSubmit = async () => {
+    const response = await fetch('https://api.beatbuddy.world/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: id,
+      // credentials: 'include',
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setAccess(data.access);
+      setIsAuth(true);
+      if (access) {
+        const response2 = await GetOnBoardingStatus(access);
+        if (response2.ok) {
+          const responseJson = await response2.json();
+          if (responseJson.adultCert === false) {
+            router.push('/onBoarding');
+          }
+          // 성인 인증 X && 장르, 분위기, 지역 선택 X
+          else if (responseJson.genre === false || responseJson.mood === false || responseJson.region === false) {
+            alert('온보딩을 진행해주세요');
+            router.push('/onBoarding');
+          }
+          // 성인 인증 O && 장르, 분위기, 지역 선택 O %responseJson.adultCert &&
+          else if (responseJson.genre && responseJson.mood && responseJson.region) {
+            setIsAuth(true);
+            router.push('/');
+          }
+          // 성인 인증 O && 장르, 분위기, 지역 선택 X
+          // else if (responseJson.adultCert && (!responseJson.genre || !responseJson.mood || !responseJson.region)) {
+          //   router.push('/onBoarding');
+          // }
+        }
+      }
+    }
+  };
+
+  const onChangeId = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setId(e.target.value);
+  };
+
   return (
     <>
       <div className="flex h-screen w-full flex-col items-center">
@@ -10,8 +64,15 @@ export default function AdminLogin() {
           <div className="w-[80%]">
             <h1 className="text-[1.5rem] text-white">어드민 로그인</h1>
           </div>
-          <input className="mt-[2.75rem] w-[80%] rounded-sm border-b border-white bg-BG-black px-2 py-4 text-white outline-none" />
-          <button className="mt-3 w-[80%] bg-main py-3 text-xs font-semibold hover:brightness-105">로그인</button>
+          <input
+            onChange={onChangeId}
+            className="mt-[2.75rem] w-[80%] rounded-sm border-b border-white bg-BG-black px-2 py-4 text-white outline-none"
+          />
+          <button
+            onClick={onClickSubmit}
+            className="mt-3 w-[80%] bg-main py-3 text-xs font-semibold hover:brightness-105">
+            로그인
+          </button>
         </div>
       </div>
     </>

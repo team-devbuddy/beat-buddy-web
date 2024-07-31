@@ -1,5 +1,4 @@
 'use client';
-import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRecoilValue, useRecoilState } from 'recoil';
@@ -9,41 +8,9 @@ import { ClubProps } from '@/lib/types';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import styled from 'styled-components';
-
-const CustomToast = styled.div`
-  background: #313335;
-  color: #fff;
-  font-size: 0.9375rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%; /* 1.40625rem */
-  letter-spacing: -0.01875rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StyledToastContainer = styled(ToastContainer)`
-  .Toastify__toast {
-    background: none;
-    box-shadow: none;
-    padding: 0;
-  }
-  .Toastify__toast-body {
-    margin: 0 1rem 0 1rem;
-    padding: 0.75rem 1rem;
-    background-color: #313335;
-    border-radius: 0.25rem;
-    color: #fff;
-    margin-bottom: 2.25rem;
-  }
-  .Toastify__close-button {
-    display: none;
-  }
-`;
+import { useEffect, useRef } from 'react';
+import { CustomToast, CustomToastContainer } from '@/components/common/toast/CustomToastContainer';
+import { toast } from 'react-toastify';
 
 const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   const router = useRouter();
@@ -82,15 +49,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        toast(<CustomToast>링크가 복사되었어요!</CustomToast>, {
-          position: 'bottom-center',
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast(<CustomToast>링크가 복사되었어요!</CustomToast>);
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -124,7 +83,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
 
   return (
     <div className="relative flex h-[17.5rem] w-full flex-col justify-between">
-      <StyledToastContainer />
+      <CustomToastContainer />
       <div className="absolute z-20 flex w-full items-start justify-between px-[1rem] py-[1rem]">
         <button onClick={() => router.back()} aria-label="뒤로가기" className="text-white">
           <Image src="/icons/ArrowLeft.svg" alt="back icon" width={24} height={24} />

@@ -49,12 +49,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                 카카오톡으로 계속하기
               </button>
             </Link>
-            <Link href="/adminLogin">
+            {/* <Link href="/adminLogin">
               <button className="flex w-full items-center rounded-[0.38rem] bg-main py-[1.19rem] pl-[1.25rem] pr-20 text-black">
                 <Image src="/icons/Logo.svg" alt="kakao" width={22} height={22} className="mr-8" />
                 어드민으로 로그인
               </button>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </motion.div>

@@ -112,10 +112,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                   mapInstance.fitBounds(initialBounds);
                   const customRenderer = {
                     render: ({ count, position }: any, stats: any, map: any) => {
-                      const color =
-                        count > Math.max(5, stats.clusters.markers.mean)
-                          ? "#EE1171"
-                          : "#8F0B48";
+                      const color = count > Math.max(5, stats.clusters.markers.mean) ? '#EE1171' : '#8F0B48';
 
                       return new google.maps.Marker({
                         position,
@@ -125,8 +122,8 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                         },
                         label: {
                           text: String(count),
-                          color: "#fff",
-                          fontSize: "12px",
+                          color: '#fff',
+                          fontSize: '12px',
                         },
                         zIndex: 1000 + count,
                       });
@@ -139,8 +136,10 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                     renderer: customRenderer,
                   });
 
+
                   google.maps.event.addListener(markerClusterer, 'clusterclick', (cluster: { getBounds: () => google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral; }) => {
                     mapInstance.fitBounds(cluster.getBounds());
+
                   });
 
                   mapInstance.addListener('click', () => {
@@ -229,10 +228,12 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
 
             const customRenderer = {
               render: ({ count, position }: any, stats: any, map: any) => {
+
                 const color =
                   count > Math.max(5, stats.clusters.markers.mean)
                     ? "#EE1171"
                     : "#8F0B48";
+
 
                 return new google.maps.Marker({
                   position,
@@ -242,8 +243,8 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                   },
                   label: {
                     text: String(count),
-                    color: "#fff",
-                    fontSize: "12px",
+                    color: '#fff',
+                    fontSize: '12px',
                   },
                   zIndex: 1000 + count,
                 });
@@ -262,7 +263,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
         }
       }
     };
-    
+
     return (
       <div className="relative">
         <div className="absolute right-4 top-12 z-10 cursor-pointer" onClick={handleCurrentLocation}>
@@ -294,7 +295,6 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             display: none !important;
           }
         `}</style>
-
       </div>
     );
   },

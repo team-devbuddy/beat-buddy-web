@@ -1,6 +1,8 @@
 import { atom, selector, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
+
 import { HeartbeatProps,ClubProps } from '@/lib/types';
+
 const { persistAtom } = recoilPersist();
 
 export const accessTokenState = atom<string | null>({

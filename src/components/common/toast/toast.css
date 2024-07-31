@@ -1,0 +1,16 @@
+.custom-toast {
+  background: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.custom-toast-body {
+  margin: 0 1rem 0 1rem;
+  background-color: #313335;
+  border-radius: 0.25rem;
+  color: #fff;
+}
+
+.Toastify__close-button {
+  display: none;
+}
