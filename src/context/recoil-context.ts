@@ -13,7 +13,7 @@ export const accessTokenState = atom<string | null>({
 
 export const authState = atom<boolean>({
   key: 'authState',
-  default: false,
+  default: true,
   effects_UNSTABLE: [persistAtom],
 });
 
