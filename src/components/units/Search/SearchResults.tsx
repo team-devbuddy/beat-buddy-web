@@ -68,30 +68,30 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
-  const fetchFilteredClubs = async () => {
-    if (!selectedGenre && !selectedLocation && !selectedOrder) {
-      if (searchQuery) {
-        const clubs = await fetchVenues(searchQuery, accessToken);
-        setFilteredClubs(clubs);
-      }
-    } else {
-      const filters = {
-        keyword: searchQuery ? [searchQuery] : [],
-        genreTag: genresMap[selectedGenre] || '',
-        regionTag: locationsMap[selectedLocation] || '',
-        sortCriteria: criteriaMap[selectedOrder] || '관련도순',
-      };
-      const clubs = await filterDropdown(filters, accessToken);
+  const fetchFilteredClubsByQuery = async () => {
+    if (searchQuery) {
+      const clubs = await fetchVenues(searchQuery, accessToken);
       setFilteredClubs(clubs);
     }
   };
 
+  const fetchFilteredClubsByFilters = async () => {
+    const filters = {
+      keyword: searchQuery ? [searchQuery] : [],
+      genreTag: genresMap[selectedGenre] || '',
+      regionTag: locationsMap[selectedLocation] || '',
+      sortCriteria: criteriaMap[selectedOrder] || '관련도순',
+    };
+    const clubs = await filterDropdown(filters, accessToken);
+    setFilteredClubs(clubs);
+  };
+
   useEffect(() => {
-    fetchFilteredClubs();
+    fetchFilteredClubsByQuery();
   }, [searchQuery]);
 
   useEffect(() => {
-    fetchFilteredClubs();
+    fetchFilteredClubsByFilters();
   }, [selectedGenre, selectedLocation, selectedOrder]);
 
   useEffect(() => {
