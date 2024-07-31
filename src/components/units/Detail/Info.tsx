@@ -28,25 +28,27 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
   };
 
   return (
-    <div className="px-[1rem] py-[2rem] bg-BG-black">
-      <div className="flex justify-around ">
-        <div className="flex flex-col items-center">
-          <Image src="/icons/phone.fill.svg" alt="phone icon" width={24} height={24} />
-          <p className="text-body2-15-medium text-gray200 mt-[0.5rem]">전화</p>
+    <div className="bg-BG-black px-[1rem] py-[2rem]">
+      <div className="flex justify-around">
+        <div>
+          <div className="flex flex-col items-center min-w-[6rem] px-[2rem]">
+            <Image src="/icons/phone.fill.svg" alt="phone icon" width={24} height={24} />
+            <p className="mt-[0.5rem] text-body2-15-medium text-gray200">전화</p>
+          </div>
         </div>
-        <div className="flex flex-col items-center cursor-pointer" onClick={handleInstagramClick}>
+        <div className="flex cursor-pointer flex-col items-center min-w-[8rem] px-[2rem] border border-b-none border-t-none" onClick={handleInstagramClick}>
           <Image src="/icons/insta.fill.svg" alt="instagram icon" width={24} height={24} />
-          <p className="text-body2-15-medium text-gray200 mt-[0.5rem]">SNS</p>
+          <p className="mt-[0.5rem] text-body2-15-medium text-gray200">SNS</p>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center min-w-[6rem] ">
           <Image
-            src={venue.smokingAllowed ? "/icons/smoke.fill.svg" : "/icons/icon-nonsmoking.svg"}
+            src={venue.smokingAllowed ? '/icons/smoke.fill.svg' : '/icons/icon-nonsmoking.svg'}
             alt="smoking icon"
             width={24}
             height={24}
           />
-          <p className="text-body2-15-medium text-gray200 mt-[0.5rem]">
-            {venue.smokingAllowed ? "흡연 가능" : "흡연 불가"}
+          <p className="mt-[0.5rem] text-body2-15-medium text-gray200">
+            {venue.smokingAllowed ? '흡연 가능' : '흡연 불가'}
           </p>
         </div>
       </div>
