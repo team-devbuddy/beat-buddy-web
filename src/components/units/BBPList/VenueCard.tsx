@@ -11,9 +11,18 @@ interface VenueCardProps {
 }
 
 const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: VenueCardProps) => {
-  // if (!clubs || clubs.length === 0) {
-  //   return <div>No clubs available</div>;
-  // }
+  const getImageSrc = (club: Club) => {
+    if (club.backgroundUrl.length > 0) {
+      const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i));
+      if (firstImage) {
+        return firstImage;
+      } else {
+        const firstNonVideoImage = club.backgroundUrl.find((url) => !url.match(/\.mp4$/i));
+        return firstNonVideoImage || club.logoUrl || '/images/DefaultImage.png';
+      }
+    }
+    return club.logoUrl || '/images/DefaultImage.png';
+  };
 
   return (
     <div className="bg-BG-black px-4">
@@ -23,11 +32,7 @@ const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
             <Link href={`/detail/${club.venueId}`} passHref>
               <div className="relative w-full pb-[100%]">
                 <Image
-                  src={
-                    club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i)) ||
-                    club.logoUrl ||
-                    '/images/DefaultImage.png'
-                  } // 클럽 이미지 URL 사용
+                  src={getImageSrc(club)} // 수정된 부분
                   alt={`${club.englishName} image`}
                   layout="fill"
                   objectFit="cover"
