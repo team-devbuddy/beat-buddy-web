@@ -92,7 +92,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
               />
               {isDuplicateChecked && isDuplicateValid ? (
                 <div className="absolute right-5 top-4 text-white">
-                  <Image src="/icons/check.svg" alt="check" width={16} height={16} />
+                  <Image src="/icons/PinkCheck.svg" alt="check" width={16} height={16} />
                 </div>
               ) : (
                 <button
