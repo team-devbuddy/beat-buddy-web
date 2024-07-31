@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { SearchResultsProps } from '@/lib/types';
 import ClubList from '../Main/ClubList';
@@ -68,23 +69,14 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   };
 
   const fetchFilteredClubs = async () => {
-    if (!selectedGenre && !selectedLocation && !selectedOrder) {
-      if (searchQuery) {
-        const clubs = await fetchVenues(searchQuery, accessToken);
-        setFilteredClubs(clubs);
-      }
-    } else {
-      const filters = {
-        keyword: searchQuery ? [searchQuery] : [],
-        genreTag: genresMap[selectedGenre] || '',
-        regionTag: locationsMap[selectedLocation] || '',
-        sortCriteria: criteriaMap[selectedOrder] || '관련도순',
-      };
-      const clubs = await filterDropdown(filters, accessToken);
-      setFilteredClubs(clubs);
-
-
-    }
+    const filters = {
+      keyword: searchQuery ? [searchQuery] : [],
+      genreTag: genresMap[selectedGenre] || '',
+      regionTag: locationsMap[selectedLocation] || '',
+      sortCriteria: criteriaMap[selectedOrder] || '관련도순',
+    };
+    const clubs = await filterDropdown(filters, accessToken);
+    setFilteredClubs(clubs);
   };
 
   useEffect(() => {
@@ -92,14 +84,17 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   }, [searchQuery]);
 
   useEffect(() => {
-    if (selectedGenre || selectedLocation || selectedOrder) {
-      fetchFilteredClubs();
-    }
+    fetchFilteredClubs();
   }, [selectedGenre, selectedLocation, selectedOrder]);
 
   useEffect(() => {
     setIsMapView(false);
   }, [setIsMapView]);
+
+  // 컴포넌트가 처음 로드될 때 무조건 selectedOrder를 "관련도순"으로 설정
+  useEffect(() => {
+    setSelectedOrder('관련도순');
+  }, []);
 
   return (
     <div className="relative flex w-full flex-col">
