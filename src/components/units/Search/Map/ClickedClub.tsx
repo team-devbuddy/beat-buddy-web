@@ -2,6 +2,7 @@
 import { useRecoilValue } from 'recoil';
 import { clickedClubState } from '@/context/recoil-context';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 const getFilteredTags = (tags: string[]) => {
@@ -65,6 +66,8 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
   const filteredTags = getFilteredTags(clickedClub.tagList || []);
 
   return (
+    <Link key={clickedClub.venue.venueId} href={`/detail/${clickedClub.venue.venueId}`} passHref>
+
     <div className="flex w-full flex-col bg-BG-black p-4">
       <motion.div
         whileHover={{
@@ -119,7 +122,8 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
           </div>
         </div>
       </motion.div>
-    </div>
+      </div>
+      </Link>
   );
 };
 

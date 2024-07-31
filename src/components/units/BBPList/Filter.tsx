@@ -67,7 +67,7 @@ const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
   };
 
   return (
-    <div className="mt-[1.75rem] flex flex-wrap gap-[0.5rem] bg-BG-black px-[1rem] text-body2-15-medium">
+    <div className="mt-[1.75rem] w-6/7 flex flex-wrap gap-[0.5rem] bg-BG-black px-[1rem] text-body2-15-medium">
       {preferences.length > 0 ? (
         preferences.map((filter, index) => (
           <button
