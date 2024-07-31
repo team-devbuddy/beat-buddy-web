@@ -21,6 +21,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
     const [markerCluster, setMarkerCluster] = useState<MarkerClusterer | null>(null);
     const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
+    const [visibleClubs, setVisibleClubs] = useState<Club[]>([]);
 
     const MARKER_ICON_URL = '/icons/map_marker.svg';
 
@@ -195,10 +196,21 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           Promise.all(geocodePromises).then(() => {
             newMarkers.forEach((marker) => marker.setMap(map));
 
+            const filteredClubs = clubs.filter((club) =>
+              newMarkers.some((marker) => {
+                const label = marker.getLabel();
+                // 타입 가드를 사용하여 label이 MarkerLabel 객체인 경우에만 text 속성에 접근
+                return typeof label === 'object' && label !== null && label.text === club.englishName;
+              }),
+            );
+
+            setVisibleClubs(filteredClubs); // 현재 보이는 클럽들의 정보 업데이트
+            console.log(filteredClubs);
+            onAddressesInBounds?.(filteredClubs.map(club => club.address)); // 콜백을 통해 주소 전달
+
             const customRenderer = {
               render: ({ count, position }: any, stats: any, map: any) => {
                 const color = count > Math.max(5, stats.clusters.markers.mean) ? '#EE1171' : '#8F0B48';
-
                 return new google.maps.Marker({
                   position,
                   icon: {

@@ -1,4 +1,3 @@
-'use client';
 import { SearchResultsProps, Club } from '@/lib/types';
 import BottomSheetComponent from './BottomSheet';
 import GoogleMap from '@/components/common/GoogleMap';
@@ -24,6 +23,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     const filtered = filteredClubs.filter((club) => addressesInView.includes(club.address ?? ''));
     setCurrentFilteredClubs(filtered);
   };
+
   useEffect(() => {
     setCurrentFilteredClubs(filteredClubs);
   }, [filteredClubs]);
@@ -32,7 +32,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     <>
       <GoogleMap clubs={filteredClubs} minHeight="44rem" onAddressesInBounds={handleSearch} ref={mapRef} />
       <MapSearchButton onClick={() => mapRef.current?.filterAddressesInView()} />
-      <BottomSheetComponent filteredClubs={filteredClubs} />
+      <BottomSheetComponent filteredClubs={currentFilteredClubs} />
     </>
   );
 }

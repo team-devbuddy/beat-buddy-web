@@ -53,18 +53,30 @@ const getFilteredTags = (tags: string[]) => {
 
   return selectedTags.slice(0, 3);
 };
+const getImageSrc = (club: Club) => {
+  if (club.backgroundUrl && club.backgroundUrl.length > 0) {
+    const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i));
+    if (firstImage) {
+      return firstImage;
+    } else {
+      const firstNonVideoImage = club.backgroundUrl.find((url) => !url.match(/\.mp4$/i));
+      return firstNonVideoImage || '/images/DefaultImage.png';
+    }
+  } else {
+    if (club.logoUrl && !club.logoUrl.match(/\.mp4$/i)) {
+      return club.logoUrl;
+    } else {
+      return '/images/DefaultImage.png';
+    }
+  }
+};
 
 export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
   return (
-
     <div className="flex w-full flex-col bg-BG-black">
       <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
-
         {clubs.map((venue) => {
-          const firstImageUrl =
-            venue.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i)) ||
-            venue.logoUrl ||
-            '/images/DefaultImage.png';
+          const firstImageUrl = getImageSrc(venue);
           const filteredTags = getFilteredTags(venue.tagList || []);
 
           return (
@@ -75,7 +87,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
                   backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
-                className="relative flex h-full flex-col p-2 rounded-md">
+                className="relative flex h-full flex-col rounded-md p-2">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}
@@ -93,7 +105,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     }}>
                     <Image
                       src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
-                      alt="pink-heart icon"
+                      alt="heart icon"
                       width={32}
                       height={32}
                     />
@@ -104,7 +116,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
                     <div className="mb-[1.06rem] mt-[0.75rem] flex w-3/4 flex-wrap gap-[0.5rem]">
                       {filteredTags.length > 0 ? (
-                        filteredTags.map((tag: string, index: number) => (
+                        filteredTags.map((tag, index) => (
                           <span
                             key={index}
                             className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
