@@ -141,6 +141,20 @@ export async function PostArchive(access: string, archive: { memberGenreId: numb
   return response;
 }
 
+// 아카이브 변경
+export async function PutArchive(access: string, archiveId: number) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/archive/history/${archiveId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+    body: JSON.stringify({ archiveId }),
+  });
+
+  return response;
+}
+
 // 사용자 온보딩 현황 조회
 export async function GetOnBoardingStatus(access: string) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/onboarding`, {
