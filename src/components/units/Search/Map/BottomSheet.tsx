@@ -83,7 +83,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
     : [window.innerHeight * 0.9, window.innerHeight * 0.5, 82];
 
   return (
-    <div className="flex w-full flex-col justify-between">
+    <div className="flex w-full flex-col">
       <AnimatePresence>
         {isOpen && (
           <Sheet
@@ -115,8 +115,8 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
               <Sheet.Content
                 className="relative z-10 h-full w-full grow overflow-y-auto bg-BG-black"
                 disableDrag={true}>
-                <div className="club-list-container flex flex-col text-[0.93rem]">
-                  <div className="flex w-full flex-wrap justify-between gap-4">
+                <div className="club-list-container flex w-full flex-col text-[0.93rem]">
+                  <div className="w-full flex-wrap gap-4">
                     {clickedClub ? (
                       <ClickedClubDetails
                         likedClubs={likedClubs}

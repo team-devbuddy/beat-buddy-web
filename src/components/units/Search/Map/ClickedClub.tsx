@@ -66,64 +66,64 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
   const filteredTags = getFilteredTags(clickedClub.tagList || []);
 
   return (
-    <Link key={clickedClub.venue.venueId} href={`/detail/${clickedClub.venue.venueId}`} passHref>
 
-    <div className="flex w-full flex-col bg-BG-black p-4">
-      <motion.div
-        whileHover={{
-          y: -5,
-          boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-        }}
-        className="relative flex flex-row gap-x-[1.25rem] rounded-md">
-        <div className="relative w-40 h-40">
-          <Image
-            src={firstImageUrl}
-            alt={`${clickedClub.venue.koreanName} image`}
-            layout="fill"
-            objectFit="cover"
-            className="rounded-sm"
-          />
-          <div
-            className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
-            onClick={(e) => {
-              handleHeartClickWrapper(e, clickedClub.venue.venueId);
-            }}>
+    <Link key={clickedClub.venue.venueId} href={`/detail/${clickedClub.venue.venueId}`} passHref>
+      <div className="flex w-full cursor-pointer flex-col bg-BG-black p-4">
+        <motion.div
+          whileHover={{
+            y: -5,
+            boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          }}
+          className="relative flex p-2 flex-row gap-x-[1.25rem] rounded-md">
+          <div className="relative h-40 w-40">
             <Image
-              src={likedClubs[clickedClub.venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
-              alt="pink-heart icon"
-              width={32}
-              height={32}
+              src={firstImageUrl}
+              alt={`${clickedClub.venue.koreanName} image`}
+              layout="fill"
+              objectFit="cover"
+              className="rounded-sm"
             />
+            <div
+              className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
+              onClick={(e) => {
+                handleHeartClickWrapper(e, clickedClub.venue.venueId);
+              }}>
+              <Image
+                src={likedClubs[clickedClub.venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                alt="pink-heart icon"
+                width={32}
+                height={32}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col">
-          <h3 className="text-ellipsis text-body1-16-bold text-white">{clickedClub.venue.englishName}</h3>
-          <div className="mb-[1.06rem] mt-[0.75rem] flex w-3/4 flex-wrap gap-[0.5rem]">
-            {filteredTags.length > 0 ? (
-              filteredTags.map((tag: string, index: number) => (
-                <span
-                  key={index}
-                  className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                  {tag}
+          <div className="flex flex-col">
+            <h3 className="text-ellipsis text-body1-16-bold text-white">{clickedClub.venue.englishName}</h3>
+            <div className="mb-[1.06rem] mt-[0.75rem] flex w-3/4 flex-wrap gap-[0.5rem]">
+              {filteredTags.length > 0 ? (
+                filteredTags.map((tag: string, index: number) => (
+                  <span
+                    key={index}
+                    className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                    {tag}
+                  </span>
+                ))
+              ) : (
+                <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                  No tagList
                 </span>
-              ))
-            ) : (
-              <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                No tagList
+              )}
+            </div>
+            <div className="flex items-center space-x-[0.25rem] text-gray300">
+              <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
+              <span className="text-body3-12-medium">
+                {heartbeatNums[clickedClub.venue.venueId] !== undefined ? heartbeatNums[clickedClub.venue.venueId] : 0}
               </span>
-            )}
+            </div>
           </div>
-          <div className="flex items-center space-x-[0.25rem] text-gray300">
-            <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-            <span className="text-body3-12-medium">
-              {heartbeatNums[clickedClub.venue.venueId] !== undefined ? heartbeatNums[clickedClub.venue.venueId] : 0}
-            </span>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
       </div>
-      </Link>
+    </Link>
   );
 };
 

@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { SearchResultsProps } from '@/lib/types';
 import ClubList from '../Main/ClubList';
@@ -90,14 +91,17 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   }, [searchQuery]);
 
   useEffect(() => {
-    if (selectedGenre || selectedLocation || selectedOrder) {
-      fetchFilteredClubs();
-    }
+    fetchFilteredClubs();
   }, [selectedGenre, selectedLocation, selectedOrder]);
 
   useEffect(() => {
     setIsMapView(false);
   }, [setIsMapView]);
+
+  // 컴포넌트가 처음 로드될 때 무조건 selectedOrder를 "관련도순"으로 설정
+  useEffect(() => {
+    setSelectedOrder('관련도순');
+  }, []);
 
   return (
     <div className="relative flex w-full flex-col">

@@ -26,10 +26,14 @@ function Dropdown({
     };
   }, []);
 
-
   const toggleDropdown = () => setIsOpen(!isOpen);
+
   const handleOptionClick = (option: string) => {
-    setSelectedOption(option);
+    if (option === selectedOption) {
+      setSelectedOption('');  // 선택된 옵션을 다시 클릭하면 선택 해제
+    } else {
+      setSelectedOption(option);
+    }
     setIsOpen(false);
   };
 
@@ -38,7 +42,7 @@ function Dropdown({
       <div className="flex items-center">
         <button
           type="button"
-          className={`inline-flex w-full justify-between rounded-sm py-[0.25rem] pl-[0.62rem] pr-[0.5rem] text-body2-15-medium focus:outline-none ${
+          className={`inline-flex w-full justify-between rounded-sm cursor-pointer py-[0.25rem] pl-[0.62rem] pr-[0.5rem] text-body2-15-medium focus:outline-none ${
             isThirdDropdown
               ? 'text-gray300 border-transparent bg-transparent'
               : selectedOption

@@ -52,14 +52,9 @@ function SearchGenre() {
         onClick={() => handleGenreClick(item)}
         className={`flex ${
           index < 3 || (index >= 5 && index < 8) ? 'aspect-square w-full' : 'h-[3.75rem] sm:h-[6.25rem]'
-        } cursor-pointer items-center justify-center rounded-sm bg-cover bg-center text-body1-16-medium text-white ${
-          selectedGenre === item || selectedLocation === item ? 'border border-main' : ''
-        }`}
+        } items-center justify-center rounded-sm bg-cover bg-center text-body1-16-medium text-white`}
         style={{
-          backgroundImage:
-            selectedGenre === item || selectedLocation === item
-              ? `linear-gradient(0deg, rgba(0, 0, 0, 0.70), rgba(0, 0, 0, 0.70)), url('/images/onBoarding/background/onboarding-${index + 1}.png')`
-              : `url('/images/onBoarding/background/onboarding-${index + 1}.png')`,
+          backgroundImage: `url('/images/onBoarding/background/onboarding-${index + 1}.png')`,
         }}
         variants={gridItemVariants}
         whileHover="hover"
@@ -71,10 +66,10 @@ function SearchGenre() {
 
   return (
     <div className="bg-BG-black px-[1rem] pb-[2.5rem] pt-[2.25rem]">
-      <div className="grid grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(0, 3)}</div>
-      <div className="mt-[0.5rem] grid grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(3, 5)}</div>
-      <div className="mt-[0.5rem] grid grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(5, 8)}</div>
-      <div className="mt-[0.5rem] grid grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(8, 10)}</div>
+      <div className="grid cursor-pointer grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(0, 3)}</div>
+      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(3, 5)}</div>
+      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(5, 8)}</div>
+      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(8, 10)}</div>
     </div>
   );
 }
