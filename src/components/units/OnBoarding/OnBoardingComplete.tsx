@@ -1,14 +1,27 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { accessTokenState, memberGenreIdState, memberMoodIdState } from '@/context/recoil-context';
-import { PostArchive } from '@/lib/action';
+import { GetNickname, PostArchive } from '@/lib/action';
 import { useRecoilValue } from 'recoil';
+import { use, useEffect, useState } from 'react';
 
 export default function OnBoardingComplete() {
   const memberMoodId = useRecoilValue(memberMoodIdState);
   const memberGenreId = useRecoilValue(memberGenreIdState);
   const access = useRecoilValue(accessTokenState) || '';
   const router = useRouter();
+  const [nickname, setNickname] = useState<string>('');
+
+  useEffect(() => {
+    const getNickname = async () => {
+      const response = await GetNickname(access);
+      if (response.ok) {
+        const data = await response.json();
+        setNickname(data.nickname);
+      }
+    };
+    getNickname();
+  }, []);
 
   const onClickSubmit = async () => {
     console.log('memberGenreId:', memberGenreId);
@@ -33,7 +46,7 @@ export default function OnBoardingComplete() {
       <div className="flex w-full flex-col">
         <div className="flex w-full flex-col px-4 pt-[3.5rem]">
           <h1 className="py-5 text-2xl font-bold leading-9 text-white">
-            수빈버디님을 위한
+            {nickname} 버디님을 위한
             <br />
             맞춤 베뉴를 찾았어요!
           </h1>
