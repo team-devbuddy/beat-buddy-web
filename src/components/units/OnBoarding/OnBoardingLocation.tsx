@@ -8,9 +8,9 @@ import Image from 'next/image';
 
 const locationMap: { [key: string]: string } = {
   홍대: 'HONGDAE',
-  압구정: 'APGUJEONG',
   이태원: 'ITAEWON',
-  '강남-신사': 'GANGNAM/SINSA',
+  압구정: 'APGUJEONG',
+  '강남/신사': 'GANGNAM/SINSA',
   기타: 'OTHERS',
 };
 
@@ -18,7 +18,7 @@ const locationImages: { [key: string]: string } = {
   홍대: '/images/onboarding/background/onboarding-4.png',
   압구정: '/images/onboarding/background/onboarding-2.png',
   이태원: '/images/onboarding/background/onboarding-5.png',
-  '강남-신사': '/images/onboarding/background/onboarding-7.png',
+  '강남/신사': '/images/onboarding/background/onboarding-7.png',
   기타: '/images/onboarding/background/onboarding-9.png',
 };
 
@@ -26,14 +26,24 @@ const locations = Object.keys(locationMap);
 
 export default function OnBoardingLocation() {
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
   const [isAuth, setIsAuth] = useRecoilState(authState);
 
   const toggleLocation = (location: string) => {
-    setSelectedLocations((prevSelected) =>
-      prevSelected.includes(location) ? prevSelected.filter((l) => l !== location) : [...prevSelected, location],
-    );
+    setSelectedLocations((prevSelected) => {
+      if (prevSelected.includes(location)) {
+        setError(null); // Reset error if a valid selection is made
+        return prevSelected.filter((l) => l !== location);
+      } else if (prevSelected.length < 2) {
+        setError(null); // Reset error if a valid selection is made
+        return [...prevSelected, location];
+      } else {
+        setError('최대 2개 선택 가능합니다.');
+        return prevSelected;
+      }
+    });
   };
 
   const onClickSubmit = async () => {
@@ -84,6 +94,7 @@ export default function OnBoardingLocation() {
             </div>
           ))}
         </div>
+        {error && <div className="mt-4 text-main">{error}</div>}
       </div>
       <button
         onClick={onClickSubmit}

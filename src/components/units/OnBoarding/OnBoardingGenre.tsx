@@ -8,41 +8,50 @@ import Image from 'next/image';
 
 export default function OnBoardingGenre() {
   const genreMap: { [key: string]: string } = {
-    EDM: 'EDM',
-    힙합: 'HIPHOP',
-    하우스: 'HOUSE',
-    '소울 & 펑크': 'SOUL&FUNK',
-    테크노: 'TECHNO',
-    'K-POP': 'K-POP',
-    팝: 'POP',
-    라틴: 'LATIN',
+    HIPHOP: 'HIPHOP',
     'R&B': 'R&B',
-    락: 'ROCK',
+    EDM: 'EDM',
+    HOUSE: 'HOUSE',
+    TECHNO: 'TECHNO',
+    'SOUL&FUNK': 'SOUL&FUNK',
+    ROCK: 'ROCK',
+    LATIN: 'LATIN',
+    'K-POP': 'K-POP',
+    POP: 'POP',
   };
 
   const genreImages: { [key: string]: string } = {
     EDM: '/images/onboarding/background/onboarding-1.png',
-    힙합: '/images/onboarding/background/onboarding-2.png',
-    하우스: '/images/onboarding/background/onboarding-3.png',
-    '소울 & 펑크': '/images/onboarding/background/onboarding-4.png',
-    테크노: '/images/onboarding/background/onboarding-5.png',
+    HIPHOP: '/images/onboarding/background/onboarding-2.png',
+    HOUSE: '/images/onboarding/background/onboarding-3.png',
+    'SOUL&FUNK': '/images/onboarding/background/onboarding-4.png',
+    TECHNO: '/images/onboarding/background/onboarding-5.png',
     'K-POP': '/images/onboarding/background/onboarding-6.png',
-    팝: '/images/onboarding/background/onboarding-7.png',
-    라틴: '/images/onboarding/background/onboarding-8.png',
+    POP: '/images/onboarding/background/onboarding-7.png',
+    LATIN: '/images/onboarding/background/onboarding-8.png',
     'R&B': '/images/onboarding/background/onboarding-9.png',
-    락: '/images/onboarding/background/onboarding-10.png',
+    ROCK: '/images/onboarding/background/onboarding-10.png',
   };
 
   const genres = Object.keys(genreMap);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
   const setMemberGenreId = useSetRecoilState(memberGenreIdState);
 
   const toggleGenre = (genre: string) => {
-    setSelectedGenres((prevSelected) =>
-      prevSelected.includes(genre) ? prevSelected.filter((g) => g !== genre) : [...prevSelected, genre],
-    );
+    setSelectedGenres((prevSelected) => {
+      if (prevSelected.includes(genre)) {
+        return prevSelected.filter((g) => g !== genre);
+      } else if (prevSelected.length < 4) {
+        setError(null); // Reset error if a valid selection is made
+        return [...prevSelected, genre];
+      } else {
+        setError('최대 4개 선택 가능합니다.');
+        return prevSelected;
+      }
+    });
   };
 
   const onClickSubmit = async () => {
@@ -102,6 +111,7 @@ export default function OnBoardingGenre() {
             </div>
           ))}
         </div>
+        {error && <div className="mt-4 text-main">{error}</div>}
       </div>
       <button
         onClick={onClickSubmit}
