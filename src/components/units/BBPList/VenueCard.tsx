@@ -23,7 +23,11 @@ const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
             <Link href={`/detail/${club.venueId}`} passHref>
               <div className="relative w-full pb-[100%]">
                 <Image
-                  src={club.backgroundUrl?.[0] || club.logoUrl || '/images/DefaultImage.png'} // 클럽 이미지 URL 사용
+                  src={
+                    club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i)) ||
+                    club.logoUrl ||
+                    '/images/DefaultImage.png'
+                  } // 클럽 이미지 URL 사용
                   alt={`${club.englishName} image`}
                   layout="fill"
                   objectFit="cover"
