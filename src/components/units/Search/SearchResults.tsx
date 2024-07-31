@@ -73,7 +73,6 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   };
 
   const fetchFilteredClubsByQuery = useCallback(async () => {
-
     setIsLoading(true); // 로딩 상태 활성화
 
     if (searchQuery && searchQuery !== previousSearchQuery) {
@@ -102,7 +101,6 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     setFilteredClubs(clubs);
 
     setIsLoading(false); // 로딩 상태 비활성화
-
   }, [searchQuery, selectedGenre, selectedLocation, selectedOrder, accessToken, isInitialLoad]);
 
   useEffect(() => {
