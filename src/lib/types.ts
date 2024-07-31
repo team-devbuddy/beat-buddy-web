@@ -15,6 +15,7 @@ export interface Club {
   englishName: string;
   koreanName: string;
   region: string;
+  phoneNum?: string;
   description: string | null;
   address: string;
   instaId: string;
