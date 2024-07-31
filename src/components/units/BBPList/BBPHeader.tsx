@@ -31,7 +31,7 @@ const BBPHeader = () => {
             BeatBuddy Pick {/*로그인시 유저네임...*/}
         </span>
         <span className="text-gray200 text-body2-15-medium mt-[0.75rem]">
-        {loggedIn ? '테스트 결과를 바탕으로 맞춤 메뉴를 추천해드려요' : '테스트하고 본인만을 위한 맞춤 메뉴를 추천받으세요'}
+       테스트 결과를 바탕으로 맞춤 메뉴를 추천해드려요
         </span>
       </div>
     </header>

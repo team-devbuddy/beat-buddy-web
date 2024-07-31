@@ -21,6 +21,10 @@ const fullDaysOfWeek: { [key: string]: string } = {
   토: '토요일',
 };
 
+const parseHours = (hours: string) => {
+  return hours.replace('~', ' - ');
+};
+
 const VenueHours = ({ hours }: VenueHoursProps) => {
   return (
     <div className='bg-BG-black'>
@@ -30,7 +34,7 @@ const VenueHours = ({ hours }: VenueHoursProps) => {
           {daysOfWeek.map((day) => (
             <div key={day} className="flex items-center space-x-[0.75rem]">
               <p className="text-body2-15-medium text-gray200">
-                {fullDaysOfWeek[day]}: {hours[fullDaysOfWeek[day]] || '운영하지 않음'}
+                {fullDaysOfWeek[day]} &nbsp;{hours[fullDaysOfWeek[day]] ? parseHours(hours[fullDaysOfWeek[day]]) : '운영하지 않음'}
               </p>
             </div>
           ))}
