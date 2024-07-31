@@ -2,7 +2,6 @@
 import { forwardRef, useImperativeHandle, useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
-import Image from 'next/image';
 import { Club } from '@/lib/types';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { useRecoilState } from 'recoil';
@@ -16,18 +15,14 @@ interface GoogleMapProp {
 }
 
 const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapProp>(
-  ({ clubs, minHeight, onAddressesInBounds, zoom = 300 }, ref) => {
+  ({ clubs, minHeight, onAddressesInBounds, zoom }, ref) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
-    const [currentLocationMarker, setCurrentLocationMarker] = useState<google.maps.Marker | null>(null);
     const [markerCluster, setMarkerCluster] = useState<MarkerClusterer | null>(null);
     const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
 
     const MARKER_ICON_URL = '/icons/map_marker.svg';
-    const CURRENT_LOCATION_MARKER_URL = '/icons/menow.svg';
-    const CURRENT_LOCATION_BUTTON_URL = '/icons/currentLocation.png';
-    const CURRENT_LOCATION_BUTTON_HOVER_URL = '/icons/currentLocationHover.png';
 
     useImperativeHandle(ref, () => ({
       filterAddressesInView,
@@ -87,10 +82,13 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             const mapInstance = new google.maps.Map(mapRef.current, {
               styles: MapStyles,
               disableDefaultUI: true,
+              zoom,
               zoomControl: false,
               streetViewControl: false,
               mapTypeControl: false,
               fullscreenControl: false,
+              // minZoom: 16,
+              maxZoom: zoom || null,
             });
 
             setMap(mapInstance);
@@ -136,11 +134,13 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                     renderer: customRenderer,
                   });
 
-
-                  google.maps.event.addListener(markerClusterer, 'clusterclick', (cluster: { getBounds: () => google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral; }) => {
-                    mapInstance.fitBounds(cluster.getBounds());
-
-                  });
+                  google.maps.event.addListener(
+                    markerClusterer,
+                    'clusterclick',
+                    (cluster: { getBounds: () => google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral }) => {
+                      mapInstance.fitBounds(cluster.getBounds());
+                    },
+                  );
 
                   mapInstance.addListener('click', () => {
                     setClickedClub(null);
@@ -160,42 +160,11 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
         markers.forEach((marker) => marker.setMap(null));
         markerCluster?.clearMarkers();
       };
-    }, [clubs]);
+    }, [clubs, zoom]);
 
     useEffect(() => {
       setClickedClub(null);
     }, [setClickedClub]);
-
-    const handleCurrentLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-            map?.setCenter(pos);
-            map?.setZoom(zoom);
-
-            if (currentLocationMarker) {
-              currentLocationMarker.setPosition(pos);
-            } else {
-              const marker = new google.maps.Marker({
-                map: map,
-                position: pos,
-                icon: CURRENT_LOCATION_MARKER_URL,
-              });
-              setCurrentLocationMarker(marker);
-            }
-          },
-          () => {
-            console.error('Error: The Geolocation service failed.');
-          },
-        );
-      } else {
-        console.error("Error: Your browser doesn't support geolocation.");
-      }
-    };
 
     const filterAddressesInView = () => {
       if (map) {
@@ -228,12 +197,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
 
             const customRenderer = {
               render: ({ count, position }: any, stats: any, map: any) => {
-
-                const color =
-                  count > Math.max(5, stats.clusters.markers.mean)
-                    ? "#EE1171"
-                    : "#8F0B48";
-
+                const color = count > Math.max(5, stats.clusters.markers.mean) ? '#EE1171' : '#8F0B48';
 
                 return new google.maps.Marker({
                   position,
@@ -266,23 +230,8 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
 
     return (
       <div className="relative">
-        <div className="absolute right-4 top-12 z-10 cursor-pointer" onClick={handleCurrentLocation}>
-          <Image
-            src={CURRENT_LOCATION_BUTTON_URL}
-            alt="Current Location"
-            width={40}
-            height={40}
-            className="current-location-button"
-          />
-        </div>
         <div className={`p-2`} style={{ minHeight }} ref={mapRef} />
         <style jsx>{`
-          .current-location-button {
-            transition: opacity 0.3s;
-          }
-          .current-location-button:hover {
-            content: url(${CURRENT_LOCATION_BUTTON_HOVER_URL});
-          }
           .marker-label {
             color: #ff4493;
             font-size: 14px;
