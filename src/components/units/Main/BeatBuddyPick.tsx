@@ -12,6 +12,7 @@ interface BeatBuddyPickProps {
   heartbeatNums: { [key: number]: number };
   handleHeartClickWrapper: (e: React.MouseEvent, venueId: number) => void;
 }
+
 const clubTypes = ['club', 'pub', 'rooftop'];
 const regions = ['HONGDAE', 'ITAEWON', 'APGUJEONG', 'GANGNAM/SINSA', 'OTHERS'];
 const regionTranslations: { [key: string]: string } = {
@@ -21,6 +22,7 @@ const regionTranslations: { [key: string]: string } = {
   'GANGNAM/SINSA': '강남/신사',
   OTHERS: '기타',
 };
+
 const genres = [
   'HIPHOP',
   'R&B',
@@ -54,6 +56,20 @@ const getFilteredTags = (tags: string[]) => {
   return selectedTags.slice(0, 3);
 };
 
+const getImageSrc = (club: Club) => {
+  if (club.backgroundUrl.length > 0) {
+    const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i));
+    if (firstImage) {
+      return firstImage;
+    } else {
+      const firstNonVideoImage = club.backgroundUrl.find((url) => !url.match(/\.mp4$/i));
+      return firstNonVideoImage || club.logoUrl || '/images/DefaultImage.png';
+    }
+  } else {
+    return club.logoUrl || '/images/DefaultImage.png';
+  }
+};
+
 export default function BeatBuddyPick({
   clubs,
   userName,
@@ -74,7 +90,7 @@ export default function BeatBuddyPick({
       <div
         className={`flex ${clubs.length > 1 ? 'space-x-[0.5rem]' : ''} snap-x snap-mandatory overflow-x-auto px-[1rem] hide-scrollbar`}>
         {clubs.map((club) => {
-          const imageUrl = club.backgroundUrl?.[0] || club.logoUrl || '/images/DefaultImage.png';
+          const imageUrl = getImageSrc(club);
           const filteredTags = getFilteredTags(club.tagList || []);
           return (
             <Link key={club.venueId} href={`/detail/${club.venueId}`} passHref>
