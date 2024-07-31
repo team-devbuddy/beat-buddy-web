@@ -54,7 +54,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen w-full items-center justify-center">
       {/* 모바일 컨테이너 */}
-      <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
+      <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black shadow-lg">
         {/* 콘텐츠 */}
         <div className="flex h-full w-full flex-col">{children}</div>
         {/* <Footer /> */}
