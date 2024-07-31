@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Club } from '@/lib/types';
 import GoogleMap from '@/components/common/GoogleMap';
 
@@ -10,6 +10,7 @@ interface LocationProps {
 
 const Location = ({ venue }: LocationProps) => {
   const address = venue.address || '';
+  const mapRef = useRef<{ filterAddressesInView: () => void } | null>(null);
 
   return (
     <div className="pb-[1.25rem]">
