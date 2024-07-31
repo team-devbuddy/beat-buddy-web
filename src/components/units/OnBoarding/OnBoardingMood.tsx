@@ -1,23 +1,22 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useState, useRef } from 'react';
-import { PostMood, PostArchive } from '@/lib/action';
+import React, { useState } from 'react';
+import { PostMood } from '@/lib/action';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { accessTokenState, memberGenreIdState, memberMoodIdState } from '@/context/recoil-context';
+import { accessTokenState, memberMoodIdState } from '@/context/recoil-context';
 import Image from 'next/image';
-
 import { AnimatePresence } from 'framer-motion';
 import InfoModal from './MoodInfoModal';
 
 const moodMap: { [key: string]: string } = {
-  펍: 'PUB',
   클럽: 'CLUB',
-  딥한: 'DEEP',
-  칠한: 'CHILL',
-  커머셜한: 'COMMERCIAL',
-  헌팅: 'HUNTING',
-  이국적인: 'EXOTIC',
+  펍: 'PUB',
   루프탑: 'ROOFTOP',
+  딥한: 'DEEP',
+  커머셜한: 'COMMERCIAL',
+  칠한: 'CHILL',
+  이국적인: 'EXOTIC',
+  헌팅: 'HUNTING',
 };
 
 const moodImages: { [key: string]: string } = {
@@ -36,14 +35,22 @@ const moods = Object.keys(moodMap);
 export default function OnBoardingMood() {
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
   const [memberMoodId, setMemberMoodId] = useRecoilState(memberMoodIdState);
 
   const toggleMood = (mood: string) => {
-    setSelectedMoods((prevSelected) =>
-      prevSelected.includes(mood) ? prevSelected.filter((m) => m !== mood) : [...prevSelected, mood],
-    );
+    setSelectedMoods((prevSelected) => {
+      if (prevSelected.includes(mood)) {
+        return prevSelected.filter((m) => m !== mood);
+      } else if (prevSelected.length < 4) {
+        return [...prevSelected, mood];
+      } else {
+        setError('최대 4개 선택 가능합니다');
+        return prevSelected;
+      }
+    });
   };
 
   const onClickSubmit = async () => {
@@ -117,6 +124,7 @@ export default function OnBoardingMood() {
             </div>
           ))}
         </div>
+        {error && <div className="mt-4 text-main">{error}</div>}
       </div>
       <button
         onClick={onClickSubmit}
