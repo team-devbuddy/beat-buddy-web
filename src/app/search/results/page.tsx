@@ -7,11 +7,7 @@ const SearchResultsPage = dynamic(() => import('@/components/units/Search/Search
 });
 
 const SearchPage = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SearchResultsPage />
-    </Suspense>
-  );
+  return <SearchResultsPage />;
 };
 
 export default SearchPage;
