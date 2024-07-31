@@ -9,15 +9,6 @@ import { accessTokenState } from '@/context/recoil-context';
 import { PostAgree } from '@/lib/action';
 import Loading from '@/app/loading';
 
-const LoadingOverlay = () => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-    <div className="flex flex-col items-center">
-      <Image src="/icons/loader.svg" alt="Loading" width={50} height={50} />
-      <p className="mt-4 text-white">로딩 중...</p>
-    </div>
-  </div>
-);
-
 export default function AgreementTerm() {
   const [terms, setTerms] = useState<Term[]>(termsData);
   const [allChecked, setAllChecked] = useState<boolean>(false);
@@ -57,7 +48,7 @@ export default function AgreementTerm() {
   };
 
   const handleViewClick = (url: string) => {
-    router.push(url);
+    window.open(url, '_blank');
   };
 
   const onClickSubmit = async () => {
