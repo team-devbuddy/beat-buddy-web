@@ -82,8 +82,6 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
       };
       const clubs = await filterDropdown(filters, accessToken);
       setFilteredClubs(clubs);
-
-
     }
   };
 
@@ -104,43 +102,37 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   return (
     <div className="relative flex w-full flex-col">
       <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <AnimatePresence mode="wait">
-        {isMapView ? (
-          <motion.div key="map" initial="initial" animate="animate" exit="exit" variants={transitionVariants}>
-            <MapView filteredClubs={filteredClubs} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="list"
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={transitionVariants}
-            className="flex flex-grow flex-col bg-BG-black">
-            <DropdownGroup
-              genres={genres}
-              locations={locations}
-              criteria={criteria}
-              selectedGenre={selectedGenre}
-              setSelectedGenre={setSelectedGenre}
-              selectedLocation={selectedLocation}
-              setSelectedLocation={setSelectedLocation}
-              selectedOrder={selectedOrder}
-              setSelectedOrder={setSelectedOrder}
+
+      {isMapView ? (
+        <div key="map">
+          <MapView filteredClubs={filteredClubs} />
+        </div>
+      ) : (
+        <div key="list" className="flex flex-grow flex-col bg-BG-black">
+          <DropdownGroup
+            genres={genres}
+            locations={locations}
+            criteria={criteria}
+            selectedGenre={selectedGenre}
+            setSelectedGenre={setSelectedGenre}
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+            selectedOrder={selectedOrder}
+            setSelectedOrder={setSelectedOrder}
+          />
+          {filteredClubs.length > 0 ? (
+            <ClubList
+              clubs={filteredClubs}
+              likedClubs={likedClubs}
+              heartbeatNums={heartbeatNums}
+              handleHeartClickWrapper={handleHeartClickWrapper}
             />
-            {filteredClubs.length > 0 ? (
-              <ClubList
-                clubs={filteredClubs}
-                likedClubs={likedClubs}
-                heartbeatNums={heartbeatNums}
-                handleHeartClickWrapper={handleHeartClickWrapper}
-              />
-            ) : (
-              <NoResults />
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          ) : (
+            <NoResults />
+          )}
+        </div>
+      )}
+
       {filteredClubs.length > 0 ? <MapButton /> : ''}
     </div>
   );
