@@ -155,7 +155,7 @@ export default function SearchResults({
     <div className="relative flex w-full flex-col">
       {isLoading ? (
         <>
-          <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <SearchHeader  />
           <SearchListSkeleton /> 
         </>
       ) : isMapView ? (
@@ -164,7 +164,7 @@ export default function SearchResults({
         </div>
       ) : (
         <div key="list" className="flex flex-grow flex-col bg-BG-black">
-          <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <SearchHeader />
 
           <DropdownGroup
             genres={genres}
