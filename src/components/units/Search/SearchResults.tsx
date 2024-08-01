@@ -84,7 +84,8 @@ export default function SearchResults({
     setIsLoading(true); // 로딩 상태 활성화
 
     if (searchQuery && searchQuery !== previousSearchQuery) {
-      const clubs = await fetchVenues(searchQuery, accessToken);
+      const queryArray = searchQuery.split(' ').filter(Boolean);
+      const clubs = await fetchVenues(queryArray, accessToken);
       setFilteredClubs(clubs);
       setPreviousSearchQuery(searchQuery);
     }
@@ -93,9 +94,10 @@ export default function SearchResults({
 
   const fetchFilteredClubsByFilters = useCallback(async () => {
     setIsLoading(true); // 로딩 상태 활성화
+    const queryArray = searchQuery.split(' ').filter(Boolean);
 
     const filters = {
-      keyword: searchQuery ? [searchQuery] : [],
+      keyword: searchQuery ? queryArray : [],
       genreTag: genresMap[selectedGenre] || '',
       regionTag: locationsMap[selectedLocation] || '',
       sortCriteria: criteriaMap[selectedOrder] || '관련도순',
@@ -196,7 +198,7 @@ export default function SearchResults({
 }
 
 export async function getServerSideProps() {
-  const clubs = await fetchVenues('', null); // 서버 사이드에서 기본 클럽 데이터 가져오기
+  const clubs = await fetchVenues([], null); // 서버 사이드에서 기본 클럽 데이터 가져오기
   return {
     props: {
       initialFilteredClubs: clubs,
