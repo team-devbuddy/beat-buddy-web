@@ -15,11 +15,11 @@ const locationMap: { [key: string]: string } = {
 };
 
 const locationImages: { [key: string]: string } = {
-  홍대: '/images/onboarding/background/onboarding-4.png',
-  압구정: '/images/onboarding/background/onboarding-2.png',
-  이태원: '/images/onboarding/background/onboarding-5.png',
-  '강남/신사': '/images/onboarding/background/onboarding-7.png',
-  기타: '/images/onboarding/background/onboarding-9.png',
+  홍대: '/images/onboarding/background/onboarding-4.webp',
+  압구정: '/images/onboarding/background/onboarding-2.webp',
+  이태원: '/images/onboarding/background/onboarding-5.webp',
+  '강남/신사': '/images/onboarding/background/onboarding-7.webp',
+  기타: '/images/onboarding/background/onboarding-9.webp',
 };
 
 const locations = Object.keys(locationMap);

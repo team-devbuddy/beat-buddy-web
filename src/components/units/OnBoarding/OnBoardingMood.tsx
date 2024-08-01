@@ -20,14 +20,14 @@ const moodMap: { [key: string]: string } = {
 };
 
 const moodImages: { [key: string]: string } = {
-  펍: '/images/onBoarding/background/onboarding-3.png',
-  클럽: '/images/onBoarding/background/onboarding-7.png',
-  딥한: '/images/onBoarding/background/onboarding-1.png',
-  칠한: '/images/onBoarding/background/onboarding-5.png',
-  커머셜한: '/images/onBoarding/background/onboarding-2.png',
-  헌팅: '/images/onBoarding/background/onboarding-6.png',
-  이국적인: '/images/onBoarding/background/onboarding-4.png',
-  루프탑: '/images/onBoarding/background/onboarding-8.png',
+  펍: '/images/onBoarding/background/onboarding-3.webp',
+  클럽: '/images/onBoarding/background/onboarding-7.webp',
+  딥한: '/images/onBoarding/background/onboarding-1.webp',
+  칠한: '/images/onBoarding/background/onboarding-5.webp',
+  커머셜한: '/images/onBoarding/background/onboarding-2.webp',
+  헌팅: '/images/onBoarding/background/onboarding-6.webp',
+  이국적인: '/images/onBoarding/background/onboarding-4.webp',
+  루프탑: '/images/onBoarding/background/onboarding-8.webp',
 };
 
 const moods = Object.keys(moodMap);
