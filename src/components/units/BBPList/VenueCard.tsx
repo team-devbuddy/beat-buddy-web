@@ -1,7 +1,11 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Club } from '@/lib/types';
+import { motion } from 'framer-motion';
+import { heartAnimation } from '@/lib/animation';
 
 interface VenueCardProps {
   clubs: Club[];
@@ -11,6 +15,14 @@ interface VenueCardProps {
 }
 
 const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: VenueCardProps) => {
+  const [clickedHeart, setClickedHeart] = useState<{ [key: number]: boolean }>({});
+
+  const handleHeartClick = (e: React.MouseEvent, venueId: number) => {
+    setClickedHeart((prev) => ({ ...prev, [venueId]: true }));
+    handleHeartClickWrapper(e, venueId);
+    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [venueId]: false })), 500);
+  };
+
   const translateTag = (tag: string) => {
     const atmosphereMap: { [key: string]: string } = {
       CLUB: '클럽',
@@ -49,7 +61,7 @@ const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
 
   const getImageSrc = (club: Club) => {
     if (club.backgroundUrl.length > 0) {
-      const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i));
+      const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i));
       if (firstImage) {
         return firstImage;
       } else {
@@ -68,26 +80,27 @@ const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
             <Link href={`/detail/${club.venueId}`} passHref>
               <div className="relative w-full pb-[100%]">
                 <Image
-                  src={getImageSrc(club)} // 수정된 부분
+                  src={getImageSrc(club)}
                   alt={`${club.englishName} image`}
                   layout="fill"
                   objectFit="cover"
                   className="rounded-sm"
                 />
                 <div className="club-gradient absolute inset-0"></div>
-                <div
+                <motion.div
                   className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleHeartClickWrapper(e, club.venueId);
-                  }}>
+                  onClick={(e) => handleHeartClick(e, club.venueId)}
+                  variants={heartAnimation}
+                  initial="initial"
+                  animate={clickedHeart[club.venueId] ? 'clicked' : 'initial'}
+                >
                   <Image
                     src={likedClubs[club.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                     alt="pink-heart icon"
                     width={32}
                     height={32}
                   />
-                </div>
+                </motion.div>
               </div>
             </Link>
             <div className="mt-[1rem]">
@@ -98,7 +111,7 @@ const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
                     <span
                       key={index}
                       className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                      {translateTag(tag)} 
+                      {translateTag(tag)}
                     </span>
                   ))
                 ) : (

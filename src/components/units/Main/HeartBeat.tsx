@@ -40,7 +40,7 @@ function Heartbeat() {
     setShowModal(false);
   };
   const getDefaultImageIfInvalid = (url: string) => {
-    const imagePattern = /\.(jpeg|jpg|gif|png|heic|jfif)$/i;
+    const imagePattern = /\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i;
     return imagePattern.test(url) ? url : '/images/DefaultImage.png';
   };
 

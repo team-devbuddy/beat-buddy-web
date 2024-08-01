@@ -59,7 +59,7 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
   if (!clickedClub) return null;
 
   const firstImageUrl =
-    clickedClub.venue.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i)) ||
+    clickedClub.venue.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i)) ||
     clickedClub.venue.logoUrl ||
     '/images/DefaultImage.png';
 

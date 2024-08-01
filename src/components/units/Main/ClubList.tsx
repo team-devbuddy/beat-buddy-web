@@ -1,9 +1,10 @@
 'use client';
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Club } from '@/lib/types';
 import { motion } from 'framer-motion';
+import { heartAnimation } from '@/lib/animation';
 
 interface ClubsListProps {
   clubs: Club[];
@@ -55,7 +56,7 @@ const getFilteredTags = (tags: string[]) => {
 };
 
 const getImageSrc = (club: Club) => {
-  const isImage = (url: string) => /\.(jpeg|jpg|gif|png|heic|jfif)$/i.test(url);
+  const isImage = (url: string) => /\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i.test(url);
   const isVideo = (url: string) => /\.mp4$/i.test(url);
 
   if (club.backgroundUrl && club.backgroundUrl.length > 0) {
@@ -73,12 +74,20 @@ const getImageSrc = (club: Club) => {
 };
 
 export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
+  const [clickedHeart, setClickedHeart] = useState<{ [key: number]: boolean }>({});
+
   const memoizedValues = useMemo(() => {
     return clubs.map((club) => ({
       firstImageUrl: getImageSrc(club),
       filteredTags: getFilteredTags(club.tagList || []),
     }));
   }, [clubs]);
+
+  const handleHeartClick = (e: React.MouseEvent, venueId: number) => {
+    setClickedHeart((prev) => ({ ...prev, [venueId]: true }));
+    handleHeartClickWrapper(e, venueId);
+    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [venueId]: false })), 500); // 애니메이션이 끝난 후 상태를 리셋
+  };
 
   return (
     <div className="flex w-full flex-col bg-BG-black">
@@ -94,8 +103,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
                   backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
-                className="relative flex flex-col rounded-md p-2 h-full"
-              >
+                className="relative flex h-full flex-col rounded-md p-2">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}
@@ -105,25 +113,27 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     className="rounded-sm"
                   />
                   <div className="club-gradient absolute inset-0"></div>
-                  <div
+                  <motion.div
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleHeartClickWrapper(e, venue.venueId);
+                      handleHeartClick(e, venue.venueId);
                     }}
-                  >
+                    variants={heartAnimation}
+                    initial="initial"
+                    animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
                     <Image
                       src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                       alt="heart icon"
                       width={32}
                       height={32}
                     />
-                  </div>
+                  </motion.div>
                 </div>
                 <div className="mt-[1rem] flex flex-grow flex-col justify-between">
                   <div>
                     <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
-                    <div className="mb-[1.06rem] mt-[0.75rem] w-4/5 flex flex-wrap gap-[0.5rem]">
+                    <div className="mb-[1.06rem] mt-[0.75rem] flex w-4/5 flex-wrap gap-[0.5rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span

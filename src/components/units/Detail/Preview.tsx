@@ -12,6 +12,8 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { CustomToast, CustomToastContainer } from '@/components/common/toast/CustomToastContainer';
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import { heartAnimation } from '@/lib/animation';
 
 const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   const router = useRouter();
@@ -19,7 +21,8 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const sliderRef = useRef<Slider>(null);
-  const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드를 추적하는 상태 추가
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [clickedHeart, setClickedHeart] = useState(false); // 추가된 상태
 
   const defaultImage = '/images/DefaultImage.png';
 
@@ -27,7 +30,6 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
     venue.backgroundUrl && venue.backgroundUrl.length > 0 ? venue.backgroundUrl : [venue.logoUrl || defaultImage];
 
   useEffect(() => {
-    // 초기 좋아요 상태 설정
     setLikedClubs((prevLikedClubs) => ({
       ...prevLikedClubs,
       [venue.venueId]: isHeartbeat,
@@ -43,7 +45,9 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
 
   const handleHeartClickWrapper = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    setClickedHeart(true); // 하트 클릭 애니메이션 상태 설정
     await handleHeartClick(e, venue.venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
+    setTimeout(() => setClickedHeart(false), 500); // 애니메이션 상태 초기화
   };
 
   const handleShareClick = () => {
@@ -76,7 +80,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
       });
     },
     afterChange: (current: number) => {
-      setCurrentSlide(current); // 현재 슬라이드를 업데이트
+      setCurrentSlide(current);
       const video = document.querySelector<HTMLVideoElement>(`.slick-slide[data-index="${current}"] video`);
       if (video) {
         video.play();
@@ -132,20 +136,26 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
           <div onClick={handleShareClick} className="cursor-pointer">
             <Image src="/icons/share.svg" alt="share icon" width={32} height={32} />
           </div>
-          <div onClick={handleHeartClickWrapper} className="cursor-pointer">
+          <motion.div
+            onClick={handleHeartClickWrapper}
+            className="cursor-pointer"
+            variants={heartAnimation}
+            initial="initial"
+            animate={clickedHeart ? 'clicked' : 'initial'}
+          >
             <Image
               src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
               alt="heart icon"
               width={32}
               height={32}
             />
-          </div>
+          </motion.div>
         </div>
       </div>
       <Slider ref={sliderRef} {...settings} className="absolute inset-0 z-10 h-full w-full">
         {media.map((url, index) => (
           <div key={index} className="relative h-[17.5rem] w-full">
-            {url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i) ? (
+            {url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i) ? (
               <Image src={url} alt={`Background ${index}`} fill className="object-cover object-center" />
             ) : url.match(/\.mp4$/i) ? (
               <video key={`video-${index}`} className="h-full w-full object-cover" controls muted loop>
