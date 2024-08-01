@@ -11,20 +11,9 @@ import {
 import { motion } from 'framer-motion';
 import { gridItemVariants } from '@/lib/animation';
 
-const atmospheres = [
-  '클럽',
-  '펍',
-  '루프탑',
-  '딥한',
-  '커머셜한',
-  '칠한',
-  '이국적인',
-  '헌팅',
-];
+const atmospheres = ['클럽', '펍', '루프탑', '딥한', '커머셜한', '칠한', '이국적인', '헌팅'];
 
-const genres = [
-  'HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 'LATIN', 'K-POP', 'POP',
-];
+const genres = ['HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 'LATIN', 'K-POP', 'POP'];
 
 const locations = ['홍대', '이태원', '압구정', '강남/신사', '기타'];
 
@@ -78,12 +67,11 @@ function SearchGenre() {
         onClick={() => handleItemClick(item)}
         className={`flex ${index < 3 || (index >= 5 && index < 8) ? 'aspect-square w-full' : 'h-[3.75rem] sm:h-[6.25rem]'} items-center justify-center rounded-sm bg-cover bg-center text-body1-16-medium text-white`}
         style={{
-          backgroundImage: `url('/images/onBoarding/background/onboarding-${index + 1}.png')`,
+          backgroundImage: `url('/images/onBoarding/background/onboarding-${index + 1}.webp')`,
         }}
         variants={gridItemVariants}
         whileHover="hover"
-        whileTap="tap"
-      >
+        whileTap="tap">
         {item}
       </motion.div>
     ));
@@ -91,18 +79,10 @@ function SearchGenre() {
 
   return (
     <div className="bg-BG-black px-[1rem] pb-[2.5rem] pt-[2.25rem]">
-      <div className="grid cursor-pointer grid-cols-3 gap-[0.5rem]">
-        {renderGridItems().slice(0, 3)}
-      </div>
-      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-2 gap-[0.5rem]">
-        {renderGridItems().slice(3, 5)}
-      </div>
-      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-3 gap-[0.5rem]">
-        {renderGridItems().slice(5, 8)}
-      </div>
-      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-2 gap-[0.5rem]">
-        {renderGridItems().slice(8, 10)}
-      </div>
+      <div className="grid cursor-pointer grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(0, 3)}</div>
+      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(3, 5)}</div>
+      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(5, 8)}</div>
+      <div className="mt-[0.5rem] grid cursor-pointer grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(8, 10)}</div>
     </div>
   );
 }

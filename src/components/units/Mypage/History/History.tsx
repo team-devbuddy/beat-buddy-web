@@ -18,21 +18,21 @@ export default function History({ data }: HistoryProps) {
   const getBackgroundImage = (preference: string) => {
     switch (preference) {
       case 'HIP':
-        return '/images/onBoarding/background/onboarding-1.png';
+        return '/images/onBoarding/background/onboarding-1.webp';
       case 'DISCO':
-        return '/images/onBoarding/background/onboarding-2.png';
+        return '/images/onBoarding/background/onboarding-2.webp';
       case 'R&B':
-        return '/images/onBoarding/background/onboarding-3.png';
+        return '/images/onBoarding/background/onboarding-3.webp';
       case 'TECHNO':
-        return '/images/onBoarding/background/onboarding-4.png';
+        return '/images/onBoarding/background/onboarding-4.webp';
       case 'EDM':
-        return '/images/onBoarding/background/onboarding-5.png';
+        return '/images/onBoarding/background/onboarding-5.webp';
       case 'HOUSE':
-        return '/images/onBoarding/background/onboarding-6.png';
+        return '/images/onBoarding/background/onboarding-6.webp';
       case 'LATIN':
-        return '/images/onBoarding/background/onboarding-7.png';
+        return '/images/onBoarding/background/onboarding-7.webp';
       case 'SOUL&FUNK':
-        return '/images/onBoarding/background/onboarding-8.png';
+        return '/images/onBoarding/background/onboarding-8.webp';
       default:
         return '/images/DefaultImage.png'; // 기본 이미지
     }
