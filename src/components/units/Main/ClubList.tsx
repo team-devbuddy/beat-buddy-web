@@ -77,6 +77,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
     return clubs.map((club) => ({
       firstImageUrl: getImageSrc(club),
       filteredTags: getFilteredTags(club.tagList || []),
+
     }));
   }, [clubs]);
 
@@ -94,6 +95,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
                   backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
+
                 className="relative flex flex-col rounded-md p-2">
                 <div className="relative w-full pb-[100%]">
                   <Image

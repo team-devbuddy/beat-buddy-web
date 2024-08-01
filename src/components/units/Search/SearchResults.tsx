@@ -64,15 +64,15 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
 
-  const genres = useMemo(() => ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', 'POP', '하우스', 'K-POP'], []);
-  const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정', '기타'], []);
+
+  const genres = useMemo(() => ['힙합', 'R&B', '테크노', 'EDM',  '소울&펑크', 'ROCK', 'POP','하우스', 'K-POP'], []);
+  const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정','기타'], []);
+
   const criteria = useMemo(() => ['관련도순', '인기순'], []);
 
   const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
-
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
-
   const [isInitialLoad, setIsInitialLoad] = useState(true); // 초기 로드 상태 추가
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
@@ -86,17 +86,12 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
       setFilteredClubs(clubs);
       setPreviousSearchQuery(searchQuery);
     }
-
     setIsLoading(false); // 로딩 상태 비활성화
   }, [searchQuery, accessToken, previousSearchQuery]);
 
   const fetchFilteredClubsByFilters = useCallback(async () => {
     setIsLoading(true); // 로딩 상태 활성화
 
-    if (isInitialLoad) {
-      setIsInitialLoad(false); // 최초 로드 후 상태 변경
-      return;
-    }
     const filters = {
       keyword: searchQuery ? [searchQuery] : [],
       genreTag: genresMap[selectedGenre] || '',
@@ -105,9 +100,10 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     };
     const clubs = await filterDropdown(filters, accessToken);
     setFilteredClubs(clubs);
-
     setIsLoading(false); // 로딩 상태 비활성화
+
   }, [searchQuery, selectedGenre, selectedLocation, selectedOrder, accessToken, isInitialLoad]);
+
 
   useEffect(() => {
     fetchFilteredClubsByQuery();
