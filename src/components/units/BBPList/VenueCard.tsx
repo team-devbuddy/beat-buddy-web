@@ -28,7 +28,7 @@ const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
     <div className="bg-BG-black px-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {clubs.map((club) => (
-          <div key={club.venueId} className="relative mb-4 flex flex-col bg-BG-black">
+          <div key={club.venueId} className="relative mb-[2.5rem] flex flex-col bg-BG-black">
             <Link href={`/detail/${club.venueId}`} passHref>
               <div className="relative w-full pb-[100%]">
                 <Image
