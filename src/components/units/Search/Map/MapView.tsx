@@ -20,10 +20,10 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     }
   }, [sheetRef]);
 
-  const handleSearch = (addressesInView: string[]) => {
-    const filtered = filteredClubs.filter((club) => addressesInView.includes(club.address ?? ''));
-    setCurrentFilteredClubs(filtered);
+  const handleSearch = (filteredClubsInView: Club[]) => {
+    setCurrentFilteredClubs(filteredClubsInView);
   };
+
   useEffect(() => {
     setCurrentFilteredClubs(filteredClubs);
   }, [filteredClubs]);
@@ -32,7 +32,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     <>
       <GoogleMap clubs={filteredClubs} minHeight="44rem" onAddressesInBounds={handleSearch} ref={mapRef} />
       <MapSearchButton onClick={() => mapRef.current?.filterAddressesInView()} />
-      <BottomSheetComponent filteredClubs={filteredClubs} />
+      <BottomSheetComponent filteredClubs={currentFilteredClubs} />
     </>
   );
 }
