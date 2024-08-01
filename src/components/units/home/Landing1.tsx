@@ -33,7 +33,7 @@ export default function Landing1() {
         whileInView="visible"
         variants={clubEffect}
         className="mb-[1.25rem] text-body1-16-bold text-white">
-        지금 나에게 맞는 베뉴를 추천 받고 싶나요?
+        지금 나에게 맞는 베뉴를 추천 받으세요
       </motion.span>
       <motion.div
         initial="hidden"
