@@ -11,6 +11,7 @@ import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { Club, ClubProps } from '@/lib/types';
+import Loading from '@/components/common/skeleton/LoadingLottie';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [venue, setVenue] = useState<Club | null>(null);
@@ -41,16 +42,12 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   }, [params.id, accessToken]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen w-full flex-col bg-BG-black text-white justify-center items-center">
-        <p>Loading...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!venue) {
     return (
-      <div className="flex min-h-screen w-full flex-col bg-BG-black text-white justify-center items-center">
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-BG-black text-white">
         <p>Club data not found.</p>
       </div>
     );
