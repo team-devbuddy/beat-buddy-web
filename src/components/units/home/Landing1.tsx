@@ -25,22 +25,18 @@ export default function Landing1() {
         initial="hidden"
         whileInView="visible"
         variants={clubEffect}
-        className="mb-[1.25rem] flex w-full justify-center">
+        className="mb-[3.75rem] flex w-full justify-center">
         <Image src={'/images/onBoarding/Landing1.png'} alt="colored logo" width={221} height={125} />
       </motion.div>
-      <motion.span
-        initial="hidden"
-        whileInView="visible"
-        variants={clubEffect}
-        className="mb-[1.25rem] text-body1-16-bold text-white">
+      <motion.span initial="hidden" whileInView="visible" variants={clubEffect} className="mb-[1.25rem] text-white">
         지금 나에게 맞는 베뉴를 추천 받으세요
       </motion.span>
       <motion.div
         initial="hidden"
         whileInView="visible"
         variants={clubEffect}
-        className="flex cursor-pointer items-center justify-center rounded-full bg-main px-[1.25rem] py-[0.75rem] text-body3-12-bold text-BG-black">
-        <span className="text-body2-15-bold" onClick={handleLoginClick}>
+        className="flex cursor-pointer items-center justify-center rounded-full bg-main px-[2.5rem] py-4 text-body3-12-bold text-BG-black">
+        <span className="text-lg font-bold text-BG-black" onClick={handleLoginClick}>
           비트버디 시작하기
         </span>
       </motion.div>

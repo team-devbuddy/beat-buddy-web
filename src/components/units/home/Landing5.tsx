@@ -7,7 +7,6 @@ import { clubEffect } from '@/lib/animation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-
 export default function Landing5() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -29,11 +28,7 @@ export default function Landing5() {
         className="mb-[1.25rem] flex w-full justify-center">
         <Image src={'/images/onBoarding/logo.svg'} alt="colored logo" width={63} height={60} />
       </motion.div>
-      <motion.span
-        initial="hidden"
-        whileInView="visible"
-        variants={clubEffect}
-        className="mb-[1.25rem] text-body1-16-bold text-white">
+      <motion.span initial="hidden" whileInView="visible" variants={clubEffect} className="text-[0.93rem] text-main">
         Feel the beat, Live the night
       </motion.span>
 
@@ -43,8 +38,8 @@ export default function Landing5() {
           whileInView="visible"
           variants={clubEffect}
           // onClick={handleLoginClick}
-          className="mt-[3.75rem] flex cursor-pointer items-center justify-center rounded-full bg-main px-[1.25rem] py-[0.75rem] text-body3-12-bold text-BG-black">
-          <span className="text-body2-15-bold">비트버디 시작하기</span>
+          className="mt-[3.75rem] flex cursor-pointer items-center justify-center rounded-full bg-main px-[2.5rem] py-4 text-body3-12-bold text-BG-black">
+          <span className="text-lg font-bold text-BG-black">비트버디 시작하기</span>
         </motion.div>
       </Link>
 
