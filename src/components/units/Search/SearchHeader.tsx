@@ -12,17 +12,19 @@ import { isMapViewState } from '@/context/recoil-context';
 const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [lastSearch, setLastSearch] = useState('');
   const isMapView = useRecoilValue(isMapViewState);
   const setIsMapView = useSetRecoilState(isMapViewState);
 
   useEffect(() => {
-    const storedSearch = getLocalStorageItem('lastSearch');
-    setLastSearch(storedSearch);
-
     const query = searchParams.get('q');
     if (query) {
       setSearchQuery(query);
+      setLocalStorageItem('lastSearch', query);
+    } else {
+      const storedSearch = getLocalStorageItem('lastSearch');
+      if (storedSearch) {
+        setSearchQuery(storedSearch);
+      }
     }
   }, [searchParams, setSearchQuery]);
 

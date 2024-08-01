@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SearchResultsProps } from '@/lib/types';
 import ClubList from '../Main/ClubList';
 import SearchHeader from './SearchHeader';
@@ -20,8 +20,6 @@ import {
   searchQueryState,
 } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
-import { AnimatePresence, motion } from 'framer-motion';
-import { transitionVariants } from '@/lib/animation';
 import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 
@@ -53,6 +51,7 @@ const criteriaMap: { [key: string]: string } = {
 
 export default function SearchResults({ filteredClubs: initialFilteredClubs = [] }: SearchResultsProps) {
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
+  const [previousSearchQuery, setPreviousSearchQuery] = useState<string | null>(null);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
   const [selectedGenre, setSelectedGenre] = useRecoilState(selectedGenreState);
   const [selectedLocation, setSelectedLocation] = useRecoilState(selectedLocationState);
@@ -69,19 +68,25 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   const criteria = ['관련도순', '인기순'];
 
   const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
+  const [isInitialLoad, setIsInitialLoad] = useState(true); // 초기 로드 상태 추가
 
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
-  const fetchFilteredClubsByQuery = async () => {
-    if (searchQuery) {
+  const fetchFilteredClubsByQuery = useCallback(async () => {
+    if (searchQuery && searchQuery !== previousSearchQuery) {
       const clubs = await fetchVenues(searchQuery, accessToken);
       setFilteredClubs(clubs);
+      setPreviousSearchQuery(searchQuery);
     }
-  };
+  }, [searchQuery, accessToken, previousSearchQuery]);
 
-  const fetchFilteredClubsByFilters = async () => {
+  const fetchFilteredClubsByFilters = useCallback(async () => {
+    if (isInitialLoad) {
+      setIsInitialLoad(false); // 최초 로드 후 상태 변경
+      return;
+    }
     const filters = {
       keyword: searchQuery ? [searchQuery] : [],
       genreTag: genresMap[selectedGenre] || '',
@@ -90,24 +95,25 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     };
     const clubs = await filterDropdown(filters, accessToken);
     setFilteredClubs(clubs);
-  };
+  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder, accessToken, isInitialLoad]);
 
   useEffect(() => {
     fetchFilteredClubsByQuery();
-  }, [searchQuery]);
+  }, [fetchFilteredClubsByQuery]);
 
   useEffect(() => {
-    fetchFilteredClubsByFilters();
-  }, [selectedGenre, selectedLocation, selectedOrder]);
+    if (!isInitialLoad) {
+      fetchFilteredClubsByFilters();
+    }
+  }, [fetchFilteredClubsByFilters]);
 
   useEffect(() => {
     setIsMapView(false);
   }, [setIsMapView]);
 
-  // 컴포넌트가 처음 로드될 때 무조건 selectedOrder를 "관련도순"으로 설정
   useEffect(() => {
     setSelectedOrder('관련도순');
-  }, []);
+  }, [resetSelectedOrder, resetSelectedGenre, resetSelectedLocation]);
 
   return (
     <div className="relative flex w-full flex-col">
