@@ -141,8 +141,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
             className="cursor-pointer"
             variants={heartAnimation}
             initial="initial"
-            animate={clickedHeart ? 'clicked' : 'initial'}
-          >
+            animate={clickedHeart ? 'clicked' : 'initial'}>
             <Image
               src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
               alt="heart icon"
@@ -157,8 +156,8 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
           <div key={index} className="relative h-[17.5rem] w-full">
             {url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i) ? (
               <Image src={url} alt={`Background ${index}`} fill className="object-cover object-center" />
-            ) : url.match(/\.mp4$/i) ? (
-              <video key={`video-${index}`} className="h-full w-full object-cover" controls muted loop>
+            ) : url.match(/\.mp4|MOV$/i) ? (
+              <video key={`video-${index}`} className="h-full w-full object-cover" muted loop playsInline>
                 <source src={url} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>

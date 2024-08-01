@@ -8,6 +8,7 @@ export interface Term {
 
 // src/lib/types.ts
 export interface Club {
+  isHeartbeat: boolean;
   tagList: any;
   createdAt: string;
   updatedAt: string;
