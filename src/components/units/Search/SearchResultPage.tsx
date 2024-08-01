@@ -19,11 +19,8 @@ const SearchResultsPage = () => {
   }, [searchParams]);
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
-      <div className="flex-grow">
-        <SearchResults filteredClubs={[]} />
-      </div>
-      <MainFooter />
+    <div className="flex w-full flex-col bg-BG-black text-white">
+      <SearchResults filteredClubs={[]} />
     </div>
   );
 };

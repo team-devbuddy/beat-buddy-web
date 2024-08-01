@@ -11,7 +11,7 @@ export default function NotFound() {
       <SearchBar />
       <TrendBar />
 
-      <div className="flex h-full w-full flex-col items-center justify-center">
+      <div className="flex w-full flex-col items-center justify-center">
         <Image src="/icons/blackLogo.svg" width={120} height={120} alt="logo" />
         <p className="mt-4 text-[0.93rem] text-gray300">해당 페이지를 찾을 수 없습니다.</p>
       </div>
