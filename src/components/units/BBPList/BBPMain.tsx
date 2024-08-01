@@ -16,8 +16,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 import NoResults from '../Search/NoResult';
-
-
+import { getUserName } from '@/lib/actions/user-controller/fetchUsername';
 
 const BBPickHeader = dynamic(() => import('./BBPHeader'), { ssr: false });
 
@@ -29,6 +28,16 @@ export default function BBPMain() {
   const [loading, setLoading] = useState(true);
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   const [showToast, setShowToast] = useState<boolean>(false);
+  const [userName, setUserName] = useState<string | null>(null);
+
+  const fetchUserName = async (token: string) => {
+    try {
+      const name = await getUserName(token);
+      setUserName(name);
+    } catch (error) {
+      console.error('Error fetching user name:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchBBPClubs = async () => {
@@ -36,7 +45,7 @@ export default function BBPMain() {
         if (accessToken) {
           const data = await getBBP(accessToken);
           setBBPClubs(data);
-          setFilteredClubs(data); 
+          setFilteredClubs(data);
 
           const heartbeatNumbers = data.reduce(
             (acc: { [key: number]: number }, club: { venueId: number; heartbeatNum: number }) => {
@@ -74,6 +83,7 @@ export default function BBPMain() {
 
     if (accessToken) {
       fetchBBPClubs().then(() => fetchLikedStatuses(accessToken));
+      fetchUserName(accessToken); 
     }
   }, [accessToken, setLikedClubs, setHeartbeatNums]);
 
@@ -87,7 +97,7 @@ export default function BBPMain() {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
-      <BBPickHeader />
+      <BBPickHeader username={userName} />
       <Filter setFilteredClubs={setFilteredClubs} BBPClubs={BBPClubs} />
       <main className="pt-[1.75rem]">
         {filteredClubs.length === 0 && filteredClubs !== BBPClubs ? (
