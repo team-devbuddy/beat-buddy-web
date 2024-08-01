@@ -82,3 +82,11 @@ export const colorPulse: Variants = {
   },
 };
 
+//하트ㅡ또잉
+export const heartAnimation: Variants = {
+  initial: { scale: 1 },
+  clicked: {
+    scale: [1, 1.5, 1],
+    transition: { duration: 0.3 },
+  },
+};

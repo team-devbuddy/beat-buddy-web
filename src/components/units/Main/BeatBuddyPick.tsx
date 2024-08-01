@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Club } from '@/lib/types';
+import { heartAnimation } from '@/lib/animation';
+import { motion } from 'framer-motion';
 
 interface BeatBuddyPickProps {
   clubs: Club[];
@@ -58,7 +60,7 @@ const getFilteredTags = (tags: string[]) => {
 
 const getImageSrc = (club: Club) => {
   if (club.backgroundUrl.length > 0) {
-    const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i));
+    const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i));
     if (firstImage) {
       return firstImage;
     } else {
@@ -69,7 +71,6 @@ const getImageSrc = (club: Club) => {
   return club.logoUrl || '/images/DefaultImage.png';
 };
 
-
 export default function BeatBuddyPick({
   clubs,
   userName,
@@ -77,6 +78,14 @@ export default function BeatBuddyPick({
   heartbeatNums,
   handleHeartClickWrapper,
 }: BeatBuddyPickProps) {
+  const [clickedHeart, setClickedHeart] = useState<{ [key: number]: boolean }>({});
+
+  const handleHeartClick = (e: React.MouseEvent, venueId: number) => {
+    setClickedHeart((prev) => ({ ...prev, [venueId]: true }));
+    handleHeartClickWrapper(e, venueId);
+    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [venueId]: false })), 500);
+  };
+  
   return (
     <div className="mt-[0.44rem] flex flex-col bg-BG-black">
       <Link href="/bbp-list" passHref>
@@ -96,16 +105,19 @@ export default function BeatBuddyPick({
             <Link key={club.venueId} href={`/detail/${club.venueId}`} passHref>
               <div className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card hover:brightness-75">
                 <Image src={imageUrl} alt={`${club.englishName} image`} layout="fill" className="object-cover" />
-                <div
+                <motion.div
                   className="absolute right-[1.5rem] top-[1.5rem] cursor-pointer"
-                  onClick={(e) => handleHeartClickWrapper(e, club.venueId)}>
+                  onClick={(e) => handleHeartClick(e, club.venueId)}
+                  variants={heartAnimation}
+                  initial="initial"
+                  animate={clickedHeart[club.venueId] ? 'clicked' : 'initial'}>
                   <Image
                     src={likedClubs[club.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                     alt="pink-heart icon"
                     width={32}
                     height={32}
                   />
-                </div>
+                </motion.div>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                   <div className="mt-[0.75rem] flex flex-wrap gap-[0.5rem]">
                     {filteredTags.length > 0 ? (

@@ -65,6 +65,7 @@ export default function AdminLogin() {
             <h1 className="text-[1.5rem] text-white">어드민 로그인</h1>
           </div>
           <input
+            placeholder='비밀버디'
             onChange={onChangeId}
             className="mt-[2.75rem] w-[80%] rounded-sm border-b border-white bg-BG-black px-2 py-4 text-white outline-none"
           />
