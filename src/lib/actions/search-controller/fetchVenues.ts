@@ -1,4 +1,4 @@
-export const fetchVenues = async (query: string,   accessToken: string | null,
+export const fetchVenues = async (query: string[],   accessToken: string | null,
 ) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/search`, {
     method: 'POST',
@@ -6,7 +6,7 @@ export const fetchVenues = async (query: string,   accessToken: string | null,
       'Content-Type': 'application/json',
       Access: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ keyword: [query] }),
+    body: JSON.stringify({ keyword: query }),
   });
 
   if (!response.ok) {
