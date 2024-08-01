@@ -99,3 +99,9 @@ export interface HeartBeat {
   backgroundUrl: string[];
   isHeartbeat: boolean;
 }
+export interface MapClub {
+  address: string;
+  englishName: string;
+  tagList?: string[];
+  isHeartbeat: boolean;
+}
