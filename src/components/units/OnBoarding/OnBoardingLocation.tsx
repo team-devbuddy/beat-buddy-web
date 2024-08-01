@@ -40,7 +40,7 @@ export default function OnBoardingLocation() {
         setError(null); // Reset error if a valid selection is made
         return [...prevSelected, location];
       } else {
-        setError('최대 2개 선택 가능합니다.');
+        setError('최대 2개까지 선택 가능합니다');
         return prevSelected;
       }
     });

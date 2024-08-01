@@ -48,7 +48,7 @@ export default function OnBoardingGenre() {
         setError(null); // Reset error if a valid selection is made
         return [...prevSelected, genre];
       } else {
-        setError('최대 4개 선택 가능합니다.');
+        setError('최대 4개까지 선택 가능합니다');
         return prevSelected;
       }
     });

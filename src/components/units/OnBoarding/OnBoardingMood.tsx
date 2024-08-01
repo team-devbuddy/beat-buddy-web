@@ -47,7 +47,7 @@ export default function OnBoardingMood() {
       } else if (prevSelected.length < 4) {
         return [...prevSelected, mood];
       } else {
-        setError('최대 4개 선택 가능합니다');
+        setError('최대 4개까지 선택 가능합니다');
         return prevSelected;
       }
     });
