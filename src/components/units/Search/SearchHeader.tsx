@@ -61,6 +61,7 @@ const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
               placeholder="지금 가장 인기있는 클럽은?"
               value={searchQuery}
               onChange={handleInputChange}
+              style={{ WebkitAppearance: 'none', borderRadius: 0 }}
             />
             <Link
               href={generateLink('/search/results', searchQuery)}

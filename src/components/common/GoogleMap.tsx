@@ -10,7 +10,7 @@ import { clickedClubState } from '@/context/recoil-context';
 interface GoogleMapProp {
   clubs: Club[];
   minHeight?: string;
-  onAddressesInBounds?: (addresses: string[]) => void;
+  onAddressesInBounds?: (clubs: Club[]) => void;
   zoom?: number;
 }
 
@@ -171,12 +171,15 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       if (map) {
         const bounds = map.getBounds();
         if (bounds) {
+          console.log('Bounds:', bounds); // Bounds 확인
           // 초기화
           markerCluster?.clearMarkers();
           markers.forEach((marker) => marker.setMap(null));
           setMarkers([]);
 
           const newMarkers: google.maps.Marker[] = [];
+          const clubsInBounds: Club[] = [];
+
           const geocodePromises: Promise<void>[] = clubs.map((club) => {
             return new Promise((resolve) => {
               const geocoder = new google.maps.Geocoder();
@@ -186,6 +189,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                   if (bounds.contains(location)) {
                     const marker = createCustomMarker(club, location);
                     newMarkers.push(marker);
+                    clubsInBounds.push(club); // 클럽 추가
                   }
                 }
                 resolve();

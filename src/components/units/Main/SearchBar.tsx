@@ -49,6 +49,7 @@ export default function SearchBar() {
                 className="w-full border-b-2 cursor-pointer border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
                 placeholder="지금 가장 인기있는 클럽은?"
                 readOnly
+                style={{ WebkitAppearance: 'none', borderRadius: 0 }}
               />
               <Image
                 src="/icons/red-search.svg"
@@ -66,7 +67,8 @@ export default function SearchBar() {
             className="w-full border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
             placeholder="지금 가장 인기있는 클럽은?"
             value={searchQuery}
-            onChange={handleInputChange}
+              onChange={handleInputChange}
+              style={{ WebkitAppearance: 'none', borderRadius: 0 }}
           />
           <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
             <Image src="/icons/red-search.svg" alt="search icon" width={20} height={20} />

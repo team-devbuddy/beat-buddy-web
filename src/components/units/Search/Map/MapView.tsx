@@ -19,9 +19,8 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     }
   }, [sheetRef]);
 
-  const handleSearch = (addressesInView: string[]) => {
-    const filtered = filteredClubs.filter((club) => addressesInView.includes(club.address ?? ''));
-    setCurrentFilteredClubs(filtered);
+  const handleSearch = (filteredClubsInView: Club[]) => {
+    setCurrentFilteredClubs(filteredClubsInView);
   };
 
   useEffect(() => {

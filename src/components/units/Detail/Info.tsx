@@ -36,18 +36,26 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
   const isPhoneAvailable = !!venue.phoneNum;
 
   return (
-    <div className="bg-BG-black  py-[2rem]">
+    <div className="bg-BG-black py-[2rem]">
       <div className="flex justify-around">
         <div
           className={`flex flex-1 flex-col items-center ${isPhoneAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-          onClick={isPhoneAvailable ? handlePhoneClick : undefined}
-        >
+          onClick={isPhoneAvailable ? handlePhoneClick : undefined}>
           <div className="flex flex-col items-center">
-            <Image src={isPhoneAvailable ? "/icons/phone.fill.svg" : "/icons/grayPhone.svg"} alt="phone icon" width={24} height={24} />
-            <p className={`mt-[0.5rem] text-body2-15-medium ${isPhoneAvailable ? 'text-gray200' : 'text-gray500'}`}>전화</p>
+            <Image
+              src={isPhoneAvailable ? '/icons/phone.fill.svg' : '/icons/grayPhone.svg'}
+              alt="phone icon"
+              width={24}
+              height={24}
+            />
+            <p className={`mt-[0.5rem] text-body2-15-medium ${isPhoneAvailable ? 'text-gray200' : 'text-gray500'}`}>
+              전화
+            </p>
           </div>
         </div>
-        <div className="flex flex-1 cursor-pointer flex-col items-center border border-y-0 border-l-gray600 border-r-gray600" onClick={handleInstagramClick}>
+        <div
+          className="flex flex-1 cursor-pointer flex-col items-center border border-y-0 border-l-gray600 border-r-gray600"
+          onClick={handleInstagramClick}>
           <div className="flex flex-col items-center">
             <Image src="/icons/insta.fill.svg" alt="instagram icon" width={24} height={24} />
             <p className="mt-[0.5rem] text-body2-15-medium text-gray200">SNS</p>
