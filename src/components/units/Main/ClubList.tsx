@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Club } from '@/lib/types';
@@ -59,27 +59,32 @@ const getImageSrc = (club: Club) => {
   const isVideo = (url: string) => /\.mp4$/i.test(url);
 
   if (club.backgroundUrl && club.backgroundUrl.length > 0) {
-    const firstImage = club.backgroundUrl.find(isImage);
-    if (firstImage) {
-      return firstImage;
-    } else {
-      const firstNonVideoImage = club.backgroundUrl.find((url) => !isVideo(url));
-      return firstNonVideoImage || '/images/DefaultImage.png';
+    const firstNonVideoImage = club.backgroundUrl.find(isImage);
+    if (firstNonVideoImage) {
+      return firstNonVideoImage;
     }
-  } else if (club.logoUrl) {
-    return isVideo(club.logoUrl) ? '/images/DefaultImage.png' : club.logoUrl;
-  } else {
-    return '/images/DefaultImage.png';
   }
+
+  if (club.logoUrl && isImage(club.logoUrl)) {
+    return club.logoUrl;
+  }
+
+  return '/images/DefaultImage.png';
 };
 
 export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
+  const memoizedValues = useMemo(() => {
+    return clubs.map((club) => ({
+      firstImageUrl: getImageSrc(club),
+      filteredTags: getFilteredTags(club.tagList || [])
+    }));
+  }, [clubs]);
+
   return (
     <div className="flex w-full flex-col bg-BG-black">
       <div className="mx-[1rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
-        {clubs.map((venue) => {
-          const firstImageUrl = getImageSrc(venue);
-          const filteredTags = getFilteredTags(venue.tagList || []);
+        {clubs.map((venue, index) => {
+          const { firstImageUrl, filteredTags } = memoizedValues[index];
 
           return (
             <Link key={venue.venueId} href={`/detail/${venue.venueId}`} passHref>

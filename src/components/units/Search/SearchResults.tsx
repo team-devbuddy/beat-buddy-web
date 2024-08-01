@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { SearchResultsProps } from '@/lib/types';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { SearchResultsProps, Club } from '@/lib/types';
 import ClubList from '../Main/ClubList';
 import SearchHeader from './SearchHeader';
 import NoResults from './NoResult';
@@ -64,9 +64,9 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
 
-  const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', 'POP', '하우스', 'K-POP'];
-  const locations = ['홍대', '이태원', '강남/신사', '압구정', '기타'];
-  const criteria = ['관련도순', '인기순'];
+  const genres = useMemo(() => ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', 'POP', '하우스', 'K-POP'], []);
+  const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정', '기타'], []);
+  const criteria = useMemo(() => ['관련도순', '인기순'], []);
 
   const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
 
@@ -114,10 +114,8 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   }, [fetchFilteredClubsByQuery]);
 
   useEffect(() => {
-    if (!isInitialLoad) {
-      fetchFilteredClubsByFilters();
-    }
-  }, [fetchFilteredClubsByFilters]);
+    fetchFilteredClubsByFilters();
+  }, [selectedGenre, selectedLocation, selectedOrder, fetchFilteredClubsByFilters]);
 
   useEffect(() => {
     setIsMapView(false);
@@ -166,4 +164,13 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
       {filteredClubs.length > 0 ? <MapButton /> : ''}
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const clubs = await fetchVenues('', null); // 서버 사이드에서 기본 클럽 데이터 가져오기
+  return {
+    props: {
+      initialFilteredClubs: clubs,
+    },
+  };
 }
