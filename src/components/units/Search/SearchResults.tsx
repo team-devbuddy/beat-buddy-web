@@ -67,7 +67,10 @@ export default function SearchResults({
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
 
-  const genres = useMemo(() => ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', 'POP', '하우스', 'K-POP'], []);
+  const genres = useMemo(
+    () => ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'],
+    [],
+  );
   const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정', '기타'], []);
 
   const criteria = useMemo(() => ['관련도순', '인기순'], []);
@@ -156,10 +159,21 @@ export default function SearchResults({
   return (
     <div className="relative flex w-full flex-col">
       {isLoading ? (
-        <>
-          <SearchHeader  />
-          <SearchListSkeleton /> 
-        </>
+        <div key="list" className="flex flex-grow flex-col bg-BG-black">
+          <SearchHeader />
+          <DropdownGroup
+            genres={genres}
+            locations={locations}
+            criteria={criteria}
+            selectedGenre={selectedGenre}
+            setSelectedGenre={setSelectedGenre}
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+            selectedOrder={selectedOrder}
+            setSelectedOrder={setSelectedOrder}
+          />
+          <SearchListSkeleton />
+        </div>
       ) : isMapView ? (
         <div key="map">
           <MapView filteredClubs={filteredClubs} />
