@@ -21,16 +21,16 @@ export default function OnBoardingGenre() {
   };
 
   const genreImages: { [key: string]: string } = {
-    EDM: '/images/onboarding/background/onboarding-1.webp',
-    HIPHOP: '/images/onboarding/background/onboarding-2.webp',
-    HOUSE: '/images/onboarding/background/onboarding-3.webp',
-    'SOUL&FUNK': '/images/onboarding/background/onboarding-4.webp',
-    TECHNO: '/images/onboarding/background/onboarding-5.webp',
-    'K-POP': '/images/onboarding/background/onboarding-6.webp',
-    POP: '/images/onboarding/background/onboarding-7.webp',
-    LATIN: '/images/onboarding/background/onboarding-8.webp',
-    'R&B': '/images/onboarding/background/onboarding-9.webp',
-    ROCK: '/images/onboarding/background/onboarding-10.webp',
+    EDM: '/images/onBoarding/background/onboarding-1.webp',
+    HIPHOP: '/images/onBoarding/background/onboarding-2.webp',
+    HOUSE: '/images/onBoarding/background/onboarding-3.webp',
+    'SOUL&FUNK': '/images/onBoarding/background/onboarding-4.webp',
+    TECHNO: '/images/onBoarding/background/onboarding-5.webp',
+    'K-POP': '/images/onBoarding/background/onboarding-6.webp',
+    POP: '/images/onBoarding/background/onboarding-7.webp',
+    LATIN: '/images/onBoarding/background/onboarding-8.webp',
+    'R&B': '/images/onBoarding/background/onboarding-9.webp',
+    ROCK: '/images/onBoarding/background/onboarding-10.webp',
   };
 
   const genres = Object.keys(genreMap);
