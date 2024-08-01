@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { SearchResultsProps, Club } from '@/lib/types';
 import ClubList from '../Main/ClubList';
 import SearchHeader from './SearchHeader';
@@ -21,6 +21,7 @@ import {
 } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
+import { filterMapDropdown } from '@/lib/actions/search-controller/filterMapDropdown';
 import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import SearchListSkeleton from '@/components/common/skeleton/SearchListSkeleton';
 
@@ -50,7 +51,9 @@ const criteriaMap: { [key: string]: string } = {
   인기순: '인기순',
 };
 
-export default function SearchResults({ filteredClubs: initialFilteredClubs = [] }: SearchResultsProps) {
+export default function SearchResults({
+  filteredClubs: initialFilteredClubs = [],
+}: SearchResultsProps & { initialFilteredClubs: Club[] }) {
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const [previousSearchQuery, setPreviousSearchQuery] = useState<string | null>(null);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
@@ -64,15 +67,14 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
 
-
-  const genres = useMemo(() => ['힙합', 'R&B', '테크노', 'EDM',  '소울&펑크', 'ROCK', 'POP','하우스', 'K-POP'], []);
-  const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정','기타'], []);
+  const genres = useMemo(() => ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', 'POP', '하우스', 'K-POP'], []);
+  const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정', '기타'], []);
 
   const criteria = useMemo(() => ['관련도순', '인기순'], []);
 
   const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
-  const [isInitialLoad, setIsInitialLoad] = useState(true); // 초기 로드 상태 추가
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const initialRender = useRef(true);
 
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
@@ -101,17 +103,45 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     const clubs = await filterDropdown(filters, accessToken);
     setFilteredClubs(clubs);
     setIsLoading(false); // 로딩 상태 비활성화
+  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder, accessToken]);
 
-  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder, accessToken, isInitialLoad]);
+  const fetchFilteredClubsByMapView = useCallback(async () => {
+    setIsLoading(true); // 로딩 상태 활성화
 
+    const filters = {
+      venueList: filteredClubs,
+      genreTag: genresMap[selectedGenre] || '',
+      regionTag: locationsMap[selectedLocation] || '',
+      sortCriteria: criteriaMap[selectedOrder] || '관련도순',
+    };
+
+    try {
+      const data = await filterMapDropdown(filters, accessToken);
+      console.log(filters);
+      setFilteredClubs(data);
+    } catch (error) {
+      console.error('Failed to fetch map view filtered clubs:', error);
+    }
+
+    setIsLoading(false); // 로딩 상태 비활성화
+  }, [filteredClubs, selectedGenre, selectedLocation, selectedOrder, accessToken]);
 
   useEffect(() => {
     fetchFilteredClubsByQuery();
   }, [fetchFilteredClubsByQuery]);
 
   useEffect(() => {
-    fetchFilteredClubsByFilters();
-  }, [selectedGenre, selectedLocation, selectedOrder, fetchFilteredClubsByFilters]);
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
+
+    if (isMapView) {
+      fetchFilteredClubsByMapView();
+    } else {
+      fetchFilteredClubsByFilters();
+    }
+  }, [selectedGenre, selectedLocation, selectedOrder, isMapView]);
 
   useEffect(() => {
     setIsMapView(false);
@@ -123,16 +153,19 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
 
   return (
     <div className="relative flex w-full flex-col">
-      <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-
       {isLoading ? (
-        <SearchListSkeleton /> // 로딩 중일 때 표시
+        <>
+          <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <SearchListSkeleton /> 
+        </>
       ) : isMapView ? (
         <div key="map">
           <MapView filteredClubs={filteredClubs} />
         </div>
       ) : (
         <div key="list" className="flex flex-grow flex-col bg-BG-black">
+          <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
           <DropdownGroup
             genres={genres}
             locations={locations}

@@ -9,7 +9,7 @@ import { getLocalStorageItem, setLocalStorageItem } from '@/lib/utils/storage';
 import { generateLink } from '@/lib/utils/searchUtils';
 import { isMapViewState } from '@/context/recoil-context';
 
-const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
+const MapHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isMapView = useRecoilValue(isMapViewState);
@@ -75,4 +75,4 @@ const SearchHeader = ({ searchQuery, setSearchQuery }: SearchHeaderProps) => {
   );
 };
 
-export default SearchHeader;
+export default MapHeader;

@@ -6,7 +6,7 @@ import SearchResults from '@/components/units/Search/SearchResults';
 import MainFooter from '@/components/units/Main/MainFooter';
 import { useRecoilState } from 'recoil';
 import { searchQueryState } from '@/context/recoil-context';
-
+import SearchHeader from './SearchHeader';
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
@@ -20,7 +20,7 @@ const SearchResultsPage = () => {
 
   return (
     <div className="flex w-full flex-col bg-BG-black text-white">
-      <SearchResults filteredClubs={[]} />
+      <SearchResults filteredClubs={[]} initialFilteredClubs={[]} />
     </div>
   );
 };
