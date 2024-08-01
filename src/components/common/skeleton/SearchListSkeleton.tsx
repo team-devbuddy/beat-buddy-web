@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { colorPulse } from '@/lib/animation';
 
-const MyHeartBeatLoading = () => {
+const SearchListSkeleton = () => {
   return (
     <>
       <div className="flex w-full flex-col bg-BG-black">
@@ -41,4 +41,4 @@ const MyHeartBeatLoading = () => {
   );
 };
 
-export default MyHeartBeatLoading;
+export default SearchListSkeleton;
