@@ -1,4 +1,3 @@
-'use client';
 import { SearchResultsProps, Club } from '@/lib/types';
 import BottomSheetComponent from './BottomSheet';
 import GoogleMap from '@/components/common/GoogleMap';

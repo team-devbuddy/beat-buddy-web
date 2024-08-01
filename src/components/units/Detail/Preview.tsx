@@ -85,27 +85,27 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   };
 
   const atmosphereMap: { [key: string]: string } = {
-    Club: '클럽',
-    Pub: '펍',
-    Rooftop: '루프탑',
-    Deep: '딥한',
-    Commercial: '커머셜한',
-    Chill: '칠한',
-    Exotic: '이국적인',
-    Hunting: '헌팅',
+    CLUB: '클럽',
+    PUB: '펍',
+    ROOFTOP: '루프탑',
+    DEEP: '딥한',
+    COMMERCIAL: '커머셜한',
+    CHILL: '칠한',
+    EXOTIC: '이국적인',
+    HUNTING: '헌팅',
   };
 
   const genresMap: { [key: string]: string } = {
-    HIPHOP: '힙합',
+    HIPHOP: 'HIPHOP',
     'R&B': 'R&B',
     EDM: 'EDM',
-    HOUSE: '하우스',
-    TECHNO: '테크노',
-    'SOUL&FUNK': '소울&펑크',
-    ROCK: '록',
-    LATIN: '라틴',
-    'K-POP': 'K-팝',
-    POP: '팝',
+    HOUSE: 'HOUSE',
+    TECHNO: 'TECHNO',
+    'SOUL&FUNK': 'SOUL&FUNK',
+    ROCK: 'ROCK',
+    LATIN: 'LATIN',
+    'K-POP': 'K-POP',
+    POP: 'POP',
   };
 
   const locationsMap: { [key: string]: string } = {
