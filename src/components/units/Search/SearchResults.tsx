@@ -64,8 +64,10 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
 
+
   const genres = useMemo(() => ['힙합', 'R&B', '테크노', 'EDM',  '소울&펑크', 'ROCK', 'POP','하우스', 'K-POP'], []);
   const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정','기타'], []);
+
   const criteria = useMemo(() => ['관련도순', '인기순'], []);
 
   const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
@@ -99,23 +101,17 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
     const clubs = await filterDropdown(filters, accessToken);
     setFilteredClubs(clubs);
     setIsLoading(false); // 로딩 상태 비활성화
-  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder, accessToken]);
+
+  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder, accessToken, isInitialLoad]);
+
 
   useEffect(() => {
     fetchFilteredClubsByQuery();
   }, [fetchFilteredClubsByQuery]);
 
   useEffect(() => {
-    if (!isInitialLoad) {
-      fetchFilteredClubsByFilters();
-    }
+    fetchFilteredClubsByFilters();
   }, [selectedGenre, selectedLocation, selectedOrder, fetchFilteredClubsByFilters]);
-
-  useEffect(() => {
-    if (isInitialLoad) {
-      setIsInitialLoad(false);
-    }
-  }, []);
 
   useEffect(() => {
     setIsMapView(false);

@@ -215,7 +215,6 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             const customRenderer = {
               render: ({ count, position }: any, stats: any, map: any) => {
                 const color = count > Math.max(5, stats.clusters.markers.mean) ? '#EE1171' : '#8F0B48';
-
                 return new google.maps.Marker({
                   position,
                   icon: {

@@ -66,7 +66,6 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
   const filteredTags = getFilteredTags(clickedClub.tagList || []);
 
   return (
-
     <Link key={clickedClub.venue.venueId} href={`/detail/${clickedClub.venue.venueId}`} passHref>
       <div className="flex w-full cursor-pointer flex-col bg-BG-black p-4">
         <motion.div
@@ -75,7 +74,7 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
             boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
           }}
-          className="relative flex p-2 flex-row gap-x-[1.25rem] rounded-md">
+          className="relative flex flex-row gap-x-[1.25rem] rounded-md p-2">
           <div className="relative h-40 w-40">
             <Image
               src={firstImageUrl}

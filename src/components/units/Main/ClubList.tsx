@@ -76,7 +76,8 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
   const memoizedValues = useMemo(() => {
     return clubs.map((club) => ({
       firstImageUrl: getImageSrc(club),
-      filteredTags: getFilteredTags(club.tagList || [])
+      filteredTags: getFilteredTags(club.tagList || []),
+
     }));
   }, [clubs]);
 
@@ -94,7 +95,8 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
                   backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
-                className="relative flex h-full flex-col rounded-md p-2">
+
+                className="relative flex flex-col rounded-md p-2">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}

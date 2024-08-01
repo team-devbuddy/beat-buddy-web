@@ -74,11 +74,11 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
           <Sheet
             className="!z-10 mx-auto w-full min-w-[360px] max-w-[600px]"
             isOpen={true}
-            onClose={() => setOpen(false)}
+            onClose={() => setOpen(true)} // onClose 콜백에서 다시 시트를 열도록 설정
             initialSnap={1}
-            snapPoints={[height, 234, 150]}>
+            snapPoints={[height, 450, 80]}>
             <Sheet.Container className="relative h-full w-full !shadow-none">
-              <Sheet.Header className="relative flex w-full flex-col justify-center rounded-t-lg bg-BG-black pt-[6px]">
+              <Sheet.Header className="relative flex w-full cursor-pointer flex-col justify-center rounded-t-lg bg-BG-black pt-[6px]">
                 <div className="flex justify-center">
                   <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
                 </div>

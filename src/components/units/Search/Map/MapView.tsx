@@ -29,7 +29,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
 
   return (
     <>
-      <GoogleMap clubs={filteredClubs} minHeight="44rem" onAddressesInBounds={handleSearch} ref={mapRef} />
+      <GoogleMap clubs={filteredClubs} minHeight="48.5rem" onAddressesInBounds={handleSearch} ref={mapRef} />
       <MapSearchButton onClick={() => mapRef.current?.filterAddressesInView()} />
       <BottomSheetComponent filteredClubs={currentFilteredClubs} />
     </>
