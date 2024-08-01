@@ -259,6 +259,9 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           .gm-bundled-control {
             display: none !important;
           }
+          div:focus {
+            outline: none; /* 클릭 시 파란색 border 제거 */
+          }
         `}</style>
       </div>
     );
