@@ -42,6 +42,7 @@ export default function MyHeartbeatMain() {
             backgroundUrl: club.backgroundUrl || [],
             heartbeatNum: club.heartbeatNum,
             smokingAllowed: false,
+            isHeartbeat: club.isHeartbeat
           }));
 
           setMyHeartbeatClubs(clubs);
