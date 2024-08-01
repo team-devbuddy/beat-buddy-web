@@ -64,7 +64,7 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
         <div className="flex flex-1 flex-col items-center">
           <div className="flex flex-col items-center">
             <Image
-              src={venue.smokingAllowed ? '/icons/smoke.fill.svg' : '/icons/smoke.svg'}
+              src={venue.smokingAllowed ? '/icons/smoke.fill.svg' : '/icons/icon-smoking.svg'}
               alt="smoking icon"
               width={24}
               height={24}
