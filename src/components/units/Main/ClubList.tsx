@@ -76,7 +76,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
   const memoizedValues = useMemo(() => {
     return clubs.map((club) => ({
       firstImageUrl: getImageSrc(club),
-      filteredTags: getFilteredTags(club.tagList || [])
+      filteredTags: getFilteredTags(club.tagList || []),
     }));
   }, [clubs]);
 
