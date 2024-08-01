@@ -8,7 +8,7 @@ interface SearchButtonProps {
 const MapSearchButton = ({ onClick }: SearchButtonProps) => {
   return (
     <div
-      className="active:scale-95 fixed left-1/2 top-[6.3rem] z-10 flex cursor-pointer items-center justify-center rounded-full bg-gray600 px-[1.25rem] py-[0.75rem] transform -translate-x-1/2 transition duration-150 ease-in-out"
+      className="active:scale-95 fixed left-1/2 top-[10rem] z-8.5 flex cursor-pointer items-center justify-center rounded-full bg-gray600 px-[1.25rem] py-[0.75rem] transform -translate-x-1/2 transition duration-150 ease-in-out"
       onClick={onClick}>
       <div className="flex items-center justify-center w-6 h-6">
         <Image

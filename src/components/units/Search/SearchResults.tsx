@@ -148,7 +148,7 @@ export default function SearchResults({
   }, [setIsMapView]);
 
   useEffect(() => {
-    setSelectedOrder('관련도순');
+    setSelectedOrder('관련도 순');
   }, [resetSelectedOrder, resetSelectedGenre, resetSelectedLocation]);
 
   return (
