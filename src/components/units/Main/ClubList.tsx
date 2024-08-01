@@ -12,7 +12,6 @@ interface ClubsListProps {
   handleHeartClickWrapper: (e: React.MouseEvent, venueId: number) => void;
 }
 
-//태그필터링!! 히히
 const clubTypes = ['club', 'pub', 'rooftop'];
 const regions = ['HONGDAE', 'ITAEWON', 'APGUJEONG', 'GANGNAM/SINSA', 'OTHERS'];
 const regionTranslations: { [key: string]: string } = {
@@ -39,6 +38,7 @@ const genres = [
   'EXOTIC',
   'HUNTING',
 ];
+
 const getFilteredTags = (tags: string[]) => {
   let selectedTags = [];
 
@@ -53,21 +53,23 @@ const getFilteredTags = (tags: string[]) => {
 
   return selectedTags.slice(0, 3);
 };
+
 const getImageSrc = (club: Club) => {
+  const isImage = (url: string) => /\.(jpeg|jpg|gif|png|heic|jfif)$/i.test(url);
+  const isVideo = (url: string) => /\.mp4$/i.test(url);
+
   if (club.backgroundUrl && club.backgroundUrl.length > 0) {
-    const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i));
+    const firstImage = club.backgroundUrl.find(isImage);
     if (firstImage) {
       return firstImage;
     } else {
-      const firstNonVideoImage = club.backgroundUrl.find((url) => !url.match(/\.mp4$/i));
+      const firstNonVideoImage = club.backgroundUrl.find((url) => !isVideo(url));
       return firstNonVideoImage || '/images/DefaultImage.png';
     }
+  } else if (club.logoUrl) {
+    return isVideo(club.logoUrl) ? '/images/DefaultImage.png' : club.logoUrl;
   } else {
-    if (club.logoUrl && !club.logoUrl.match(/\.mp4$/i)) {
-      return club.logoUrl;
-    } else {
-      return '/images/DefaultImage.png';
-    }
+    return '/images/DefaultImage.png';
   }
 };
 
