@@ -11,6 +11,42 @@ interface VenueCardProps {
 }
 
 const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: VenueCardProps) => {
+  const translateTag = (tag: string) => {
+    const atmosphereMap: { [key: string]: string } = {
+      CLUB: '클럽',
+      PUB: '펍',
+      ROOFTOP: '루프탑',
+      DEEP: '딥한',
+      COMMERCIAL: '커머셜한',
+      CHILL: '칠한',
+      EXOTIC: '이국적인',
+      HUNTING: '헌팅',
+    };
+
+    const genresMap: { [key: string]: string } = {
+      HIPHOP: 'HIPHOP',
+      'R&B': 'R&B',
+      EDM: 'EDM',
+      HOUSE: 'HOUSE',
+      TECHNO: 'TECHNO',
+      'SOUL&FUNK': 'SOUL&FUNK',
+      ROCK: 'ROCK',
+      LATIN: 'LATIN',
+      'K-POP': 'K-POP',
+      POP: 'POP',
+    };
+
+    const locationsMap: { [key: string]: string } = {
+      HONGDAE: '홍대',
+      ITAEWON: '이태원',
+      'GANGNAM/SINSA': '강남/신사',
+      APGUJEONG: '압구정',
+      OTHERS: '기타',
+    };
+
+    return atmosphereMap[tag] || genresMap[tag] || locationsMap[tag] || tag;
+  };
+
   const getImageSrc = (club: Club) => {
     if (club.backgroundUrl.length > 0) {
       const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i));
@@ -62,13 +98,11 @@ const VenueCard = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
                     <span
                       key={index}
                       className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                      {tag}
+                      {translateTag(tag)} 
                     </span>
                   ))
                 ) : (
-                  <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                    No Tags
-                  </span>
+                  <span className="text-body3-12-medium text-gray100">No Tags</span>
                 )}
               </div>
               <div className="flex items-center space-x-[0.25rem] text-gray300">
