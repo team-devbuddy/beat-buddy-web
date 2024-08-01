@@ -77,7 +77,7 @@ export default function OnBoardingGenre() {
 
   return (
     <>
-      <div className="relative flex w-full flex-col px-4">
+      <div className="relative flex h-full w-full flex-col justify-center px-4">
         <Image
           src="/icons/landing_step_1.svg"
           alt="prev"
@@ -91,26 +91,29 @@ export default function OnBoardingGenre() {
           모두 선택해주세요
         </h1>
 
-        <div className="mt-7 flex flex-wrap gap-2">
-          {genres.map((genre, index) => (
-            <div
-              key={index}
-              onClick={() => toggleGenre(genre)}
-              className={`relative flex h-[6.8rem] w-[31.7%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
-                selectedGenres.includes(genre) ? 'text-main' : 'text-white'
-              }`}
-              style={{
-                backgroundImage: `url(${genreImages[genre]})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}>
-              {selectedGenres.includes(genre) && (
-                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"></div>
-              )}
-              <span className="relative z-10">{genre}</span>
-            </div>
-          ))}
+        <div className="mt-7 flex w-full justify-center gap-2">
+          <div className="grid w-full grid-cols-3 gap-2">
+            {genres.map((genre, index) => (
+              <div
+                key={index}
+                onClick={() => toggleGenre(genre)}
+                className={`relative flex h-[6.8rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
+                  selectedGenres.includes(genre) ? 'text-main' : 'text-white'
+                }`}
+                style={{
+                  backgroundImage: `url(${genreImages[genre]})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}>
+                {selectedGenres.includes(genre) && (
+                  <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"></div>
+                )}
+                <span className="relative z-10">{genre}</span>
+              </div>
+            ))}
+          </div>
         </div>
+
         {error && <div className="mt-4 text-main">{error}</div>}
       </div>
       <button

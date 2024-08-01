@@ -104,12 +104,12 @@ export default function OnBoardingMood() {
           </div>
         </div>
 
-        <div className="mt-7 flex flex-wrap gap-2">
+        <div className="mt-7 grid w-full grid-cols-2 gap-2">
           {moods.map((mood, index) => (
             <div
               key={index}
               onClick={() => toggleMood(mood)}
-              className={`relative flex h-[3.75rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
+              className={`relative flex h-[3.75rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
                 selectedMoods.includes(mood) ? 'text-main' : 'text-white'
               }`}
               style={{

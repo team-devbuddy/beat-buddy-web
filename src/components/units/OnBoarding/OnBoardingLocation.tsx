@@ -74,12 +74,12 @@ export default function OnBoardingLocation() {
           모두 선택해주세요
         </h1>
 
-        <div className="mt-7 flex flex-wrap gap-2">
+        <div className="mt-7 grid w-full grid-cols-2 gap-2">
           {locations.map((location, index) => (
             <div
               key={index}
               onClick={() => toggleLocation(location)}
-              className={`relative flex h-[7.5rem] w-[48.8%] cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
+              className={`relative flex h-[7.5rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
                 selectedLocations.includes(location) ? 'text-main' : 'text-white'
               }`}
               style={{
