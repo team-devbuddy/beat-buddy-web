@@ -49,7 +49,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       marker.addListener('click', () => {
         setClickedClub({
           venue: club,
-          isHeartbeat: false,
+          isHeartbeat: club.isHeartbeat,
           tagList: club.tagList || [],
         });
       });
@@ -88,7 +88,6 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               streetViewControl: false,
               mapTypeControl: false,
               fullscreenControl: false,
-              // minZoom: 16,
               maxZoom: zoom || null,
             });
 
@@ -143,8 +142,10 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                     },
                   );
 
-                  mapInstance.addListener('click', () => {
-                    setClickedClub(null);
+                  mapInstance.addListener('click', (event: google.maps.MapMouseEvent) => {
+                    if (event.latLng) {
+                      setClickedClub(null);
+                    }
                   });
 
                   setMarkerCluster(markerClusterer);
