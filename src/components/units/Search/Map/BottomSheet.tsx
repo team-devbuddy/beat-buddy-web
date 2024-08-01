@@ -33,6 +33,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const clickedClub = useRecoilValue(clickedClubState);
+  const [height, setHeight] = useState<number>(834);
 
   const genres = ['힙합', '디스코', 'R&B', '테크노', 'EDM', '하우스'];
   const locations = ['홍대', '이태원', '신사', '압구정'];
@@ -53,34 +54,17 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
-  const handleSnap = (index: number) => {
-    if (index === 0) {
-      setIsMapView(false);
-    }
-  };
-
-  const calculatePaddingHeight = () => {
-    const viewportHeight = window.innerHeight;
-    const paddingHeight = viewportHeight * 0.4; // 화면 40%만큼 패딩 추가 - 이렇게밖에할수없엇던나를용서하시오
-    return paddingHeight;
-  };
-
-  const [paddingHeight, setPaddingHeight] = useState(calculatePaddingHeight());
-
   useEffect(() => {
-    const handleResize = () => {
-      setPaddingHeight(calculatePaddingHeight());
-    };
-
-    window.addEventListener('resize', handleResize);
+    function updateSnapPoints() {
+      const calculateHeight = window.innerHeight - 53;
+      setHeight(calculateHeight);
+    }
+    updateSnapPoints();
+    window.addEventListener('resize', updateSnapPoints);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', updateSnapPoints);
     };
   }, []);
-
-  const snapPoints = clickedClub
-    ? [window.innerHeight * 0.9, 280, 82]
-    : [window.innerHeight * 0.9, window.innerHeight * 0.5, 82];
 
   return (
     <div className="flex w-full flex-col">
@@ -91,9 +75,8 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
             isOpen={true}
             onClose={() => setOpen(false)}
             initialSnap={1}
-            snapPoints={snapPoints} // 동적으로 snapPoints 설정
-            onSnap={handleSnap}>
-            <Sheet.Container className="relative h-full w-full !shadow-none transition-all duration-500 ease-in-out">
+            snapPoints={[height, 234, 150]}>
+            <Sheet.Container className="relative h-full w-full !shadow-none">
               <Sheet.Header className="relative flex w-full flex-col justify-center rounded-t-lg bg-BG-black pt-[6px]">
                 <div className="flex justify-center">
                   <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
@@ -131,7 +114,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                           heartbeatNums={heartbeatNums}
                           handleHeartClickWrapper={handleHeartClickWrapper}
                         />
-                        <div style={{ height: `${paddingHeight}px` }} />
+                        {/* <div style={{ height: `${paddingHeight}px` }} /> */}
                       </>
                     )}
                   </div>
