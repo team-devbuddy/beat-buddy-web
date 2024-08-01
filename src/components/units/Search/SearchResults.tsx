@@ -64,8 +64,8 @@ export default function SearchResults({ filteredClubs: initialFilteredClubs = []
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const accessToken = useRecoilValue(accessTokenState);
 
-  const genres = ['힙합', 'R&B', '테크노', 'EDM',  '소울&펑크', 'ROCK', 'POP','하우스', 'K-POP'];
-  const locations = ['홍대', '이태원', '강남/신사', '압구정','기타'];
+  const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', 'POP', '하우스', 'K-POP'];
+  const locations = ['홍대', '이태원', '강남/신사', '압구정', '기타'];
   const criteria = ['관련도순', '인기순'];
 
   const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
