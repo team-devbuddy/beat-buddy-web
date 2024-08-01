@@ -120,7 +120,11 @@ export default function MyPageComponent() {
 
         <div className="mb-6 flex justify-between px-4 py-2">
           <p className="font-queensides text-xl text-main2">History</p>
-          <button className="rounded-[0.13rem] bg-gray500 px-3 py-[0.38rem] text-gray200">취향 수정하기</button>
+          <Link href="/onBoarding/custom">
+            <button className="rounded-[0.13rem] bg-gray500 px-3 py-[0.38rem] text-gray200 hover:brightness-75">
+              취향 수정하기
+            </button>
+          </Link>
         </div>
 
         <div className="ml-4 flex gap-3 overflow-x-auto hide-scrollbar">
