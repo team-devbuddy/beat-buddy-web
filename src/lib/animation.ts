@@ -90,3 +90,24 @@ export const heartAnimation: Variants = {
     transition: { duration: 0.3 },
   },
 };
+//드롭다운 또잉
+export const dropdownVariants = {
+  open: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 500,
+      damping: 30,
+    },
+  },
+  closed: {
+    opacity: 0,
+    y: -20,
+    transition: {
+      type: 'spring',
+      stiffness: 500,
+      damping: 30,
+    },
+  },
+};
