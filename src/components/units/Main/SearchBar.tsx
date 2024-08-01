@@ -24,6 +24,11 @@ export default function SearchBar() {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   const handleSearch = () => {
     setRecentSearches((prevSearches) => {
@@ -40,13 +45,13 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="flex w-full items-center justify-between bg-main px-[1rem] pt-[0.75rem] pb-[0.5rem]">
+    <div className="flex w-full items-center justify-between bg-main px-[1rem] pb-[0.5rem] pt-[0.75rem]">
       {isMainPage ? (
         <div className="relative w-full">
           <Link href="/search" className="block w-full">
             <div className="relative w-full">
               <input
-                className="w-full border-b-2 cursor-pointer border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
+                className="w-full cursor-pointer border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
                 placeholder="지금 가장 인기있는 클럽은?"
                 readOnly
                 style={{ WebkitAppearance: 'none', borderRadius: 0 }}
@@ -67,8 +72,9 @@ export default function SearchBar() {
             className="w-full border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
             placeholder="지금 가장 인기있는 클럽은?"
             value={searchQuery}
-              onChange={handleInputChange}
-              style={{ WebkitAppearance: 'none', borderRadius: 0 }}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            style={{ WebkitAppearance: 'none', borderRadius: 0 }}
           />
           <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
             <Image src="/icons/red-search.svg" alt="search icon" width={20} height={20} />

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { generateLink } from '@/lib/utils/searchUtils';
 import { recentSearchState } from '@/context/recoil-context';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
@@ -13,12 +13,14 @@ const SearchHeader = () => {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const query = searchParams.get('q');
     if (query) {
       setSearchQuery(query);
     }
+    setIsLoading(false);
   }, [searchParams]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +51,14 @@ const SearchHeader = () => {
   return (
     <header className="flex flex-col bg-BG-black">
       <div className="flex w-full items-center justify-between px-[1rem] py-[0.68rem]">
-        <Image src="/icons/ArrowLeft.svg" alt="뒤로가기" width={24} height={24} onClick={handleBackClick} />
+        <Image
+          src="/icons/ArrowLeft.svg"
+          alt="뒤로가기"
+          width={24}
+          height={24}
+          onClick={handleBackClick}
+          className="cursor-pointer"
+        />
         <Link href="/mypage">
           <Image
             src="/icons/person.svg"
@@ -64,7 +73,7 @@ const SearchHeader = () => {
         <div className="relative w-full">
           <input
             className="w-full border-b-2 border-white bg-transparent px-2 py-2 text-white placeholder:text-white focus:outline-none"
-            placeholder="지금 가장 인기있는 클럽은?"
+            placeholder={isLoading ? "" : "지금 가장 인기있는 클럽은?"}
             value={searchQuery}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
