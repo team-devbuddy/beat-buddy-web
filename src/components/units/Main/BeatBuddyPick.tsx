@@ -57,21 +57,16 @@ const getFilteredTags = (tags: string[]) => {
 };
 
 const getImageSrc = (club: Club) => {
-  if (club.backgroundUrl && club.backgroundUrl.length > 0) {
+  if (club.backgroundUrl.length > 0) {
     const firstImage = club.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif)$/i));
     if (firstImage) {
       return firstImage;
     } else {
       const firstNonVideoImage = club.backgroundUrl.find((url) => !url.match(/\.mp4$/i));
-      return firstNonVideoImage || '/images/DefaultImage.png';
-    }
-  } else {
-    if (club.logoUrl && !club.logoUrl.match(/\.mp4$/i)) {
-      return club.logoUrl;
-    } else {
-      return '/images/DefaultImage.png';
+      return firstNonVideoImage || club.logoUrl || '/images/DefaultImage.png';
     }
   }
+  return club.logoUrl || '/images/DefaultImage.png';
 };
 
 
