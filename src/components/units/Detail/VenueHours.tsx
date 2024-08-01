@@ -1,7 +1,5 @@
-// src/components/units/Detail/VenueHours.tsx
-
 'use client';
-
+import { useEffect, useState } from 'react';
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,6 +24,26 @@ const parseHours = (hours: string) => {
 };
 
 const VenueHours = ({ hours }: VenueHoursProps) => {
+  const [currentDayMessage, setCurrentDayMessage] = useState('');
+
+  useEffect(() => { //이러케하면 나혼나나 ㅋ
+    const getDayMessage = () => {
+      const dayMessages = [
+        '아쉬운 일요일',
+        '우울한 월요일',
+        '아직 화요일이지만', 
+        '심심한 수요일', 
+        '반가운 목요일', 
+        '신나는 금요일', 
+        '최고의 토요일', 
+      ];
+      const today = new Date();
+      return dayMessages[today.getDay()];
+    };
+
+    setCurrentDayMessage(getDayMessage());
+  }, []);
+
   return (
     <div className="bg-BG-black">
       <div className="px-[1rem] py-[1.25rem]">
@@ -35,7 +53,7 @@ const VenueHours = ({ hours }: VenueHoursProps) => {
             <div key={day} className="flex items-center space-x-[0.75rem]">
               <p className="text-body2-15-medium text-gray200">
                 {fullDaysOfWeek[day]} &nbsp;
-                {hours[fullDaysOfWeek[day]] ? parseHours(hours[fullDaysOfWeek[day]]) : '운영하지 않음'}
+                {hours[fullDaysOfWeek[day]] ? parseHours(hours[fullDaysOfWeek[day]]) : '휴무'}
               </p>
             </div>
           ))}
@@ -45,8 +63,8 @@ const VenueHours = ({ hours }: VenueHoursProps) => {
         <Image src="/images/AdBanner.png" alt="광고 배너" layout="fill" objectFit="cover" />
         <Link href="https://www.instagram.com/beatbuddy.kr/">
           <div className="absolute inset-0 z-10 flex cursor-pointer flex-col items-start justify-center p-[1.25rem] text-white">
-            <span className="text-body3-12-medium">신나는 금요일</span>
-            <span className="text-body2-15-bold">더 많은 정보를 얻고 싶다면?</span>
+          <span className="text-body3-12-medium">{currentDayMessage}</span>
+          <span className="text-body2-15-bold">더 많은 정보를 얻고 싶다면?</span>
           </div>
         </Link>
       </div>
