@@ -3,7 +3,7 @@ import { forwardRef, useImperativeHandle, useEffect, useRef, useState } from 're
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
 import { Club } from '@/lib/types';
-import { MarkerClusterer ,SuperClusterAlgorithm} from '@googlemaps/markerclusterer';
+import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 import { useRecoilState } from 'recoil';
 import { clickedClubState } from '@/context/recoil-context';
 import CurrentLocationButton from '../units/Search/Map/CurrentLocationButton';
@@ -90,7 +90,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               mapTypeControl: false,
               fullscreenControl: false,
               maxZoom: zoom || null,
-               gestureHandling: 'greedy'
+              gestureHandling: 'greedy',
             });
 
             setMap(mapInstance);
@@ -134,7 +134,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                     map: mapInstance,
                     markers: markersArray,
                     renderer: customRenderer,
-                    algorithm: new SuperClusterAlgorithm({ radius: 120,maxZoom:30 }),
+                    algorithm: new SuperClusterAlgorithm({ radius: 120, maxZoom: 30 }),
                   });
 
                   google.maps.event.addListener(
@@ -239,6 +239,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               map: map,
               markers: newMarkers,
               renderer: customRenderer,
+              algorithm: new SuperClusterAlgorithm({ radius: 120, maxZoom: 30 }),
             });
 
             setMarkers(newMarkers);
@@ -291,7 +292,10 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             display: none !important;
           }
           div:focus {
-            outline: none; /* 클릭 시 파란색 border 제거 */
+            outline: none !important; /* 클릭 시 파란색 border 제거 */
+          }
+          .gm-style img {
+            max-width: none !important;
           }
         `}</style>
       </div>
