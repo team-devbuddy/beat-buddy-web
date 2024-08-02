@@ -77,7 +77,7 @@ export default function OnBoardingGenre() {
 
   return (
     <>
-      <div className="relative flex h-full w-full flex-col justify-center px-4">
+      <div className="relative flex h-full w-full flex-col justify-center bg-BG-black px-4 pb-20">
         <Image
           src="/icons/landing_step_1.svg"
           alt="prev"
@@ -97,7 +97,7 @@ export default function OnBoardingGenre() {
               <div
                 key={index}
                 onClick={() => toggleGenre(genre)}
-                className={`relative flex h-[6.8rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
+                className={`relative flex h-[6.8rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-lg hover:brightness-75 ${
                   selectedGenres.includes(genre) ? 'text-main' : 'text-white'
                 }`}
                 style={{
@@ -119,7 +119,7 @@ export default function OnBoardingGenre() {
       <button
         onClick={onClickSubmit}
         disabled={selectedGenres.length === 0}
-        className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
+        className={`fixed bottom-0 z-50 flex w-full max-w-[600px] justify-center py-4 text-lg font-bold ${
           selectedGenres.length > 0 ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
         }`}>
         다음

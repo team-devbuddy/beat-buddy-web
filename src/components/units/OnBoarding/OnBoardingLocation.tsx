@@ -60,7 +60,7 @@ export default function OnBoardingLocation() {
 
   return (
     <>
-      <div className="relative flex w-full flex-col px-4">
+      <div className="relative flex w-full flex-col bg-BG-black px-4 pb-20">
         <Image
           src="/icons/landing_step_3.svg"
           alt="prev"
@@ -79,7 +79,7 @@ export default function OnBoardingLocation() {
             <div
               key={index}
               onClick={() => toggleLocation(location)}
-              className={`relative flex h-[7.5rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-xl hover:brightness-75 ${
+              className={`relative flex h-[7.5rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-lg hover:brightness-75 ${
                 selectedLocations.includes(location) ? 'text-main' : 'text-white'
               }`}
               style={{
@@ -99,7 +99,7 @@ export default function OnBoardingLocation() {
       <button
         onClick={onClickSubmit}
         disabled={selectedLocations.length === 0}
-        className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
+        className={`fixed bottom-0 z-50 flex w-full max-w-[600px] justify-center py-4 text-lg font-bold ${
           selectedLocations.length > 0 ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
         }`}>
         다음
