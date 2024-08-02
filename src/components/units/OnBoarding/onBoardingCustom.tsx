@@ -23,14 +23,15 @@ export default function OnBoardingCustom() {
   return (
     <div
       className="relative flex min-h-screen w-full bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url('/onboarding_custom.webp')`,
-        backgroundSize: 'cover', // 비율 유지
-      }}>
-      {/* <video autoPlay loop muted className="absolute inset-0 h-full w-full object-cover">
+     // style={{
+       // backgroundImage: `url('/onboarding_custom.webp')`,
+      //  backgroundSize: 'cover', // 비율 유지
+    // }}
+    >
+      <video autoPlay loop muted className="absolute inset-0 h-full w-full object-cover">
         <source src="/beatbuddy.mp4" type="video/mp4" />
         beat buddy
-      </video> */}
+      </video>
       <div className="relative mt-[3.5rem] flex w-full flex-col px-4">
         <h1 className="py-5 text-2xl font-bold leading-9 text-white">
           {nickname} 버디님의
