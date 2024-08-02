@@ -104,11 +104,10 @@ export default function BBPMain() {
           <NoResults />
         ) : (
           <VenueCard
-            clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}
-            likedClubs={likedClubs}
-            heartbeatNums={heartbeatNums}
-            handleHeartClickWrapper={handleHeartClickWrapper}
-          />
+              clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}
+              likedClubs={likedClubs}
+              heartbeatNums={heartbeatNums}
+              handleHeartClickWrapper={handleHeartClickWrapper}           />
         )}
       </main>
       <MainFooter />

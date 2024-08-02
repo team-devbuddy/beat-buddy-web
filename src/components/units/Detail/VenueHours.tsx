@@ -35,7 +35,7 @@ const VenueHours = ({ hours }: VenueHoursProps) => {
         '심심한 수요일', 
         '반가운 목요일', 
         '신나는 금요일', 
-        '최고의 토요일', 
+        '재밌는 토요일', 
       ];
       const today = new Date();
       return dayMessages[today.getDay()];

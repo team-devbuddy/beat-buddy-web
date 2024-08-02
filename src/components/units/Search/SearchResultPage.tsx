@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SearchResults from '@/components/units/Search/SearchResults';
-import MainFooter from '@/components/units/Main/MainFooter';
 import { useRecoilState } from 'recoil';
 import { searchQueryState } from '@/context/recoil-context';
-import SearchHeader from './SearchHeader';
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
