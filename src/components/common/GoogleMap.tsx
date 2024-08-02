@@ -297,6 +297,9 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           .gm-style img {
             max-width: none !important;
           }
+          [data-obj] {
+            outline: none !important;
+          }
         `}</style>
       </div>
     );
