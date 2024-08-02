@@ -293,6 +293,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           }
           div:focus {
             outline: none !important; /* 클릭 시 파란색 border 제거 */
+            -webkit-tap-highlight-color: transparent; /* 사파리 하이라이트 제거 */
           }
           .gm-style img {
             max-width: none !important;
