@@ -121,8 +121,8 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                         handleHeartClickWrapper={handleHeartClickWrapper}
                       />
                     ) : (
-                            <>
-                              {setIsMapView(false)} 
+                      <>
+                        {setIsMapView(false)}
                         <NoResults />
                       </>
                     )}
