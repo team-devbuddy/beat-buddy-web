@@ -4,6 +4,7 @@ import { fetchTop10 } from '@/lib/actions/search-controller/fetchTop10';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export default function HotClubsList() {
   const [hotData, setHotData] = useState<{ rankKeyword: string; score: number }[] | null>(null);
@@ -62,26 +63,28 @@ export default function HotClubsList() {
         <div className="mt-[1.25rem] flex justify-between">
           <ul className="flex w-[10rem] list-none flex-col gap-y-[0.5rem]">
             {hotData.slice(0, 5).map((club, index) => (
-              <li
+              <motion.li
                 key={index}
                 className="flex py-[0.25rem] text-body1-16-medium cursor-pointer"
                 onClick={() => handleKeywordClick(club.rankKeyword)}
+                whileTap={{ scale: 0.95 }} // 추가된 부분
               >
                 <span className="mr-[0.25rem] w-[1.125rem] text-main">{index + 1}</span>
                 <span className="text-body1-16-medium">{club.rankKeyword}</span>
-              </li>
+              </motion.li>
             ))}
           </ul>
           <ul className="flex w-[10rem] list-none flex-col gap-y-[0.5rem]">
             {hotData.slice(5, 10).map((club, index) => (
-              <li
+              <motion.li
                 key={index + 5}
                 className="flex py-[0.25rem] text-body1-16-medium cursor-pointer"
                 onClick={() => handleKeywordClick(club.rankKeyword)}
+                whileTap={{ scale: 0.95 }} // 추가된 부분
               >
                 <span className="mr-[0.25rem] w-[1.125rem] text-main">{index + 6}</span>
                 <span className="text-body1-16-medium">{club.rankKeyword}</span>
-              </li>
+              </motion.li>
             ))}
           </ul>
         </div>
