@@ -3,7 +3,7 @@ import { forwardRef, useImperativeHandle, useEffect, useRef, useState } from 're
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapStyles } from '@/assets/map_styles/dark';
 import { Club } from '@/lib/types';
-import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import { MarkerClusterer ,SuperClusterAlgorithm} from '@googlemaps/markerclusterer';
 import { useRecoilState } from 'recoil';
 import { clickedClubState } from '@/context/recoil-context';
 import CurrentLocationButton from '../units/Search/Map/CurrentLocationButton';
@@ -90,7 +90,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               mapTypeControl: false,
               fullscreenControl: false,
               maxZoom: zoom || null,
-              gestureHandling: 'greedy',
+               gestureHandling: 'greedy'
             });
 
             setMap(mapInstance);
@@ -134,6 +134,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
                     map: mapInstance,
                     markers: markersArray,
                     renderer: customRenderer,
+                    algorithm: new SuperClusterAlgorithm({ radius: 120,maxZoom:30 }),
                   });
 
                   google.maps.event.addListener(

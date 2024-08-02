@@ -1,7 +1,7 @@
 import { atom, selector, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
-import { HeartbeatProps,ClubProps } from '@/lib/types';
+import { HeartbeatProps,ClubProps,Club } from '@/lib/types';
 
 const { persistAtom } = recoilPersist();
 
@@ -93,4 +93,8 @@ export const filterState = selector({
 export const clickedClubState = atom<ClubProps | null>({
   key: 'clickedClubState',
   default: null,
+});
+export const clickedClubsState = atom<Club[]>({
+  key: 'clickedClubsState',
+  default: [],
 });
