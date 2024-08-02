@@ -93,7 +93,7 @@ function Dropdown({
         {isOpen && (
           <>
             <motion.div
-              className="fixed  inset-0 bg-black bg-opacity-30 z-40"
+              className="fixed inset-0 bg-black bg-opacity-30 z-40"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -104,14 +104,14 @@ function Dropdown({
               animate="open"
               exit="closed"
               variants={dropdownVariants}
-              className={`absolute ${dropdownTop ? 'top-full' : 'bottom-full'} ${isThirdDropdown ? 'right-0 w-[6.25rem]' : label === '장르' ? 'left-0 w-[15.5rem]' : 'left-0 w-[12.25rem]'} z-50 mt-2 origin-top-right rounded-md bg-gray700 shadow-lg`}>
+              className={`absolute ${dropdownTop ? 'top-full' : 'bottom-full'} ${isThirdDropdown ? 'right-0 w-[6.25rem]' : 'left-0 w-[13.75rem]'} z-50 mt-2 origin-top-right rounded-md bg-gray700 shadow-lg`}>
               {!isThirdDropdown && (
                 <div className="flex items-center gap-[0.5rem] border-b-[0.5px] border-gray400 px-[0.75rem] py-[0.5rem] text-body1-16-bold text-gray-400">
                   <Image src="/icons/OpenArrow.svg" alt="arrow down" width={24} height={24} />
                   <div>{label}</div>
                 </div>
               )}
-              <div className={`${label === '장르' ? 'grid grid-cols-2' : 'flex flex-col'}`}>
+              <div className="flex flex-col overflow-y-auto max-h-52"> 
                 {options.map((option, index) => (
                   <button
                     key={index}
@@ -121,14 +121,8 @@ function Dropdown({
                     onClick={() => handleOptionClick(option)}>
                     <div
                       className={`flex items-center gap-[0.25rem] px-[0.75rem] py-[0.75rem] hover:bg-gray500 ${
-                        label === '장르'
-                          ? index === 8
-                            ? 'rounded-bl-md'
-                            : index === options.length - 1
-                            ? 'rounded-br-md'
-                            : ''
-                          : index === 0
-                          ? isThirdDropdown ? 'rounded-t-md' : ''
+                        index === 0
+                          ? 'rounded-t-md'
                           : index === options.length - 1
                           ? 'rounded-b-md'
                           : ''
