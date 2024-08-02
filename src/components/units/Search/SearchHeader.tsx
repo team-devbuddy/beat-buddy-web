@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRecoilState } from 'recoil';
 import { generateLink } from '@/lib/utils/searchUtils';
-import { recentSearchState } from '@/context/recoil-context';
+import { recentSearchState,isMapViewState } from '@/context/recoil-context';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
 
 const SearchHeader = () => {
@@ -14,6 +14,7 @@ const SearchHeader = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -45,9 +46,12 @@ const SearchHeader = () => {
   };
 
   const handleBackClick = () => {
-    router.push('/search');
+    if (isMapView) {
+      setIsMapView(false);
+    } else {
+      router.push('/search');
+    }
   };
-
   return (
     <header className="flex flex-col bg-BG-black">
       <div className="flex w-full items-center justify-between px-[1rem] py-[0.68rem]">

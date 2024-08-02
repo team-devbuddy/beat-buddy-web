@@ -39,7 +39,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           labelOrigin: new google.maps.Point(12, -10),
         },
         label: {
-          text: club.englishName,
+          text: club.englishName || club.koreanName,
           color: '#FF4493',
           fontSize: '14px',
           fontWeight: 'bold',
@@ -90,6 +90,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
               mapTypeControl: false,
               fullscreenControl: false,
               maxZoom: zoom || null,
+              gestureHandling: 'greedy',
             });
 
             setMap(mapInstance);

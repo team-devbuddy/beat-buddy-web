@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 interface CurrentLocationButtonProps {
   onClick: () => void;
@@ -19,9 +20,15 @@ const CurrentLocationButton = ({ onClick }: CurrentLocationButtonProps) => {
     setButtonIcon(CURRENT_LOCATION_BUTTON_URL);
   };
 
+  const pathname = usePathname();
+
+  if (pathname.includes('detail')) {
+    return null; // 'detail'이 경로에 포함되어 있으면 아무것도 반환하지 않음
+  }
+
   return (
     <div
-      className="absolute right-8 top-[1.8rem] z-10 cursor-pointer"
+      className="absolute right-8 top-[1.8rem] z-40 cursor-pointer"
       onClick={onClick}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
