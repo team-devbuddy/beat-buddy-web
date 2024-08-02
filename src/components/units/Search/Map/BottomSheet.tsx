@@ -1,5 +1,6 @@
 'use client';
-import { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
+
+import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
 import { Sheet } from 'react-modal-sheet';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -20,6 +21,8 @@ import ClubList from '../../Main/ClubList';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
 import ClickedClubDetails from './ClickedClub';
+import SearchListSkeleton from '@/components/common/skeleton/SearchListSkeleton';
+import NoResults from '../NoResult';
 
 const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProps>(({ filteredClubs }, ref) => {
   const [isOpen, setOpen] = useState(true);
@@ -34,6 +37,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const clickedClub = useRecoilValue(clickedClubState);
   const [height, setHeight] = useState<number>(834);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'];
   const locations = ['홍대', '이태원', '강남/신사', '압구정', '기타'];
@@ -48,6 +52,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
     if (query && query !== searchQuery) {
       setSearchQuery(query);
     }
+    setLoading(false);
   }, [searchParams, searchQuery, setSearchQuery]);
 
   const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
@@ -73,7 +78,7 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
           <Sheet
             className="!z-10 mx-auto w-full min-w-[360px] max-w-[600px]"
             isOpen={true}
-            onClose={() => setOpen(true)} // onClose 콜백에서 다시 시트를 열도록 설정
+            onClose={() => setOpen(true)}
             initialSnap={1}
             snapPoints={[height, 450, 80]}>
             <Sheet.Container className="relative h-full w-full !shadow-none">
@@ -100,21 +105,25 @@ const BottomSheetComponent = forwardRef<{ close: () => void }, SearchResultsProp
                 disableDrag={true}>
                 <div className="club-list-container flex w-full flex-col text-[0.93rem]">
                   <div className="w-full flex-wrap gap-4">
-                    {clickedClub ? (
+                    {loading ? (
+                      <SearchListSkeleton />
+                    ) : clickedClub ? (
                       <ClickedClubDetails
                         likedClubs={likedClubs}
                         heartbeatNums={heartbeatNums}
                         handleHeartClickWrapper={handleHeartClickWrapper}
                       />
+                    ) : filteredClubs.length > 0 ? (
+                      <ClubList
+                        clubs={filteredClubs}
+                        likedClubs={likedClubs}
+                        heartbeatNums={heartbeatNums}
+                        handleHeartClickWrapper={handleHeartClickWrapper}
+                      />
                     ) : (
-                      <>
-                        <ClubList
-                          clubs={filteredClubs}
-                          likedClubs={likedClubs}
-                          heartbeatNums={heartbeatNums}
-                          handleHeartClickWrapper={handleHeartClickWrapper}
-                        />
-                        {/* <div style={{ height: `${paddingHeight}px` }} /> */}
+                            <>
+                              {setIsMapView(false)} 
+                        <NoResults />
                       </>
                     )}
                   </div>
