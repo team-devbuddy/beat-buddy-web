@@ -1,12 +1,50 @@
 import { useEffect, useState } from 'react';
-import { GetHistory } from '@/lib/action';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
+import { GetHistory } from '@/lib/action';
 import { postFilter } from '@/lib/actions/recommend-controller/postFilter';
+import { shuffleArray } from '@/lib/utils/shuffleArray';
 
 const regionTags = ['HONGDAE', 'ITAEWON', 'GANGNAM/SINSA', 'APGUJEONG', 'OTHERS'];
 const genreTags = ['HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 'LATIN', 'K-POP', 'POP'];
 const moodTags = ['CLUB', 'PUB', 'ROOFTOP', 'DEEP', 'COMMERCIAL', 'CHILL', 'EXOTIC', 'HUNTING'];
+
+const atmosphereMap: { [key: string]: string } = {
+  CLUB: '클럽',
+  PUB: '펍',
+  ROOFTOP: '루프탑',
+  DEEP: '딥한',
+  COMMERCIAL: '커머셜한',
+  CHILL: '칠한',
+  EXOTIC: '이국적인',
+  HUNTING: '헌팅',
+};
+
+const genresMap: { [key: string]: string } = {
+  HIPHOP: 'HIPHOP',
+  'R&B': 'R&B',
+  EDM: 'EDM',
+  HOUSE: 'HOUSE',
+  TECHNO: 'TECHNO',
+  'SOUL&FUNK': 'SOUL&FUNK',
+  ROCK: 'ROCK',
+  LATIN: 'LATIN',
+  'K-POP': 'K-POP',
+  POP: 'POP',
+};
+
+const locationsMap: { [key: string]: string } = {
+  HONGDAE: '홍대',
+  ITAEWON: '이태원',
+  'GANGNAM/SINSA': '강남/신사',
+  APGUJEONG: '압구정',
+  OTHERS: '기타',
+};
+
+const translateTag = (tag: string) => {
+  const translatedTag = atmosphereMap[tag] || genresMap[tag] || locationsMap[tag] || tag;
+  return translatedTag;
+};
 
 interface FilterProps {
   setFilteredClubs: (clubs: any[]) => void;
@@ -26,7 +64,8 @@ const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
           const history = await response.json();
           const recentArchive = history[0];
           if (recentArchive && recentArchive.preferenceList) {
-            setPreferences([...recentArchive.preferenceList]);
+            const shuffledPreferences = shuffleArray([...recentArchive.preferenceList]);
+            setPreferences(shuffledPreferences);
           }
         } catch (error) {
           console.error('Error fetching preferences:', error);
@@ -74,9 +113,9 @@ const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
             key={index}
             className={`box-border rounded-sm px-[0.62rem] py-[0.25rem] ${
               selectedFilters.includes(filter) ? 'bg-gray500 text-main2' : 'border-transparent bg-gray500 text-gray400'
-            }`}
+            } active:scale-95 transition-transform duration-150`}
             onClick={() => handleFilterClick(filter)}>
-            {filter}
+            {translateTag(filter)} 
           </button>
         ))
       ) : (
