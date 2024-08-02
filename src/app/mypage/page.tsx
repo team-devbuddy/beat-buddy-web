@@ -6,7 +6,7 @@ import MyPageComponent from '@/components/units/Mypage/MyPage';
 export default function Mypage() {
   return (
     <>
-      <div className="flex w-full flex-col">
+      <div className="flex w-full flex-col bg-BG-black">
         <HeaderBack url="/" />
         <MyPageComponent />
         <div className="pt-10">
