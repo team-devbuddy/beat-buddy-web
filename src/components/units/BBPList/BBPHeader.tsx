@@ -26,7 +26,7 @@ const BBPHeader = ({ username }: BBPHeaderProps) => {
             <Image src="/icons/ArrowLeft.svg" alt="뒤로가기" width={24} height={24} />
           </div>
         </Link>
-        <Link href="/onBoarding/myTaste/genre">
+        <Link href="/onBoarding/custom">
           <div className="cursor-pointer bg-transparent px-[0.75rem] py-[0.38rem] text-body3-12-bold text-gray200">
             취향 수정하기
           </div>
