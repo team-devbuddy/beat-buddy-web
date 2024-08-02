@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 
 interface SearchButtonProps {
@@ -8,17 +7,12 @@ interface SearchButtonProps {
 const MapSearchButton = ({ onClick }: SearchButtonProps) => {
   return (
     <div
-      className="active:scale-95 fixed left-1/2 top-[10rem] z-8.5 flex cursor-pointer items-center justify-center rounded-full bg-gray600 px-[1.25rem] py-[0.75rem] transform -translate-x-1/2 transition duration-150 ease-in-out"
+      className="z-8.5 fixed left-1/2 top-[9rem] flex -translate-x-1/2 transform cursor-pointer items-center justify-center rounded-full bg-gray600 px-[1.25rem] py-[0.75rem] transition duration-150 ease-in-out active:scale-95"
       onClick={onClick}>
-      <div className="flex items-center justify-center w-6 h-6">
-        <Image
-          src="/icons/goforward.svg"
-          alt="refresh icon"
-          width={14.87}
-          height={17.7}
-        />
+      <div className="flex h-6 w-6 items-center justify-center">
+        <Image src="/icons/goforward.svg" alt="refresh icon" width={14.87} height={17.7} />
       </div>
-      <span className="ml-2 text-main2 text-body3-12-bold">현 지도에서 검색</span>
+      <span className="ml-2 text-body3-12-bold text-main2">현 지도에서 검색</span>
     </div>
   );
 };
