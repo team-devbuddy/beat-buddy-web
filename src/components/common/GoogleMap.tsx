@@ -6,6 +6,7 @@ import { Club } from '@/lib/types';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { useRecoilState } from 'recoil';
 import { clickedClubState } from '@/context/recoil-context';
+import CurrentLocationButton from '../units/Search/Map/CurrentLocationButton';
 
 interface GoogleMapProp {
   clubs: Club[];
@@ -245,9 +246,36 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       }
     };
 
+    const handleCurrentLocationClick = () => {
+      if (navigator.geolocation && map) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+
+            map.setCenter(pos);
+            new google.maps.Marker({
+              icon: '/icons/CurrentMe.svg',
+              position: pos,
+              map,
+              title: 'Current Location',
+            });
+          },
+          () => {
+            alert('Error: The Geolocation service failed.');
+          },
+        );
+      } else {
+        alert("Error: Your browser doesn't support geolocation.");
+      }
+    };
+
     return (
       <div className="relative">
         <div className={`p-2`} style={{ minHeight }} ref={mapRef} />
+        {map && <CurrentLocationButton onClick={handleCurrentLocationClick} />}
         <style jsx>{`
           .marker-label {
             color: #ff4493;

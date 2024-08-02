@@ -21,7 +21,7 @@ const CurrentLocationButton = ({ onClick }: CurrentLocationButtonProps) => {
 
   return (
     <div
-      className="absolute left-4 bottom-[5rem] z-10 cursor-pointer"
+      className="absolute right-8 top-[1.8rem] z-10 cursor-pointer"
       onClick={onClick}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
