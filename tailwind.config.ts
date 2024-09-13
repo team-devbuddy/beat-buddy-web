@@ -47,7 +47,6 @@ const config: Config = {
         gray500: '#313335',
         gray600: '#2F3237',
         gray700: '#28292A',
-
         FooterBlack: '#000000',
       },
       borderRadius: {
