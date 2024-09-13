@@ -173,9 +173,8 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
 
     const filterAddressesInView = () => {
       if (map) {
-        const bounds = map.getBounds();
+        const bounds = map.getBounds(); //현재 지도 범위에 따라 경계 정함
         if (bounds) {
-          console.log('Bounds:', bounds); // Bounds 확인
           // 초기화
           markerCluster?.clearMarkers();
           markers.forEach((marker) => marker.setMap(null));
@@ -187,13 +186,13 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           const geocodePromises: Promise<void>[] = clubs.map((club) => {
             return new Promise((resolve) => {
               const geocoder = new google.maps.Geocoder();
-              geocoder.geocode({ address: club.address }, (results, status) => {
+              geocoder.geocode({ address: club.address }, (results, status) => { //각 클럽의 주소를 지오코딩(주소를 위도 및 경도로 변환)-> 위치확인
                 if (status === 'OK' && results) {
                   const location = results[0].geometry.location;
-                  if (bounds.contains(location)) {
-                    const marker = createCustomMarker(club, location);
+                  if (bounds.contains(location)) { //bound에 그 클럽들이 포함되는지 확인
+                    const marker = createCustomMarker(club, location); //경계 안에 있는 클럽들만 마커에 추가
                     newMarkers.push(marker);
-                    clubsInBounds.push(club); // 클럽 추가
+                    clubsInBounds.push(club); // 클럽 목록 저장
                   }
                 }
                 resolve();
@@ -201,7 +200,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
             });
           });
 
-          Promise.all(geocodePromises).then(() => {
+          Promise.all(geocodePromises).then(() => { //지오코딩하는 작업이 비동기로 수행 -> 병렬로 처리함
             newMarkers.forEach((marker) => marker.setMap(map));
 
             const filteredClubs = clubs.filter((club) =>
