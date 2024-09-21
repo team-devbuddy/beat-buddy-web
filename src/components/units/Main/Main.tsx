@@ -17,6 +17,8 @@ import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
 import { Club } from '@/lib/types';
 import Loading from '@/app/loading';
 import HomeSkeleton from '@/components/common/skeleton/HomeSkeleton';
+import HotPost from './HotPost';
+import { dummyPosts } from '@/lib/dummyData';
 
 const MainHeader = dynamic(() => import('./MainHeader'), { ssr: false });
 
@@ -135,6 +137,7 @@ export default function Main() {
         />
         {!accessToken && <LoggedOutBanner />}
         <Heartbeat />
+        <HotPost posts={dummyPosts} />
         <HotVenues
           clubs={hotClubs}
           likedClubs={likedClubs}

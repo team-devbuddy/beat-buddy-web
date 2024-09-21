@@ -143,7 +143,7 @@ export default function BeatBuddyPick({
             <span className="font-queensides text-[1.5rem] text-main2">
               {userName ? `Venue for ${userName}버디` : 'BeatBuddy Pick'}
             </span>
-            <span className="text-body2-15-mediu text-gray200">나에게 딱 맞는 베뉴들의 정보를 확인하세요!</span>
+            <span className="text-body2-15-medium text-gray200">나에게 딱 맞는 베뉴들의 정보를 확인하세요!</span>
           </div>
           <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
         </div>
