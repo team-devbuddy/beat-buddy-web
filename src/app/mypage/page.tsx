@@ -1,6 +1,7 @@
+'use client'
 import HeaderBack from '@/components/common/HeaderBack';
 import Footer from '@/components/units/Main/MainFooter';
-
+import NavigateFooter from '@/components/units/Main/NavigateFooter';
 import MyPageComponent from '@/components/units/Mypage/MyPage';
 
 export default function Mypage() {
@@ -12,6 +13,8 @@ export default function Mypage() {
         <div className="pt-10">
           <Footer />
         </div>
+        <NavigateFooter/>
+
       </div>
     </>
   );

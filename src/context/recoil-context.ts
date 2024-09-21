@@ -98,3 +98,7 @@ export const clickedClubsState = atom<Club[]>({
   key: 'clickedClubsState',
   default: [],
 });
+export const activePageState = atom({
+  key: 'activePageState',
+  default: 'home', // 초기값-home
+});

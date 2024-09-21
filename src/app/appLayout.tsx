@@ -5,7 +5,7 @@ import { accessTokenState, authState } from '@/context/recoil-context';
 import { PostRefresh } from '@/lib/action';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import NavigateFooter from '@/components/units/Main/NavigateFooter';
 function ClientLayout({ children }: { children: React.ReactNode }) {
   const [access, setAccess] = useRecoilState(accessTokenState);
   const [isAuth, setIsAuth] = useRecoilState(authState);
@@ -57,8 +57,10 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
       {/* 모바일 컨테이너 */}
       <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black shadow-lg">
         {/* 콘텐츠 */}
-        <div className="flex h-full w-full flex-col">{children}</div>
+        <div className="flex h-full  w-full flex-col">{children}</div>
         {/* <Footer /> */}
+        <NavigateFooter />
+
       </div>
     </div>
   );

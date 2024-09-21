@@ -19,7 +19,7 @@ import Loading from '@/app/loading';
 import HomeSkeleton from '@/components/common/skeleton/HomeSkeleton';
 import HotPost from './HotPost';
 import { dummyPosts } from '@/lib/dummyData';
-
+import NavigateFooter from './NavigateFooter';
 const MainHeader = dynamic(() => import('./MainHeader'), { ssr: false });
 
 export default function Main() {
@@ -145,7 +145,7 @@ export default function Main() {
           handleHeartClickWrapper={handleHeartClickWrapper}
         />
       </div>
-      <Footer />
+      <NavigateFooter />
     </div>
   );
 }
