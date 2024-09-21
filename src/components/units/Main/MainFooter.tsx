@@ -4,8 +4,8 @@ import Link from 'next/link';
 
 export default function MainFooter() {
   return (
-    <footer className="relative bg-FooterBlack px-[1rem] py-[1.25rem] pt-10 text-gray100">
-      <div className="relative z-10 flex flex-col items-start">
+    <footer className="relative bg-FooterBlack pb-[8rem] px-[1rem] py-[1.25rem] pt-10 text-gray100">
+      <div className="relative flex flex-col items-start">
         <Link href="https://admitted-xenon-54c.notion.site/b5b15a4a269a40f3b30113ee27e5aedf?pvs=4" target="_blank">
           <span className="cursor-pointer text-body2-15-medium">이용약관</span>
         </Link>

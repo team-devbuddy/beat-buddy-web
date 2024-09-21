@@ -45,9 +45,9 @@ function Heartbeat() {
   };
 
   return (
-    <div className="my-[1.75rem] flex flex-col px-[1rem]">
+    <div className="my-[1.5rem] flex flex-col px-[1rem]">
       <Link href="/myheartbeat">
-        <div className="flex items-center justify-between rounded-md py-[0.5rem] hover:brightness-75">
+        {/*<div className="flex items-center justify-between rounded-md py-[0.5rem] hover:brightness-75">
           <div className="flex flex-col">
             <span className="font-queensides text-main-queen text-main2">My Heart Beat</span>
             <div className="mt-[0.25rem] cursor-pointer text-body2-15-medium text-gray200">
@@ -55,9 +55,9 @@ function Heartbeat() {
             </div>
           </div>
           <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
-        </div>
+        </div>*/}
       </Link>
-      <div className="flex space-x-[0.75rem] overflow-x-auto pt-[1.5rem] hide-scrollbar">
+      <div className="flex space-x-[0.75rem] overflow-x-auto hide-scrollbar">
         {heartbeats.length === 0 ? (
           <motion.div
             className="relative h-16 w-16 cursor-pointer hover:brightness-75"
