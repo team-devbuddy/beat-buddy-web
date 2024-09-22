@@ -1,16 +1,18 @@
 'use client';
 
-import { RecoilRoot, useRecoilState } from 'recoil';
+import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, authState } from '@/context/recoil-context';
 import { PostRefresh } from '@/lib/action';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation'; // usePathname 사용
 import NavigateFooter from '@/components/units/Main/NavigateFooter';
+
 function ClientLayout({ children }: { children: React.ReactNode }) {
   const [access, setAccess] = useRecoilState(accessTokenState);
   const [isAuth, setIsAuth] = useRecoilState(authState);
   const [isHydrated, setIsHydrated] = useState(false);
   const router = useRouter();
+  const pathname = usePathname(); // 현재 경로 감지
 
   useEffect(() => {
     setIsHydrated(true);
@@ -34,9 +36,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (error) {
-        // setIsAuth(false);
-        // setAccess(null);
-        // alert('로그인이 필요합니다.');
+        console.error('Error refreshing token:', error);
       }
     };
     if (isHydrated) {
@@ -52,15 +52,17 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     return null;
   }
 
+  // 푸터를 숨겨야 하는 경우:
+  const shouldHideFooter = pathname.includes('onBoarding') || !isAuth;
+
   return (
     <div className="flex h-screen w-full items-center justify-center">
       {/* 모바일 컨테이너 */}
       <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black shadow-lg">
         {/* 콘텐츠 */}
-        <div className="flex h-full  w-full flex-col">{children}</div>
-        {/* <Footer /> */}
-        <NavigateFooter />
-
+        <div className="flex h-full w-full flex-col">{children}</div>
+        {/* 푸터는 특정 경로 및 로그인 여부에 따라 표시 */}
+        {!shouldHideFooter && <NavigateFooter />}
       </div>
     </div>
   );
