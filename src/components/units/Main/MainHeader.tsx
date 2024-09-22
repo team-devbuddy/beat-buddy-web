@@ -54,7 +54,6 @@ export default function MainHeader() {
         )}
       </div>
       
-      {/* 모달 애니메이션 */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="inset-0 flex items-center justify-center">

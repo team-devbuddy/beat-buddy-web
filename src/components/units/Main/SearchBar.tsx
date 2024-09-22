@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,16 +14,22 @@ export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
   const accessToken = useRecoilValue(accessTokenState);
+  const inputRef = useRef<HTMLInputElement>(null); 
 
   useEffect(() => {
     if (isMainPage) {
       setSearchQuery('');
+    }
+
+    if (!isMainPage && inputRef.current) {
+      inputRef.current.focus(); // input에 포커스
     }
   }, [isMainPage]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       handleSearch();
@@ -69,11 +75,13 @@ export default function SearchBar() {
       ) : (
         <div className="relative w-full">
           <input
+            ref={inputRef} 
             className="w-full border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
             placeholder="지금 가장 인기있는 클럽은?"
             value={searchQuery}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            autoFocus // 모바일에서 자동으로 키패드 올라오게 autoFocus 추가
             style={{ WebkitAppearance: 'none', borderRadius: 0 }}
           />
           <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
