@@ -29,7 +29,6 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
             setAccess(data.access);
             setIsAuth(true);
           } else {
-            alert('로그인이 필요합니다.');
             setAccess(null);
             setIsAuth(false);
             router.push('/');
