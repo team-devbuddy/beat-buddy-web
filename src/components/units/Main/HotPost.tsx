@@ -42,7 +42,7 @@ const HotPost = ({ posts }: HotPostProps) => {
   }, [posts]);
 
   return (
-    <div className="bg-gray400 px-4">
+    <div className="bg-gray500 px-4">
       <div className="flex cursor-pointer items-center justify-between py-[0.5rem] hover:brightness-75">
         <div className="flex flex-col justify-center">
           <span className="font-queensides text-[1.375rem] text-main2">HotPost </span>

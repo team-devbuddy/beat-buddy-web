@@ -136,7 +136,7 @@ export default function Main() {
           handleHeartClickWrapper={handleHeartClickWrapper}
         />
         {!accessToken && <LoggedOutBanner />}
-        <Heartbeat />
+        {/*<Heartbeat />*/}
         <HotPost posts={dummyPosts} />
         <HotVenues
           clubs={hotClubs}

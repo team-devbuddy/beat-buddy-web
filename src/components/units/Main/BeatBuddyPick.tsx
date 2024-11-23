@@ -138,8 +138,8 @@ export default function BeatBuddyPick({
         })}
       </div>
       <Link href="/bbp-list" passHref>
-        <div className="my-[1.5rem] mx-4 flex cursor-pointer items-center justify-between rounded-sm bg-main px-4 py-[0.5rem] hover:brightness-75">
-          <div className="flex flex-col gap-y-2 justify-center">
+        <div className="mx-4 my-[1.5rem] flex cursor-pointer items-center justify-between rounded-sm bg-main px-4 py-[0.5rem] hover:brightness-75">
+          <div className="flex flex-col justify-center gap-y-2">
             <span className="font-queensides text-[1.5rem] text-white">
               {userName ? `Venue for ${userName}버디` : 'BeatBuddy Pick'}
             </span>
