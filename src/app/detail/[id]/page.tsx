@@ -15,6 +15,7 @@ import Loading from '@/components/common/skeleton/LoadingLottie';
 import DetailCategoryBar from '@/components/units/Detail/DetailCategoryBar';
 import DetailFooter from '@/components/units/Detail/DetailFooter';
 import VenueIntro from '@/components/units/Detail/VenueIntro';
+import ReviewHeader from '@/components/units/Detail/Review/ReviewHeader';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [venue, setVenue] = useState<Club | null>(null);
@@ -71,7 +72,14 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           </>
         );
       case 'review':
-        return <div>리뷰 콘텐츠</div>;
+        return (
+          <div>
+            {/* 리뷰 헤더 */}
+            <ReviewHeader venueName={venue.englishName || ''} />
+            {/* 리뷰 콘텐츠 */}
+            <div className="px-4 py-4">리뷰 콘텐츠가 여기에 표시됩니다.</div>
+          </div>
+        );
       case 'news':
         return <div>뉴스 콘텐츠</div>;
       case 'board':
