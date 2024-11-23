@@ -10,14 +10,16 @@ import CustomerService from '@/components/units/Detail/CustomerService';
 import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-import { Club, ClubProps } from '@/lib/types';
+import { Club } from '@/lib/types';
 import Loading from '@/components/common/skeleton/LoadingLottie';
+import DetailCategoryBar from '@/components/units/Detail/DetailCategoryBar';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [venue, setVenue] = useState<Club | null>(null);
   const [isHeartbeat, setIsHeartbeat] = useState<boolean>(false);
   const [tagList, setTagList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<string>('info'); // 활성 탭 상태 추가
   const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           const data = await fetchClubDetail(params.id, accessToken);
           setVenue(data.venue);
           setIsHeartbeat(data.isHeartbeat);
-          setTagList(data.tagList); // tagList를 설정합니다.
+          setTagList(data.tagList);
         } else {
           console.error('Access token is not available');
         }
@@ -53,13 +55,34 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
+  // 활성화된 탭에 따라 콘텐츠를 조건부로 렌더링
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'info':
+        return (
+          <>
+            <Info venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
+            <Location venue={venue} />
+            <VenueHours hours={venue.operationHours} />
+            <CustomerService />
+          </>
+        );
+      case 'review':
+        return <div>리뷰 콘텐츠</div>; 
+      case 'news':
+        return <div>뉴스 콘텐츠</div>; 
+      case 'board':
+        return <div>게시판 콘텐츠</div>; 
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
-      <Info venue={venue} isHeartbeat={isHeartbeat} tagList={[]} />
-      <Location venue={venue} />
-      <VenueHours hours={venue.operationHours} />
-      <CustomerService />
+      <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="flex-grow">{renderContent()}</div>
       <Footer />
     </div>
   );
