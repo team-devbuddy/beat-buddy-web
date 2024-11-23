@@ -14,6 +14,7 @@ import { Club } from '@/lib/types';
 import Loading from '@/components/common/skeleton/LoadingLottie';
 import DetailCategoryBar from '@/components/units/Detail/DetailCategoryBar';
 import DetailFooter from '@/components/units/Detail/DetailFooter';
+import VenueIntro from '@/components/units/Detail/VenueIntro';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [venue, setVenue] = useState<Club | null>(null);
@@ -63,6 +64,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
         return (
           <>
             <Info venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
+            <VenueIntro />
             <Location venue={venue} />
             <VenueHours hours={venue.operationHours} />
             <CustomerService />
