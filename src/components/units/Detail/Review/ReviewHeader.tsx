@@ -1,18 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ReviewHeaderProps {
-  venueName: string; 
+  venueName: string;
+  isPhotoOnly: boolean; // 포토 리뷰만 보기 상태
+  setIsPhotoOnly: React.Dispatch<React.SetStateAction<boolean>>; // 포토 리뷰 상태 변경 함수
 }
 
-const ReviewHeader = ({ venueName }: ReviewHeaderProps) => {
-  const [isPhotoOnly, setIsPhotoOnly] = useState(false); 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedSortOption, setSelectedSortOption] = useState('최신순'); 
+const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderProps) => {
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const [selectedSortOption, setSelectedSortOption] = React.useState('최신순');
 
-  const sortOptions = ['최신순', '추천순']; 
+  const sortOptions = ['최신순', '추천순'];
 
   const handlePhotoToggle = () => {
     setIsPhotoOnly(!isPhotoOnly);

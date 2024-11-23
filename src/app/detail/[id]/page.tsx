@@ -16,13 +16,54 @@ import DetailCategoryBar from '@/components/units/Detail/DetailCategoryBar';
 import DetailFooter from '@/components/units/Detail/DetailFooter';
 import VenueIntro from '@/components/units/Detail/VenueIntro';
 import ReviewHeader from '@/components/units/Detail/Review/ReviewHeader';
+import ReviewContents from '@/components/units/Detail/Review/ReviewContents';
+
+const mockReviews = [
+  {
+    id: '1',
+    userName: '집에 가고 싶은 펭귄',
+    userProfileImage: '/icons/userProfile.svg',
+    date: '2024-05-28 05:50',
+    content: '꾸준히 재밌어요. 친구들이랑 놀기 좋아요!',
+    likeCount: 12,
+    images: ['/images/Review1.png', '/images/Review2.png'],
+  },
+  {
+    id: '2',
+    userName: '파티광 토끼',
+    userProfileImage: '/icons/userProfile.svg',
+    date: '2024-05-20 14:30',
+    content: '음악과 분위기가 너무 좋아요!',
+    likeCount: 8,
+    images: [],
+  },
+  {
+    id: '3',
+    userName: '댄스러버',
+    userProfileImage: '/icons/userProfile.svg',
+    date: '2024-05-15 12:10',
+    content: '댄스 플로어가 최고예요!',
+    likeCount: 15,
+    images: ['/images/Review3.png'],
+  },
+  {
+    id: '4',
+    userName: '클럽 매니아',
+    userProfileImage: '/icons/userProfile.svg',
+    date: '2024-05-10 20:00',
+    content: '조명과 음악의 조합이 완벽합니다!',
+    likeCount: 20,
+    images: ['/images/Review1.png', '/images/Review2.png'],
+  },
+];
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
+  const [isPhotoOnly, setIsPhotoOnly] = useState(false);
   const [venue, setVenue] = useState<Club | null>(null);
   const [isHeartbeat, setIsHeartbeat] = useState<boolean>(false);
   const [tagList, setTagList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<string>('info'); // 활성 탭 상태 추가
+  const [activeTab, setActiveTab] = useState<string>('info');
   const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
@@ -58,7 +99,6 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  // 활성화된 탭에 따라 콘텐츠를 조건부로 렌더링
   const renderContent = () => {
     switch (activeTab) {
       case 'info':
@@ -73,13 +113,20 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
         );
       case 'review':
         return (
-          <div>
+          <div className="flex h-full flex-col bg-BG-black">
             {/* 리뷰 헤더 */}
-            <ReviewHeader venueName={venue.englishName || ''} />
+            <ReviewHeader
+              venueName={venue.englishName || ''}
+              isPhotoOnly={isPhotoOnly}
+              setIsPhotoOnly={setIsPhotoOnly}
+            />
             {/* 리뷰 콘텐츠 */}
-            <div className="px-4 py-4">리뷰 콘텐츠가 여기에 표시됩니다.</div>
+            <div className="flex-grow overflow-y-auto">
+              <ReviewContents reviews={mockReviews} isPhotoOnly={isPhotoOnly} />
+            </div>
           </div>
         );
+
       case 'news':
         return <div>뉴스 콘텐츠</div>;
       case 'board':
@@ -93,16 +140,9 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-BG-black text-white">
-      {/* 프리뷰 섹션 */}
       <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
-
-      {/* 카테고리 바 */}
       <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      {/* 콘텐츠 섹션 */}
       <div className="flex-grow">{renderContent()}</div>
-
-      {/* 푸터 */}
       <DetailFooter activeTab={activeTab} venueName={venueName} />
     </div>
   );
