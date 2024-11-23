@@ -26,16 +26,17 @@ const parseHours = (hours: string) => {
 const VenueHours = ({ hours }: VenueHoursProps) => {
   const [currentDayMessage, setCurrentDayMessage] = useState('');
 
-  useEffect(() => { //이러케하면 나혼나나 ㅋ
+  useEffect(() => {
+    //이러케하면 나혼나나 ㅋ
     const getDayMessage = () => {
       const dayMessages = [
         '아쉬운 일요일',
         '우울한 월요일',
-        '아직 화요일이지만', 
-        '심심한 수요일', 
-        '반가운 목요일', 
-        '신나는 금요일', 
-        '재밌는 토요일', 
+        '아직 화요일이지만',
+        '심심한 수요일',
+        '반가운 목요일',
+        '신나는 금요일',
+        '재밌는 토요일',
       ];
       const today = new Date();
       return dayMessages[today.getDay()];
@@ -59,12 +60,12 @@ const VenueHours = ({ hours }: VenueHoursProps) => {
           ))}
         </div>
       </div>
-      <div className="relative mb-[2.5rem] mt-[1rem] h-[5.625rem] w-full">
+      <div className="relative mt-[1rem] h-[5.625rem] w-full">
         <Image src="/images/AdBanner.png" alt="광고 배너" layout="fill" objectFit="cover" />
         <Link href="https://www.instagram.com/beatbuddy.kr/">
           <div className="absolute inset-0 z-10 flex cursor-pointer flex-col items-start justify-center p-[1.25rem] text-white">
-          <span className="text-body3-12-medium">{currentDayMessage}</span>
-          <span className="text-body2-15-bold">더 많은 정보를 얻고 싶다면?</span>
+            <span className="text-body3-12-medium">{currentDayMessage}</span>
+            <span className="text-body2-15-bold">더 많은 정보를 얻고 싶다면?</span>
           </div>
         </Link>
       </div>
