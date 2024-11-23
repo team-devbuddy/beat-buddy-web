@@ -13,6 +13,7 @@ import { accessTokenState } from '@/context/recoil-context';
 import { Club } from '@/lib/types';
 import Loading from '@/components/common/skeleton/LoadingLottie';
 import DetailCategoryBar from '@/components/units/Detail/DetailCategoryBar';
+import DetailFooter from '@/components/units/Detail/DetailFooter';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [venue, setVenue] = useState<Club | null>(null);
@@ -68,22 +69,31 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           </>
         );
       case 'review':
-        return <div>리뷰 콘텐츠</div>; 
+        return <div>리뷰 콘텐츠</div>;
       case 'news':
-        return <div>뉴스 콘텐츠</div>; 
+        return <div>뉴스 콘텐츠</div>;
       case 'board':
-        return <div>게시판 콘텐츠</div>; 
+        return <div>게시판 콘텐츠</div>;
       default:
         return null;
     }
   };
 
+  const venueName = `${venue.englishName || ''}`;
+
   return (
-    <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
+    <div className="relative flex min-h-screen w-full flex-col bg-BG-black text-white">
+      {/* 프리뷰 섹션 */}
       <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
+
+      {/* 카테고리 바 */}
       <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {/* 콘텐츠 섹션 */}
       <div className="flex-grow">{renderContent()}</div>
-      <Footer />
+
+      {/* 푸터 */}
+      <DetailFooter activeTab={activeTab} venueName={venueName} />
     </div>
   );
 };

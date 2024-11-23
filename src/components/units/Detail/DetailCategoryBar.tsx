@@ -22,7 +22,12 @@ const DetailCategoryBar = ({
             className={`flex flex-col items-center py-2 transition-all duration-500 ${
               activeTab === tab.id ? 'border-b-2 border-main text-main' : 'border-b-2 border-transparent text-gray-100'
             }`}>
-            <span className="text-sm font-bold">{tab.label}</span>
+            <span
+              className={`text-sm ${
+                activeTab === tab.id ? 'text-body2-15-bold' : 'text-body2-15-medium'
+              }`}>
+              {tab.label}
+            </span>
           </button>
         ))}
       </div>
