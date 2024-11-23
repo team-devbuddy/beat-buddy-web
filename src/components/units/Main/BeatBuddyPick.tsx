@@ -138,14 +138,14 @@ export default function BeatBuddyPick({
         })}
       </div>
       <Link href="/bbp-list" passHref>
-        <div className="mt-[1.5rem] flex cursor-pointer items-center justify-between px-4 py-[0.5rem] hover:brightness-75">
-          <div className="flex flex-col justify-center">
-            <span className="font-queensides text-[1.5rem] text-main2">
+        <div className="mx-4 my-[1.5rem] flex cursor-pointer items-center justify-between rounded-sm bg-main px-4 py-[0.5rem] hover:brightness-75">
+          <div className="flex flex-col justify-center gap-y-2">
+            <span className="font-queensides text-[1.5rem] text-white">
               {userName ? `Venue for ${userName}버디` : 'BeatBuddy Pick'}
             </span>
-            <span className="text-body2-15-medium text-gray200">나에게 딱 맞는 베뉴들의 정보를 확인하세요!</span>
+            <span className="text-body2-15-medium text-sub2">나에게 딱 맞는 베뉴들의 정보를 확인하세요!</span>
           </div>
-          <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
+          <Image src="/icons/rightArrowWhite.svg" alt="Arrow head right icon" width={24} height={24} />
         </div>
       </Link>
     </div>

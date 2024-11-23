@@ -25,7 +25,7 @@ const config: Config = {
         'webkit-fill-available': '-webkit-fill-available',
       },
       screens: {
-        'sm': '440px',
+        sm: '440px',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -160,6 +160,15 @@ const config: Config = {
             lineHeight: '2.0625rem',
             fontWeight: '500',
             letterSpacing: '-0.0275rem',
+          },
+        ],
+        'navigate-queen': [
+          '0.6875rem',
+
+          {
+            lineHeight: '160%', // 1.1rem
+            fontWeight: '700', // bold
+            letterSpacing: '-0.01375rem', // letter spacing
           },
         ],
       },
