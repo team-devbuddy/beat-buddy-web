@@ -32,7 +32,7 @@ const CustomerService = () => {
       <div className="relative  h-[5.625rem] w-full">
         <Image src="/images/AdBanner.png" alt="광고 배너" layout="fill" objectFit="cover" />
         <Link href="https://www.instagram.com/beatbuddy.kr/">
-          <div className="absolute inset-0 z-10 flex cursor-pointer flex-col items-start justify-center p-[1.25rem] text-white">
+          <div className="absolute inset-0 z-2 flex cursor-pointer flex-col items-start justify-center p-[1.25rem] text-white">
             <span className="text-body3-12-medium">{currentDayMessage}</span>
             <span className="text-body2-15-bold">더 많은 정보를 얻고 싶다면?</span>
           </div>

@@ -53,7 +53,7 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
     }
   };
 
-  return <div className="fixed bottom-0 left-0 right-0 flex h-14 bg-white shadow-lg">{renderFooterContent()}</div>;
+  return <div className="fixed bottom-0 left-0 right-0 flex h-14 w-full max-w-[600px] mx-auto bg-white shadow-lg">{renderFooterContent()}</div>;
 };
 
 export default DetailFooter;

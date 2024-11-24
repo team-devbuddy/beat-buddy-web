@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link'; // Next.js Link import
 import dayjs from 'dayjs';
 
 interface NewsItem {
@@ -79,41 +80,37 @@ const NewsContents = ({ newsList }: NewsContentsProps) => {
       {/* 뉴스 목록 */}
       <div className="grid grid-cols-2 gap-4">
         {currentItems.map((news) => (
-          <div key={news.id} className="flex flex-col overflow-hidden rounded-[0.25rem]">
-            {/* 이미지 */}
-            <div
-              style={{
-                borderRadius: '0.25rem',
-                background:
-                  calculateDday(news.dateRange) === 'END'
-                    ? `linear-gradient(180deg, rgba(0, 0, 0, 0.50) 0%, rgba(0, 0, 0, 0.85) 100%), url(${news.imageUrl}) lightgray 50% / cover no-repeat`
-                    : `url(${news.imageUrl}) lightgray 50% / cover no-repeat`,
-              }}
-              className="h-[160px] w-full"></div>
+          <Link key={news.id} href={`/news/${news.id}`} passHref>
+            <div className="flex cursor-pointer flex-col overflow-hidden rounded-[0.25rem]">
+              {/* 이미지 */}
+              <div className="h-[160px] w-full rounded-[0.25rem] overflow-hidden">
+                <img src={news.imageUrl} alt={news.title} className="h-full w-full object-cover object-top" />
+              </div>
 
-            {/* 뉴스 정보 */}
-            <div className="flex flex-col p-4">
-              <div className="flex items-center">
-                <h3 className="max-w-[70%] truncate text-body1-16-bold text-white">{truncateText(news.title, 12)}</h3>
+              {/* 뉴스 정보 */}
+              <div className="flex flex-col p-4">
+                <div className="flex items-center">
+                  <h3 className="max-w-[70%] truncate text-body1-16-bold text-white">{truncateText(news.title, 12)}</h3>
+                  <span
+                    className={`ml-[0.38rem] w-[2.5rem] flex-shrink-0 rounded-xs px-[0.38rem] py-[0.13rem] text-center text-body3-12-medium ${getDdayStyle(
+                      calculateDday(news.dateRange),
+                    )}`}
+                    style={{
+                      whiteSpace: 'nowrap',
+                    }}>
+                    {calculateDday(news.dateRange)}
+                  </span>
+                </div>
                 <span
-                  className={`ml-[0.38rem] w-[2.5rem] flex-shrink-0 rounded-xs px-[0.38rem] py-[0.13rem] text-center text-body3-12-medium ${getDdayStyle(
-                    calculateDday(news.dateRange),
-                  )}`}
+                  className="text-body3-12-medium text-gray300"
                   style={{
                     whiteSpace: 'nowrap',
                   }}>
-                  {calculateDday(news.dateRange)}
+                  {news.dateRange}
                 </span>
               </div>
-              <span
-                className="text-body3-12-medium text-gray300"
-                style={{
-                  whiteSpace: 'nowrap',
-                }}>
-                {news.dateRange}
-              </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

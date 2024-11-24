@@ -52,15 +52,16 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   }
 
   // 푸터를 숨겨야 하는 경우:
-  const shouldHideFooter = pathname.includes('onBoarding') || !isAuth || pathname.includes('detail') || pathname.includes('write');
+  const shouldHideFooter = pathname.includes('onBoarding') || !isAuth || pathname.includes('detail') || pathname.includes('write')|| pathname.includes('news');
 
   return (
-    <div className="flex h-screen w-full items-center justify-center">
+    <div className="flex  h-screen w-full items-center justify-center">
       {/* 모바일 컨테이너 */}
       <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black shadow-lg">
         {/* 콘텐츠 */}
-        <div className="flex h-full w-full flex-col">{children}</div>
+        <div className="flex h-full max-w-[600px] w-full flex-col">{children}</div>
         {/* 푸터는 특정 경로 및 로그인 여부에 따라 표시 */}
+        
         {!shouldHideFooter && <NavigateFooter />}
       </div>
     </div>
