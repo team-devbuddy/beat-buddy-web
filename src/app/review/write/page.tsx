@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import ReviewWriteHeader from '@/components/units/Detail/Review/Write/ReviewWriteHeader';
 import ImageUploader from '@/components/units/Detail/Review/Write/ImageUploader';
 import ReviewTextArea from '@/components/units/Detail/Review/Write/ReviewTextArea';
@@ -9,6 +9,7 @@ import ReviewSubmitButton from '@/components/units/Detail/Review/Write/ReviewSub
 
 const ReviewWritePage = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const venueName = searchParams.get('venueName') || 'venueName';
 
   const [reviewText, setReviewText] = useState('');
@@ -45,7 +46,11 @@ const ReviewWritePage = () => {
     if (step === 2) {
       // 리뷰 제출 완료 화면
       return (
-        <div className="flex min-h-screen flex-col items-center justify-center text-center">
+        <div
+          className="mt-40 flex flex-col items-center justify-center bg-BG-black text-center"
+          onClick={() => router.back()} // 화면 어디를 클릭하든 이전 페이지로 돌아가기
+          style={{ cursor: 'pointer' }} // 클릭 가능하도록 스타일 추가
+        >
           <h2 className="text-title-24-bold text-main">리뷰가 등록되었습니다!</h2>
           <p className="mt-4 text-body2-15-medium text-gray300">{venueName}에 대한 소중한 리뷰 감사합니다.</p>
         </div>
@@ -56,7 +61,7 @@ const ReviewWritePage = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-BG-black  text-white">
+    <div className="relative min-h-screen bg-BG-black text-white">
       <ReviewWriteHeader title={venueName} currentStep={step} totalSteps={2} />
       {renderContent()}
     </div>

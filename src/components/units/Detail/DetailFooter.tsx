@@ -13,7 +13,7 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
             </Link>
             <Link
               href="/reservate"
-              className="flex flex-[6] items-center justify-center bg-main text-center text-body1-16-bold text-white">
+              className="flex flex-[6] items-center justify-center bg-main text-center text-body1-16-bold text-black">
               예약하기
             </Link>
           </>
@@ -25,7 +25,7 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
               pathname: '/review/write',
               query: { venueName }, // 클럽 이름을 쿼리로 전달
             }}
-            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-white">
+            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
             {venueName} 리뷰 작성하기
           </Link>
         );
@@ -33,7 +33,7 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
         return (
           <Link
             href="/news/write"
-            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-white">
+            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
             글 작성하기
           </Link>
         );
@@ -41,7 +41,7 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
         return (
           <Link
             href="/board/write"
-            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-white">
+            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
             {venueName} 게시판에 글쓰기
           </Link>
         );

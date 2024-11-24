@@ -20,6 +20,7 @@ interface ReviewContentsProps {
 
 const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
   const [likedReviews, setLikedReviews] = useState<{ [key: string]: boolean }>({}); // 좋아요 상태 저장
+  const [visibleReviews, setVisibleReviews] = useState(10); // 초기 표시되는 리뷰 개수
 
   // 좋아요 토글 핸들러
   const handleLikeToggle = (reviewId: string) => {
@@ -32,6 +33,14 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
   // 포토 리뷰 필터링
   const filteredReviews = isPhotoOnly ? reviews.filter((review) => review.images && review.images.length > 0) : reviews;
 
+  // 더보기 버튼 클릭 핸들러
+  const handleLoadMore = () => {
+    setVisibleReviews((prev) => prev + 10); // 추가로 10개 리뷰 표시
+  };
+
+  // 표시할 리뷰 목록
+  const reviewsToDisplay = filteredReviews.slice(0, visibleReviews);
+
   // 리뷰가 없는 경우
   if (!filteredReviews.length) {
     return (
@@ -43,11 +52,11 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
   }
 
   return (
-    <div className="space-y-6 px-4 py-4 pb-12">
-      {filteredReviews.map((review) => {
+    <div className=" px-4 py-4">
+      {reviewsToDisplay.map((review) => {
         const isLiked = likedReviews[review.id]; // 현재 리뷰의 좋아요 상태
         return (
-          <div key={review.id} className="flex flex-col space-y-3 border-b border-gray500 pb-6 last:border-none">
+          <div key={review.id} className="flex flex-col space-y-3  pb-6 last:border-none">
             {/* 유저 정보 */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -108,6 +117,17 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
           </div>
         );
       })}
+
+      {/* 더보기 버튼 */}
+      {filteredReviews.length > visibleReviews && (
+        <div className="flex justify-center ">
+          <button
+            onClick={handleLoadMore}
+            className="rounded-xs bg-gray700 px-[0.63rem] py-[0.38rem] text-body3-12-medium text-gray100 hover:bg-gray500">
+            + 더보기
+          </button>
+        </div>
+      )}
     </div>
   );
 };
