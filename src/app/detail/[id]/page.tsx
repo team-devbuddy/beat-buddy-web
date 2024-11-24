@@ -19,8 +19,10 @@ import ReviewHeader from '@/components/units/Detail/Review/ReviewHeader';
 import ReviewContents from '@/components/units/Detail/Review/ReviewContents';
 import NewsHeader from '@/components/units/Detail/News/NewsHeader';
 import NewsContents from '@/components/units/Detail/News/NewsContents';
+import BoardContents from '@/components/units/Detail/Board/BoardContents';
 import { mockReviews } from '@/lib/dummyData';
 import { mockNewsList } from '@/lib/dummyData';
+import { mockBoardData } from '@/lib/dummyData';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [isPhotoOnly, setIsPhotoOnly] = useState(false);
@@ -79,13 +81,11 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
       case 'review':
         return (
           <div className="flex h-full flex-col bg-BG-black">
-            {/* 리뷰 헤더 */}
             <ReviewHeader
               venueName={venue.englishName || ''}
               isPhotoOnly={isPhotoOnly}
               setIsPhotoOnly={setIsPhotoOnly}
             />
-            {/* 리뷰 콘텐츠 */}
             <div className="flex-grow overflow-y-auto">
               <ReviewContents reviews={mockReviews} isPhotoOnly={isPhotoOnly} />
             </div>
@@ -96,17 +96,28 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
       case 'news':
         return (
           <div className="flex h-full flex-col bg-BG-black">
-            {/* 뉴스 헤더 */}
             <NewsHeader venueName={venue.englishName || ''} />
             <div className="flex-grow overflow-y-auto">
-              <NewsContents newsList={mockNewsList} />;
+              <NewsContents newsList={mockNewsList} />
             </div>
             <CustomerService />
           </div>
         );
 
       case 'board':
-        return <div>게시판 콘텐츠</div>;
+        return (
+          <div className="flex h-full flex-col bg-BG-black">
+            <div className="flex-grow overflow-y-auto">
+              <BoardContents
+                boardData={mockBoardData}
+                filterKorName={venue.koreanName}
+                filterEngName={venue.englishName}
+              />
+            </div>
+            <CustomerService />
+          </div>
+        );
+
       default:
         return null;
     }
