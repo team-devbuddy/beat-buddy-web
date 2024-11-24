@@ -32,7 +32,10 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
       case 'news':
         return (
           <Link
-            href="/news/write"
+            href={{
+              pathname: '/news/write',
+              query: { venueName }, // 클럽 이름을 쿼리로 전달
+            }}
             className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
             글 작성하기
           </Link>
