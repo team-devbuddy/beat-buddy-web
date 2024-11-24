@@ -179,7 +179,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
           {venue.englishName} {venue.koreanName}
         </h1>
         <div className="flex w-full items-end justify-between">
-          <div className="flex w-5/6 flex-wrap gap-2">
+          <div className="flex w-4/5 flex-wrap gap-2">
             {tagList && tagList.length > 0 ? (
               tagList.map((tag: string, index: number) => {
                 const translatedTag = translateTag(tag);

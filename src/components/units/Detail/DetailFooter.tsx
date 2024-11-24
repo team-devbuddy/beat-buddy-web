@@ -1,33 +1,59 @@
+import Link from 'next/link';
+
 const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: string }) => {
   const renderFooterContent = () => {
     switch (activeTab) {
       case 'info':
         return (
           <>
-            <button className="flex-[4] bg-gray-100 text-center text-body1-16-bold text-black">조각모집</button>
-            <button className="flex-[6] bg-main text-center text-body1-16-bold text-white">예약하기</button>
+            <Link
+              href="/recruit"
+              className="flex flex-[4] items-center justify-center bg-gray-100 text-center text-body1-16-bold text-black">
+              조각모집
+            </Link>
+            <Link
+              href="/reservate"
+              className="flex flex-[6] items-center justify-center bg-main text-center text-body1-16-bold text-black">
+              예약하기
+            </Link>
           </>
         );
       case 'review':
         return (
-          <button className="w-full bg-main text-center text-body1-16-bold text-white">
+          <Link
+            href={{
+              pathname: '/review/write',
+              query: { venueName }, // 클럽 이름을 쿼리로 전달
+            }}
+            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
             {venueName} 리뷰 작성하기
-          </button>
+          </Link>
         );
       case 'news':
-        return <button className="w-full bg-main text-center text-body1-16-bold text-white">글 작성하기</button>;
+        return (
+          <Link
+            href={{
+              pathname: '/news/write',
+              query: { venueName }, // 클럽 이름을 쿼리로 전달
+            }}
+            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
+            글 작성하기
+          </Link>
+        );
       case 'board':
         return (
-          <button className="w-full bg-main text-center text-body1-16-bold text-white">
+          <Link
+            href="/board/write"
+            className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
             {venueName} 게시판에 글쓰기
-          </button>
+          </Link>
         );
       default:
         return null;
     }
   };
 
-  return <div className="fixed bottom-0 left-0 right-0 flex h-14 bg-white shadow-lg">{renderFooterContent()}</div>;
+  return <div className="fixed bottom-0 left-0 right-0 flex h-14 w-full max-w-[600px] mx-auto bg-white shadow-lg">{renderFooterContent()}</div>;
 };
 
 export default DetailFooter;

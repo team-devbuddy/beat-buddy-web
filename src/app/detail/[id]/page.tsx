@@ -15,13 +15,22 @@ import Loading from '@/components/common/skeleton/LoadingLottie';
 import DetailCategoryBar from '@/components/units/Detail/DetailCategoryBar';
 import DetailFooter from '@/components/units/Detail/DetailFooter';
 import VenueIntro from '@/components/units/Detail/VenueIntro';
+import ReviewHeader from '@/components/units/Detail/Review/ReviewHeader';
+import ReviewContents from '@/components/units/Detail/Review/ReviewContents';
+import NewsHeader from '@/components/units/Detail/News/NewsHeader';
+import NewsContents from '@/components/units/Detail/News/NewsContents';
+import BoardContents from '@/components/units/Detail/Board/BoardContents';
+import { mockReviews } from '@/lib/dummyData';
+import { mockNewsList } from '@/lib/dummyData';
+import { mockBoardData } from '@/lib/dummyData';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
+  const [isPhotoOnly, setIsPhotoOnly] = useState(false);
   const [venue, setVenue] = useState<Club | null>(null);
   const [isHeartbeat, setIsHeartbeat] = useState<boolean>(false);
   const [tagList, setTagList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<string>('info'); // 활성 탭 상태 추가
+  const [activeTab, setActiveTab] = useState<string>('info');
   const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
@@ -57,7 +66,6 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  // 활성화된 탭에 따라 콘텐츠를 조건부로 렌더링
   const renderContent = () => {
     switch (activeTab) {
       case 'info':
@@ -71,11 +79,45 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           </>
         );
       case 'review':
-        return <div>리뷰 콘텐츠</div>;
+        return (
+          <div className="flex h-full flex-col bg-BG-black">
+            <ReviewHeader
+              venueName={venue.englishName || ''}
+              isPhotoOnly={isPhotoOnly}
+              setIsPhotoOnly={setIsPhotoOnly}
+            />
+            <div className="flex-grow overflow-y-auto">
+              <ReviewContents reviews={mockReviews} isPhotoOnly={isPhotoOnly} />
+            </div>
+            <CustomerService />
+          </div>
+        );
+
       case 'news':
-        return <div>뉴스 콘텐츠</div>;
+        return (
+          <div className="flex h-full flex-col bg-BG-black">
+            <NewsHeader venueName={venue.englishName || ''} />
+            <div className="flex-grow overflow-y-auto">
+              <NewsContents newsList={mockNewsList} />
+            </div>
+            <CustomerService />
+          </div>
+        );
+
       case 'board':
-        return <div>게시판 콘텐츠</div>;
+        return (
+          <div className="flex h-full flex-col bg-BG-black">
+            <div className="flex-grow overflow-y-auto">
+              <BoardContents
+                boardData={mockBoardData}
+                filterKorName={venue.koreanName}
+                filterEngName={venue.englishName}
+              />
+            </div>
+            <CustomerService />
+          </div>
+        );
+
       default:
         return null;
     }
@@ -85,16 +127,9 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-BG-black text-white">
-      {/* 프리뷰 섹션 */}
       <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
-
-      {/* 카테고리 바 */}
       <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      {/* 콘텐츠 섹션 */}
       <div className="flex-grow">{renderContent()}</div>
-
-      {/* 푸터 */}
       <DetailFooter activeTab={activeTab} venueName={venueName} />
     </div>
   );
