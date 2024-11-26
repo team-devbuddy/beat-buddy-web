@@ -116,18 +116,18 @@ const BoardContents = ({ boardData, filterKorName, filterEngName }: BoardContent
                         animate={{ opacity: 1, translateY: 0 }}
                         exit={{ opacity: 0, translateY: -10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute right-0 top-6 mt-4 w-[8rem] rounded-md bg-gray700 p-2 shadow-lg">
+                        className="absolute right-0 top-6 mt-4 w-[5.5rem] rounded-xs bg-gray700 shadow-lg">
                         {item.isAuthor ? (
                           <>
-                            <button className="mb-1 w-full px-4 py-2 text-left text-gray200 hover:text-main focus:text-main">
+                            <button className="w-full px-5 py-2 text-center text-body3-12-medium text-gray200 hover:text-main focus:text-main">
                               수정하기
                             </button>
-                            <button className="text-red500 hover:bg-red700 w-full px-4 py-2 text-left text-gray200 hover:text-main focus:text-main">
+                            <button className="text-red500 hover:bg-red700 w-full px-5 py-2 text-center text-body3-12-medium text-gray200 hover:text-main focus:text-main">
                               삭제하기
                             </button>
                           </>
                         ) : (
-                          <button className="w-full px-4 py-2 text-left text-gray200 hover:text-main focus:text-main">
+                          <button className="w-full px-5 py-2 text-center text-body3-12-medium text-gray200 hover:text-main focus:text-main">
                             신고하기
                           </button>
                         )}
