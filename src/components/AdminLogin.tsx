@@ -13,12 +13,12 @@ export default function AdminLogin() {
   const [access, setAccess] = useRecoilState(accessTokenState);
 
   const onClickSubmit = async () => {
-    const response = await fetch('https://api.beatbuddy.world/login', {
+    const response = await fetch('https://api.beatbuddy.world/admin/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: id,
+      body: JSON.stringify({ id }),
       // credentials: 'include',
     });
     if (response.ok) {
