@@ -19,6 +19,50 @@ const NewsForm: React.FC<NewsFormProps> = ({ formData, onFormChange }) => {
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
   const [remainingDays, setRemainingDays] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<string[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const fetchSearchResults = async (keyword: string) => {
+    if (!keyword) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsFetching(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          keyword: [keyword],
+        }),
+      });
+      const data = await response.json();
+      if (data && Array.isArray(data.results)) {
+        setSearchResults(data.results.map((result: any) => result.name)); // 결과에서 장소 이름만 추출
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      setSearchResults([]);
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const keyword = e.target.value;
+    onFormChange('location', keyword);
+    fetchSearchResults(keyword); // 장소 검색 실행
+  };
+
+  const handleSearchResultClick = (result: string) => {
+    onFormChange('location', result); // 선택한 장소로 값 설정
+    setSearchResults([]); // 검색 결과 초기화
+  };
 
   const generateYearOptions = () => {
     const currentYear = new Date().getFullYear();
@@ -347,13 +391,30 @@ const NewsForm: React.FC<NewsFormProps> = ({ formData, onFormChange }) => {
         <input
           type="text"
           value={formData.location}
-          onChange={(e) => onFormChange('location', e.target.value)}
+          onChange={handleLocationChange}
           placeholder="장소 정보를 입력해주세요."
           className={`w-full rounded-xs border bg-gray500 px-4 py-3 text-body2-15-medium  placeholder-gray300 outline-none ${getBorderStyle(
             formData.location,
           )} ${getTextColor(formData.location)}`}
         />
+      {/* 검색 결과 */}
+      {isFetching && <div className="mt-2 text-gray300">검색 중...</div>}
+        {!isFetching && searchResults.length > 0 && (
+          <ul className="mt-2 max-h-40 overflow-y-auto rounded-xs border bg-gray500 shadow-lg">
+            {searchResults.map((result, index) => (
+              <li
+                key={index}
+                className="cursor-pointer px-4 py-2 hover:bg-gray400"
+                onClick={() => handleSearchResultClick(result)}
+              >
+                {result}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
+
+      
 
       {/* 소개 */}
       <div className="pb-14">
