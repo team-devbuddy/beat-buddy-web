@@ -31,6 +31,13 @@ const BoardWriteHeader = ({ title, currentStep, totalSteps }: BoardWriteHeaderPr
           ))}
         </div>
       </div>
+
+      {/* 제목 영역 */}
+      <h1 className="mt-4 text-left text-title-24-bold text-white">
+        {title}에
+        <br />
+        새로운 글 게시하기
+      </h1>
     </header>
   );
 };

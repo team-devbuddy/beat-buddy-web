@@ -10,12 +10,15 @@ interface WriteDropdownProps {
   px?: string; // padding-x 값
   py?: string; // padding-y 값
   placeholder?: string; // 선택되지 않았을 때 표시될 기본 값
+  disabled?: boolean;
+  onTypeChange?: (value: string) => void;
 }
 
 const WriteDropdown: React.FC<WriteDropdownProps> = ({
   value,
   options,
   onChange,
+  onTypeChange,
   px = 'px-4',
   py = 'py-3',
   placeholder = '00',

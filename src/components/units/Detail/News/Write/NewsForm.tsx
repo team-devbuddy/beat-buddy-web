@@ -11,6 +11,7 @@ interface NewsFormProps {
     description: string;
   };
   onFormChange: (field: string, value: string | { year: string; month: string; day: string }) => void;
+  venueEngName: string;
 }
 
 const NewsForm: React.FC<NewsFormProps> = ({ formData, onFormChange }) => {

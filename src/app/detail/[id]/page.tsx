@@ -124,13 +124,16 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   };
 
   const venueName = `${venue.englishName || ''}`;
+  const venueId = params.id;
+  const venueLocation = venue.region || '';
+  const venueKorName = venue.koreanName || '';
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-BG-black text-white">
       <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
       <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-grow">{renderContent()}</div>
-      <DetailFooter activeTab={activeTab} venueName={venueName} />
+      <DetailFooter activeTab={activeTab} venueEngName={venueName} venueId={venueId} venueLocation={venueLocation} venueKorName={venueKorName} />
     </div>
   );
 };

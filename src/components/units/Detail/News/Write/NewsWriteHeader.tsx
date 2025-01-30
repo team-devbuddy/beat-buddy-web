@@ -4,12 +4,12 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 interface NewsWriteHeaderProps {
-  title: string;
+  venueEngName: string;
   currentStep: number;
   totalSteps: number;
 }
 
-const NewsWriteHeader = ({ title, currentStep, totalSteps }: NewsWriteHeaderProps) => {
+const NewsWriteHeader = ({ venueEngName, currentStep, totalSteps }: NewsWriteHeaderProps) => {
   const router = useRouter();
 
   const handleBack = () => {
@@ -35,7 +35,7 @@ const NewsWriteHeader = ({ title, currentStep, totalSteps }: NewsWriteHeaderProp
 
       {/* 제목 영역 */}
       <h1 className="mt-4 text-left text-title-24-bold text-white">
-        {title}의
+        {venueEngName}의
         <br />
         새로운 소식을 전해주세요!
       </h1>

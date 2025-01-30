@@ -1,6 +1,9 @@
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
-const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: string }) => {
+const DetailFooter = ({ activeTab, venueEngName, venueId, venueLocation, venueKorName }: { activeTab: string; venueEngName: string; venueId: string; venueLocation: string; venueKorName: string }) => {
+  const params = useParams();
+
   const renderFooterContent = () => {
     switch (activeTab) {
       case 'info':
@@ -23,10 +26,10 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
           <Link
             href={{
               pathname: '/review/write',
-              query: { venueName }, // 클럽 이름을 쿼리로 전달
+              query: { venueEngName }, // 클럽 이름을 쿼리로 전달
             }}
             className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
-            {venueName} 리뷰 작성하기
+            {venueEngName} 리뷰 작성하기
           </Link>
         );
       case 'news':
@@ -34,7 +37,7 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
           <Link
             href={{
               pathname: '/news/write',
-              query: { venueName }, // 클럽 이름을 쿼리로 전달
+              query: { venueEngName }, // 클럽 이름을 쿼리로 전달
             }}
             className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
             글 작성하기
@@ -43,9 +46,16 @@ const DetailFooter = ({ activeTab, venueName }: { activeTab: string; venueName: 
       case 'board':
         return (
           <Link
-            href="/board/write"
+            href={{
+              pathname: '/board/write',
+              query: { 
+                venueEngName,
+                venueId,
+                venueLocation
+              }
+            }}
             className="flex w-full items-center justify-center bg-main text-center text-body1-16-bold text-black">
-            {venueName} 게시판에 글쓰기
+            {venueEngName} 게시판에 글쓰기
           </Link>
         );
       default:
