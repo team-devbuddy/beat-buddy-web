@@ -18,6 +18,15 @@ interface ReviewContentsProps {
   isPhotoOnly: boolean; // 포토 리뷰만 보기 여부
 }
 
+const EmptyReview = () => {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <img src="/icons/grayLogo.svg" alt="BeatBuddy Logo" className="mb-6 h-16 w-16" />
+      <p className="text-body2-15-medium text-gray300">아직 등록된 리뷰가 없습니다.</p>
+    </div>
+  );
+};
+
 const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
   const [likedReviews, setLikedReviews] = useState<{ [key: string]: boolean }>({}); // 좋아요 상태 저장
   const [visibleReviews, setVisibleReviews] = useState(10); // 초기 표시되는 리뷰 개수
@@ -41,14 +50,8 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
   // 표시할 리뷰 목록
   const reviewsToDisplay = filteredReviews.slice(0, visibleReviews);
 
-  // 리뷰가 없는 경우
-  if (!filteredReviews.length) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-gray-300">
-        <p className="text-body1-16-bold">아직 작성된 리뷰가 없습니다.</p>
-        <p className="mt-2 text-body2-15-medium">리뷰를 작성해 주세요!</p>
-      </div>
-    );
+  if (reviews.length === 0) {
+    return <EmptyReview />;
   }
 
   return (

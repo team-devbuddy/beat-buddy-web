@@ -50,7 +50,20 @@ const sortNewsByDday = (newsList: NewsItem[]) => {
   });
 };
 
+const EmptyNews = () => {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <img src="/icons/grayLogo.svg" alt="BeatBuddy Logo" className="mb-6 h-16 w-16" />
+      <p className="text-body2-15-medium text-gray300">아직 등록된 뉴스가 없습니다.</p>
+    </div>
+  );
+};
+
 const NewsContents = ({ newsList }: NewsContentsProps) => {
+  if (newsList.length === 0) {
+    return <EmptyNews />;
+  }
+
   const sortedNewsList = sortNewsByDday(newsList);
 
   const itemsPerPage = 6;

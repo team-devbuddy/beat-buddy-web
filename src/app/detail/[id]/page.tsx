@@ -87,7 +87,10 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
               setIsPhotoOnly={setIsPhotoOnly}
             />
             <div className="flex-grow overflow-y-auto">
-              <ReviewContents reviews={mockReviews} isPhotoOnly={isPhotoOnly} />
+              <ReviewContents 
+                reviews={mockReviews.filter(review => review.venueId === Number(params.id))} 
+                isPhotoOnly={isPhotoOnly} 
+              />
             </div>
             <CustomerService />
           </div>
@@ -98,7 +101,9 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           <div className="flex h-full flex-col bg-BG-black">
             <NewsHeader venueName={venue.englishName || ''} />
             <div className="flex-grow overflow-y-auto">
-              <NewsContents newsList={mockNewsList} />
+              <NewsContents 
+                newsList={mockNewsList.filter(news => news.venueId === Number(params.id))} 
+              />
             </div>
             <CustomerService />
           </div>
@@ -109,7 +114,9 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           <div className="flex h-full flex-col bg-BG-black">
             <div className="flex-grow overflow-y-auto">
               <BoardContents
-                boardData={mockBoardData}
+                boardData={mockBoardData.filter(post => 
+                  post.boardType === '조각 게시판' ? post.venueId === Number(params.id) : true
+                )}
                 filterKorName={venue.koreanName}
                 filterEngName={venue.englishName}
               />

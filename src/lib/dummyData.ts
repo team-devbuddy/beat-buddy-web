@@ -29,6 +29,7 @@ export const mockReviews = [
     content: '꾸준히 재밌어요. 친구들이랑 놀기 좋아요!',
     likeCount: 12,
     images: ['/images/Review1.png', '/images/Review2.png'],
+    venueId: 70  // FREAX
   },
   {
     id: '2',
@@ -181,6 +182,7 @@ export const mockNewsList = [
 
 ※ 원활한 추가 티켓 오픈을 위해 2024년 8월 14일(수) 3:00PM~5:59:59PM까지 예매가 일시 중지됩니다. 관객 여러분의 양해 부탁드립니다.`,
     location: '서울특별시 마포구 와우산로 17길',
+    venueId: 53  // Arga
   },
   {
     id: '2',
@@ -361,11 +363,12 @@ export const mockBoardData = [
     totalParticipants: 6,
     englishName: 'FREAX',
     koreanName: '프릭스',
-    isAuthor: true, // 작성자 본인 여부
+    isAuthor: true,
+    venueId: 70
   },
   {
     id: '2',
-    author: '작성자 닉네임',
+    author: '아르가ㅏㅏㅏ',
     timestamp: '2024-05-28 05:50',
     venue: 'Arga',
     status: '조각 모집 중',
@@ -380,6 +383,7 @@ export const mockBoardData = [
     englishName: 'Arga',
     koreanName: '아르가',
     isAuthor: false,
+    venueId: 53
   },
   {
     id: '3',
@@ -393,7 +397,7 @@ export const mockBoardData = [
     boardType: '자유 게시판',
     englishName: '',
     koreanName: '',
-    isAuthor: true,
+    isAuthor: true
   },
   {
     id: '4',
@@ -412,6 +416,8 @@ export const mockBoardData = [
     englishName: 'FREAX',
     koreanName: '프릭스',
     isAuthor: false,
+    venueId: 70
   },
 ];
+
 

@@ -23,6 +23,7 @@ interface BoardItem {
   englishName?: string; // 영어 이름
   koreanName?: string; // 한글 이름
   isAuthor: boolean; // 작성자 본인 여부
+  venueId?: number;  // 선택적 필드로 변경
 }
 
 interface BoardContentsProps {
@@ -30,6 +31,15 @@ interface BoardContentsProps {
   filterKorName: string; // 필터 조건 (검색 키워드)
   filterEngName: string; // 필터 조건 (검색 키워드)
 }
+
+const EmptyBoard = () => {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <img src="/icons/grayLogo.svg" alt="BeatBuddy Logo" className="mb-6 h-16 w-16" />
+      <p className="text-body2-15-medium text-gray300">아직 등록된 게시글이 없습니다.</p>
+    </div>
+  );
+};
 
 const BoardContents = ({ boardData, filterKorName, filterEngName }: BoardContentsProps) => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -51,6 +61,10 @@ const BoardContents = ({ boardData, filterKorName, filterEngName }: BoardContent
       // 글 내용 필터
     );
   });
+
+  if (filteredData.length === 0) {
+    return <EmptyBoard />;
+  }
 
   return (
     <div className="bg-BG-black text-white">
