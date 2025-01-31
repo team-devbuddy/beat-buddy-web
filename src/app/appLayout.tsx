@@ -52,7 +52,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   }
 
   // 푸터를 숨겨야 하는 경우:
-  const shouldHideFooter = pathname.includes('onBoarding') || !isAuth || pathname.includes('detail') || pathname.includes('write')|| pathname.includes('news');
+  const shouldHideFooter = pathname.includes('onBoarding') || !isAuth || pathname.includes('detail') || pathname.includes('write')|| pathname.includes('news')|| pathname.includes('bbp-list')|| pathname.includes('bbp-detail')|| pathname.includes('board');
 
   return (
     <div className="flex  h-screen w-full items-center justify-center">
