@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useRouter } from 'next/navigation';
 
 interface BoardWriteHeaderProps {
@@ -8,7 +9,7 @@ interface BoardWriteHeaderProps {
   totalSteps: number;
 }
 
-const BoardWriteHeader = ({ title, currentStep, totalSteps }: BoardWriteHeaderProps) => {
+const BoardWriteHeader = ({ title = '', currentStep, totalSteps }: BoardWriteHeaderProps) => {
   const router = useRouter();
 
   const handleBack = () => {

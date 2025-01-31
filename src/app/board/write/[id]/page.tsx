@@ -27,6 +27,7 @@ const BoardWritePage = () => {
     content: '',
     location: '',
     venue: '',
+    isAnonymous: false,
   });
   const [type, setType] = useState('free'); // 게시판 유형 상태 관리 (default: 자유 게시판)
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
@@ -53,23 +54,43 @@ const BoardWritePage = () => {
 
   // 게시글 제출 핸들러
   const handleSubmit = async () => {
+    if (!accessToken) {
+      alert("로그인이 필요합니다.");
+      router.push("/login");
+      return;
+    }
+
     try {
-      await createPost(type, {
-        type,
+      const postData = {
+        type: type === 'piece' ? 'piece' : 'free',
         title: formData.title,
         content: formData.content,
         images: uploadedImages,
-        venueId,
-      },accessToken);
-      setStep(2); // 완료 화면으로 이동
+        venueId: Number(venueId),
+        isAnonymous: formData.isAnonymous,
+        ...(type === 'piece' && {
+          minParticipants: Number(formData.minParticipants),
+          maxParticipants: Number(formData.maxParticipants),
+          cost: Number(formData.cost.replace(/,/g, '')),
+          date: formData.date
+        })
+      };
+
+      await createPost(type, postData, accessToken);
+      setStep(2);
     } catch (error) {
-      console.error('게시글 등록 실패:', error);
-      alert('게시글 등록 중 오류가 발생했습니다.');
+      console.error("게시글 등록 실패:", error);
+      alert("게시글 등록 중 오류가 발생했습니다.");
     }
   };
+  
 
   // 폼 유효성 검사
   const isFormValid = () => {
+    if (type === 'free') {
+      return formData.title.trim() && formData.content.trim();
+    }
+    
     return (
       formData.title.trim() &&
       formData.minParticipants.trim() &&
@@ -90,6 +111,8 @@ const BoardWritePage = () => {
             formData={formData}
             onFormChange={handleFormChange}
             onTypeChange={handleTypeChange} // 게시판 유형 전달
+            uploadedImages={uploadedImages}
+            setUploadedImages={setUploadedImages}
           />
           <BoardSubmitButton
             onClick={handleSubmit}
