@@ -1,9 +1,12 @@
 'use client';
 
-import { mockComments, mockBoardData } from '@/lib/dummyData';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { createComment, getComments, deleteComment } from '@/lib/actions/detail-controller/board/replyWriteUtils';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
+import { GetNickname } from '@/lib/action';
 
 interface ReplyProps {
   postId: string;
@@ -21,6 +24,8 @@ interface Comment {
   content: string;
   timestamp: string;
   parentId: string | null;
+  isAnonymous: boolean;
+  isAuthor?: boolean;
 }
 
 interface CommentWithReplies extends Comment {
@@ -30,36 +35,165 @@ interface CommentWithReplies extends Comment {
 const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyProps) => {
   const [showJoinBar, setShowJoinBar] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
+  const [commentContent, setCommentContent] = useState('');
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [localComments, setLocalComments] = useState<CommentWithReplies[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const accessToken = useRecoilValue(accessTokenState);
+  const [postData, setPostData] = useState<any>(null);
   
-  // 현재 게시글의 댓글들을 가져오고 대댓글 구조로 정리
-  const comments = useMemo(() => {
-    const postComments = mockComments.filter(comment => comment.postId === postId);
-    const mainComments = postComments.filter(comment => !comment.parentId);
+  // 게시글 정보 가져오기
+  useEffect(() => {
+    const getPostData = async () => {
+      if (!postId || !accessToken) return;
+      
+      try {
+        const post = await fetchPostDetail(postId, accessToken);
+        if (post) {
+          setPostData(post);
+        }
+      } catch (error) {
+        console.error('게시글 정보 가져오기 실패:', error);
+      }
+    };
     
-    return mainComments.map(comment => ({
-      ...comment,
-      replies: postComments.filter(reply => reply.parentId === comment.id)
-    }));
-  }, [postId]);
+    getPostData();
+  }, [postId, accessToken]);
+  
+  // postAuthorId 수정
+  const postAuthorId = postData?.memberId?.toString() || '';
 
-  // 게시글 작성자 ID 가져오기
-  const post = mockBoardData.find(p => p.id === postId);
-  const postAuthorId = post?.authorId || '';  // 기본값 빈 문자열 설정
+  // 현재 유저 정보 가져오기 - GetNickname 사용
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      if (!accessToken) return;
+      
+      try {
+        const response = await GetNickname(accessToken);
+        const userInfo = await response.json();
+        setCurrentUser(userInfo);
+      } catch (error) {
+        console.error('유저 정보 가져오기 실패:', error);
+      }
+    };
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const scrollTop = e.currentTarget.scrollTop;
-    const threshold = 20;  // 임계값을 20px로 낮춤
-    onScroll(scrollTop > threshold);
+    fetchCurrentUser();
+  }, [accessToken]);
+
+  // 댓글 컨테이너 ref 선언
+  const commentContainerRef = useRef<HTMLDivElement>(null);
+  const shouldScrollRef = useRef(false);
+
+  // localComments가 변경될 때마다 스크롤 처리
+  useEffect(() => {
+    if (shouldScrollRef.current && commentContainerRef.current) {
+      commentContainerRef.current.scrollTop = commentContainerRef.current.scrollHeight;
+      shouldScrollRef.current = false;
+    }
+  }, [localComments]);
+
+  // 모든 댓글을 로드하는 함수
+  const loadAllComments = async () => {
+    if (!accessToken || !postId) return;
+
+    try {
+      let pageNum = 0;
+      let allComments: Comment[] = [];
+      let hasMoreComments = true;
+
+      while (hasMoreComments) {
+        const response: CommentResponse = await getComments(postId, pageNum, 10, accessToken);
+        
+        const newComments = response.content.map(comment => ({
+          id: String(comment.id),
+          postId: postId,
+          authorId: String(comment.member?.memberId || ''),
+          author: comment.isAnonymous 
+            ? '익명' 
+            : (comment.memberName || '알 수 없음'),
+          profileImage: comment.member?.profileImage || '/icons/default-avatar.svg',
+          content: comment.content,
+          timestamp: new Date(comment.createdAt).toLocaleString(),
+          parentId: comment.replyId === 0 ? null : String(comment.replyId),
+          isAnonymous: comment.isAnonymous,
+          isAuthor: currentUser?.memberId === comment.member?.memberId
+        }));
+
+        allComments = [...allComments, ...newComments];
+        hasMoreComments = response.content.length === 10;
+        pageNum++;
+      }
+
+      setLocalComments(allComments);
+      setHasMore(false);
+      setPage(pageNum);
+      
+      // 스크롤 처리는 여기서 제거 (handleSubmitComment에서 직접 호출)
+    } catch (error) {
+      console.error('전체 댓글 로드 실패:', error);
+    }
   };
 
+  // 댓글 목록 불러오기
+  const fetchComments = async (pageNum: number) => {
+    if (!accessToken || !postId) return;
+
+    try {
+      const response: CommentResponse = await getComments(postId, pageNum, 10, accessToken);
+      
+      const newComments = response.content.map(comment => ({
+        id: String(comment.id),
+        postId: postId,
+        authorId: String(comment.member?.memberId || ''),
+        author: comment.isAnonymous 
+          ? '익명' 
+          : (comment.memberName || '알 수 없음'),
+        profileImage: comment.member?.profileImage || '/icons/default-avatar.svg',
+        content: comment.content,
+        timestamp: new Date(comment.createdAt).toLocaleString(),
+        parentId: comment.replyId === 0 ? null : String(comment.replyId),
+        isAnonymous: comment.isAnonymous,
+        isAuthor: currentUser?.memberId === comment.member?.memberId
+      }));
+
+      if (pageNum === 0) {
+        setLocalComments(newComments);
+      } else {
+        setLocalComments(prev => [...prev, ...newComments]);
+      }
+      
+      setHasMore(response.content.length === 10);
+      setPage(pageNum + 1);
+    } catch (error) {
+      console.error('댓글 목록 불러오기 실패:', error);
+    }
+  };
+
+  // 초기 로딩
+  useEffect(() => {
+    setPage(0);
+    fetchComments(0);
+  }, [postId, accessToken]);
+
   const handleDeleteComment = async (commentId: string) => {
-    if (!currentUserId) {
+    if (!currentUserId || !accessToken) {
       alert('로그인이 필요합니다.');
       return;
     }
-    // TODO: API 호출하여 댓글 삭제
-    console.log('댓글 삭제:', commentId);
-    setSelectedCommentId(null);
+
+    try {
+      await deleteComment(postId, Number(commentId), accessToken);
+      // 로컬 상태에서 댓글 제거
+      setLocalComments(prevComments => 
+        prevComments.filter(comment => comment.id !== commentId)
+      );
+      setSelectedCommentId(null);
+    } catch (error) {
+      console.error('댓글 삭제 실패:', error);
+      alert('댓글 삭제에 실패했습니다.');
+    }
   };
 
   const handleReportComment = async (commentId: string) => {
@@ -72,21 +206,61 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
     setSelectedCommentId(null);
   };
 
+  const handleSubmitComment = async () => {
+    if (!accessToken) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    if (!commentContent.trim()) {
+      alert('댓글 내용을 입력해주세요.');
+      return;
+    }
+
+    try {
+      // 새 댓글 작성
+      await createComment(
+        postId, 
+        commentContent, 
+        isAnonymous, 
+        accessToken
+      );
+
+      // 입력 필드 초기화
+      setCommentContent('');
+      setIsAnonymous(false);
+
+      // 스크롤 플래그 설정
+      shouldScrollRef.current = true;
+      
+      // 전체 댓글 다시 로드
+      await loadAllComments();
+
+    } catch (error) {
+      console.error('댓글 작성 실패:', error);
+      alert('댓글 작성에 실패했습니다.');
+    }
+  };
+
   return (
-    <div className="flex flex-1 flex-col border-t border-gray500">
-      <div className="flex-1 overflow-y-auto pb-[4.5rem] scroll-container" onScroll={handleScroll}>
+    <div className="flex flex-1 flex-col border-t bg-BG-black border-gray500">
+      <div 
+        ref={commentContainerRef}
+        className="flex-1 overflow-y-auto pb-[4.5rem]"
+      >
         <div className="">
-          {comments.map((comment) => (
-            <div key={comment.id} className=" p-4">
+          {localComments.map((comment) => (
+            <div key={comment.id} className="p-4">
               {/* 메인 댓글 */}
               <CommentItem 
                 comment={comment}
-                postAuthorId={postAuthorId}
+                postAuthorId={postId}
                 selectedId={selectedCommentId}
                 onSelect={setSelectedCommentId}
                 onDelete={handleDeleteComment}
                 onReport={handleReportComment}
-                currentUserId={currentUserId}
+                currentUserId={currentUser?.memberId}
+                isAuthor={comment.isAuthor}
               />
               
               {/* 대댓글 목록 */}
@@ -95,7 +269,7 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
                   {comment.replies.map((reply) => (
                     <div key={reply.id} className="flex items-start justify-between w-full">
                       <div className="flex items-start w-full">
-                        <div className="w-4 mr-3 ">
+                        <div className="w-4 mr-3">
                           <img 
                             src="/icons/arrow-curve-left-right.svg" 
                             alt="reply" 
@@ -106,13 +280,14 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
                           <CommentItem 
                             key={reply.id}
                             comment={reply}
-                            postAuthorId={postAuthorId}
+                            postAuthorId={postId}
                             selectedId={selectedCommentId}
                             onSelect={setSelectedCommentId}
                             onDelete={handleDeleteComment}
                             onReport={handleReportComment}
-                            currentUserId={currentUserId}
+                            currentUserId={currentUser?.memberId}
                             isReply
+                            isAuthor={reply.isAuthor}
                           />
                         </div>
                       </div>
@@ -122,6 +297,18 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
               )}
             </div>
           ))}
+          
+          {/* 더보기 버튼 */}
+          {hasMore && (
+            <div className="flex justify-center p-4">
+              <button 
+                onClick={() => fetchComments(page)}
+                className="px-4 py-2 bg-gray500 text-gray100 rounded-md hover:bg-gray600 transition-colors"
+              >
+                댓글 더보기
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -131,15 +318,34 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
         initial={{ y: 0 }}
         animate={{ y: 0 }}
       >
-        <div className="flex w-full items-center">
-          <input 
-            type="text"
-            placeholder="댓글을 입력해주세요." 
-            className="flex-1 bg-transparent text-body2-15-medium text-gray100 px-4 py-3 placeholder-gray300 focus:outline-none"
-          />
-          <button className="h-full bg-main text-white px-4 py-3 text-body2-15-medium">
-            등록
-          </button>
+        <div className="flex flex-col w-full">
+          <div className="flex items-center px-4 py-2 border-b border-gray400">
+            <label className="flex items-center space-x-2 text-gray200">
+              <input
+                type="checkbox"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+                className="form-checkbox h-4 w-4 text-main rounded border-gray300"
+              />
+              <span className="text-body3-12-medium">익명으로 작성</span>
+            </label>
+          </div>
+          <div className="flex w-full items-center">
+            <input 
+              type="text"
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+              placeholder="댓글을 입력해주세요." 
+              className="flex-1 bg-transparent text-body2-15-medium text-gray100 px-4 py-3 placeholder-gray300 focus:outline-none"
+            />
+            <button 
+              onClick={handleSubmitComment}
+              disabled={!commentContent.trim() || !accessToken}
+              className="h-full bg-main text-white px-4 py-3 text-body2-15-medium disabled:opacity-50"
+            >
+              등록
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -155,6 +361,7 @@ interface CommentItemProps {
   onReport: (id: string) => void;
   currentUserId?: string;
   isReply?: boolean;
+  isAuthor?: boolean;
 }
 
 interface CommentDropdownProps {
@@ -168,8 +375,8 @@ interface CommentDropdownProps {
 }
 
 const CommentDropdown = ({ comment, postAuthorId, currentUserId, selectedId, onSelect, onDelete, onReport }: CommentDropdownProps) => {
-  // 본인이 작성한 댓글인 경우에만 삭제 가능
-  const isOwnComment = currentUserId && comment.authorId === currentUserId;
+  // 본인이 작성한 댓글인지 확인
+  const isOwnComment = currentUserId && String(comment.authorId) === String(currentUserId);
 
   return (
     <div className="relative">
@@ -197,7 +404,7 @@ const CommentDropdown = ({ comment, postAuthorId, currentUserId, selectedId, onS
               }}
             />
 
-            {/* 드롭다운 메뉴 */}
+            {/* 드롭다운 메뉴 - 본인 댓글이면 삭제하기, 아니면 신고하기 */}
             <motion.div
               initial={{ opacity: 0, translateY: -10 }}
               animate={{ opacity: 1, translateY: 0 }}
@@ -205,21 +412,14 @@ const CommentDropdown = ({ comment, postAuthorId, currentUserId, selectedId, onS
               transition={{ duration: 0.2 }}
               className="absolute right-0 top-6 mt-4 w-[5.5rem] rounded-xs bg-gray700 shadow-lg z-20"
             >
-              {isOwnComment ? (
-                <button 
-                  onClick={() => onDelete(comment.id)}
-                  className="w-full px-5 py-2 text-center text-body3-12-medium text-red500 hover:brightness-110"
-                >
-                  삭제하기
-                </button>
-              ) : (
-                <button 
-                  onClick={() => onReport(comment.id)}
-                  className="w-full px-5 py-2 text-center text-body3-12-medium text-gray200 hover:text-main"
-                >
-                  신고하기
-                </button>
-              )}
+              <button 
+                onClick={() => isOwnComment ? onDelete(comment.id) : onReport(comment.id)}
+                className={`w-full px-5 py-2 text-center text-body3-12-medium ${
+                  isOwnComment ? 'text-red500 hover:brightness-110' : 'text-gray200 hover:text-main'
+                }`}
+              >
+                {isOwnComment ? '삭제하기' : '신고하기'}
+              </button>
             </motion.div>
           </>
         )}
@@ -236,28 +436,36 @@ const CommentItem = ({
   onDelete, 
   onReport,
   currentUserId,
-  isReply = false 
+  isReply = false,
+  isAuthor = false
 }: CommentItemProps) => {
-  // 게시글 작성자인지 확인
-  const isPostAuthor = comment.authorId === postAuthorId;
-  // 댓글 작성자 본인인지 확인
-  const isCommentAuthor = comment.authorId === currentUserId;
+  // 게시글 작성자와 댓글 작성자 비교
+  const isPostAuthor = postAuthorId && comment.authorId === postAuthorId;
+  const isCommentAuthor = currentUserId && comment.authorId === currentUserId;
 
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-start space-x-2">
         <img 
-          src={comment.profileImage} 
+          src={comment.isAnonymous ? '/icons/default-avatar.svg' : comment.profileImage} 
           alt="Profile" 
           className="h-8 w-8 rounded-full" 
         />
         <div>
           <div className="flex items-center space-x-2">
-            <span className={`text-body3-12-bold ${isPostAuthor ? 'text-main' : ''}`}>
+            <span className={`text-body3-12-bold ${
+              isPostAuthor ? 'text-main' : 
+              isCommentAuthor ? 'text-sub' : ''
+            }`}>
               {comment.author}
               {isPostAuthor && (
                 <span className="ml-1 text-body3-12-bold text-main">
                   (작성자)
+                </span>
+              )}
+              {isCommentAuthor && !isPostAuthor && (
+                <span className="ml-1 text-body3-12-bold text-sub">
+                  (내 댓글)
                 </span>
               )}
             </span>
@@ -282,6 +490,47 @@ const CommentItem = ({
       />
     </div>
   );
+};
+
+interface CommentAuthor {
+  memberId: number;
+  nickname?: string;
+  profileImage?: string;
+}
+
+interface CommentResponse {
+  content: Array<{
+    id: number;
+    content: string;
+    isAnonymous: boolean;
+    replyId: number;
+    memberName: string;
+    likes: number;
+    createdAt: string;
+    member?: CommentAuthor;
+  }>;
+}
+
+// 서버에서 게시글 정보를 가져오는 함수 추가
+const fetchPostDetail = async (postId: string, accessToken: string) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/post/piece/${postId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access': `Bearer ${accessToken}`,
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`게시글 정보 가져오기 실패: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('게시글 정보 가져오기 실패:', error);
+    return null;
+  }
 };
 
 export default Reply; 

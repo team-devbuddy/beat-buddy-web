@@ -15,6 +15,7 @@ const BoardWritePage = () => {
   const venueEngName = searchParams.get('venueEngName') || 'venueEngName';
   const venueLocation = searchParams.get('venueLocation') || '';
   const venueId = Number(searchParams.get('venueId')) || 0;
+  const urlType = searchParams.get('type'); // URL에서 type 파라미터 가져오기
 
   const accessToken = useRecoilValue(accessTokenState);
   // 폼 데이터와 게시판 유형
@@ -29,7 +30,11 @@ const BoardWritePage = () => {
     venue: '',
     isAnonymous: false,
   });
-  const [type, setType] = useState('free'); // 게시판 유형 상태 관리 (default: 자유 게시판)
+  // 초기 타입을 URL 파라미터에서 가져온 값으로 설정
+  const [type, setType] = useState(() => {
+    // URL type이 'piece'이거나 조각게시판인 경우 모두 'piece'로 설정
+    return urlType === 'piece' || urlType === '조각 게시판' ? 'piece' : 'free';
+  });
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [step, setStep] = useState(1); // Step 상태 관리 (1: 작성 중, 2: 완료 화면)
 
@@ -49,7 +54,7 @@ const BoardWritePage = () => {
 
   // 게시판 유형 업데이트 핸들러
   const handleTypeChange = (selectedType: string) => {
-    setType(selectedType); // 게시판 유형 업데이트
+    setType(selectedType === '조각 게시판' || selectedType === 'piece' ? 'piece' : 'free');
   };
 
   // 게시글 제출 핸들러

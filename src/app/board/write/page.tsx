@@ -129,9 +129,16 @@ const BoardWritePage = () => {
           style={{ cursor: 'pointer' }}
         >
           <h2 className="text-title-24-bold text-main">게시글이 등록되었습니다!</h2>
-          <p className="mt-4 text-body2-15-medium text-gray300">
-            {venueEngName}에 대한 소중한 게시글을 공유해주셔서 감사합니다.
-          </p>
+          {venueEngName !== 'venueEngName' ? (
+            <p className="mt-4 text-body2-15-medium text-gray300">
+              {venueEngName}에 대한 소중한 게시글을 공유해주셔서 감사합니다.
+            </p>
+          ) : (
+            <p className="mt-4 text-body2-15-medium text-gray300">
+              소중한 게시글을 공유해주셔서 감사합니다.
+            </p>
+          )}
+          
         </div>
       );
     }
