@@ -113,12 +113,12 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
         ) : posts.length === 0 ? (
           <div className="text-center py-8 text-gray300">게시글이 없습니다.</div>
         ) : (
-          <div>
+          <div className='pb-12'>
             {posts.map((post) => (
               <div
                 key={post.id}
                 onClick={() => handlePostClick(post.id)}
-                className="border-b border-gray600 cursor-pointer hover:bg-gray600 transition-colors"
+                className="border-b border-gray600 cursor-pointer hover:bg-gray600 transition-colors "
               >
                 <div className="px-4 py-[1.25rem] flex justify-between items-start">
                   <div className="flex-1">
@@ -183,7 +183,7 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
 
         {/* 더보기 버튼 */}
         {hasMore && (
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center pb-16">
             <button
               onClick={() => fetchPosts(page, false)}
               disabled={loading}

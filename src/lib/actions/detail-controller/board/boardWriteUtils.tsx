@@ -49,8 +49,8 @@ export async function getPosts(type: 'piece' | 'free', page: number = 0, size: n
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
-        
+        'Content-Type': 'application/json',
+       
       }
     });
 
@@ -74,7 +74,7 @@ export async function getPostDetail(type: 'piece' | 'free', postId: number, acce
       method: 'GET',
       headers: {
       'Content-Type': 'application/json',
-      Access: `Bearer ${accessToken}`,
+      access: `Bearer ${accessToken}`,
     },
   });
 
