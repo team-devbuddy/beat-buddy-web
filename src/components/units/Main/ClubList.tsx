@@ -90,7 +90,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
   };
 
   return (
-    <div className="flex w-full pb-[7rem] flex-col bg-BG-black">
+    <div className="flex w-full  flex-col bg-BG-black">
       <div className="mx-[0.5rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue, index) => {
           const { firstImageUrl, filteredTags } = memoizedValues[index];

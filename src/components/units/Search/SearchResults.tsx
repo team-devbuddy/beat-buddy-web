@@ -176,7 +176,7 @@ export default function SearchResults({
         </div>
       ) : isMapView ? (
         <div key="map">
-          <MapView filteredClubs={filteredClubs} />
+          <MapView filteredClubs={filteredClubs} searchQuery={searchQuery} />
         </div>
       ) : (
         <div key="list" className="flex flex-grow flex-col bg-BG-black">

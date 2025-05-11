@@ -7,30 +7,99 @@ import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markercluste
 import { useRecoilState } from 'recoil';
 import { clickedClubState } from '@/context/recoil-context';
 import CurrentLocationButton from '../units/Search/Map/CurrentLocationButton';
-
+import { BottomSheetRef } from '@/components/units/Search/Map/BottomSheet';
 interface GoogleMapProp {
   clubs: Club[];
   minHeight?: string;
   onAddressesInBounds?: (clubs: Club[]) => void;
   zoom?: number;
+  bottomSheetRef?: React.RefObject<BottomSheetRef>;
 }
 
-const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapProp>(
-  ({ clubs, minHeight, onAddressesInBounds, zoom }, ref) => {
+const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, GoogleMapProp>(
+  ({ clubs, minHeight, onAddressesInBounds, zoom, bottomSheetRef }, ref) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
     const [markerCluster, setMarkerCluster] = useState<MarkerClusterer | null>(null);
     const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
     const [visibleClubs, setVisibleClubs] = useState<Club[]>([]);
-
+    
     const MARKER_ICON_URL = '/icons/map_marker.svg';
 
     useImperativeHandle(ref, () => ({
-      filterAddressesInView,
+      filterAddressesInView: async () => {
+        if (!map) return [];
+        
+        const bounds = map.getBounds();
+        if (!bounds) return [];
+
+        // 초기화
+        markerCluster?.clearMarkers();
+        markers.forEach((marker) => marker.setMap(null));
+        setMarkers([]);
+
+        const newMarkers: google.maps.Marker[] = [];
+        const clubsInBounds: Club[] = [];
+
+        const geocodePromises: Promise<void>[] = clubs.map((club) => {
+          return new Promise((resolve) => {
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: club.address }, (results, status) => {
+              if (status === 'OK' && results) {
+                const location = results[0].geometry.location;
+                if (bounds.contains(location)) {
+                  const marker = createCustomMarker(club, location);
+                  newMarkers.push(marker);
+                  clubsInBounds.push(club);
+                }
+              }
+              resolve();
+            });
+          });
+        });
+
+        await Promise.all(geocodePromises);
+        
+        newMarkers.forEach((marker) => marker.setMap(map));
+
+        const customRenderer = {
+          render: ({ count, position }: any, stats: any, map: any) => {
+            const color = count > Math.max(5, stats.clusters.markers.mean) ? '#EE1171' : '#8F0B48';
+            return new google.maps.Marker({
+              position,
+              icon: {
+                url: createCustomClusterIcon(count, color),
+                scaledSize: new google.maps.Size(45, 45),
+              },
+              label: {
+                text: String(count),
+                color: '#fff',
+                fontSize: '12px',
+              },
+              zIndex: 1000 + count,
+            });
+          },
+        };
+
+        const newMarkerClusterer = new MarkerClusterer({
+          map: map,
+          markers: newMarkers,
+          renderer: customRenderer,
+          algorithm: new SuperClusterAlgorithm({ radius: 120, maxZoom: 30 }),
+        });
+
+        setMarkers(newMarkers);
+        setMarkerCluster(newMarkerClusterer);
+        
+        // 콜백 호출 및 필터링된 클럽들 반환
+        onAddressesInBounds?.(clubsInBounds);
+        return clubsInBounds;
+      },
     }));
 
     const createCustomMarker = (club: Club, position: google.maps.LatLng) => {
+      
       const marker = new google.maps.Marker({
         position,
         icon: {
@@ -48,13 +117,24 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       });
 
       marker.addListener('click', () => {
+        // 클릭된 클럽 상태 업데이트 (Recoil)
         setClickedClub({
           venue: club,
           isHeartbeat: club.isHeartbeat,
           tagList: club.tagList || [],
         });
+        
+        // 바텀시트를 강제로 올리기
+        if (bottomSheetRef?.current) {
+          // 먼저 바텀시트를 초기화(제일 낮은 위치)
+          bottomSheetRef.current.openWithSnap(2);
+          
+          // 약간의 딜레이 후 원하는 위치로 올리기
+          setTimeout(() => {
+            bottomSheetRef.current?.openWithSnap(1);
+          }, 10);
+        }
       });
-
       return marker;
     };
 
@@ -83,9 +163,9 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           if (mapRef.current) {
             const mapInstance = new google.maps.Map(mapRef.current, {
               styles: MapStyles,
-              disableDefaultUI: true,
+              disableDefaultUI: false,
               zoom,
-              zoomControl: false,
+              zoomControl: true,
               streetViewControl: false,
               mapTypeControl: false,
               fullscreenControl: false,
@@ -171,83 +251,6 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
       setClickedClub(null);
     }, [setClickedClub]);
 
-    const filterAddressesInView = () => {
-      if (map) {
-        const bounds = map.getBounds(); //현재 지도 범위에 따라 경계 정함
-        if (bounds) {
-          // 초기화
-          markerCluster?.clearMarkers();
-          markers.forEach((marker) => marker.setMap(null));
-          setMarkers([]);
-
-          const newMarkers: google.maps.Marker[] = [];
-          const clubsInBounds: Club[] = [];
-
-          const geocodePromises: Promise<void>[] = clubs.map((club) => {
-            return new Promise((resolve) => {
-              const geocoder = new google.maps.Geocoder();
-              geocoder.geocode({ address: club.address }, (results, status) => { //각 클럽의 주소를 지오코딩(주소를 위도 및 경도로 변환)-> 위치확인
-                if (status === 'OK' && results) {
-                  const location = results[0].geometry.location;
-                  if (bounds.contains(location)) { //bound에 그 클럽들이 포함되는지 확인
-                    const marker = createCustomMarker(club, location); //경계 안에 있는 클럽들만 마커에 추가
-                    newMarkers.push(marker);
-                    clubsInBounds.push(club); // 클럽 목록 저장
-                  }
-                }
-                resolve();
-              });
-            });
-          });
-
-          Promise.all(geocodePromises).then(() => { //지오코딩하는 작업이 비동기로 수행 -> 병렬로 처리함
-            newMarkers.forEach((marker) => marker.setMap(map));
-
-            const filteredClubs = clubs.filter((club) =>
-              newMarkers.some((marker) => {
-                const label = marker.getLabel();
-                // 타입 가드를 사용하여 label이 MarkerLabel 객체인 경우에만 text 속성에 접근
-                return typeof label === 'object' && label !== null && label.text === club.englishName;
-              }),
-            );
-
-            setVisibleClubs(filteredClubs); // 현재 보이는 클럽들의 정보 업데이트
-            console.log(filteredClubs);
-            onAddressesInBounds?.(filteredClubs); // 콜백을 통해 클럽 객체 전달
-
-            const customRenderer = {
-              render: ({ count, position }: any, stats: any, map: any) => {
-                const color = count > Math.max(5, stats.clusters.markers.mean) ? '#EE1171' : '#8F0B48';
-                return new google.maps.Marker({
-                  position,
-                  icon: {
-                    url: createCustomClusterIcon(count, color),
-                    scaledSize: new google.maps.Size(45, 45),
-                  },
-                  label: {
-                    text: String(count),
-                    color: '#fff',
-                    fontSize: '12px',
-                  },
-                  zIndex: 1000 + count,
-                });
-              },
-            };
-
-            const newMarkerClusterer = new MarkerClusterer({
-              map: map,
-              markers: newMarkers,
-              renderer: customRenderer,
-              algorithm: new SuperClusterAlgorithm({ radius: 120, maxZoom: 30 }),
-            });
-
-            setMarkers(newMarkers);
-            setMarkerCluster(newMarkerClusterer);
-          });
-        }
-      }
-    };
-
     const handleCurrentLocationClick = () => {
       if (navigator.geolocation && map) {
         navigator.geolocation.getCurrentPosition(
@@ -288,7 +291,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => void }, GoogleMapPro
           }
           .gmnoprint,
           .gm-bundled-control {
-            display: none !important;
+            /* display: none !important; */
           }
           div:focus {
             outline: none !important; /* 클릭 시 파란색 border 제거 */
