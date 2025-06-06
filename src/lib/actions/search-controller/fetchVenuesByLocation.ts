@@ -26,7 +26,7 @@ export const fetchVenuesByLocation = async (
     const allVenues = await fetchVenues([], accessToken);
     
     // 2. 현재 위치로부터 일정 거리 이내의 클럽만 필터링
-    const nearbyVenues = allVenues.filter((venue) => {
+    const nearbyVenues = allVenues.filter((venue: Club) => {
       // 클럽 주소로부터 좌표 추출 (이 부분은 이미 캐싱된 좌표가 있는 경우 사용)
       // 주소-좌표 변환이 필요하지만, 여기서는 지오코딩 API 호출을 피하기 위해
       // 더미 데이터를 사용하여 샘플 구현

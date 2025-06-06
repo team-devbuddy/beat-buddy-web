@@ -32,6 +32,7 @@ export const searchQueryState = atom<string>({
   key: 'searchQueryState',
   default: '',
   effects_UNSTABLE: [persistAtom],
+  
 });
 
 //하트

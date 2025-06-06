@@ -52,6 +52,7 @@ export interface SearchHeaderProps {
 
 export interface SearchResultsProps {
   filteredClubs: Club[];
+  searchQuery?: string;
 }
 
 export interface RecentTermProps {
