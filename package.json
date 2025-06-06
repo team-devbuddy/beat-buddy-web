@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/core": "^0.39.1",
+    "@auth/nextjs": "^0.0.0-380f8d56",
     "@googlemaps/js-api-loader": "^1.16.6",
     "@googlemaps/markerclusterer": "^2.5.3",
     "@googlemaps/markerclustererplus": "^1.2.10",
@@ -19,6 +21,7 @@
     "framer-motion": "^11.2.11",
     "jquery": "^3.7.1",
     "next": "^14.2.23",
+    "next-auth": "^4.24.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",
