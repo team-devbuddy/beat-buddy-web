@@ -47,3 +47,8 @@ html {
   src: url('../assets/fonts/Queensides.ttf');
 }
 
+@font-face {
+  font-family: poppins;
+  font-weight: 100;
+  src: url('../assets/fonts/Poppins-ExtraLight.ttf');
+}

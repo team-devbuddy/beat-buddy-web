@@ -103,3 +103,13 @@ export const activePageState = atom({
   key: 'activePageState',
   default: 'home', // 초기값-home
 });
+
+export const signupBusinessState = atom({
+  key: 'signupBusinessState',
+  default: {
+    name: '',
+    ssnFront: '',
+    ssnBack: '',
+    telecom: '',
+  },
+});

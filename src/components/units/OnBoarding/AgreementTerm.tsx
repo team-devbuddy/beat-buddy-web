@@ -1,4 +1,5 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Term } from '@/lib/types';
@@ -8,52 +9,45 @@ import { useRecoilState } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { PostAgree } from '@/lib/action';
 import Loading from '@/app/loading';
+import Prev from '@/components/common/Prev';
 
 export default function AgreementTerm() {
   const [terms, setTerms] = useState<Term[]>(termsData);
-  const [allChecked, setAllChecked] = useState<boolean>(false);
-  const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false); // 로딩 상태 추가
-  const router = useRouter();
+  const [allChecked, setAllChecked] = useState(false);
+  const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // access 쿼리 받아오기
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
 
+  const userType = searchParams.get('userType'); // ⬅️ business or null
+
   useEffect(() => {
     const access = searchParams.get('access');
-    if (access) {
-      setAccessToken(access);
-    }
+    if (access) setAccessToken(access);
   }, [searchParams, setAccessToken]);
 
   useEffect(() => {
-    const requiredTermsChecked = terms.filter((term) => term.isRequired).every((term) => term.checked);
+    const requiredTermsChecked = terms.filter(t => t.isRequired).every(t => t.checked);
     setButtonEnabled(requiredTermsChecked);
   }, [terms]);
 
   const handleCheckboxClick = (id: number) => {
-    setTerms((prevTerms) => prevTerms.map((term) => (term.id === id ? { ...term, checked: !term.checked } : term)));
+    setTerms(prev =>
+      prev.map(term => term.id === id ? { ...term, checked: !term.checked } : term)
+    );
   };
 
   const handleAllCheckboxClick = () => {
     const newState = !allChecked;
     setAllChecked(newState);
-    setTerms((prevTerms) =>
-      prevTerms.map((term) => ({
-        ...term,
-        checked: newState,
-      })),
-    );
-  };
-
-  const handleViewClick = (url: string) => {
-    window.open(url, '_blank');
+    setTerms(prev => prev.map(term => ({ ...term, checked: newState })));
   };
 
   const onClickSubmit = async () => {
-    const locationConsent = terms.find((term) => term.id === 3)?.checked || false;
-    const marketingConsent = terms.find((term) => term.id === 4)?.checked || false;
+    const locationConsent = terms.find(t => t.id === 3)?.checked || false;
+    const marketingConsent = terms.find(t => t.id === 4)?.checked || false;
 
     const requestData = {
       isLocationConsent: locationConsent,
@@ -62,26 +56,30 @@ export default function AgreementTerm() {
 
     if (accessToken) {
       try {
-        setLoading(true); // 로딩 상태 활성화
+        setLoading(true);
         const response = await PostAgree(accessToken, requestData);
         if (response.ok) {
-          router.push('/onBoarding/name');
+          // ✅ 쿼리에 따라 라우팅
+          if (userType === 'business') {
+            router.push('/signup/business');
+          } else {
+            router.push('/onBoarding/name');
+          }
         }
       } catch (error) {
-        console.error('Error submitting terms agreement:', error);
+        console.error('Error submitting agreement:', error);
       } finally {
-        setLoading(false); // 로딩 상태 비활성화
+        setLoading(false);
       }
-    } else {
-      console.error('Access token is not available');
     }
   };
 
   return (
-    <>
+    <div className="w-full">
+      <Prev url={'/login'} />
       {loading && <Loading />}
       <div className="flex w-full flex-col px-4">
-        <h1 className="text-2xl font-bold leading-9 text-white">
+        <h1 className="text-title-24-bold pt-[1.25rem] text-white">
           서비스 이용 동의서에
           <br />
           동의해주세요
@@ -102,25 +100,29 @@ export default function AgreementTerm() {
         </div>
 
         <div className="flex flex-col pt-3">
-          {terms.map((term) => (
+          {terms.map(term => (
             <div key={term.id} className="flex justify-between py-3 pl-[0.38rem]">
               <div className="flex gap-2 hover:brightness-75">
                 <Image
                   src={term.checked ? '/icons/Check.svg' : '/icons/NotCheck.svg'}
-                  alt="unchecked"
+                  alt="check"
                   width={16}
                   height={16}
                   className="cursor-pointer"
                   onClick={() => handleCheckboxClick(term.id)}
                 />
-                <p className="cursor-pointer text-[0.9375rem] text-white" onClick={() => handleCheckboxClick(term.id)}>
+                <p
+                  className="cursor-pointer text-[0.9375rem] text-white"
+                  onClick={() => handleCheckboxClick(term.id)}
+                >
                   {term.label}
                 </p>
               </div>
               {term.url && (
                 <div
                   className="cursor-pointer pr-2 text-xs text-gray400 hover:text-main"
-                  onClick={() => handleViewClick(term.url)}>
+                  onClick={() => window.open(term.url, '_blank')}
+                >
                   보기
                 </div>
               )}
@@ -129,14 +131,19 @@ export default function AgreementTerm() {
         </div>
       </div>
 
-      <button
-        onClick={onClickSubmit}
-        disabled={!buttonEnabled}
-        className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
-          buttonEnabled ? 'bg-[#EE1171] text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
-        }`}>
-        동의하고 가입하기
-      </button>
-    </>
+      <div className="flex justify-center px-4 fixed bottom-10 w-full z-50">
+        <button
+          onClick={onClickSubmit}
+          disabled={!buttonEnabled}
+          className={`w-full max-w-md py-4 text-lg rounded-md font-bold ${
+            buttonEnabled
+              ? 'bg-[#EE1171] text-BG-black hover:brightness-105'
+              : 'bg-gray400 text-gray300'
+          }`}
+        >
+          동의하고 가입하기
+        </button>
+      </div>
+    </div>
   );
 }

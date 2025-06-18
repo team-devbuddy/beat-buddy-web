@@ -44,6 +44,7 @@ export default function BBPMain() {
       try {
         if (accessToken) {
           const data = await getBBP(accessToken);
+          console.log(data);
           setBBPClubs(data);
           setFilteredClubs(data);
 

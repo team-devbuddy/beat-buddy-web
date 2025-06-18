@@ -9,7 +9,7 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      poppins: ['Poppins', 'sans-serif'],
+      poppins: ['poppins', 'sans-serif'],
       queensides: ['Queensides'],
     },
     extend: {
