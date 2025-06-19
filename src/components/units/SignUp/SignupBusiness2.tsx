@@ -41,7 +41,7 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
             value={ssnFront}
             onChange={(e) => setSsnFront(e.target.value)}
             maxLength={6}
-            className="flex-1 py-3 bg-transparent border-b border-white text-white text-[0.9375rem] text-center placeholder-gray400 outline-none font-mono tracking-widest"
+            className="flex-1 pt-4 pb-2 px-2 bg-transparent border-b border-white text-white text-[0.9375rem] text-center placeholder-gray400 outline-none font-mono tracking-widest"
             placeholder="앞 6자리"
         />
 
@@ -61,8 +61,8 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
 </div>
 
         <div className="mt-8">
-          <label className="block text-gray200 text-body1-16-bold mb-[0.62rem]">이름</label>
-          <p className="border-b border-gray200 py-2 text-gray200">
+          <label className="block  text-gray200 text-body1-16-bold mb-[0.62rem]">이름</label>
+          <p className="pt-4 pb-2 px-2 border-b border-gray200 py-2 text-gray200">
             {signupBusiness.name || '이름이 없습니다'}
           </p>
         </div>

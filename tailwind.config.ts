@@ -27,6 +27,37 @@ const config: Config = {
       screens: {
         sm: '440px',
       },
+      animation: {
+        'fadeIn': 'fadeIn 0.3s ease-in-out',
+        'slideDown': 'slideDown 0.3s ease-out',
+        'slideUp': 'slideUp 0.3s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideDown: {
+          '0%': { 
+            opacity: '0',
+            transform: 'translateY(-10px) scale(0.95)'
+          },
+          '100%': { 
+            opacity: '1',
+            transform: 'translateY(0) scale(1)'
+          },
+        },
+        slideUp: {
+          '0%': { 
+            opacity: '0',
+            transform: 'translateY(100%)'
+          },
+          '100%': { 
+            opacity: '1',
+            transform: 'translateY(0)'
+          },
+        },
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
