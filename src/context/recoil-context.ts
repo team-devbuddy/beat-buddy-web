@@ -111,5 +111,17 @@ export const signupBusinessState = atom({
     ssnFront: '',
     ssnBack: '',
     telecom: '',
+    businessName: '',
+    nickname: '',
   },
+});
+  
+export const signupUserTypeState = atom<'general' | 'business' | null>({
+  key: 'signupUserTypeState',
+  default: null,
+});
+
+export const businessVerifyCodeState = atom<string>({
+  key: 'businessVerifyCodeState',
+  default: '',
 });

@@ -1,23 +1,36 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { signupBusinessState } from '@/context/recoil-context';
 import Prev from '@/components/common/Prev';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { requestBusinessVerificationCode } from '@/lib/actions/signup/businessCodeReuest'; 
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
+import { businessVerifyCodeState } from '@/context/recoil-context'
+
+
 
 export default function SignUpBusiness() {
   const [signupBusiness, setSignupBusiness] = useRecoilState(signupBusinessState);
   const [step, setStep] = useState(1);
-
+  const [telecomSelected, setTelecomSelected] = useState(false);
+  const accessToken = useRecoilValue(accessTokenState);
   const [name, setName] = useState('');
   const [ssnFront, setSsnFront] = useState('');
   const [ssnBack, setSsnBack] = useState('');
   const [telecom, setTelecom] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const telecomOptions = ['KT', 'SKT', 'LG U+'];
+  const setVerifyCode = useSetRecoilState(businessVerifyCodeState);
+    const router = useRouter();
+    
+    useEffect(() => {
+        // step이 바뀔 때 드롭다운을 무조건 닫는다
+        setDropdownOpen(false);
+      }, [step]);
 
   const tryStepAdvance = () => {
     if (step === 1 && /^[가-힣]{2,5}$/.test(name)) {
@@ -33,6 +46,11 @@ export default function SignUpBusiness() {
   };
 
   const handleBack = () => {
+    if (dropdownOpen) {
+      setDropdownOpen(false);
+      return;
+    }
+  
     if (step === 2) {
       setStep(1);
     } else if (step === 3) {
@@ -46,14 +64,58 @@ export default function SignUpBusiness() {
     if (e.key === 'Enter') tryStepAdvance();
   };
 
-  const handleBlur = () => tryStepAdvance();
-
-  const handleComplete = () => {
-    if (phoneNumber) {
-      setSignupBusiness((prev) => ({ ...prev, phoneNumber }));
-      alert('가입 완료!');
+  const handleBlur = () => {
+    if (dropdownOpen) {
+      setDropdownOpen(false);
+      return;
+    }
+    if (step === 3 && telecomSelected) {
+      setSignupBusiness((prev) => ({ ...prev, telecom }));
+      setStep(4);
+      setTelecomSelected(false);
+    } else {
+      tryStepAdvance();
     }
   };
+
+    
+  const handleComplete = async () => {
+    if (phoneNumber) {
+      const residentRegistration = ssnFront + ssnBack;
+  
+      setSignupBusiness((prev) => ({
+        ...prev,
+        phoneNumber,
+        ssnFront,
+        ssnBack,
+        name,
+        telecom,
+      }));
+  
+      try {
+        const result = await requestBusinessVerificationCode({
+          realName: name,
+          phoneNumber,
+          telCarrier: telecom,
+          residentRegistration,
+        }, accessToken || '');
+      
+        console.log('인증번호 요청 결과:', result);
+      
+          if (result?.code) {
+            console.log('인증번호:', result.code);
+          setVerifyCode(result.data.code); 
+        }
+      
+        router.push('/signup/business/auth');
+      } catch (err: any) {
+        alert(err.message || '인증번호 요청에 실패했습니다.');
+      }
+      
+    }
+  };
+    
+
 
   return (
     <>
@@ -127,7 +189,10 @@ export default function SignUpBusiness() {
             <div className="relative">
               <div
                 className="w-full py-3 border-b border-white text-[0.9375rem] text-white flex justify-between items-center cursor-pointer"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDropdownOpen(!dropdownOpen);
+                }}
               >
                 <span className={telecom ? 'pl-2' : 'text-gray400 pl-2'}>
                   {telecom || '통신사 선택'}
@@ -142,7 +207,10 @@ export default function SignUpBusiness() {
                     className="fixed inset-0 bg-black bg-opacity-60 z-20"
                     onClick={() => setDropdownOpen(false)}
                   />
-                  <div className="fixed bottom-0 left-0 w-full bg-gray700 rounded-t-[1.25rem] z-30 animate-slideUp">
+                  <div
+                    className="fixed bottom-0 left-0 w-full bg-gray700 rounded-t-[1.25rem] z-30 animate-slideUp"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <div className="text-white text-body1-16-bold px-5 py-4 border-b border-gray500 text-center">통신사</div>
                     <div className="py-2 text-gray200 text-body2-15-medium">
                       {[
@@ -158,6 +226,7 @@ export default function SignUpBusiness() {
                           }`}
                           onClick={() => {
                             setTelecom(option);
+                            setTelecomSelected(true);  // 선택됨 표시
                             setDropdownOpen(false);
                           }}
                         >
@@ -258,7 +327,7 @@ export default function SignUpBusiness() {
                     : 'bg-gray400 text-gray300'
                 }`}
               >
-                가입 완료하기
+                다음
               </button>
             </div>
           </div>
