@@ -136,7 +136,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(
                           heartbeatNums={heartbeatNums}
                           handleHeartClickWrapper={handleHeartClickWrapper}
                         />
-                      ) : filteredClubs.length > 0 ? (
+                      ) : (filteredClubs?.length ?? 0) > 0 ? (
                         <ClubList
                           clubs={filteredClubs}
                           likedClubs={likedClubs}

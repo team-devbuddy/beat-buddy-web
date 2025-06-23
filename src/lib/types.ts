@@ -19,6 +19,8 @@ export interface Club {
   phoneNum?: string;
   description: string | null;
   address: string;
+  latitude?: number;
+  longitude?: number;
   instaId: string;
   instaUrl: string;
   operationHours: {
@@ -106,3 +108,4 @@ export interface MapClub {
   tagList?: string[];
   isHeartbeat: boolean;
 }
+

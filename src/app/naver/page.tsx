@@ -20,7 +20,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   const [loading, setLoading] = useState(false);
   const accessToken = useRecoilValue(accessTokenState);
   const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
-  const isEmpty = (filteredClubs?.length ?? 0) === 0;
+const isEmpty = (filteredClubs?.length ?? 0) === 0;
   const [isMapSearched, setIsMapSearched] = useState(false);
   const [clubsInView, setClubsInView] = useState<Club[]>([]);
   const isFirstSearch = useRef(true);
@@ -70,23 +70,24 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
 
   // 지도 검색 버튼 클릭 핸들러
   const handleMapSearchClick = async () => {
+    // 클릭된 클럽 상태 초기화
     setClickedClub(null);
+    
+    // 지도 검색 모드 활성화
     setIsMapSearched(true);
-  
+    
+    // 현재 보이는 클럽들로 업데이트 (비동기 처리 대기)
     if (mapRef.current) {
+      // 바텀시트를 먼저 초기화
       if (sheetRef.current) {
         sheetRef.current.openWithSnap(2);
       }
-  
+
+      // 필터링 작업 수행 및 결과 직접 사용
       const filteredClubs = await mapRef.current.filterAddressesInView();
-  
-      // ✅ 여기서 중복 제거
-      const uniqueClubs = Array.from(
-        new Map(filteredClubs.map(club => [club.venueId, club])).values()
-      );
-  
-      setCurrentFilteredClubs(uniqueClubs);
-  
+      setCurrentFilteredClubs(filteredClubs);
+      
+      // 바텀시트 애니메이션
       if (sheetRef.current) {
         setTimeout(() => {
           sheetRef.current?.openWithSnap(1);
@@ -94,7 +95,6 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       }
     }
   };
-  
 
   // 외부 검색 결과 업데이트
   useEffect(() => {

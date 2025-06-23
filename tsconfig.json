@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "types": ["@types/google.maps"],
+    "types": ["@types/google.maps","@types/navermaps","./global.d.ts"],
     "lib": ["dom", "dom.iterable", "esnext"],
+    
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
