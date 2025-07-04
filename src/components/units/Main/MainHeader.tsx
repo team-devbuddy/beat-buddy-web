@@ -21,31 +21,23 @@ export default function MainHeader() {
 
   return (
     <div className="">
-      <div className="flex w-full items-center justify-between bg-main px-4 py-[0.44rem]">
+      <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] py-[1rem]">
         <Link href="/">
-          <Image src="/icons/Symbol.svg" alt="logo" width={42} height={40} className="cursor-pointer" />
+          <Image src="/icons/Headers/Symbol.svg" alt="logo" width={42} height={40} className="cursor-pointer" />
         </Link>
 
         {isAuth ? (
           <div className="flex items-center space-x-[0.5rem]">
             <Link href="/alert">
               <Image
-                src="/icons/bell-02.svg"
+                src="/icons/Headers/bell-02.svg"
                 alt="alert"
                 width={32}
                 height={32}
                 className="cursor-pointer hover:brightness-125"
               />
             </Link>
-            <Link href="/message">
-              <Image
-                src="/icons/send-01.svg"
-                alt="message"
-                width={32}
-                height={32}
-                className="cursor-pointer hover:brightness-125"
-              />
-            </Link>
+           
           </div>
         ) : (
           <button className="rounded-[0.13rem] bg-black px-2 py-[0.38rem] text-main2" onClick={handleLoginClick}>

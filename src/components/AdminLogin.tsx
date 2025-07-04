@@ -19,7 +19,7 @@ export default function AdminLogin() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ id }),
-      // credentials: 'include',
+      credentials: 'include',
     });
     if (response.ok) {
       const data = await response.json();

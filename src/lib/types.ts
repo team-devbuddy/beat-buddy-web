@@ -109,3 +109,11 @@ export interface MapClub {
   isHeartbeat: boolean;
 }
 
+
+
+export interface MagazineProps {
+  magazineId: number;
+  thumbImageUrl: string;
+  title: string;
+  content: string;
+}

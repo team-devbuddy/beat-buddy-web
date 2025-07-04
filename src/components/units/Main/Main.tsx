@@ -5,7 +5,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import SearchBar from './SearchBar';
 import TrendBar from './TrendBar';
-import BeatBuddyPick from './BeatBuddyPick';
+import Magazine from './Magazine';
 import LoggedOutBanner from './LoggedOutBanner';
 import HotVenues from './Hot-Chart';
 import Footer from './MainFooter';
@@ -128,13 +128,7 @@ export default function Main() {
         <MainHeader />
         <SearchBar />
         <TrendBar />
-        <BeatBuddyPick
-          clubs={bbpClubs}
-          userName={userName}
-          likedClubs={likedClubs}
-          heartbeatNums={heartbeatNums}
-          handleHeartClickWrapper={handleHeartClickWrapper}
-        />
+        <Magazine magazineId={1} thumbImageUrl="/images/DefaultImage.png" title="test" content="test" />
         {!accessToken && <LoggedOutBanner />}
         {/*<Heartbeat />*/}
         <HotPost posts={dummyPosts} />

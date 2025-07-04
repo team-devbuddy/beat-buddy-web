@@ -31,10 +31,12 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const markerRefs = useRef<{ club: Club; marker: any }[]>([]);
+  const clustererRef = useRef<any>(null);
 
-  // 지도 생성
   useEffect(() => {
     if (!mapRef.current || !window.naver?.maps) return;
+    console.log('[DEBUG] clubs.length:', clubs.length);
+    console.log('[DEBUG] clubs:', clubs);
 
     const defaultCenter = new window.naver.maps.LatLng(37.5666103, 126.9783882);
 
@@ -47,97 +49,137 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
 
     mapInstance.current = map;
 
-    markerRefs.current = [];
+    // ✅ 기존 마커 제거
+    if (markerRefs.current.length > 0) {
+      markerRefs.current.forEach(({ marker }) => marker.setMap(null));
+      markerRefs.current = [];
+    }
 
-    clubs.forEach((club, index) => {
-      if (!club.address) return;
-      if (
-        !window.naver?.maps?.Service?.geocode ||
-        typeof window.naver.maps.Service.geocode !== 'function'
-      ) {
-        console.error('Naver Maps geocode API not available yet');
-        return;
-      }
-      window.naver.maps.Service.geocode({ query: club.address }, (status, response) => {
-        if (status === window.naver.maps.Service.Status.OK && response?.v2?.addresses?.length > 0) {
+    const geocodePromises = clubs.map((club) => {
+      return new Promise<void>((resolve) => {
+        if (!club.address) return resolve();
 
-          const { x, y } = response.v2.addresses[0];
-          const position = new window.naver.maps.LatLng(+y, +x);
-        
-          const marker = new window.naver.maps.Marker({
-            position,
-            map,
-            icon: {
-              content: `
-                <div style="
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: center;
-                  transform: translateY(-8px);
-                ">
+        window.naver.maps.Service.geocode({ query: club.address }, (status, response) => {
+          if (status === window.naver.maps.Service.Status.OK && response?.v2?.addresses?.length > 0) {
+            const { x, y } = response.v2.addresses[0];
+            const position = new window.naver.maps.LatLng(+y, +x);
+
+            const marker = new window.naver.maps.Marker({
+              position,
+              map,
+              icon: {
+                content: `
                   <div style="
-                    background: transparent;
-                    color: #FF4493;
-                    font-size: 0.75rem;
-                    font-weight: 500;
-                    white-space: nowrap;
-                    z-index: 9999;
-                    margin-bottom: -2px;
-                    pointer-events: none;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    transform: translateY(-8px);
                   ">
-                    ${club.englishName}
+                    <div style="
+                      background: transparent;
+                      color: #FF4493;
+                      font-size: 0.75rem;
+                      font-weight: 500;
+                      white-space: nowrap;
+                      margin-bottom: -2px;
+                      pointer-events: none;
+                    ">
+                      ${club.englishName}
+                    </div>
+                    <img src="/icons/naver_marker.svg" style="width: 24px; height: 32px;" />
                   </div>
-                  <img src="/icons/naver_marker.svg" style="width: 24px; height: 32px;" />
-                </div>
-              `,
-              size: new window.naver.maps.Size(24, 40),
-              anchor: new window.naver.maps.Point(12, 32),
-            }
-          });
-          
-          
-          
-          
-          markerRefs.current.push({ club, marker });
-        
-          if (index === 0) {
-            map.setCenter(position);
+                `,
+                size: new window.naver.maps.Size(24, 40),
+                anchor: new window.naver.maps.Point(12, 32),
+              }
+            });
+
+            markerRefs.current.push({ club, marker });
           }
 
-          if (markerRefs.current.length > 0) {
-            const bounds = new window.naver.maps.LatLngBounds(
-              new window.naver.maps.LatLng(37.5666103, 126.9783882),
-              new window.naver.maps.LatLng(37.5666103, 126.9783882)
-            );
-            markerRefs.current.forEach(({ marker }) => {
-              bounds.extend(marker.getPosition());
-            });
-            map.fitBounds(bounds); // OK
-          }
-        }
+          resolve();
+        });
       });
+    });
+
+    Promise.all(geocodePromises).then(() => {
+      if (markerRefs.current.length > 0) {
+        const bounds = new window.naver.maps.LatLngBounds(markerRefs.current[0].marker.getPosition());
+        markerRefs.current.forEach(({ marker }) => {
+          bounds.extend(marker.getPosition());
+        });
+        map.fitBounds(bounds);
+      }
+
+      if (clustererRef.current) {
+        clustererRef.current.setMap(null);
+        clustererRef.current = null;
+      }
+
+      const clusterIcon = {
+        content: `
+          <div class="custom-cluster" style="
+            width: 40px;
+            height: 40px;
+            background-color: #FF4493;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            pointer-events: none;
+            position: relative;
+          ">
+            <span class="cluster-count"></span>
+          </div>
+        `,
+        size: new window.naver.maps.Size(40, 40),
+        anchor: new window.naver.maps.Point(20, 20),
+      };
+
+      if (window.MarkerClustering) {
+        clustererRef.current = new window.MarkerClustering({
+          minClusterSize: 2,
+          maxZoom: 15,
+          map: mapInstance.current,
+          markers: markerRefs.current.map(({ marker }) => marker),
+          disableClickZoom: false,
+          gridSize: 100,
+          icons: [clusterIcon],
+          indexGenerator: [2, 5, 10, 20, 50, 100],
+          stylingFunction: function (clusterMarker: any, count: number) {
+            const el = clusterMarker.getElement();
+            const span = el?.querySelector('.cluster-count');
+            if (span) span.textContent = String(count);
+          }
+        });
+      } else {
+        console.error('MarkerClustering is not available');
+      }
     });
   }, [clubs, zoom]);
 
-  // 외부에서 호출 가능한 함수
   useImperativeHandle(ref, () => ({
     filterAddressesInView: async () => {
       const visibleClubs: Club[] = [];
-    
+
       if (!mapInstance.current) return visibleClubs;
-    
+
       const bounds = mapInstance.current.getBounds();
       markerRefs.current.forEach(({ club, marker }) => {
         const pos = marker.getPosition();
         if (bounds.hasPoint(pos)) {
           visibleClubs.push(club);
-          marker.setMap(mapInstance.current); // 다시 표시
+          marker.setMap(mapInstance.current);
         } else {
-          marker.setMap(null); // 화면 밖이면 숨김
+          marker.setMap(null);
         }
       });
-    
+
       return visibleClubs;
     }
   }));
