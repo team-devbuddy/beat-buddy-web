@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 interface PrevProps {
   url?: string;
   onBack?: () => void;
+  title?: string;
 }
 
-export default function Prev({ url, onBack }: PrevProps) {
+export default function Prev({ url, onBack, title }: PrevProps) {
   const router = useRouter();
 
   return (
@@ -27,7 +28,10 @@ export default function Prev({ url, onBack }: PrevProps) {
         }}
         className="cursor-pointer"
       >
-        <Image src="/icons/backward.svg" alt="뒤로가기" width={24} height={24} />
+        <div className="flex items-center gap-[0.12rem]">
+          <Image src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={24} height={24} />
+          <span className="text-[1.125rem] font-bold text-white">{title}</span>
+        </div>
       </button>
     </nav>
   );

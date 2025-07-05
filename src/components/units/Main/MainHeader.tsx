@@ -6,10 +6,12 @@ import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/context/recoil-context';
+import { usePathname } from 'next/navigation';
 
 export default function MainHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isAuth = useRecoilValue(authState);
+  const pathname = usePathname(); // ✅ 현재 경로 가져오기
 
   const handleLoginClick = () => {
     setIsModalOpen(true);
@@ -28,16 +30,18 @@ export default function MainHeader() {
 
         {isAuth ? (
           <div className="flex items-center space-x-[0.5rem]">
-            <Link href="/alert">
-              <Image
-                src="/icons/Headers/bell-02.svg"
-                alt="alert"
-                width={32}
-                height={32}
-                className="cursor-pointer hover:brightness-125"
-              />
-            </Link>
-           
+            {/* ✅ "search" 경로가 아닐 때만 알람 아이콘 표시 */}
+            {!pathname.includes('search') && (
+              <Link href="/alert">
+                <Image
+                  src="/icons/Headers/bell-02.svg"
+                  alt="alert"
+                  width={32}
+                  height={32}
+                  className="cursor-pointer hover:brightness-125"
+                />
+              </Link>
+            )}
           </div>
         ) : (
           <button className="rounded-[0.13rem] bg-black px-2 py-[0.38rem] text-main2" onClick={handleLoginClick}>
@@ -45,7 +49,7 @@ export default function MainHeader() {
           </button>
         )}
       </div>
-      
+
       <AnimatePresence>
         {isModalOpen && (
           <div className="inset-0 flex items-center justify-center">
