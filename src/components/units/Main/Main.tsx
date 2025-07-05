@@ -5,7 +5,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import SearchBar from './SearchBar';
 import TrendBar from './TrendBar';
-import CuratedPickCard from './CuratedPickCard';
+import Magazine from './Magazine';
 import LoggedOutBanner from './LoggedOutBanner';
 import HotVenues from './Hot-Chart';
 import Footer from './MainFooter';
@@ -167,11 +167,13 @@ export default function Main() {
         <div className="flex gap-4 w-max">
           {magazine.map((item) => (
             <div key={item.magazineId} className="min-w-[20.9375rem] snap-center">
-              <CuratedPickCard
+              <Magazine
                 magazineId={item.magazineId}
                 thumbImageUrl={item.thumbImageUrl}
                 title={item.title}
                 content={item.content}
+                currentIndex={item.currentIndex}
+                totalCount={item.totalCount}
               />
             </div>
           ))}

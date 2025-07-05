@@ -116,4 +116,7 @@ export interface MagazineProps {
   thumbImageUrl: string;
   title: string;
   content: string;
+  currentIndex: number;
+  totalCount: number; 
+  isLiked: boolean;
 }
