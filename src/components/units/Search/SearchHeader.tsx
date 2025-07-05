@@ -84,7 +84,7 @@ const SearchHeader = () => {
             style={{ WebkitAppearance: 'none', borderRadius: 0 }}
           />
           <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
-            <Image src="/icons/gray-search.svg" alt="search icon" width={20} height={20} />
+            <Image src="/icons/gray-search.svg" alt="search icon" width={24} height={24} />
           </div>
         </div>
       </div>

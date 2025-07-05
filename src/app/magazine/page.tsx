@@ -44,20 +44,20 @@ export default function MagazineListPage() {
         ) : magazines.length === 0 ? (
           <NoResults />
         ) : (
-          <div className="flex flex-col gap-[1.5rem]">
-            {magazines.map((magazine, index) => (
-              <MagazineCard
-                key={magazine.magazineId}
-                magazineId={magazine.magazineId}
-                thumbImageUrl={magazine.thumbImageUrl}
-                title={magazine.title}
-                content={magazine.content}
-                currentIndex={index + 1}
-                totalCount={magazines.length}
-                isLiked={magazine.isLiked}
-              />
-            ))}
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem]">
+  {magazines.map((magazine, index) => (
+    <MagazineCard
+      key={magazine.magazineId}
+      magazineId={magazine.magazineId}
+      thumbImageUrl={magazine.thumbImageUrl}
+      title={magazine.title}
+      content={magazine.content}
+      isLiked={magazine.isLiked}
+      currentIndex={index + 1}
+      totalCount={magazines.length}
+    />
+  ))}
+</div>
         )}
       </main>
 

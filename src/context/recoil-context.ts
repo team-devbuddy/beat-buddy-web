@@ -125,3 +125,9 @@ export const businessVerifyCodeState = atom<string>({
   key: 'businessVerifyCodeState',
   default: '',
 });
+
+export const recentSearchesState = atom<string[]>({
+  key: 'recentSearchesState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});

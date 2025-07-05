@@ -51,7 +51,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] pb-[0.5rem] pt-[0.75rem]">
+    <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] pb-[0.5rem]">
       {isMainPage ? (
         <div className="relative w-full">
           <Link href="/search" className="block w-full">
@@ -76,7 +76,7 @@ export default function SearchBar() {
         <div className="relative w-full">
           <input
             ref={inputRef} 
-            className="w-full cursor-pointer border-b-[1px] border-main bg-transparent py-[0.75rem] px-[0.75rem] text-gray300 placeholder:text-gray300 focus:outline-none"
+            className="w-full cursor-pointer border-b-[1px] border-main bg-transparent py-[0.75rem] px-[0.75rem] text-white placeholder:text-gray300 focus:outline-none"
             placeholder="지금 가장 인기있는 클럽은?"
             value={searchQuery}
             onChange={handleInputChange}
@@ -85,7 +85,7 @@ export default function SearchBar() {
             style={{ WebkitAppearance: 'none', borderRadius: 0 }}
           />
           <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
-            <Image src="/icons/Headers/search-01.svg" alt="search icon" width={20} height={20} />
+            <Image src="/icons/Headers/search-01.svg" alt="search icon" width={24} height={24} />
           </div>
         </div>
       )}
