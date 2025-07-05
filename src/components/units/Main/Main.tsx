@@ -5,7 +5,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import SearchBar from './SearchBar';
 import TrendBar from './TrendBar';
-import Magazine from './Magazine';
+import CuratedPickCard from './CuratedPickCard';
 import LoggedOutBanner from './LoggedOutBanner';
 import HotVenues from './Hot-Chart';
 import Footer from './MainFooter';
@@ -14,12 +14,15 @@ import { getHotChart } from '@/lib/actions/hearbeat-controller/getHotChart';
 import { getBBP } from '@/lib/actions/recommend-controller/getBBP';
 import { getUserName } from '@/lib/actions/user-controller/fetchUsername';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
-import { Club } from '@/lib/types';
+import { Club, MagazineProps } from '@/lib/types';
 import Loading from '@/app/loading';
 import HomeSkeleton from '@/components/common/skeleton/HomeSkeleton';
 import HotPost from './HotPost';
 import { dummyPosts } from '@/lib/dummyData';
 import NavigateFooter from './NavigateFooter';
+import { getMagazineList } from '@/lib/actions/magazine-controller/getMagazine';
+import VenueFor from './VenueFor';
+import { getHotPost, RawHotPost } from '@/lib/actions/post-controller/getHotPost';
 const MainHeader = dynamic(() => import('./MainHeader'), { ssr: false });
 
 export default function Main() {
@@ -30,8 +33,39 @@ export default function Main() {
   const [bbpClubs, setBbpClubs] = useState<Club[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [magazine, setMagazine] = useState<MagazineProps[]>([]);
+  const [hotPosts, setHotPosts] = useState<RawHotPost[]>([]);
 
   useEffect(() => {
+    const fetchHotPost = async () => {
+      try {
+        if (accessToken) {
+          const data = await getHotPost(accessToken);
+          if (data.length === 0) {
+            setHotPosts(dummyPosts); // ✅ fallback
+          } else {
+            setHotPosts(data);
+          }
+        } else {
+          setHotPosts(dummyPosts); // ✅ fallback when not logged in
+        }
+      } catch (error) {
+        console.error('Error fetching hot post:', error);
+        setHotPosts(dummyPosts); // ✅ fallback on error
+      }
+    };
+
+    const fetchMagazine = async () => {
+      try {
+        if(accessToken){
+          const data = await getMagazineList(accessToken);
+          setMagazine(data);
+          console.log(data);
+        }
+      } catch (error) {
+        console.error('Error fetching magazine:', error);
+      }
+    };
     const fetchHotClubs = async () => {
       try {
         if (accessToken) {
@@ -106,7 +140,7 @@ export default function Main() {
 
     const fetchData = async () => {
       if (accessToken) {
-        await Promise.all([fetchHotClubs(), fetchBBP(accessToken), fetchUserName(accessToken)]);
+        await Promise.all([fetchHotClubs(), fetchBBP(accessToken), fetchUserName(accessToken), fetchMagazine(), fetchHotPost()]);
         setLoading(false); // 모든 데이터 로드 완료
       }
     };
@@ -128,10 +162,27 @@ export default function Main() {
         <MainHeader />
         <SearchBar />
         <TrendBar />
-        <Magazine magazineId={1} thumbImageUrl="/images/DefaultImage.png" title="test" content="test" />
+        {magazine.length > 0 && (
+        <section className="overflow-x-auto snap-x snap-mandatory px-[0.5rem] hide-scrollbar">
+        <div className="flex gap-4 w-max">
+          {magazine.map((item) => (
+            <div key={item.magazineId} className="min-w-[20.9375rem] snap-center">
+              <CuratedPickCard
+                magazineId={item.magazineId}
+                thumbImageUrl={item.thumbImageUrl}
+                title={item.title}
+                content={item.content}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+      
+        )}
+        <VenueFor userName={userName} />
         {!accessToken && <LoggedOutBanner />}
-        {/*<Heartbeat />*/}
-        <HotPost posts={dummyPosts} />
+        <Heartbeat />
+        <HotPost posts={hotPosts} />
         <HotVenues
           clubs={hotClubs}
           likedClubs={likedClubs}

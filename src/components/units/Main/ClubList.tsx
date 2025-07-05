@@ -91,7 +91,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
 
   return (
     <div className="flex w-full  flex-col bg-BG-black">
-      <div className="mx-[0.5rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
+      <div className="grid grid-cols-2 gap-x-[1rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3 ">
         {clubs.map((venue, index) => {
           const { firstImageUrl, filteredTags } = memoizedValues[index];
 
@@ -100,18 +100,28 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
               <motion.div
                 whileHover={{
                   y: -5,
-                  boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
-                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                  //boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
+                  //backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
-                className="relative flex h-full flex-col rounded-md p-2">
+                className="relative flex h-full flex-col rounded-[0.5rem] ">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}
                     alt={`${venue.koreanName} image`}
                     fill
                     objectFit="cover"
-                    className="rounded-sm"
+                    className="rounded-[0.5rem]"
                   />
+                  <motion.div
+      className="absolute bottom-[0.62rem] left-[0.62rem] flex items-center space-x-[0.25rem]"
+      initial="initial"
+      animate="initial"
+    >
+      <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
+      <span className="text-body3-12-medium text-gray300">
+        {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
+      </span>
+    </motion.div>
                   <div className="club-gradient absolute inset-0"></div>
                   <motion.div
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
@@ -130,33 +140,33 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     />
                   </motion.div>
                 </div>
-                <div className="mt-[1rem] flex flex-grow flex-col justify-between">
+                <div className="mt-[0.5rem] flex flex-grow flex-col justify-between">
                   <div>
-                    <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
-                    <div className="mb-[1.06rem] mt-[0.75rem] flex w-4/5 flex-wrap gap-[0.5rem]">
+                    <h3 className="text-ellipsis line-height-[1.6rem] text-body1-16-bold text-white">{venue.englishName}</h3>
+                    <div className=" mt-[0.25rem] flex  flex-wrap gap-[0.25rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span
                             key={index}
-                            className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                            className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-body3-12-medium text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
-                        <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                        <span className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-body3-12-medium text-gray300">
                           No tagList
                         </span>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-end">
+                  {/*<div className="flex items-end">
                     <div className="flex items-center space-x-[0.25rem] text-gray300">
                       <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
                       <span className="text-body3-12-medium">
                         {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
                       </span>
                     </div>
-                  </div>
+                  </div>*/}
                 </div>
               </motion.div>
             </Link>
