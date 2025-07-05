@@ -100,7 +100,7 @@ export default function BBPMain() {
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <BBPickHeader username={userName} />
       <Filter setFilteredClubs={setFilteredClubs} BBPClubs={BBPClubs} />
-      <main className="pt-[1.75rem]">
+      <main className="pt-[1.5rem]">
         {filteredClubs.length === 0 && filteredClubs !== BBPClubs ? (
           <NoResults />
         ) : (
@@ -111,7 +111,6 @@ export default function BBPMain() {
               handleHeartClickWrapper={handleHeartClickWrapper}           />
         )}
       </main>
-      <MainFooter />
     </div>
   );
 }

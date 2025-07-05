@@ -19,11 +19,11 @@ const BBPHeader = ({ username }: BBPHeaderProps) => {
   }, []);
 
   return (
-    <header className="flex flex-col bg-BG-black px-[1rem]">
-      <div className="flex w-full items-center justify-between py-[1rem]">
+    <header className="flex flex-col bg-BG-black ]">
+      <div className="flex w-full items-center justify-between  py-[1rem] px-[0.62rem]">
         <Link href="/">
           <div className="flex items-center text-main2">
-            <Image src="/icons/ArrowLeft.svg" alt="뒤로가기" width={24} height={24} />
+            <Image src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={35} height={35} />
           </div>
         </Link>
         <Link href="/onBoarding/custom">
@@ -32,11 +32,11 @@ const BBPHeader = ({ username }: BBPHeaderProps) => {
           </div>
         </Link>
       </div>
-      <div className="flex flex-col py-[0.5rem]">
-        <span className="font-queensides text-[1.5rem] text-main2">
+      <div className="flex flex-col py-[0.62rem] px-[1.25rem]">
+        <span className="text-title-24-bold text-main">
           {username ? `Venue for ${username}버디` : 'BeatBuddy Pick'}
         </span>
-        <span className="mt-[0.75rem] text-body2-15-medium text-gray200">
+        <span className="mt-[0.38rem] text-[0.875rem] font-light text-gray200">
           테스트 결과를 바탕으로 맞춤 메뉴를 추천해드려요
         </span>
       </div>

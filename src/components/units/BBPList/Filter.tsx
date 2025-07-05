@@ -106,13 +106,13 @@ const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
   };
 
   return (
-    <div className="mt-[1.75rem] w-6/7 flex flex-wrap gap-[0.5rem] bg-BG-black px-[1rem] text-body2-15-medium">
+    <div className="mt-[0.75rem]  flex flex-wrap gap-[0.5rem] bg-BG-black px-[1.25rem] text-body2-15-medium">
       {preferences.length > 0 ? (
         preferences.map((filter, index) => (
           <button
             key={index}
-            className={`box-border rounded-sm px-[0.62rem] py-[0.25rem] ${
-              selectedFilters.includes(filter) ? 'bg-gray500 text-main2' : 'border-transparent bg-gray500 text-gray400'
+            className={`box-border text-body2-15-medium rounded-[0.5rem] px-[0.62rem] py-[0.25rem] ${
+              selectedFilters.includes(filter) ? 'bg-sub2 text-main' : 'border-transparent bg-gray700 text-gray300'
             } active:scale-95 transition-transform duration-150`}
             onClick={() => handleFilterClick(filter)}>
             {translateTag(filter)} 
