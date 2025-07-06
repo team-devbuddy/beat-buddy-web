@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import BoardImageModal from './BoardImageModal';
+import BoardImageModal from '../BoardImageModal';
 import { useState, useEffect } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
@@ -11,7 +11,7 @@ import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
 import { deletePostLike } from '@/lib/actions/post-interaction-controller/deleteLike';
 import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap';
 import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
-import BoardDropdown from './BoardDropDown';
+import BoardDropdown from '../BoardDropDown';
 import { useRef } from 'react';
 
 interface PostProps {
@@ -27,7 +27,7 @@ interface PostProps {
     comments: number;
     hashtags: string[];
     imageUrls?: string[];
-    writerId: number;
+    followingId: number;
     liked: boolean;
     hasCommented: boolean;
     scrapped: boolean;
@@ -35,7 +35,7 @@ interface PostProps {
   };
 }
 
-export default function BoardThread({ postId, post }: PostProps) {
+export default function BoardSearchResult({ postId, post }: PostProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -73,10 +73,10 @@ export default function BoardThread({ postId, post }: PostProps) {
         try {
             setLoadingFollow(true);
             if (!isFollowing) {
-                await postFollow(post.writerId, accessToken);
+                await postFollow(post.followingId, accessToken);
                 setIsFollowing(true);
             } else {
-                await deleteFollow(post.writerId, accessToken);
+                await deleteFollow(post.followingId, accessToken);
                 setIsFollowing(false);
             }
         } catch (err: any) {

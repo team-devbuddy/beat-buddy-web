@@ -54,19 +54,19 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
 
   // 푸터를 숨겨야 하는 경우:
   const shouldHideFooter = pathname.includes('onBoarding') || !isAuth || pathname.includes('detail') || pathname.includes('write') || pathname.includes('news') || pathname.includes('bbp-list') || pathname.includes('bbp-detail') || pathname.includes('free') || pathname.includes('piece')
-  || pathname.includes('bbp-list') || pathname.includes('alert') || pathname.includes('search') || pathname.includes('magazine') || pathname.includes('board/') || pathname.includes('maintenance') || pathname.includes('signup') || isMaintenance || pathname.includes('withdrawal');
+  || pathname.includes('bbp-list') || pathname.includes('alert') || pathname.includes('magazine')  || pathname.includes('maintenance') || pathname.includes('signup') || isMaintenance || pathname.includes('withdrawal');
 
   return (
-    <div className="flex  h-screen w-full items-center justify-center">
-      {/* 모바일 컨테이너 */}
-      <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black shadow-lg">
-        {/* 콘텐츠 */}
-        <div className="flex h-full max-w-[600px] w-full flex-col">{children}</div>
-        {/* 푸터는 특정 경로 및 로그인 여부에 따라 표시 */}
-        
-        {!shouldHideFooter && <NavigateFooter />}
-      </div>
-    </div>
+    <div className="flex h-screen  w-full items-center justify-center">
+  {/* 모바일 컨테이너 */}
+  <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
+  <div className="flex h-full flex-col overflow-y-auto pb-[64px]">
+    {children}
+  </div>
+</div>
+
+{!shouldHideFooter && <NavigateFooter />}
+</div>
   );
 }
 

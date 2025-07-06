@@ -71,7 +71,7 @@ const BoardHashtag = ({ selectedTags, setSelectedTags, onUpdatePosts }: BoardHas
               className="flex flex-wrap gap-[0.5rem] max-w-[80%]"
             >
               {selectedTags.length === 0 ? (
-                <div className="relative bg-gray500 border border-gray500 text-gray200 text-body3-12-medium px-[0.62rem] py-[0.25rem] rounded-[0.38rem] ml-[0.25rem]">
+                <div className="relative bg-gray500 border border-gray500 text-gray200 text-[0.75rem] px-[0.62rem] py-[0.3rem] rounded-[0.5rem] ml-[0.25rem]">
                   <p>#를 눌러 관련 게시물만 모아보세요!</p>
                   <div className="absolute -left-[0.5rem] top-1/2 -translate-y-1/2 w-0 h-0 border-y-[4px] border-r-[8px] border-y-transparent border-r-gray500" />
                 </div>
@@ -79,7 +79,7 @@ const BoardHashtag = ({ selectedTags, setSelectedTags, onUpdatePosts }: BoardHas
                 selectedTags.map((tag, idx) => (
                   <div
                     key={idx}
-                    className="bg-sub2 text-main text-[0.75rem] font-body2-15-medium px-[0.62rem] py-[0.3rem] rounded-[0.5rem]"
+                    className="bg-sub2 text-main  text-body3-12-medium px-[0.62rem] py-[0.3rem] rounded-[0.5rem]"
                   >
                     {tag}
                   </div>

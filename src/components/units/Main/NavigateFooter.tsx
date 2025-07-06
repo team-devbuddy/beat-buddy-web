@@ -37,8 +37,8 @@ const NavigateFooter = () => {
   }, [pathname, setActivePage]);
 
   return (
-    <footer className="text-navigate-queen fixed bottom-0 left-0 right-0 mx-auto max-w-[600px] bg-black py-[1rem] font-queensides">
-      <div className="flex items-center justify-around">
+<footer className="fixed bottom-0 left-0 right-0 z-50 text-navigate-queen rounded-t-[1.25rem] w-full max-w-[600px] mx-auto border-t border-gray500 bg-BG-black py-[1rem] font-queensides">
+<div className="flex items-center justify-around">
         <Link href="/">
           <div
             onClick={() => setActivePage('home')}
@@ -49,7 +49,6 @@ const NavigateFooter = () => {
               width={32}
               height={32}
             />
-            <span className="mt-[0.12rem] text-sm font-bold">Home</span>
           </div>
         </Link>
 
@@ -63,7 +62,6 @@ const NavigateFooter = () => {
               width={32}
               height={32}
             />
-            <span className="mt-[0.12rem] text-sm font-medium">Board</span>
           </div>
         </Link>
 
@@ -77,7 +75,6 @@ const NavigateFooter = () => {
               width={32}
               height={32}
             />
-            <span className="mt-[0.12rem] text-sm font-medium">Venue</span>
           </div>
         </Link>
 
@@ -91,7 +88,6 @@ const NavigateFooter = () => {
               width={32}
               height={32}
             />
-            <span className="mt-[0.12rem] text-sm font-medium">News</span>
           </div>
         </Link>
 
@@ -105,7 +101,6 @@ const NavigateFooter = () => {
               width={32}
               height={32}
             />
-            <span className="mt-[0.12rem] text-sm font-medium">My Page</span>
           </div>
         </Link>
       </div>

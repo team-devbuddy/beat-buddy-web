@@ -146,3 +146,9 @@ export const postScrapState = atom<{ [postId: number]: boolean }>({
   key: 'postScrapState',
   default: {},
 });
+
+export const boardRecentSearchState = atom<string[]>({
+  key: 'boardRecentSearchState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
