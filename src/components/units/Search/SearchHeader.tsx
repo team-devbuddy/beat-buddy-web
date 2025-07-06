@@ -56,7 +56,7 @@ const SearchHeader = () => {
     <header className="flex flex-col bg-BG-black">
       <div className="flex w-full items-center justify-between px-[1rem] py-[0.68rem]">
         <Image
-          src="/icons/ArrowLeft.svg"
+          src="/icons/line-md_chevron-left.svg"
           alt="뒤로가기"
           width={24}
           height={24}
@@ -73,10 +73,10 @@ const SearchHeader = () => {
           />
         </Link>
       </div>
-      <div className="flex w-full items-center justify-between bg-BG-black px-4 py-3">
+      <div className="flex w-full items-center justify-between bg-BG-black px-4 pb-3">
         <div className="relative w-full">
           <input
-            className="w-full border-b-2 border-white bg-transparent px-2 py-2 text-white placeholder:text-white focus:outline-none"
+            className="w-full border-b-2 border-main bg-transparent px-2 py-2 text-white placeholder:text-white focus:outline-none"
             placeholder={isLoading ? "" : "지금 가장 인기있는 클럽은?"}
             value={searchQuery}
             onChange={handleInputChange}
@@ -84,7 +84,7 @@ const SearchHeader = () => {
             style={{ WebkitAppearance: 'none', borderRadius: 0 }}
           />
           <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
-            <Image src="/icons/gray-search.svg" alt="search icon" width={24} height={24} />
+            <Image src="/icons/search-01.svg" alt="search icon" width={24} height={24} />
           </div>
         </div>
       </div>
