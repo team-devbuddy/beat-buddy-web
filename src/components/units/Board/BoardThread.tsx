@@ -162,8 +162,8 @@ export default function BoardThread({ postId, post }: PostProps) {
                     {isFollowing ? '팔로잉' : '팔로우'}
                 </button>
             </div>
-
-            <p className="text-[0.75rem] text-gray100 mt-[0.88rem] whitespace-pre-wrap">{post.content}</p>
+            <p className="text-body2-15-bold text-gray100 mt-[0.88rem] mb-[0.5rem]">{post.title}</p>
+            <p className="text-[0.75rem] text-gray100  whitespace-pre-wrap">{post.content}</p>
 
             {post.imageUrls && post.imageUrls.length > 0 && (
                 <div className="mt-[0.88rem] overflow-x-auto flex gap-[0.5rem]">

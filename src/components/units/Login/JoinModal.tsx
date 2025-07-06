@@ -21,8 +21,8 @@ export default function JoinModal({ onBusinessClick, onClose, loginType }: Props
     setUserType(type);
     const loginUrls = {
       kakao: 'https://api.beatbuddy.world/oauth2/authorization/kakao',
-      google: 'https://accounts.google.com/o/oauth2/v2/auth?...',
-      apple: 'https://appleid.apple.com/auth/authorize?...',
+      google: 'https://api.beatbuddy.world/oauth2/authorization/google',
+      apple: 'https://api.beatbuddy.world/oauth2/authorization/apple',
     };
     window.location.href = loginUrls[loginType];
   };
