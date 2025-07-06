@@ -1,13 +1,16 @@
-// BoardThread.tsx
 'use client';
 
 import Image from 'next/image';
 import BoardImageModal from './BoardImageModal';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { accessTokenState, postLikeState, postScrapState } from '@/context/recoil-context';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
+import { deletePostLike } from '@/lib/actions/post-interaction-controller/deleteLike';
+import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap';
+import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
 
 interface PostProps {
   postId: number;
@@ -23,6 +26,9 @@ interface PostProps {
     hashtags: string[];
     imageUrls?: string[];
     followingId: number;
+    liked: boolean;
+    hasCommented: boolean;
+    scrapped: boolean;
   };
 }
 
@@ -31,7 +37,17 @@ export default function BoardThread({ postId, post }: PostProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loadingFollow, setLoadingFollow] = useState(false);
+  const [isLoadingLike, setIsLoadingLike] = useState(false);
+  const [isLoadingScrap, setIsLoadingScrap] = useState(false);
+  const [likes, setLikes] = useState(post.likes);
+  const [scraps, setScraps] = useState(post.scraps);
+
   const accessToken = useRecoilValue(accessTokenState) || '';
+  const [likeMap, setLikeMap] = useRecoilState(postLikeState);
+  const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
+
+  const liked = likeMap[post.id] ?? false;
+  const scrapped = scrapMap[post.id] ?? false;
 
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -39,12 +55,7 @@ export default function BoardThread({ postId, post }: PostProps) {
   };
 
   const handleFollow = async () => {
-    if (loadingFollow) return;
-
-    if (!accessToken) {
-      alert('로그인이 필요합니다.');
-      return;
-    }
+    if (loadingFollow || !accessToken) return alert('로그인이 필요합니다.');
 
     try {
       setLoadingFollow(true);
@@ -62,6 +73,60 @@ export default function BoardThread({ postId, post }: PostProps) {
     }
   };
 
+  const handleLike = async () => {
+    if (!accessToken || isLoadingLike) return;
+
+    setIsLoadingLike(true);
+    try {
+      if (liked) {
+        await deletePostLike(post.id, accessToken);
+        setLikeMap(prev => ({ ...prev, [post.id]: false }));
+        setLikes(prev => prev - 1);
+      } else {
+        await addPostLike(post.id, accessToken);
+        setLikeMap(prev => ({ ...prev, [post.id]: true }));
+        setLikes(prev => prev + 1);
+      }
+    } catch (err: any) {
+      alert(err.message ?? '요청 실패');
+    } finally {
+      setIsLoadingLike(false);
+    }
+  };
+
+  const handleScrap = async () => {
+    if (!accessToken || isLoadingScrap) return;
+
+    setIsLoadingScrap(true);
+    try {
+      if (scrapped) {
+        await deletePostScrap(post.id, accessToken);
+        setScrapMap(prev => ({ ...prev, [post.id]: false }));
+        setScraps(prev => prev - 1);
+      } else {
+        await addPostScrap(post.id, accessToken);
+        setScrapMap(prev => ({ ...prev, [post.id]: true }));
+        setScraps(prev => prev + 1);
+      }
+    } catch (err: any) {
+      alert(err.message ?? '요청 실패');
+    } finally {
+      setIsLoadingScrap(false);
+    }
+  };
+
+  useEffect(() => {
+    if (likeMap[post.id] === undefined) {
+      setLikeMap(prev => ({ ...prev, [post.id]: post.liked }));
+    }
+  }, [post.id]);
+
+  useEffect(() => {
+    if (scrapMap[post.id] === undefined) {
+      setScrapMap(prev => ({ ...prev, [post.id]: post.scrapped }));
+    }
+  }, [post.id]);
+
   return (
     <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[1.12rem]">
       <div className="flex justify-between items-start">
@@ -70,7 +135,7 @@ export default function BoardThread({ postId, post }: PostProps) {
             <Image src="/icons/mask Group.svg" alt="profile" width={37} height={37} />
           </div>
           <div>
-            <p className="text-[0.875rem] font-bold text-white">작성자 {post.nickname}</p>
+            <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
             <p className="text-body3-12-medium text-gray200">{post.createAt}</p>
           </div>
         </div>
@@ -126,17 +191,36 @@ export default function BoardThread({ postId, post }: PostProps) {
       </div>
 
       <div className="flex gap-[0.5rem] text-body3-12-medium text-gray300 mt-[1rem]">
-        <span className="flex items-center gap-[0.12rem]">
-          <Image src="/icons/favorite.svg" alt="heart" width={20} height={20} />
-          {post.likes}
+        <span className={`flex items-center gap-[0.12rem] ${liked ? 'text-main' : ''}`}>
+          <button onClick={handleLike} disabled={isLoadingLike} title="좋아요" className="flex items-center">
+            <Image
+              src={liked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
+              alt="heart"
+              width={20}
+              height={20}
+            />
+          </button>
+          {likes}
         </span>
-        <span className="flex items-center gap-[0.12rem]">
-          <Image src="/icons/maps_ugc.svg" alt="comment" width={20} height={20} />
+        <span className={`flex items-center gap-[0.12rem] ${post.hasCommented ? 'text-main' : ''}`}>
+          <Image
+            src={post.hasCommented ? '/icons/maps_ugc-pink.svg' : '/icons/maps_ugc.svg'}
+            alt="comment"
+            width={20}
+            height={20}
+          />
           {post.comments}
         </span>
-        <span className="flex items-center gap-[0.12rem]">
-          <Image src="/icons/material-symbols_bookmark-gray.svg" alt="bookmark" width={20} height={20} />
-          {post.scraps}
+        <span className={`flex items-center gap-[0.12rem] ${scrapped ? 'text-main' : ''}`}>
+          <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
+            <Image
+              src={scrapped ? '/icons/material-symbols_bookmark-pink.svg' : '/icons/material-symbols_bookmark-gray.svg'}
+              alt="bookmark"
+              width={20}
+              height={20}
+            />
+          </button>
+          {scraps}
         </span>
       </div>
     </div>

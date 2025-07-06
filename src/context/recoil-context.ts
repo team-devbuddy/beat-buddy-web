@@ -131,3 +131,18 @@ export const recentSearchesState = atom<string[]>({
   default: [],
   effects_UNSTABLE: [persistAtom],
 });
+
+  
+export interface PostLikeInfo {
+  [postId: number]: boolean;
+}
+
+export const postLikeState = atom<PostLikeInfo>({
+  key: 'postLikeState',
+  default: {},
+});
+
+export const postScrapState = atom<{ [postId: number]: boolean }>({
+  key: 'postScrapState',
+  default: {},
+});

@@ -22,6 +22,8 @@ interface PostType {
   comments: number;
   hashtags: string[];
   followingId: number;
+  liked: boolean;
+  hasCommented: boolean;
 }
 
 const PAGE_SIZE = 10;
