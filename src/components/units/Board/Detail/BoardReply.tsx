@@ -20,7 +20,7 @@ interface ReplyType {
   likes: number;
   createdAt: string;
   isAuthor: boolean;
-  userId: number;
+  userId: string;
 }
 
 interface Props {
@@ -41,7 +41,7 @@ export default function BoardReply({ reply, isNested = false }: Props) {
   };
 
   const fetchUserProfile = async () => {
-    const res = await getUserProfileInfo(reply.userId.toString(), accessToken);
+    const res = await getUserProfileInfo(reply.userId, accessToken);
     setUserProfile(res);
   };
 

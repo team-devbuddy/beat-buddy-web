@@ -15,7 +15,7 @@ interface CommentType {
   likes: number;
   createdAt: string;
   isAuthor: boolean;
-  userId: number;
+  userId: string;
 }
 
 interface Props {
@@ -58,7 +58,7 @@ export default function BoardComments({ postId }: Props) {
   }, [isLastPage]);
 
   return (
-    <div className="pb-[6.5rem]">
+    <div className="pb-[6.5rem] bg-transparent">
       {comments.map((comment) => (
         <BoardReply key={comment.id} reply={comment} />
       ))}

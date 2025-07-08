@@ -1,145 +1,127 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+
+import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { heartAnimation } from '@/lib/animation';
 
-interface News {
+interface Event {
   id: string;
   title: string;
-  thumbnail: string;
-  tags: string[];
-  likeCount: number;
-  publishedAt: string;
+  thumbImage: string;
+  location: string;
+  startDate: string;
+  endDate: string;
 }
 
-interface NewsListsProps {
-  news: News[];
-  likedNews: { [key: string]: boolean };
+interface EventListsProps {
+  events: Event[];
+  tab: 'upcoming' | 'past';
+  likedEvents: { [key: string]: boolean };
   likeNums: { [key: string]: number };
-  handleLikeClickWrapper: (e: React.MouseEvent, newsId: string) => void;
-  sortBy: '최신순' | '인기순';
+  onLikeClick: (e: React.MouseEvent, id: string) => void;
+  sortBy?: '최신순' | '인기순';
 }
 
-const getImageSrc = (news: News) => {
-  if (news.thumbnail) {
-    return news.thumbnail;
-  }
-  return '/images/DefaultImage.png';
-};
-
-export default function NewsLists({ news, likedNews, likeNums, handleLikeClickWrapper, sortBy }: NewsListsProps) {
+export default function EventLists({
+  events,
+  tab,
+  likedEvents,
+  likeNums,
+  onLikeClick,
+  sortBy = '최신순',
+}: EventListsProps) {
   const [clickedHeart, setClickedHeart] = useState<{ [key: string]: boolean }>({});
+  const now = new Date();
 
-  const memoizedValues = useMemo(() => {
-    return news.map((item) => ({
-      imageUrl: getImageSrc(item),
-      tags: item.tags || [],
-    }));
-  }, [news]);
+  // 필터링
+  const filtered = useMemo(() => {
+    return events.filter((e) => {
+      const date = new Date(e.endDate);
+      return tab === 'upcoming' ? date >= now : date < now;
+    });
+  }, [events, tab]);
 
-  const handleHeartClick = (e: React.MouseEvent, newsId: string) => {
-    setClickedHeart((prev) => ({ ...prev, [newsId]: true }));
-    handleLikeClickWrapper(e, newsId);
-    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [newsId]: false })), 500); // 애니메이션 후 상태 리셋
+  // 정렬
+  const sorted = useMemo(() => {
+    if (sortBy === '인기순') {
+      return [...filtered].sort((a, b) => (likeNums[b.id] || 0) - (likeNums[a.id] || 0));
+    }
+    return [...filtered].sort(
+      (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+    );
+  }, [filtered, sortBy, likeNums]);
+
+  // 하트 클릭 처리
+  const handleHeartClick = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    setClickedHeart((prev) => ({ ...prev, [id]: true }));
+    onLikeClick(e, id);
+    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [id]: false })), 500);
   };
 
-  // 정렬 로직
-  const sortedNews = useMemo(() => {
-    if (sortBy === '인기순') {
-      return [...news].sort((a, b) => 
-        (likeNums[b.id] || 0) - (likeNums[a.id] || 0)
-      );
-    } else {
-      // 최신순 - 기본 API 응답 정렬 유지 또는 날짜별 정렬
-      return [...news].sort((a, b) => 
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-      );
-    }
-  }, [news, likeNums, sortBy]);
-
   return (
-    <div className="flex w-full  flex-col bg-BG-black">
-      <div className="mx-[0.5rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
-        {sortedNews.map((item, index) => {
-          const { imageUrl, tags } = memoizedValues[index];
+    <div className="flex w-full flex-col bg-BG-black">
+      <div className="grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] px-[0.5rem] pt-4">
+        {sorted.map((event) => (
+          <Link key={event.id} href={`/event/${event.id}`}>
+            <motion.div
+              whileHover={{
+                y: -5,
+                boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
+              }}
+              className="relative flex flex-col rounded-md overflow-hidden">
+              {/* 이미지 */}
+              <div className="relative w-full pb-[100%]">
+                <Image
+                  src={event.thumbImage || '/images/DefaultImage.png'}
+                  alt={event.title}
+                  fill
+                  className="object-cover rounded-md"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
 
-          return (
-            <Link key={item.id} href={`/news/${item.id}`} passHref>
-              <motion.div
-                whileHover={{
-                  y: -5,
-                  boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
-                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                }}
-                className="relative flex h-full flex-col rounded-md p-2">
-                <div className="relative w-full pb-[100%]">
+                {/* 좋아요 */}
+                <motion.div
+                  className="absolute top-3 right-3 cursor-pointer z-10"
+                  onClick={(e) => handleHeartClick(e, event.id)}
+                  variants={heartAnimation}
+                  initial="initial"
+                  animate={clickedHeart[event.id] ? 'clicked' : 'initial'}>
                   <Image
-                    src={imageUrl}
-                    alt={`${item.title} image`}
-                    fill
-                    objectFit="cover"
-                    className="rounded-xs"
+                    src={
+                      likedEvents[event.id]
+                        ? '/icons/FilledHeart.svg'
+                        : '/icons/PinkHeart.svg'
+                    }
+                    alt="heart"
+                    width={28}
+                    height={28}
                   />
-                  <div className="club-gradient absolute inset-0"></div>
-                  <motion.div
-                    className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleHeartClick(e, item.id);
-                    }}
-                    variants={heartAnimation}
-                    initial="initial"
-                    animate={clickedHeart[item.id] ? 'clicked' : 'initial'}>
-                    <Image
-                      src={likedNews[item.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
-                      alt="heart icon"
-                      width={32}
-                      height={32}
-                    />
-                  </motion.div>
+                </motion.div>
+
+                {/* 좋아요 수 */}
+                <div className="absolute bottom-3 left-3 flex items-center space-x-1 z-10">
+                  <Image src="/icons/PinkHeart.svg" alt="heart" width={16} height={16} />
+                  <span className="text-[0.75rem] text-gray100">
+                    {String(likeNums[event.id] || 0).padStart(3, '0')}
+                  </span>
                 </div>
-                <div className="mt-[1rem] flex flex-grow flex-col justify-between">
-                  <div>
-                    <h3 className="text-ellipsis text-body1-16-bold text-white">{item.title}</h3>
-                    <div className="mb-[1.06rem] mt-[0.75rem] flex w-4/5 flex-wrap gap-[0.5rem]">
-                      {tags.length > 0 ? (
-                        tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                            {tag}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                          NEWS
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-end justify-between">
-                    <div className="flex items-center space-x-[0.25rem] text-gray300">
-                      <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-                      <span className="text-body3-12-medium">
-                        {likeNums[item.id] !== undefined ? likeNums[item.id] : 0}
-                      </span>
-                    </div>
-                    <div className="text-body3-12-medium text-gray300">
-                      {new Date(item.publishedAt).toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </Link>
-          );
-        })}
+              </div>
+
+              {/* 텍스트 */}
+              <div className="p-3 text-white">
+                <p className="text-[0.75rem] text-gray100">
+                  {event.startDate} ~ {event.endDate}
+                </p>
+                <h3 className="text-[0.875rem] font-bold mt-1 truncate">{event.title}</h3>
+                <p className="text-[0.75rem] text-gray300 mt-1 truncate">{event.location}</p>
+              </div>
+            </motion.div>
+          </Link>
+        ))}
       </div>
     </div>
   );
-} 
+}

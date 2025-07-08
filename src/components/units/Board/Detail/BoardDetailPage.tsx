@@ -81,7 +81,7 @@ export default function BoardDetailPage({
 
       {/* 입력창 고정 */}
       {post && (
-        <div className="fixed bottom-5 left-0 right-0  bg-BG-black z-50">
+        <div className="fixed bottom-5 left-0 right-0   z-50">
           <BoardCommentInput postId={post.id} onCommentAdded={() => {}} />
         </div>
       )}

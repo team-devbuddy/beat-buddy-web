@@ -152,3 +152,14 @@ export const boardRecentSearchState = atom<string[]>({
   default: [],
   effects_UNSTABLE: [persistAtom],
 });
+
+export const likedEventsState = atom<{ [eventId: number]: boolean }>({
+  key: 'likedEventsState',
+  default: {},
+});
+
+// 좋아요 수 상태 (eventId → number)
+export const likeCountState = atom<{ [eventId: number]: number }>({
+  key: 'likeCountState',
+  default: {},
+});
