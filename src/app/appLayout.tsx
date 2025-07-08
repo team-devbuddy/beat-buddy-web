@@ -1,11 +1,13 @@
 'use client';
 
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
-import { accessTokenState, authState } from '@/context/recoil-context';
+import { accessTokenState, authState, userProfileState } from '@/context/recoil-context';
 import { PostRefresh } from '@/lib/action';
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation'; // usePathname 사용
 import NavigateFooter from '@/components/units/Main/NavigateFooter';
+import { UserProfile } from '@/lib/types';
+import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 
 function ClientLayout({ children }: { children: React.ReactNode }) {
   const [access, setAccess] = useRecoilState(accessTokenState);
@@ -13,7 +15,9 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false);
   const router = useRouter();
   const pathname = usePathname(); // 현재 경로 감지
-
+  const [userProfile, setUserProfile] = useRecoilState(userProfileState);
+  const userProfileValue = useRecoilValue(userProfileState);
+  console.log(userProfileValue);
   useEffect(() => {
     setIsHydrated(true);
   }, []);
@@ -25,7 +29,8 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
           const response = await PostRefresh(access);
           if (response.ok) {
             const data = await response.json();
-
+            const userProfile = await getProfileinfo(access);
+            setUserProfile(userProfileValue);
             setAccess(data.access);
             setIsAuth(true);
           } else {

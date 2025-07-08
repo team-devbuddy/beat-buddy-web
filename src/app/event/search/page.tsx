@@ -2,44 +2,47 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { postSearch } from '@/lib/actions/post-interaction-controller/postSearch';
+import { eventSearch } from '@/lib/actions/event-controller/eventSearch';
 import BoardHashtag from '@/components/units/Board/BoardHashtag';
-import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { motion, AnimatePresence } from 'framer-motion';
 import BoardSearchHeader from '@/components/units/Board/Search/BoardSearchHeader';
-import BoardSearchResult from '@/components/units/Board/Search/BoardSearchResult';
+import EventSearchResult from '@/components/units/Event/EventSearchResult';
 import BoardRecentTerm from '@/components/units/Board/Search/BoardRecentTerm';
 import NoResults from '@/components/units/Search/NoResult';
 import Link from 'next/link';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { userProfileState } from '@/context/recoil-context';
 
 interface PostType {
-  id: number;
-  title?: string;
+  eventId: number;
+  title: string;
   content: string;
-  nickname: string;
-  createAt: string;
-  likes: number;
-  scraps: number;
-  comments: number;
-  hashtags: string[];
-  followingId: number;
+  images: string[];
   liked: boolean;
-  hasCommented: boolean;
-  scrapped: boolean;
+  likes: number;
+  views: number;
+  startDate: string;
+  endDate: string;
+  receiveInfo: boolean;
+  receiveName: boolean;
+  receiveGender: boolean;
+  receivePhoneNumber: boolean;
+  receiveSNSId: boolean;
+  receiveMoney: boolean;
+  depositAccount: string;
+  depositAmount: number;
   isAuthor: boolean;
 }
 
 const PAGE_SIZE = 10;
 
-// postSearch가 PostType[]을 직접 반환한다고 가정합니다.
-// 실제 API 응답이 { data: { ... } } 형태라면 반환값을 적절히 처리해주세요.
-export default function BoardSearchPage() {
+export default function EventSearchPage() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get('q') ?? '';
   const pathname = usePathname();
   const router = useRouter();
-
+  const userProfile = useRecoilValue(userProfileState);
   const [posts, setPosts] = useState<PostType[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -104,38 +107,36 @@ export default function BoardSearchPage() {
 
   const fetchSearchPosts = useCallback(
     async (targetPage: number) => {
-      if (loading) return; // 중복 요청 방지
+      if (loading) return;
       setLoading(true);
 
       try {
         if (selectedTags.length === 0) {
-          const newPosts = await postSearch(keyword, accessToken, targetPage, PAGE_SIZE);
+          const newPosts = await eventSearch(keyword, accessToken, targetPage, PAGE_SIZE); // ✅ 수정
           if (newPosts.length < PAGE_SIZE) setHasMore(false);
           setPosts(prevPosts => (targetPage === 1 ? newPosts : [...prevPosts, ...newPosts]));
         } else {
           const postLists = await Promise.all(
-            selectedTags.map(tag => postSearch(tag, accessToken, targetPage, PAGE_SIZE))
+            selectedTags.map(tag => eventSearch(tag, accessToken, targetPage, PAGE_SIZE)) // ✅ 수정
           );
           const merged = postLists.flat();
           if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
           
           setPosts(prevPosts => {
             const combined = targetPage === 1 ? merged : [...prevPosts, ...merged];
-            const unique = [...new Map(combined.map(post => [post.id, post])).values()];
+            const unique = [...new Map(combined.map(post => [post.eventId, post])).values()];
             return unique;
           });
         }
       } catch (err) {
-        console.error('게시글 로드 실패:', err);
+        console.error('이벤트 게시글 로드 실패:', err);
       } finally {
         setLoading(false);
       }
     },
-    // 🔥 최종 수정된 의존성 배열: loading을 제거하여 무한 루프를 방지합니다.
     [keyword, accessToken, selectedTags]
   );
 
-  // 검색어나 태그 변경 시, 상태를 초기화하고 첫 페이지 로드
   useEffect(() => {
     if (!isInitialized || !pathname) return;
     localStorage.setItem('selectedTags', JSON.stringify(selectedTags));
@@ -146,13 +147,11 @@ export default function BoardSearchPage() {
     fetchSearchPosts(1);
   }, [keyword, selectedTags, pathname, isInitialized, fetchSearchPosts]);
 
-  // 페이지 번호 변경 시 (무한 스크롤), 다음 페이지 로드
   useEffect(() => {
     if (!isInitialized || page === 1) return;
     fetchSearchPosts(page);
   }, [page, isInitialized, fetchSearchPosts]);
 
-  // 마운트 시 로컬 스토리지에서 태그 로드
   useEffect(() => {
     if (!pathname) return;
     const stored = localStorage.getItem('selectedTags');
@@ -187,13 +186,13 @@ export default function BoardSearchPage() {
 
   return (
     <main
-      className=" bg-BG-black text-white"
+      className="bg-BG-black text-white"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <BoardSearchHeader placeholder="궁금한 소식을 검색해주세요." onSearchSubmit={handleSearchSubmit} />
-      {keyword === '' && <BoardRecentTerm />}
+      <BoardSearchHeader placeholder="이벤트를 입력해주세요." onSearchSubmit={handleSearchSubmit} isEvent={true} />
+      {keyword === '' && <BoardRecentTerm isEvent={true} />}
 
       <div style={{ height: `${pullDistance}px`, transition: isRefreshing ? 'height 0.3s ease' : 'none' }} />
       <AnimatePresence>
@@ -205,36 +204,36 @@ export default function BoardSearchPage() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
             className="text-center text-sm text-gray300"
-          >
-          </motion.div>
+          />
         )}
       </AnimatePresence>
 
       {posts.map((post, i) => {
         if (i === posts.length - 1) {
           return (
-            <div ref={lastPostRef} key={post.id}>
-              <BoardSearchResult postId={post.id} post={post} />
+            <div ref={lastPostRef} key={post.eventId}>
+              <EventSearchResult eventId={post.eventId} event={post} />
             </div>
           );
         } else {
-          return <BoardSearchResult key={post.id} postId={post.id} post={post} />;
+          return <EventSearchResult key={post.eventId} eventId={post.eventId} event={post} />;
         }
       })}
 
-      {!loading && posts.length === 0 && keyword !== '' && (
-         <NoResults/>
-      )}
+      {!loading && posts.length === 0 && keyword !== '' && <NoResults />}
+
+      {userProfile?.role === 'BUSINESS' && (
       <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
-  <div className="w-full max-w-[600px] px-4">
-    <Link
-      href="/board/write"
-      className="ml-auto flex h-14 w-14 items-center justify-center border border-main2 rounded-full bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90"
-    >
-      <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
-    </Link>
-  </div>
-</div>
+        <div className="w-full max-w-[600px] px-4">
+          <Link
+            href="/board/write"
+            className="ml-auto flex h-14 w-14 items-center justify-center border border-main2 rounded-full bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90"
+          >
+            <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
+          </Link>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

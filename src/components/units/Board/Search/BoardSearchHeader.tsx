@@ -11,10 +11,12 @@ import { AnimatePresence, motion } from 'framer-motion'; // ✅ 추가
 
 interface Props {
     onSearchSubmit: () => void;
+  placeholder: string;
+  isEvent?: boolean;
 }
   
 
-const BoardSearchHeader = ({ onSearchSubmit }: Props) => {
+const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,7 +58,7 @@ const BoardSearchHeader = ({ onSearchSubmit }: Props) => {
     });
   
     // ✅ URL을 변경해서 BoardSearchPage의 useSearchParams가 갱신되도록 유도
-    router.push(`/board/search?q=${encodeURIComponent(searchQuery)}`);
+    router.push(`/${isEvent ? 'event' : 'board'}/search?q=${encodeURIComponent(searchQuery)}`);
   };
   
 
@@ -70,7 +72,7 @@ const BoardSearchHeader = ({ onSearchSubmit }: Props) => {
     if (isMapView) {
       setIsMapView(false);
     } else {
-      router.push('/board');
+      router.push(`/${isEvent ? 'event' : 'board'}`);
     }
   };
 
@@ -92,7 +94,7 @@ const BoardSearchHeader = ({ onSearchSubmit }: Props) => {
           <input
             ref={inputRef}
             className="w-full border-b-2 border-main bg-transparent pl-7 pr-10 py-2 text-white placeholder:text-gray300 focus:outline-none"
-            placeholder={isLoading ? '' : '관심 있는 이벤트를 검색해주세요.'}
+            placeholder={isLoading ? '' : placeholder}
             value={searchQuery}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}

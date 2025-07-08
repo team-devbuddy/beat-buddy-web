@@ -26,9 +26,10 @@ interface DropdownProps {
   onClose: () => void;
   position: { top: number; left: number };
   postId: number;
+  eventId?: number;
 }
 
-const BoardDropdown = ({ isAuthor, onClose, position, postId }: DropdownProps) => {
+const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId }: DropdownProps) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const accessToken = useRecoilValue(accessTokenState) || '';

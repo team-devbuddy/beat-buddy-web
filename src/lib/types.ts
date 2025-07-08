@@ -120,3 +120,14 @@ export interface MagazineProps {
   totalCount: number; 
   isLiked: boolean;
 }
+
+export interface UserProfile {
+  memberId: number;
+  nickname: string;
+  profileImageUrl: string;
+  role: string;
+  postCount: number;
+  followerCount: number;
+  followingCount: number;
+}
+

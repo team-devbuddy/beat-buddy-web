@@ -8,12 +8,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { boardRecentSearchState } from '@/context/recoil-context'; // 기존 recentSearchState 말고 이거!
 
 
-const BoardRecentTerm = () => {
+const BoardRecentTerm = ({ isEvent }: { isEvent?: boolean }) => {
     const [recentSearches, setRecentSearches] = useRecoilState(boardRecentSearchState);
     const router = useRouter();
 
   const handleTermClick = (term: string) => {
-    router.push(`/board/search?q=${encodeURIComponent(term)}`);
+    router.push(`/${isEvent ? 'event' : 'board'}/search?q=${encodeURIComponent(term)}`);
   };
 
   const handleRemoveSearchTerm = (term: string) => {

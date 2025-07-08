@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import EventSearch from '@/components/units/Event/EventSearch';
+import EventHeader from '@/components/units/Event/EventHeader';
 import EventTap from '@/components/units/Event/EventTap';
 import EventNow from '@/components/units/Event/EventNow';
 import EventContainer from '@/components/units/Event/EventContainer';
@@ -56,7 +56,7 @@ export default function EventPage() {
       onTouchEnd={handleTouchEnd}
       className="bg-BG-black"
     >
-      <EventSearch />
+      <EventHeader />
       <EventTap activeTab={activeTab} setActiveTab={setActiveTab} />
       <LocationFilter />
 

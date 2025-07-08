@@ -1,7 +1,7 @@
 import { atom, selector, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
-import { HeartbeatProps,ClubProps,Club } from '@/lib/types';
+import { HeartbeatProps,ClubProps,Club, UserProfile } from '@/lib/types';
 
 const { persistAtom } = recoilPersist();
 
@@ -162,4 +162,9 @@ export const likedEventsState = atom<{ [eventId: number]: boolean }>({
 export const likeCountState = atom<{ [eventId: number]: number }>({
   key: 'likeCountState',
   default: {},
+});
+
+export const userProfileState = atom<UserProfile | null>({
+  key: 'userProfileState',
+  default: null,
 });
