@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import BoardImageModal from '../BoardImageModal';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
 import { accessTokenState, postLikeState, postScrapState } from '@/context/recoil-context';
@@ -12,13 +12,14 @@ import { deletePostLike } from '@/lib/actions/post-interaction-controller/delete
 import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap';
 import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
 import BoardDropdown from '../BoardDropDown';
-import { useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { formatRelativeTime } from '../BoardThread';
 
 interface PostProps {
   postId: number;
   post: {
     id: number;
+    profileImageUrl: string;
     title?: string;
     content: string;
     nickname: string;
@@ -26,17 +27,20 @@ interface PostProps {
     likes: number;
     scraps: number;
     comments: number;
-    hashtags: string[];
+    hashtags?: string[];
     imageUrls?: string[];
-    followingId: number;
+    writerId: number;
     liked: boolean;
     hasCommented: boolean;
     scrapped: boolean;
     isAuthor: boolean;
+    role: string;
+    views: number;
   };
 }
 
-export default function BoardSearchResult({ postId, post }: PostProps) {
+export default function BoardDetail({ postId, post }: PostProps) {
+    const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -51,15 +55,25 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
     const [likeMap, setLikeMap] = useRecoilState(postLikeState);
     const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
 
-    const liked = likeMap[post.id] ?? false;
-    const scrapped = scrapMap[post.id] ?? false;
+    // 🔥 렌더링 시점에 상태를 파생시켜 불필요한 재렌더링을 방지
+    const liked = likeMap[post.id] ?? post.liked;
+    const scrapped = scrapMap[post.id] ?? post.scrapped;
+    
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
+    const goToEdit = () => {
+        router.push(`/board/write?postId=${post.id}`);
+    };
+
+    const goToUserProfile = () => {
+        router.push(`/profile?writerId=${post.writerId}`);
+    };
+    
     const openDropdown = () => {
       if (dropdownTriggerRef.current) {
         const rect = dropdownTriggerRef.current.getBoundingClientRect();
-        setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 }); // 160은 dropdown width
+        setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 });
         setIsDropdownOpen(true);
       }
     };
@@ -74,10 +88,10 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         try {
             setLoadingFollow(true);
             if (!isFollowing) {
-                await postFollow(post.followingId, accessToken);
+                await postFollow(post.writerId, accessToken);
                 setIsFollowing(true);
             } else {
-                await deleteFollow(post.followingId, accessToken);
+                await deleteFollow(post.writerId, accessToken);
                 setIsFollowing(false);
             }
         } catch (err: any) {
@@ -129,26 +143,32 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         }
     };
 
-    useEffect(() => {
-        if (likeMap[post.id] === undefined) {
-            setLikeMap(prev => ({ ...prev, [post.id]: post.liked }));
-        }
-    }, [post.id]);
-
-    useEffect(() => {
-        if (scrapMap[post.id] === undefined) {
-            setScrapMap(prev => ({ ...prev, [post.id]: post.scrapped }));
-        }
-    }, [post.id]);
-
-
+    // 🔥 불필요한 재렌더링을 유발하던 useEffect 훅들을 모두 삭제했습니다.
 
     return (
-        <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[1.12rem]">
+        <div className="border-b border-gray700 bg-BG-black px-[1.25rem] pb-[1.25rem]">
             <div className="flex justify-between items-start">
                 <div className="flex items-center gap-[0.5rem]">
-                    <div className="rounded-full bg-gray500 flex items-center justify-center">
-                        <Image src="/icons/mask Group.svg" alt="profile" width={37} height={37} />
+                    <div
+                        className="relative w-[37px] h-[37px] rounded-full bg-gray500 flex items-center justify-center cursor-pointer"
+                        onClick={goToUserProfile}
+                    >
+                        <Image
+                            src={post.profileImageUrl || '/icons/mask Group.svg'}
+                            alt="profile"
+                            width={37}
+                            height={37}
+                            className="rounded-full object-cover"
+                        />
+                        {post.role === 'BUSINESS' && (
+                            <Image
+                            src="/icons/businessMark.svg"
+                            alt="business-mark"
+                            width={9}
+                            height={9}
+                            className="absolute -top-[-1px] -right-[1px]"
+                            />
+                        )}
                     </div>
                     <div>
                         <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
@@ -157,14 +177,14 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
                 </div>
                 <button
                     onClick={handleFollow}
-                    className="text-body2-15-bold text-main disabled:opacity-50"
+                    className={`text-body2-15-bold ${isFollowing || post.isAuthor ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
                     disabled={loadingFollow}
                 >
-                    {isFollowing ? '팔로잉' : '팔로우'}
+                   {post.isAuthor ? '' : isFollowing ? '팔로잉' : '팔로우'}
                 </button>
             </div>
-
-            <p className="text-[0.75rem] text-gray100 mt-[0.88rem] whitespace-pre-wrap">{post.content}</p>
+            <p className="text-body2-15-bold text-gray100 mt-[0.88rem] mb-[0.5rem]">{post.title}</p>
+            <p className="text-[0.75rem] text-gray100  whitespace-pre-wrap">{post.content}</p>
 
             {post.imageUrls && post.imageUrls.length > 0 && (
                 <div className="mt-[0.88rem] overflow-x-auto flex gap-[0.5rem]">
@@ -196,7 +216,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
             )}
 
             <div className="flex gap-[0.38rem] flex-wrap mt-[0.88rem]">
-                {post.hashtags.map(tag => (
+               {post.hashtags && post.hashtags.map(tag => (
                     <span
                         key={tag}
                         className="bg-gray700 text-[0.75rem] text-gray300 px-[0.5rem] py-[0.19rem] rounded-[0.5rem]"
@@ -240,15 +260,17 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
                     </span>
                 </div>
                 <div className="flex items-end gap-[0.5rem]">
-                <Image
-  ref={dropdownTriggerRef}
-  onClick={openDropdown}
-  src="/icons/dot-vertical.svg"
-  alt="bookmark"
-  width={20}
-  height={20}
-  className="cursor-pointer rotate-90"
-/>                </div>
+                    <p className="text-body3-12-medium text-gray300">조회 {post.views}회</p>
+                    <Image
+                        ref={dropdownTriggerRef}
+                        onClick={openDropdown}
+                        src="/icons/dot-vertical.svg"
+                        alt="bookmark"
+                        width={20}
+                        height={20}
+                        className="cursor-pointer rotate-90"
+                    />
+                </div>
             </div>
             {isDropdownOpen && dropdownPosition && (
                 <BoardDropdown
@@ -260,5 +282,4 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
             )}
         </div>
     );
-
 }

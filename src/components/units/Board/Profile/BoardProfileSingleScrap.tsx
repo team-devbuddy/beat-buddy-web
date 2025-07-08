@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import BoardImageModal from '../BoardImageModal';
+import BoardImageModal from '@/components/units/Board/BoardImageModal';
 import { useState, useEffect } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
@@ -13,7 +13,6 @@ import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap
 import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
 import BoardDropdown from '../BoardDropDown';
 import { useRef } from 'react';
-import { formatRelativeTime } from '../BoardThread';
 
 interface PostProps {
   postId: number;
@@ -28,15 +27,16 @@ interface PostProps {
     comments: number;
     hashtags: string[];
     imageUrls?: string[];
-    followingId: number;
+    writerId: number;
     liked: boolean;
     hasCommented: boolean;
     scrapped: boolean;
     isAuthor: boolean;
   };
+  onRemove: () => void;
 }
 
-export default function BoardSearchResult({ postId, post }: PostProps) {
+export default function BoardProfileScrapPosts({ postId, post , onRemove}: PostProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -74,10 +74,10 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         try {
             setLoadingFollow(true);
             if (!isFollowing) {
-                await postFollow(post.followingId, accessToken);
+                await postFollow(post.writerId, accessToken);
                 setIsFollowing(true);
             } else {
-                await deleteFollow(post.followingId, accessToken);
+                await deleteFollow(post.writerId, accessToken);
                 setIsFollowing(false);
             }
         } catch (err: any) {
@@ -117,6 +117,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
                 await deletePostScrap(post.id, accessToken);
                 setScrapMap(prev => ({ ...prev, [post.id]: false }));
                 setScraps(prev => prev - 1);
+                onRemove();
             } else {
                 await addPostScrap(post.id, accessToken);
                 setScrapMap(prev => ({ ...prev, [post.id]: true }));
@@ -152,19 +153,21 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
                     </div>
                     <div>
                         <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
-                        <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
+                        <p className="text-body3-12-medium text-gray200">{post.createAt}</p>
                     </div>
                 </div>
-                <button
-                    onClick={handleFollow}
-                    className="text-body2-15-bold text-main disabled:opacity-50"
-                    disabled={loadingFollow}
-                >
-                    {isFollowing ? '팔로잉' : '팔로우'}
-                </button>
+                {!post.isAuthor && (
+  <button
+    onClick={handleFollow}
+    className="text-body2-15-bold text-main disabled:opacity-50"
+    disabled={loadingFollow}
+  >
+    {isFollowing ? '팔로잉' : '팔로우'}
+  </button>
+)}
             </div>
-
-            <p className="text-[0.75rem] text-gray100 mt-[0.88rem] whitespace-pre-wrap">{post.content}</p>
+            <p className="text-body2-15-bold text-gray100 mt-[0.88rem] mb-[0.5rem]">{post.title}</p>
+            <p className="text-[0.75rem] text-gray100  whitespace-pre-wrap">{post.content}</p>
 
             {post.imageUrls && post.imageUrls.length > 0 && (
                 <div className="mt-[0.88rem] overflow-x-auto flex gap-[0.5rem]">

@@ -23,15 +23,28 @@ const BoardHeader = ({ profileImageUrl }: BoardHeaderProps) => {
           className="cursor-pointer"
           onClick={() => router.push('/board/search')}
               />
-              <Link href="/mypage">
-        <Image
-          src={profileImageUrl || defaultProfileImage}
-          alt="프로필 이미지"
-          width={26}
-          height={26}
-          className="rounded-full"
-        />
-        </Link>
+              <Link href="/board/profile">
+  <div className="relative w-[26px] h-[26px]">
+    <Image
+      src={profileImageUrl || defaultProfileImage}
+      alt="프로필 이미지"
+      width={26}
+      height={26}
+      className="rounded-full object-cover"
+    />
+    {/* 비즈니스 유저인 경우 마크 표시 */}
+    {profileImageUrl && (
+      <Image
+        src="/icons/businessMark.svg"
+        alt="business-mark"
+        width={9}
+        height={9}
+        className="absolute -top-[-1px] -right-[1px]"
+      />
+    )}
+  </div>
+</Link>
+
       </div>
     </div>
   );

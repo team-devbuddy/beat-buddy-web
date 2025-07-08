@@ -66,25 +66,71 @@ export async function getPosts(type: 'piece' | 'free', page: number = 0, size: n
 }
   
 // 게시글 상세 정보 가져오기
-export async function getPostDetail(type: 'piece' | 'free', postId: number, accessToken: string): Promise<any> {
+// 게시글 상세 정보 가져오기
+export async function getPostDetail(category: string, postId: number, accessToken: string): Promise<any> {
   try {
-    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/post/${type}/${postId}`;
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/post/${category}/${postId}/new`;
 
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-      'Content-Type': 'application/json',
-      access: `Bearer ${accessToken}`,
-    },
-  });
+        'Content-Type': 'application/json',
+        access: `Bearer ${accessToken}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`게시글 상세 정보 가져오기 실패: ${response.status}`);
     }
 
-    return await response.json();
+    const json = await response.json();
+    return json.data; // ✅ 핵심: 실제 게시글 객체만 반환
   } catch (error) {
     throw error;
   }
 }
-  
+
+export async function editPost(
+  accessToken: string,
+  postId: number,
+  dto: {
+    title: string;
+    content: string;
+    hashtags: string[];
+    anonymous: boolean;
+    deleteImageUrls?: string[]; // 삭제할 이미지 URL들
+  },
+  images: File[]
+): Promise<void> {
+  try {
+    const formData = new FormData();
+
+    // DTO는 JSON.stringify로 감싸서 넣어야 함
+    formData.append('updatePostRequestDTO', JSON.stringify(dto));
+
+    // 새 이미지들 추가
+    images.forEach(file => {
+      formData.append('files', file);
+    });
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/post/free/${postId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          access: `Bearer ${accessToken}`,
+          // ❌ Content-Type 생략해야 FormData가 자동 설정됨
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`게시글 수정 실패: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('editPost 실패:', error);
+    throw error;
+  }
+}

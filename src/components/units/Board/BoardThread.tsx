@@ -12,12 +12,15 @@ import { deletePostLike } from '@/lib/actions/post-interaction-controller/delete
 import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap';
 import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
 import BoardDropdown from './BoardDropDown';
+import { useRouter } from 'next/navigation';
+
 import { useRef } from 'react';
 
 interface PostProps {
   postId: number;
   post: {
     id: number;
+    profileImageUrl: string;
     title?: string;
     content: string;
     nickname: string;
@@ -31,11 +34,33 @@ interface PostProps {
     liked: boolean;
     hasCommented: boolean;
     scrapped: boolean;
-    isAuthor: boolean;
+      isAuthor: boolean;
+    role: string;
   };
 }
 
+
+export function formatRelativeTime(isoString: string): string {
+    const now = new Date();
+    const time = new Date(isoString);
+    const diff = (now.getTime() - time.getTime()) / 1000; // 단위: 초
+  
+    if (diff < 60) {
+      return '방금 전';
+    } else if (diff < 3600) {
+      const minutes = Math.floor(diff / 60);
+      return `${minutes}분 전`;
+    } else if (diff < 86400) {
+      const hours = Math.floor(diff / 3600);
+      return `${hours}시간 전`;
+    } else {
+      return time.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    }
+  }
+
+
 export default function BoardThread({ postId, post }: PostProps) {
+    const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -55,6 +80,14 @@ export default function BoardThread({ postId, post }: PostProps) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
+    const category = 'free';
+
+
+const goToUserProfile = () => {
+    router.push(`/profile?writerId=${post.writerId}`);
+};
+    
+    
     const openDropdown = () => {
       if (dropdownTriggerRef.current) {
         const rect = dropdownTriggerRef.current.getBoundingClientRect();
@@ -140,30 +173,62 @@ export default function BoardThread({ postId, post }: PostProps) {
         }
     }, [post.id]);
 
+    const goToPost = () => {
+        router.push(`/board/${category}/${post.id}`);
+    };
 
+
+
+    
+    
 
     return (
-        <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[1.12rem]">
+        <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[1.12rem]"
+        >
             <div className="flex justify-between items-start">
                 <div className="flex items-center gap-[0.5rem]">
-                    <div className="rounded-full bg-gray500 flex items-center justify-center">
-                        <Image src="/icons/mask Group.svg" alt="profile" width={37} height={37} />
-                    </div>
+                <div
+  className="relative w-[37px] h-[37px] rounded-full bg-gray500 flex items-center justify-center cursor-pointer"
+>
+  <Image
+    src={post.profileImageUrl || '/icons/mask Group.svg'}
+    alt="profile"
+    width={37}
+    height={37}
+                            className="rounded-full object-cover"
+                            onClick={goToUserProfile}
+  />
+  {post.role === 'BUSINESS' && (
+    <Image
+      src="/icons/businessMark.svg"
+      alt="business-mark"
+      width={9}
+      height={9}
+      className="absolute -top-[-1px] -right-[1px]"
+    />
+  )}
+</div>
+
                     <div>
                         <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
-                        <p className="text-body3-12-medium text-gray200">{post.createAt}</p>
+                        <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
                     </div>
                 </div>
+
+                {!post.isAuthor && (
                 <button
                     onClick={handleFollow}
-                    className="text-body2-15-bold text-main disabled:opacity-50"
+                    className={`text-body2-15-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
                     disabled={loadingFollow}
                 >
                     {isFollowing ? '팔로잉' : '팔로우'}
                 </button>
+                )}
             </div>
+            <div onClick={goToPost}>
             <p className="text-body2-15-bold text-gray100 mt-[0.88rem] mb-[0.5rem]">{post.title}</p>
-            <p className="text-[0.75rem] text-gray100  whitespace-pre-wrap">{post.content}</p>
+                <p className="text-[0.75rem] text-gray100  whitespace-pre-wrap">{post.content}</p>
+                </div>
 
             {post.imageUrls && post.imageUrls.length > 0 && (
                 <div className="mt-[0.88rem] overflow-x-auto flex gap-[0.5rem]">
@@ -246,7 +311,7 @@ export default function BoardThread({ postId, post }: PostProps) {
   alt="bookmark"
   width={20}
   height={20}
-  className="cursor-pointer rotate-90"
+  className="cursor-pointer z-100 rotate-90"
 />                </div>
             </div>
             {isDropdownOpen && dropdownPosition && (
@@ -254,6 +319,7 @@ export default function BoardThread({ postId, post }: PostProps) {
                     isAuthor={post.isAuthor}
                     onClose={() => setIsDropdownOpen(false)}
                     position={dropdownPosition}
+                    postId={post.id}
                 />
             )}
         </div>

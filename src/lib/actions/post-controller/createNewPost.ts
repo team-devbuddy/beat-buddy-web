@@ -8,12 +8,16 @@ export interface PostCreateRequestDTO {
    
   }
   
-  export async function createNewPost(accessToken: string, data: PostCreateRequestDTO, images: File[]) {
+  export async function createNewPost(accessToken: string, data: PostCreateRequestDTO, images: (File | string)[]) {
     const formData = new FormData();
     formData.append('postCreateRequestDTO', JSON.stringify(data));
   
     images.forEach((file, index) => {
-      formData.append('images', file, file.name);
+      if (file instanceof File) {
+        formData.append('images', file, file.name);
+      } else {
+        formData.append('images', new Blob([file]), file);
+      }
     });
   
     const res = await fetch('https://api.beatbuddy.world/post/new/free', {

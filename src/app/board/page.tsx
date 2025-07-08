@@ -14,6 +14,8 @@ import NoResults from '@/components/units/Search/NoResult';
 import Link from 'next/link';
 
 interface PostType {
+  profileImageUrl: string;
+  role: string;
   id: number;
   title: string;
   content: string;

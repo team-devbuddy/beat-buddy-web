@@ -13,10 +13,10 @@ const HotPost = ({ posts }: HotPostProps) => {
   const [timeDiffs, setTimeDiffs] = useState<string[]>([]);
 
   const calculateTimeDiff = (createdAt: string): string => {
-    const postTime = new Date(createdAt);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - postTime.getTime()) / 1000);
-
+    const postTime = new Date(createdAt).getTime(); // ms 단위
+    const now = Date.now();
+    const diffInSeconds = Math.floor((now - postTime) / 1000);
+  
     if (diffInSeconds < 60) return `${diffInSeconds}초 전`;
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}분 전`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}시간 전`;

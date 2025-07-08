@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { createNewPost } from '@/lib/actions/post-controller/createNewPost';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-import { useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { getPostDetail, editPost } from '@/lib/actions/detail-controller/board/boardWriteUtils';
 
 const FIXED_HASHTAGS = [
   '압구정로데오', '홍대', '이태원', '강남.신사',
@@ -18,32 +19,80 @@ export default function BoardWrite() {
   const [content, setContent] = useState('');
   const [anonymous, setAnonymous] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<(File | string)[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const accessToken = useRecoilValue(accessTokenState) || '';
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [tagLimitMessage, setTagLimitMessage] = useState('');
+  const searchParams = useSearchParams();
+  const postId = Number(searchParams.get('postId'));
+
 
   const orderedTags = [
     ...selectedTags,
     ...FIXED_HASHTAGS.filter(tag => !selectedTags.includes(tag))
   ];
 
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // 이건 기존 textarea 위에 넣으세요
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [content]);
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (postId && !isNaN(postId)) {
+        try {
+          const category = 'free'; // ✅ 필요에 따라 동적으로 처리 가능
+          const post = await getPostDetail(category, postId, accessToken);
+
+          setTitle(post.title || '');
+          setContent(post.content || '');
+          setAnonymous(post.isAnonymous || false);
+          setSelectedTags(post.hashtags || []);
+          setImages(post.imageUrls || []);
+        } catch (err) {
+          console.error('수정할 게시글 불러오기 실패:', err);
+        }
+      }
+    };
+
+    fetchPost();
+  }, []);
+
   const handleAnonymous = () => {
     setAnonymous(prev => !prev);
   };
 
   const handleTagClick = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
-    );
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(prev => prev.filter(t => t !== tag));
+      setTagLimitMessage(''); // 메시지 제거
+    } else {
+      if (selectedTags.length >= 3) {
+        setTagLimitMessage('해시태그는 최대 3개까지만 선택할 수 있어요.');
+        return;
+      }
+      setSelectedTags(prev => [...prev, tag]);
+      setTagLimitMessage(''); // 메시지 제거
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setImages(Array.from(e.target.files));
+      const newImages = Array.from(e.target.files);
+      if (images.length + newImages.length > 20) {
+        alert('이미지는 최대 20장까지 업로드할 수 있어요.');
+        return;
+      }
+      setImages(prev => [...prev, ...newImages]);
     }
   };
+  
 
   const handleImageRemove = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
@@ -58,20 +107,41 @@ export default function BoardWrite() {
         router.push('/login');
         return;
       }
+  
+      // 기존 이미지 URL 리스트
+      const originalImageUrls = (await getPostDetail('free', postId, accessToken)).imageUrls || [];
+      console.log(originalImageUrls);
+      const currentImageUrls = images.filter((img: File | string) => typeof img === 'string') as string[];
+      const newImageFiles = images.filter(img => typeof img !== 'string') as File[];
+  
+      const deleteImageUrls = originalImageUrls.filter((url: string) => !currentImageUrls.includes(url));
+  
       const dto = {
         title,
         content,
         anonymous,
         hashtags: selectedTags,
+        deleteImageUrls, // 수정 시 삭제할 이미지들
       };
-      await createNewPost(accessToken, dto, images);
+  
+      if (postId) {
+        await editPost(accessToken, postId, dto, newImageFiles);
+      } else {
+        await createNewPost(accessToken, dto, newImageFiles);
+      }
+  
       alert('업로드 성공');
+      router.push(`/board/free/${postId}`); // 혹은 성공 후 이동할 경로
     } catch (e) {
       alert('업로드 실패');
     } finally {
       setIsLoading(false);
     }
   };
+  
+
+
+  
 
   return (
     <div className="flex flex-col bg-BG-black text-white pb-[140px]">
@@ -96,16 +166,19 @@ export default function BoardWrite() {
         <hr className="border-gray500 h-[0.0625rem] my-4" />
 
         <textarea
-          value={content}
-          onChange={(e) => {
-            setContent(e.target.value);
-            e.target.style.height = 'auto';
-            e.target.style.height = `${e.target.scrollHeight}px`;
-          }}
-          className="w-full bg-transparent border-none text-[0.75rem] text-gray200 placeholder:text-gray200 focus:outline-none whitespace-pre-wrap overflow-hidden"
-          style={{ minHeight: '2rem', resize: 'none' }}
-          placeholder={`광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.\n건강한 커뮤니티 문화를 함께 만들어가요.`}
-        />
+  ref={textareaRef}
+  value={content}
+  onChange={(e) => {
+    setContent(e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }}
+  className="w-full bg-transparent border-none text-[0.75rem] text-gray200 placeholder:text-gray200 focus:outline-none whitespace-pre-wrap overflow-hidden"
+  style={{ minHeight: '2rem', resize: 'none' }}
+  placeholder={`광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.\n건강한 커뮤니티 문화를 함께 만들어가요.`}
+/>
 
         {!content && (
           <div className="text-[0.75rem] text-gray200 mt-[-0.4rem]">
@@ -126,49 +199,63 @@ export default function BoardWrite() {
         {images.length > 0 && (
   <div className="mt-4 overflow-x-auto scrollbar-hide">
     <div className="flex gap-3 w-max pr-4">
-      {images.map((img, idx) => (
-        <div key={idx} className="relative max-w-[13.125rem] max-h-[9.8125rem] flex-shrink-0 rounded-md overflow-hidden border border-gray600">
-          <img
-            src={URL.createObjectURL(img)}
-            alt={`업로드 이미지 ${idx + 1}`}
-            className="w-full h-full object-cover"
-          />
-          <Image
-            onClick={() => handleImageRemove(idx)}
-            className="absolute top-[0.62rem] right-[0.62rem]  text-white "
-            src="/icons/imageout.svg"
-            alt="삭제"
-            width={18.75}
-            height={18.75}
-          />
-        </div>
-      ))}
+      {images.map((img, idx) => {
+        const src = typeof img === 'string' ? img : URL.createObjectURL(img);
+        return (
+          <div
+            key={idx}
+            className="relative max-w-[13.125rem]  flex-shrink-0 rounded-md overflow-hidden border border-gray600"
+          >
+            <img
+              src={src}
+              alt={`업로드 이미지 ${idx + 1}`}
+              className="w-full h-full object-cover"
+            />
+            <Image
+              onClick={() => handleImageRemove(idx)}
+              className="absolute top-[0.62rem] right-[0.62rem]"
+              src="/icons/imageout.svg"
+              alt="삭제"
+              width={18.75}
+              height={18.75}
+            />
+          </div>
+        );
+      })}
     </div>
   </div>
 )}
 
+
       </div>
 
       {/* 하단 고정 바 */}
-      <div className="fixed inset-x-0 bottom-[3rem] z-50 bg-BG-black  px-[1.25rem] py-[0.75rem]">
-        {/* 해시태그 */}
-        <div className="overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2">
-            {orderedTags.map(tag => (
-              <span
-                key={tag}
-                onClick={() => handleTagClick(tag)}
-                className={`whitespace-nowrap px-[0.63rem] py-[0.25rem] rounded-[0.5rem] text-[0.75rem] cursor-pointer ${
-                  selectedTags.includes(tag)
-                    ? 'bg-sub2 text-main'
-                    : 'bg-gray700 text-gray300'
-                }`}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
+{/* 하단 고정 바 */}
+<div className="fixed inset-x-0 bottom-[3rem] z-50 bg-BG-black px-[1.25rem] py-[0.75rem]">
+  {/* 해시태그 선택 제한 메시지 */}
+  {tagLimitMessage && (
+    <p className="text-main text-[0.75rem] mb-1">{tagLimitMessage}</p>
+  )}
+
+  {/* 해시태그 */}
+  <div className="overflow-x-auto scrollbar-hide">
+    <div className="flex gap-2">
+      {orderedTags.map(tag => (
+        <span
+          key={tag}
+          onClick={() => handleTagClick(tag)}
+          className={`whitespace-nowrap px-[0.63rem] py-[0.25rem] rounded-[0.5rem] text-[0.75rem] cursor-pointer ${
+            selectedTags.includes(tag)
+              ? 'bg-sub2 text-main'
+              : 'bg-gray700 text-gray300'
+          }`}
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+
 
         <div className="fixed inset-x-0 bottom-0 z-50 bg-gray700 px-[1.25rem]">
           <div className="flex bg-gray700 justify-between items-center py-[0.88rem]">

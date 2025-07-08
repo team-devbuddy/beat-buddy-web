@@ -13,8 +13,11 @@
     "@googlemaps/js-api-loader": "^1.16.6",
     "@googlemaps/markerclusterer": "^2.5.3",
     "@googlemaps/markerclustererplus": "^1.2.10",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@use-gesture/react": "^10.3.1",
+    "babel-plugin-glsl": "^1.0.0",
     "core-js": "^3.40.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.2.11",
@@ -37,6 +40,8 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.12",
     "tailwind-scrollbar-hide": "^1.1.7",
+    "three": "^0.158.0",
+    "three-mesh-bvh": "^0.9.1",
     "vue2-google-maps": "^0.10.7"
   },
   "devDependencies": {
@@ -48,6 +53,7 @@
     "@types/react-dom": "^18",
     "@types/react-slick": "^0.23.13",
     "@types/react-transition-group": "^4.4.10",
+    "@types/three": "^0.178.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
