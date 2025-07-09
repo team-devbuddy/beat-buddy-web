@@ -52,12 +52,12 @@ export default function MagazineDetail() {
     fetchMagazine();
   }, [magazineId, accessToken]);
 
-  if (loading) return <div className="text-center mt-10">로딩 중...</div>;
-  if (!magazine) return <div className="text-center mt-10">데이터를 불러올 수 없습니다.</div>;
+  if (loading) return <div className="mt-10 text-center">로딩 중...</div>;
+  if (!magazine) return <div className="mt-10 text-center">데이터를 불러올 수 없습니다.</div>;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4 text-white">{magazine.title}</h1>
+    <div className="mx-auto max-w-3xl p-6">
+      <h1 className="mb-4 text-3xl font-bold text-white">{magazine.title}</h1>
 
       {/* 이미지 */}
       {magazine.imageUrls?.[0] && (
@@ -66,12 +66,12 @@ export default function MagazineDetail() {
           alt={magazine.title}
           width={800}
           height={500}
-          className="w-full h-auto rounded-md mb-6 object-cover"
+          className="mb-6 h-auto w-full rounded-md object-cover"
         />
       )}
 
       {/* 콘텐츠 */}
-      <p className="text-white text-lg mb-6 whitespace-pre-line">{magazine.content}</p>
+      <p className="mb-6 whitespace-pre-line text-lg text-white">{magazine.content}</p>
 
       {/* 통계 정보 */}
       <div className="flex items-center gap-6 text-sm text-white">

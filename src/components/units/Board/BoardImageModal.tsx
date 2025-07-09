@@ -10,11 +10,7 @@ interface BoardImageModalProps {
   onClose: () => void;
 }
 
-export default function BoardImageModal({
-  images,
-  initialIndex,
-  onClose,
-}: BoardImageModalProps) {
+export default function BoardImageModal({ images, initialIndex, onClose }: BoardImageModalProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const modalRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
@@ -30,7 +26,7 @@ export default function BoardImageModal({
         onClose();
       }
     },
-    [images.length, onClose]
+    [images.length, onClose],
   );
 
   const handleClickOutside = useCallback(
@@ -39,7 +35,7 @@ export default function BoardImageModal({
         onClose();
       }
     },
-    [onClose]
+    [onClose],
   );
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -74,30 +70,22 @@ export default function BoardImageModal({
   if (typeof window === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
       <div
-        className="relative bg-gray700 rounded-[0.5rem] p-4 min-w-[90vw] max-h-[90vh] flex flex-col items-center justify-center"
+        className="relative flex max-h-[90vh] min-w-[90vw] flex-col items-center justify-center rounded-[0.5rem] bg-gray700 p-4"
         ref={modalRef}
         onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
+        onTouchEnd={handleTouchEnd}>
         {/* 상단 헤더 */}
-        <div className="w-full flex items-center justify-between px-2 ">
-          <div className="text-white text-sm font-semibold text-center w-full">
+        <div className="flex w-full items-center justify-between px-2">
+          <div className="w-full text-center text-sm font-semibold text-white">
             {currentIndex + 1} / {images.length}
           </div>
           <div className="absolute right-4 flex gap-2">
-            <a
-              href={images[currentIndex]}
-              download
-              className="text-white text-lg opacity-70 hover:opacity-100"
-            >
+            <a href={images[currentIndex]} download className="text-lg text-white opacity-70 hover:opacity-100">
               ⬇
             </a>
-            <button
-              onClick={onClose}
-              className="text-white text-lg opacity-70 hover:opacity-100"
-            >
+            <button onClick={onClose} className="text-lg text-white opacity-70 hover:opacity-100">
               ✕
             </button>
           </div>
@@ -110,11 +98,11 @@ export default function BoardImageModal({
             alt={`modal-img-${currentIndex}`}
             width={1000}
             height={1000}
-            className="w-auto h-auto max-w-[80vw] max-h-[70vh] object-contain"
+            className="h-auto max-h-[70vh] w-auto max-w-[80vw] object-contain"
           />
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

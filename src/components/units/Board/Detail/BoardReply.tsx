@@ -9,8 +9,6 @@ import { accessTokenState } from '@/context/recoil-context';
 import { BoardProfileInfoProps } from '../Profile/BoardProfileInfo';
 import { getUserProfileInfo } from '@/lib/actions/boardprofile-controller/getUserProfileInfo';
 
-
-
 interface ReplyType {
   id: number;
   content: string;
@@ -60,20 +58,25 @@ export default function BoardReply({ reply, isNested = false }: Props) {
   const formattedTime = formatRelativeTime(reply.createdAt);
 
   return (
-    <div className={`${isNested ? 'ml-10' : ''} p-[1.25rem] flex flex-col `}>
+    <div className={`${isNested ? 'ml-10' : ''} flex flex-col p-[1.25rem]`}>
       <div className="bg-gray800 flex flex-col gap-[0.5rem]">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-[0.37rem] text-white text-[0.75rem] font-bold">
+          <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-white">
             <Image src={userProfile?.profileImageUrl || '/icons/Mask group.svg'} alt="profile" width={24} height={24} />
             {reply.isAnonymous ? '익명' : reply.memberName}
-            <span className="text-body3-12-medium text-gray200 ">· {formattedTime}</span>
+            <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
           </div>
           <Image src="/icons/dot-vertical.svg" alt="menu" width={20} height={20} />
         </div>
-        <p className="text-[#BFBFBF] text-[0.75rem] whitespace-pre-wrap">{reply.content}</p>
+        <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
         <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
-          <span className='flex items-center gap-[0.19rem]'><Image src="/icons/favorite.svg" alt="heart" width={16} height={16} />{reply.likes}</span>
-          <button onClick={() => setShowReplyInput((prev) => !prev)} className='text-gray300'>답글 달기</button>
+          <span className="flex items-center gap-[0.19rem]">
+            <Image src="/icons/favorite.svg" alt="heart" width={16} height={16} />
+            {reply.likes}
+          </span>
+          <button onClick={() => setShowReplyInput((prev) => !prev)} className="text-gray300">
+            답글 달기
+          </button>
         </div>
       </div>
 
@@ -83,13 +86,10 @@ export default function BoardReply({ reply, isNested = false }: Props) {
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             placeholder="답글을 입력하세요"
-            className="w-full p-2 text-sm bg-gray800 rounded resize-none text-white"
+            className="bg-gray800 w-full resize-none rounded p-2 text-sm text-white"
             rows={2}
           />
-          <button
-            onClick={handleSubmitReply}
-            className="mt-1 px-3 py-1 text-sm bg-pink text-white rounded"
-          >
+          <button onClick={handleSubmitReply} className="bg-pink mt-1 rounded px-3 py-1 text-sm text-white">
             등록
           </button>
         </div>

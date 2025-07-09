@@ -35,7 +35,7 @@ export default function EventLists({
     setLikeLock(true);
 
     try {
-      const index = events.findIndex(e => e.eventId === eventId);
+      const index = events.findIndex((e) => e.eventId === eventId);
       if (index === -1) return;
 
       const target = events[index];
@@ -64,7 +64,7 @@ export default function EventLists({
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {events.map(event => {
+      {events.map((event) => {
         const dday = tab === 'upcoming' ? getDdayLabel(event.endDate) : null;
 
         return (
@@ -75,14 +75,13 @@ export default function EventLists({
                   src={event.thumbImage || '/images/DefaultImage.png'}
                   alt={event.title}
                   fill
-                  className="object-cover rounded-[0.75rem]"
+                  className="rounded-[0.75rem] object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-xl" />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/80 to-transparent" />
 
                 <div
-                  onClick={e => handleLike(e, event.eventId)}
-                  className="absolute bottom-3 right-3 cursor-pointer z-10"
-                >
+                  onClick={(e) => handleLike(e, event.eventId)}
+                  className="absolute bottom-3 right-3 z-10 cursor-pointer">
                   <Image
                     src={event.liked ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
                     alt="heart"
@@ -93,27 +92,25 @@ export default function EventLists({
 
                 {typeof dday === 'number' && (
                   <div
-                    className={`absolute top-3 left-3 rounded-[0.25rem] text-[0.75rem] px-[0.38rem] py-[0.13rem] z-10
-                      ${dday <= 7 ? 'bg-main text-white' : 'bg-gray500 text-main2'}`}
-                  >
+                    className={`absolute left-3 top-3 z-10 rounded-[0.25rem] px-[0.38rem] py-[0.13rem] text-[0.75rem] ${dday <= 7 ? 'bg-main text-white' : 'bg-gray500 text-main2'}`}>
                     D-{dday}
                   </div>
                 )}
 
-                <div className="absolute bottom-3 left-3 flex items-center space-x-1 z-10">
+                <div className="absolute bottom-3 left-3 z-10 flex items-center space-x-1">
                   <Image src="/icons/PinkHeart.svg" alt="pink-heart" width={15} height={13} />
-                  <span className="text-[0.75rem] text-gray300 font-medium">
+                  <span className="text-[0.75rem] font-medium text-gray300">
                     {String(event.likes || 0).padStart(3, '0')}
                   </span>
                 </div>
               </div>
 
-              <div className="relative pt-4 pb-5 text-white">
-                <h3 className="text-[0.875rem] font-bold truncate">{event.title}</h3>
-                <p className="text-[0.625rem] mt-1 text-gray100">
+              <div className="relative pb-5 pt-4 text-white">
+                <h3 className="truncate text-[0.875rem] font-bold">{event.title}</h3>
+                <p className="mt-1 text-[0.625rem] text-gray100">
                   {event.startDate} ~ {event.endDate}
                 </p>
-                <p className="text-[0.75rem] text-gray300 mt-1 truncate">{event.location}</p>
+                <p className="mt-1 truncate text-[0.75rem] text-gray300">{event.location}</p>
               </div>
             </div>
           </Link>

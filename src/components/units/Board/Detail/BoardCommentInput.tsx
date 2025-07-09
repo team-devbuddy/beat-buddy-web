@@ -27,34 +27,34 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
   };
 
   return (
-    <div className="px-[1.25rem] space-y-2">
-       <div className="bg-gray500 py-[0.5rem] px-[0.75rem] rounded-[0.75rem] flex items-center justify-between">
-      <label className={`flex items-center text-[0.75rem] gap-[0.12rem] ${isAnonymous ? "text-gray300" : "text-main"}`}  >
-        <Image
-          src={isAnonymous ? "/icons/check_box_outline_blank.svg" : "/icons/check_box.svg"}
-          alt="check"
-          width={18}
-          height={18}
-          onClick={() => setIsAnonymous(!isAnonymous)}
+    <div className="space-y-2 px-[1.25rem]">
+      <div className="flex items-center justify-between rounded-[0.75rem] bg-gray500 px-[0.75rem] py-[0.5rem]">
+        <label
+          className={`flex items-center gap-[0.12rem] text-[0.75rem] ${isAnonymous ? 'text-gray300' : 'text-main'}`}>
+          <Image
+            src={isAnonymous ? '/icons/check_box_outline_blank.svg' : '/icons/check_box.svg'}
+            alt="check"
+            width={18}
+            height={18}
+            onClick={() => setIsAnonymous(!isAnonymous)}
+          />
+          익명
+        </label>
+
+        <input
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="댓글을 입력해주세요."
+          className="mx-3 flex-1 border-none bg-transparent text-[0.875rem] text-gray300 placeholder:text-gray300 focus:outline-none"
         />
-        익명
-      </label>
 
-      <input
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="댓글을 입력해주세요."
-        className="flex-1 mx-3 bg-transparent border-none text-gray300 placeholder:text-gray300 text-[0.875rem] focus:outline-none"
-      />
-
-      <button
-        onClick={handleSubmit}
-        disabled={!content.trim()}
-        className="bg-gray700 text-main text-[0.75rem] font-bold px-3 py-[0.38rem] rounded-[0.5rem] disabled:text-gray300"
-      >
-        등록
-      </button>
-    </div>
+        <button
+          onClick={handleSubmit}
+          disabled={!content.trim()}
+          className="rounded-[0.5rem] bg-gray700 px-3 py-[0.38rem] text-[0.75rem] font-bold text-main disabled:text-gray300">
+          등록
+        </button>
+      </div>
     </div>
   );
 }

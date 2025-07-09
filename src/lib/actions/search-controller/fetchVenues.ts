@@ -1,5 +1,4 @@
-export const fetchVenues = async (query: string[],   accessToken: string | null,
-) => {
+export const fetchVenues = async (query: string[], accessToken: string | null) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/search`, {
     method: 'POST',
     headers: {
@@ -16,7 +15,6 @@ export const fetchVenues = async (query: string[],   accessToken: string | null,
   const data = await response.json();
   return data;
 };
-
 
 export const fetchAllVenues = async (accessToken: string | null) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/venue-info`, {

@@ -18,15 +18,8 @@ interface NaverMapProps {
 }
 
 const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
-  {
-    clubs,
-    width = '100%',
-    height = '500px',
-    minHeight,
-    zoom = 15,
-    onAddressesInBounds,
-  },
-  ref
+  { clubs, width = '100%', height = '500px', minHeight, zoom = 15, onAddressesInBounds },
+  ref,
 ) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
@@ -92,7 +85,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
                 `,
                 size: new window.naver.maps.Size(24, 40),
                 anchor: new window.naver.maps.Point(12, 32),
-              }
+              },
             });
 
             markerRefs.current.push({ club, marker });
@@ -155,7 +148,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
             const el = clusterMarker.getElement();
             const span = el?.querySelector('.cluster-count');
             if (span) span.textContent = String(count);
-          }
+          },
         });
       } else {
         console.error('MarkerClustering is not available');
@@ -181,7 +174,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
       });
 
       return visibleClubs;
-    }
+    },
   }));
 
   return (

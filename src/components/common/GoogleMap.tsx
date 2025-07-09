@@ -1,7 +1,7 @@
 'use client';
 import { forwardRef, useImperativeHandle, useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
-import { MapStyles } from '@/assets/map_styles/dark';
+import { MapStyles } from '../../assets/map_styles/dark';
 import { Club } from '@/lib/types';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 import { useRecoilState } from 'recoil';
@@ -24,13 +24,13 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, G
     const [markerCluster, setMarkerCluster] = useState<MarkerClusterer | null>(null);
     const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
     const [visibleClubs, setVisibleClubs] = useState<Club[]>([]);
-    
+
     const MARKER_ICON_URL = '/icons/map_marker.svg';
 
     useImperativeHandle(ref, () => ({
       filterAddressesInView: async () => {
         if (!map) return [];
-        
+
         const bounds = map.getBounds();
         if (!bounds) return [];
 
@@ -60,7 +60,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, G
         });
 
         await Promise.all(geocodePromises);
-        
+
         newMarkers.forEach((marker) => marker.setMap(map));
 
         const customRenderer = {
@@ -91,7 +91,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, G
 
         setMarkers(newMarkers);
         setMarkerCluster(newMarkerClusterer);
-        
+
         // 콜백 호출 및 필터링된 클럽들 반환
         onAddressesInBounds?.(clubsInBounds);
         return clubsInBounds;
@@ -99,7 +99,6 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, G
     }));
 
     const createCustomMarker = (club: Club, position: google.maps.LatLng) => {
-      
       const marker = new google.maps.Marker({
         position,
         icon: {
@@ -123,12 +122,12 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, G
           isHeartbeat: club.isHeartbeat,
           tagList: club.tagList || [],
         });
-        
+
         // 바텀시트를 강제로 올리기
         if (bottomSheetRef?.current) {
           // 먼저 바텀시트를 초기화(제일 낮은 위치)
           bottomSheetRef.current.openWithSnap(2);
-          
+
           // 약간의 딜레이 후 원하는 위치로 올리기
           setTimeout(() => {
             bottomSheetRef.current?.openWithSnap(1);

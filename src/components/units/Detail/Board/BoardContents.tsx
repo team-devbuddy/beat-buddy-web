@@ -24,7 +24,7 @@ interface BoardItem {
   englishName?: string; // 영어 이름
   koreanName?: string; // 한글 이름
   isAuthor: boolean; // 작성자 본인 여부
-  venueId?: number;  // 선택적 필드로 변경
+  venueId?: number; // 선택적 필드로 변경
 }
 
 interface BoardContentsProps {
@@ -68,15 +68,11 @@ const BoardContents = ({ boardData, filterKorName, filterEngName }: BoardContent
   return (
     <div className="bg-BG-black text-white">
       {filteredData.map((item) => (
-        <Link 
-          key={item.id} 
-          href={`/board/${item.boardType === '자유 게시판' ? '0' : item.venueId}/${item.id}`}
-        >
+        <Link key={item.id} href={`/board/${item.boardType === '자유 게시판' ? '0' : item.venueId}/${item.id}`}>
           <div
             className={`flex flex-col space-y-1 px-4 py-4 ${
               item.boardType === '조각 게시판' ? 'bg-gray500' : ''
-            } cursor-pointer hover:bg-gray600`}
-          >
+            } cursor-pointer hover:bg-gray600`}>
             {/* 작성자 프로필, 닉네임, 작성시간 */}
             <div className="mb-2 flex flex-row justify-between" onClick={(e) => e.preventDefault()}>
               <div className="align-center flex flex-row">
@@ -87,7 +83,8 @@ const BoardContents = ({ boardData, filterKorName, filterEngName }: BoardContent
                     {item.author}
                   </span>
                   <div className="text-body3-12-medium text-gray200">
-                    <span className={`flex items-center ${item.status !== '조각 마감' ? 'text-white' : 'text-gray300'}`}>
+                    <span
+                      className={`flex items-center ${item.status !== '조각 마감' ? 'text-white' : 'text-gray300'}`}>
                       {item.timestamp}
                     </span>
                   </div>
@@ -126,7 +123,7 @@ const BoardContents = ({ boardData, filterKorName, filterEngName }: BoardContent
                       <>
                         {/* 배경 어둡게 처리 */}
                         <motion.div
-                          className="z-10 fixed inset-0 bg-black bg-opacity-50"
+                          className="fixed inset-0 z-10 bg-black bg-opacity-50"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
@@ -167,17 +164,20 @@ const BoardContents = ({ boardData, filterKorName, filterEngName }: BoardContent
             {/* 모집 게시판 Content */}
             {item.boardType === '조각 게시판' && (
               <>
-                <div className={`text-body3-12-medium ${item.status === '조각 마감' ? 'text-gray300' : 'text-gray100'}`}>
+                <div
+                  className={`text-body3-12-medium ${item.status === '조각 마감' ? 'text-gray300' : 'text-gray100'}`}>
                   <span className="mr-3">모집 일자 </span>
                   {item.meetingDate}
                 </div>
 
-                <div className={`text-body3-12-medium ${item.status === '조각 마감' ? 'text-gray300' : 'text-gray100'}`}>
+                <div
+                  className={`text-body3-12-medium ${item.status === '조각 마감' ? 'text-gray300' : 'text-gray100'}`}>
                   <span className="mr-3">모집 인원 </span>
                   {item.participants}
                 </div>
 
-                <div className={`text-body3-12-medium ${item.status === '조각 마감' ? 'text-gray300' : 'text-gray100'}`}>
+                <div
+                  className={`text-body3-12-medium ${item.status === '조각 마감' ? 'text-gray300' : 'text-gray100'}`}>
                   <span className="mr-3">1/N 비용 </span>
                   {item.cost}
                 </div>

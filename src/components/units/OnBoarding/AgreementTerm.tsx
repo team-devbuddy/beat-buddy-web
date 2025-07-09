@@ -29,25 +29,23 @@ export default function AgreementTerm() {
   }, [searchParams, setAccessToken]);
 
   useEffect(() => {
-    const requiredTermsChecked = terms.filter(t => t.isRequired).every(t => t.checked);
+    const requiredTermsChecked = terms.filter((t) => t.isRequired).every((t) => t.checked);
     setButtonEnabled(requiredTermsChecked);
   }, [terms]);
 
   const handleCheckboxClick = (id: number) => {
-    setTerms(prev =>
-      prev.map(term => term.id === id ? { ...term, checked: !term.checked } : term)
-    );
+    setTerms((prev) => prev.map((term) => (term.id === id ? { ...term, checked: !term.checked } : term)));
   };
 
   const handleAllCheckboxClick = () => {
     const newState = !allChecked;
     setAllChecked(newState);
-    setTerms(prev => prev.map(term => ({ ...term, checked: newState })));
+    setTerms((prev) => prev.map((term) => ({ ...term, checked: newState })));
   };
 
   const onClickSubmit = async () => {
-    const locationConsent = terms.find(t => t.id === 3)?.checked || false;
-    const marketingConsent = terms.find(t => t.id === 4)?.checked || false;
+    const locationConsent = terms.find((t) => t.id === 3)?.checked || false;
+    const marketingConsent = terms.find((t) => t.id === 4)?.checked || false;
 
     const requestData = {
       isLocationConsent: locationConsent,
@@ -79,7 +77,7 @@ export default function AgreementTerm() {
       <Prev url={'/login'} />
       {loading && <Loading />}
       <div className="flex w-full flex-col px-4">
-        <h1 className="text-title-24-bold pt-[1.25rem] text-white">
+        <h1 className="pt-[1.25rem] text-title-24-bold text-white">
           서비스 이용 동의서에
           <br />
           동의해주세요
@@ -100,7 +98,7 @@ export default function AgreementTerm() {
         </div>
 
         <div className="flex flex-col pt-3">
-          {terms.map(term => (
+          {terms.map((term) => (
             <div key={term.id} className="flex justify-between py-3 pl-[0.38rem]">
               <div className="flex gap-2 hover:brightness-75">
                 <Image
@@ -111,18 +109,14 @@ export default function AgreementTerm() {
                   className="cursor-pointer"
                   onClick={() => handleCheckboxClick(term.id)}
                 />
-                <p
-                  className="cursor-pointer text-[0.9375rem] text-white"
-                  onClick={() => handleCheckboxClick(term.id)}
-                >
+                <p className="cursor-pointer text-[0.9375rem] text-white" onClick={() => handleCheckboxClick(term.id)}>
                   {term.label}
                 </p>
               </div>
               {term.url && (
                 <div
                   className="cursor-pointer pr-2 text-xs text-gray400 hover:text-main"
-                  onClick={() => window.open(term.url, '_blank')}
-                >
+                  onClick={() => window.open(term.url, '_blank')}>
                   보기
                 </div>
               )}
@@ -131,16 +125,13 @@ export default function AgreementTerm() {
         </div>
       </div>
 
-      <div className="flex justify-center px-4 fixed bottom-10 w-full z-50">
+      <div className="fixed bottom-10 z-50 flex w-full justify-center px-4">
         <button
           onClick={onClickSubmit}
           disabled={!buttonEnabled}
-          className={`w-full max-w-md py-4 text-lg rounded-md font-bold ${
-            buttonEnabled
-              ? 'bg-[#EE1171] text-BG-black hover:brightness-105'
-              : 'bg-gray400 text-gray300'
-          }`}
-        >
+          className={`w-full max-w-md rounded-md py-4 text-lg font-bold ${
+            buttonEnabled ? 'bg-[#EE1171] text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
+          }`}>
           동의하고 가입하기
         </button>
       </div>

@@ -26,8 +26,7 @@ export default function Prev({ url, onBack, title }: PrevProps) {
             router.back(); // 또는 브라우저 history 뒤로가기
           }
         }}
-        className="cursor-pointer"
-      >
+        className="cursor-pointer">
         <div className="flex items-center gap-[0.12rem]">
           <Image src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={24} height={24} />
           <span className="text-[1.125rem] font-bold text-white">{title}</span>

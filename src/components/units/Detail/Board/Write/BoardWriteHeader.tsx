@@ -39,7 +39,8 @@ const BoardWriteHeader = ({ title = '', currentStep, totalSteps }: BoardWriteHea
           {title}에
           <br />
           새로운 글 게시하기
-        </h1>)}
+        </h1>
+      )}
     </header>
   );
 };

@@ -34,4 +34,3 @@ export default function BoardProfilePosts({ posts, lastPostRef }: BoardProfilePo
     </div>
   );
 }
-

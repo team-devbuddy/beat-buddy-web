@@ -80,9 +80,9 @@ const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
     const fetchFilteredClubs = async () => {
       if (selectedFilters.length > 0) {
         const filters = {
-          regionTags: selectedFilters.filter(tag => regionTags.includes(tag)),
-          moodTags: selectedFilters.filter(tag => moodTags.includes(tag)),
-          genreTags: selectedFilters.filter(tag => genreTags.includes(tag)),
+          regionTags: selectedFilters.filter((tag) => regionTags.includes(tag)),
+          moodTags: selectedFilters.filter((tag) => moodTags.includes(tag)),
+          genreTags: selectedFilters.filter((tag) => genreTags.includes(tag)),
         };
 
         try {
@@ -101,21 +101,21 @@ const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
 
   const handleFilterClick = (filter: string) => {
     setSelectedFilters((prevFilters) =>
-      prevFilters.includes(filter) ? prevFilters.filter(f => f !== filter) : [...prevFilters, filter]
+      prevFilters.includes(filter) ? prevFilters.filter((f) => f !== filter) : [...prevFilters, filter],
     );
   };
 
   return (
-    <div className="mt-[0.75rem]  flex flex-wrap gap-[0.5rem] bg-BG-black px-[1.25rem] text-body2-15-medium">
+    <div className="mt-[0.75rem] flex flex-wrap gap-[0.5rem] bg-BG-black px-[1.25rem] text-body2-15-medium">
       {preferences.length > 0 ? (
         preferences.map((filter, index) => (
           <button
             key={index}
-            className={`box-border text-body2-15-medium rounded-[0.5rem] px-[0.62rem] py-[0.25rem] ${
+            className={`box-border rounded-[0.5rem] px-[0.62rem] py-[0.25rem] text-body2-15-medium ${
               selectedFilters.includes(filter) ? 'bg-sub2 text-main' : 'border-transparent bg-gray700 text-gray300'
-            } active:scale-95 transition-transform duration-150`}
+            } transition-transform duration-150 active:scale-95`}
             onClick={() => handleFilterClick(filter)}>
-            {translateTag(filter)} 
+            {translateTag(filter)}
           </button>
         ))
       ) : (

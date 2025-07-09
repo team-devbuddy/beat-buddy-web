@@ -78,7 +78,7 @@ function SearchGenre() {
   };
 
   return (
-    <div className="bg-BG-black px-[1.25rem] py-[1.5rem] ">
+    <div className="bg-BG-black px-[1.25rem] py-[1.5rem]">
       <div className="grid cursor-pointer grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(0, 3)}</div>
       <div className="mt-[0.5rem] grid cursor-pointer grid-cols-2 gap-[0.5rem]">{renderGridItems().slice(3, 5)}</div>
       <div className="mt-[0.5rem] grid cursor-pointer grid-cols-3 gap-[0.5rem]">{renderGridItems().slice(5, 8)}</div>

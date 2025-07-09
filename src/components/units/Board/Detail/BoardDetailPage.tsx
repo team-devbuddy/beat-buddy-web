@@ -32,13 +32,7 @@ interface PostType {
   imageUrls?: string[];
 }
 
-export default function BoardDetailPage({
-  postId,
-  category,
-}: {
-  postId: number;
-  category: string;
-}) {
+export default function BoardDetailPage({ postId, category }: { postId: number; category: string }) {
   const [post, setPost] = useState<PostType | null>(null);
   const accessToken = useRecoilValue(accessTokenState) || '';
   const router = useRouter();
@@ -64,8 +58,8 @@ export default function BoardDetailPage({
   }, [postId, category]);
 
   return (
-    <main className="bg-BG-black text-white min-h-screen relative pb-[5.5rem]">
-      <div className="flex items-center justify-between pl-[0.62rem] pr-4 py-4">
+    <main className="relative min-h-screen bg-BG-black pb-[5.5rem] text-white">
+      <div className="flex items-center justify-between py-4 pl-[0.62rem] pr-4">
         <Image
           onClick={() => router.back()}
           src="/icons/line-md_chevron-left.svg"
@@ -81,7 +75,7 @@ export default function BoardDetailPage({
 
       {/* 입력창 고정 */}
       {post && (
-        <div className="fixed bottom-5 left-0 right-0   z-50">
+        <div className="fixed bottom-5 left-0 right-0 z-50">
           <BoardCommentInput postId={post.id} onCommentAdded={() => {}} />
         </div>
       )}

@@ -25,30 +25,41 @@ interface PostItemProps {
 
 export default function PostItem({ post }: PostItemProps) {
   return (
-    <Link href={`/board/${post.id}`} className="block bg-BG-black border-b border-gray700 px-4 py-5">
- 
+    <Link href={`/board/${post.id}`} className="block border-b border-gray700 bg-BG-black px-4 py-5">
+      {post.title && <p className="mb-1 text-[0.875rem] font-bold text-white">{post.title}</p>}
 
-      {post.title && <p className="text-white font-bold text-[0.875rem] mb-1">{post.title}</p>}
+      <p className="line-clamp-2 text-[0.75rem] text-gray300">{post.content}</p>
 
-      <p className="text-gray300 text-[0.75rem] line-clamp-2">{post.content}</p>
+      <div className="mt-3 flex gap-2 text-[0.75rem] text-gray300">
+        <div className={`flex items-center ${post.liked ? 'text-main' : 'text-gray300'} gap-[0.12rem]`}>
+          <Image
+            src={post.liked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
+            alt="post"
+            width={20}
+            height={20}
+          />
+          <span>{post.likes}</span>
+        </div>
+        <div className={`flex items-center ${post.hasCommented ? 'text-main' : 'text-gray300'} gap-[0.12rem]`}>
+          <Image
+            src={post.hasCommented ? '/icons/maps_ugc-pink.svg' : '/icons/maps_ugc.svg'}
+            alt="post"
+            width={20}
+            height={20}
+          />
 
-    
+          <span>{post.comments}</span>
+        </div>
+        <div className={`flex items-center ${post.scrapped ? 'text-main' : 'text-gray300'} gap-[0.12rem]`}>
+          <Image
+            src={post.scrapped ? '/icons/material-symbols_bookmark.svg' : '/icons/material-symbols_bookmark-gray.svg'}
+            alt="post"
+            width={20}
+            height={20}
+          />
 
-          <div className="mt-3 text-[0.75rem] text-gray300 flex gap-2">
-              <div className={`flex items-center ${post.liked ? "text-main" : "text-gray300"} gap-[0.12rem]`}>
-              <Image src={post.liked ? "/icons/favorite-pink.svg" : "/icons/favorite.svg"} alt="post" width={20} height={20} />
-              <span>{post.likes}</span>
-              </div>
-              <div className={`flex items-center ${post.hasCommented ? "text-main" : "text-gray300"} gap-[0.12rem]`}>
-              <Image src={post.hasCommented ? "/icons/maps_ugc-pink.svg" : "/icons/maps_ugc.svg"} alt="post" width={20} height={20} />
-
-                  <span>{post.comments}</span>
-              </div>    
-              <div className={`flex items-center ${post.scrapped ? "text-main" : "text-gray300"} gap-[0.12rem]`}>
-              <Image src={post.scrapped ? "/icons/material-symbols_bookmark.svg" : "/icons/material-symbols_bookmark-gray.svg"} alt="post" width={20} height={20} />
-
-                  <span>{post.scraps}</span>
-              </div>
+          <span>{post.scraps}</span>
+        </div>
       </div>
     </Link>
   );

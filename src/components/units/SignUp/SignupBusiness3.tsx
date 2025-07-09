@@ -30,34 +30,30 @@ export default function SignUpBusiness3({ onNext, onBack }: Props) {
     <div className="min-h-screen bg-BG-black text-white">
       <Prev onBack={onBack} />
       <div className="px-4">
-        <h1 className="text-title-24-bold pb-[2rem]">통신사를 선택해주세요.</h1>
+        <h1 className="pb-[2rem] text-title-24-bold">통신사를 선택해주세요.</h1>
 
         {/* 통신사 선택 */}
-        <label className="block text-body1-16-bold mb-2">통신사</label>
+        <label className="mb-2 block text-body1-16-bold">통신사</label>
         <div className="relative">
           <div
-            className="w-full py-3 border-b border-white text-[0.9375rem] text-white flex justify-between items-center cursor-pointer"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          >
-            <span className={telecom ? 'pl-2' : 'text-gray400 pl-2'}>
-              {telecom || '통신사 선택'}
-            </span>
+            className="flex w-full cursor-pointer items-center justify-between border-b border-white py-3 text-[0.9375rem] text-white"
+            onClick={() => setDropdownOpen(!dropdownOpen)}>
+            <span className={telecom ? 'pl-2' : 'pl-2 text-gray400'}>{telecom || '통신사 선택'}</span>
             <span className="text-sm text-white">
               <Image src="/icons/chevron-down.svg" alt="arrow-down" width={24} height={24} />
             </span>
           </div>
 
           {dropdownOpen && (
-            <div className="absolute top-full left-0 w-full bg-white text-black rounded-md shadow-md z-10">
+            <div className="absolute left-0 top-full z-10 w-full rounded-md bg-white text-black shadow-md">
               {telecomOptions.map((option) => (
                 <div
                   key={option}
-                  className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
+                  className="cursor-pointer px-4 py-3 hover:bg-gray-100"
                   onClick={() => {
                     setTelecom(option);
                     setDropdownOpen(false);
-                  }}
-                >
+                  }}>
                   {option}
                 </div>
               ))}
@@ -67,31 +63,29 @@ export default function SignUpBusiness3({ onNext, onBack }: Props) {
 
         {/* 주민등록번호 표기 (2단계와 동일한 디자인) */}
         <div className="mt-8">
-          <label className="block text-gray200 text-body1-16-bold mb-2">주민등록번호</label>
-          <div className="flex items-center gap-2 mt-[0.62rem]">
+          <label className="mb-2 block text-body1-16-bold text-gray200">주민등록번호</label>
+          <div className="mt-[0.62rem] flex items-center gap-2">
             <input
               value={signupBusiness.ssnFront}
               disabled
-              className="flex-1 py-3 bg-transparent border-b border-gray200 text-gray200 text-[0.9375rem] text-center outline-none font-mono tracking-widest"
+              className="font-mono flex-1 border-b border-gray200 bg-transparent py-3 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
             />
             <span className="text-gray200">-</span>
-            <div className="flex-1 flex items-center justify-center border-b border-gray200 py-3 gap-[2px]">
+            <div className="flex flex-1 items-center justify-center gap-[2px] border-b border-gray200 py-3">
               <input
                 value={signupBusiness.ssnBack}
                 disabled
-                className="w-4 bg-transparent text-gray200 text-[0.9375rem] text-center outline-none font-mono tracking-widest"
+                className="font-mono w-4 bg-transparent text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
               />
-              <span className="text-gray200 text-[0.9375rem] font-mono tracking-widest">••••••</span>
+              <span className="font-mono text-[0.9375rem] tracking-widest text-gray200">••••••</span>
             </div>
           </div>
         </div>
 
         {/* 이름 */}
         <div className="mt-8">
-          <label className="block pl-4 text-gray200 text-body1-16-bold mb-[0.62rem]">이름</label>
-          <p className="border-b border-gray200 py-2 text-gray200">
-            {signupBusiness.name || '이름이 없습니다'}
-          </p>
+          <label className="mb-[0.62rem] block pl-4 text-body1-16-bold text-gray200">이름</label>
+          <p className="border-b border-gray200 py-2 text-gray200">{signupBusiness.name || '이름이 없습니다'}</p>
         </div>
 
         {/* 버튼 */}
@@ -99,12 +93,9 @@ export default function SignUpBusiness3({ onNext, onBack }: Props) {
           <button
             onClick={handleNext}
             disabled={!telecom}
-            className={`w-full py-4 rounded-md font-bold ${
-              telecom
-                ? 'bg-main text-BG-black hover:brightness-105'
-                : 'bg-gray400 text-gray300'
-            }`}
-          >
+            className={`w-full rounded-md py-4 font-bold ${
+              telecom ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
+            }`}>
             가입 완료하기
           </button>
         </div>

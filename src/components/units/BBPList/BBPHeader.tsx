@@ -19,8 +19,8 @@ const BBPHeader = ({ username }: BBPHeaderProps) => {
   }, []);
 
   return (
-    <header className="flex flex-col bg-BG-black ]">
-      <div className="flex w-full items-center justify-between  py-[1rem] px-[0.62rem]">
+    <header className="] flex flex-col bg-BG-black">
+      <div className="flex w-full items-center justify-between px-[0.62rem] py-[1rem]">
         <Link href="/">
           <div className="flex items-center text-main2">
             <Image src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={35} height={35} />
@@ -32,7 +32,7 @@ const BBPHeader = ({ username }: BBPHeaderProps) => {
           </div>
         </Link>
       </div>
-      <div className="flex flex-col py-[0.62rem] px-[1.25rem]">
+      <div className="flex flex-col px-[1.25rem] py-[0.62rem]">
         <span className="text-title-24-bold text-main">
           {username ? `Venue for ${username}버디` : 'BeatBuddy Pick'}
         </span>

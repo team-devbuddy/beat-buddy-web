@@ -18,7 +18,7 @@ const ReviewWriteHeader = ({ title, currentStep, totalSteps }: ReviewWriteHeader
 
   return (
     <>
-      <header className="relative flex items-center justify-between px-4 bg-BG-black py-4">
+      <header className="relative flex items-center justify-between bg-BG-black px-4 py-4">
         {/* 뒤로 가기 버튼 */}
         <button onClick={handleBack} className="flex h-8 w-8 items-center justify-center">
           <img src="/icons/whiteBack.svg" alt="뒤로가기" className="h-6 w-6" />
@@ -36,7 +36,7 @@ const ReviewWriteHeader = ({ title, currentStep, totalSteps }: ReviewWriteHeader
         </div>
       </header>
       {/* 제목 */}
-      <h1 className="flex-grow py-2 px-4 text-left text-title-24-bold text-white">
+      <h1 className="flex-grow px-4 py-2 text-left text-title-24-bold text-white">
         {title}에서의
         <br />
         경험을 공유해주세요!

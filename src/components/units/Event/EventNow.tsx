@@ -35,8 +35,8 @@ export default function EventNow({ refreshTrigger }: { refreshTrigger: boolean }
       if (newEvents.length === 0) {
         setHasMore(false);
       } else {
-        setEvents(prev => {
-          const existingIds = new Set(prev.map(e => e.eventId));
+        setEvents((prev) => {
+          const existingIds = new Set(prev.map((e) => e.eventId));
           const uniqueNew = newEvents.filter((e: EventType) => !existingIds.has(e.eventId));
           return [...prev, ...uniqueNew];
         });
@@ -54,12 +54,12 @@ export default function EventNow({ refreshTrigger }: { refreshTrigger: boolean }
     if (!hasMore) return;
 
     const observer = new IntersectionObserver(
-      entries => {
+      (entries) => {
         if (entries[0].isIntersecting) {
-          setPage(prev => prev + 1);
+          setPage((prev) => prev + 1);
         }
       },
-      { threshold: 1 }
+      { threshold: 1 },
     );
 
     const currentRef = observerRef.current;
@@ -71,9 +71,9 @@ export default function EventNow({ refreshTrigger }: { refreshTrigger: boolean }
   }, [hasMore]);
 
   return (
-    <div className="space-y-6 ">
+    <div className="space-y-6">
       {events.map((event, i) => (
-          <EventCard
+        <EventCard
           accessToken={accessToken}
           key={event.eventId}
           event={event}

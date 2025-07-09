@@ -71,34 +71,22 @@ export default function BoardProfileEdit() {
   return (
     <div className="min-h-screen bg-BG-black px-5 pt-10 text-white">
       {/* 프로필 이미지 */}
-      <div className="flex justify-center mb-6 relative">
-        <div className="w-[100px] h-[100px] rounded-full bg-gray-600 relative overflow-hidden">
-          <Image
-            src={profileImage}
-            alt="profile"
-            fill
-            className="object-cover"
-          />
+      <div className="relative mb-6 flex justify-center">
+        <div className="relative h-[100px] w-[100px] overflow-hidden rounded-full bg-gray-600">
+          <Image src={profileImage} alt="profile" fill className="object-cover" />
         </div>
         <div
           className="absolute bottom-[5px] right-[calc(50%-40px)] translate-x-[50%]"
-          onClick={handleProfileImageClick}
-        >
-          <div className="bg-gray400 rounded-full flex items-center justify-center p-[0.19rem] cursor-pointer">
+          onClick={handleProfileImageClick}>
+          <div className="flex cursor-pointer items-center justify-center rounded-full bg-gray400 p-[0.19rem]">
             <Image src="/icons/bxs_pencil.svg" alt="edit" width={18} height={18} />
           </div>
         </div>
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={handleProfileImageChange}
-          className="hidden"
-        />
+        <input type="file" accept="image/*" ref={fileInputRef} onChange={handleProfileImageChange} className="hidden" />
       </div>
 
       {/* 닉네임 입력 + 버튼 */}
-      <div className="text-[0.875rem] text-gray200 mb-3">닉네임</div>
+      <div className="mb-3 text-[0.875rem] text-gray200">닉네임</div>
       <div className="flex items-center gap-2">
         <input
           type="text"
@@ -106,24 +94,21 @@ export default function BoardProfileEdit() {
           onChange={(e) => setNickname(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="닉네임을 입력하세요"
-          className="flex-grow px-4 py-2 rounded-[0.63rem] focus:outline-none bg-gray700 text-white text-[0.9375rem] placeholder:text-gray400"
+          className="flex-grow rounded-[0.63rem] bg-gray700 px-4 py-2 text-[0.9375rem] text-white placeholder:text-gray400 focus:outline-none"
         />
         <button
           onClick={handleNicknameChange}
-          className="px-3 py-2 bg-main text-white rounded-[0.63rem] disabled:bg-gray400 text-[0.875rem] whitespace-nowrap"
-          disabled={!nickname || nickname === originalNickname || nickname.length < 2 || nickname.length > 10}
-        >
+          className="whitespace-nowrap rounded-[0.63rem] bg-main px-3 py-2 text-[0.875rem] text-white disabled:bg-gray400"
+          disabled={!nickname || nickname === originalNickname || nickname.length < 2 || nickname.length > 10}>
           변경
         </button>
       </div>
 
       {/* 에러 메시지 */}
-      {errorMessage && (
-        <p className="text-main ml-2 text-[0.75rem] mt-2">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="ml-2 mt-2 text-[0.75rem] text-main">{errorMessage}</p>}
 
       {/* 안내 문구 */}
-      <div className="text-[0.75rem] ml-2 mt-3 text-gray400 leading-relaxed">
+      <div className="ml-2 mt-3 text-[0.75rem] leading-relaxed text-gray400">
         닉네임은 14일에 두번 변경 가능해요. <br />
         {originalNickname} 님은 {daysLeft}일 뒤에 닉네임을 변경하실 수 있어요.
       </div>

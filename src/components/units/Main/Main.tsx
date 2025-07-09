@@ -57,7 +57,7 @@ export default function Main() {
 
     const fetchMagazine = async () => {
       try {
-        if(accessToken){
+        if (accessToken) {
           const data = await getMagazineList(accessToken);
           setMagazine(data);
           console.log(data);
@@ -140,7 +140,13 @@ export default function Main() {
 
     const fetchData = async () => {
       if (accessToken) {
-        await Promise.all([fetchHotClubs(), fetchBBP(accessToken), fetchUserName(accessToken), fetchMagazine(), fetchHotPost()]);
+        await Promise.all([
+          fetchHotClubs(),
+          fetchBBP(accessToken),
+          fetchUserName(accessToken),
+          fetchMagazine(),
+          fetchHotPost(),
+        ]);
         setLoading(false); // 모든 데이터 로드 완료
       }
     };
@@ -163,23 +169,22 @@ export default function Main() {
         <SearchBar />
         <TrendBar />
         {magazine.length > 0 && (
-        <section className="overflow-x-auto snap-x snap-mandatory px-[0.5rem] hide-scrollbar">
-        <div className="flex gap-4 w-max">
-          {magazine.map((item) => (
-            <div key={item.magazineId} className="min-w-[20.9375rem] snap-center">
-              <Magazine
-                magazineId={item.magazineId}
-                thumbImageUrl={item.thumbImageUrl}
-                title={item.title}
-                content={item.content}
-                currentIndex={item.currentIndex}
-                totalCount={item.totalCount}
-              />
+          <section className="snap-x snap-mandatory overflow-x-auto px-[0.5rem] hide-scrollbar">
+            <div className="flex w-max gap-4">
+              {magazine.map((item) => (
+                <div key={item.magazineId} className="min-w-[20.9375rem] snap-center">
+                  <Magazine
+                    magazineId={item.magazineId}
+                    thumbImageUrl={item.thumbImageUrl}
+                    title={item.title}
+                    content={item.content}
+                    currentIndex={item.currentIndex}
+                    totalCount={item.totalCount}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
-      
+          </section>
         )}
         <VenueFor userName={userName} />
         {!accessToken && <LoggedOutBanner />}

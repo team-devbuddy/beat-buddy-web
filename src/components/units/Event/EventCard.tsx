@@ -38,7 +38,6 @@ export default function EventCard({
     setLikes(event.likes ?? 0);
     console.log(event.liked);
     console.log(event.likes);
-    
   }, [event.eventId, event.liked, event.likes]);
 
   const handleLike = async (e: React.MouseEvent) => {
@@ -51,11 +50,11 @@ export default function EventCard({
       if (liked) {
         await deleteLikeEvent(event.eventId, accessToken);
         setLiked(false);
-        setLikes(prev => Math.max(0, prev - 1));
+        setLikes((prev) => Math.max(0, prev - 1));
       } else {
         await postLikeEvent(event.eventId, accessToken);
         setLiked(true);
-        setLikes(prev => prev + 1);
+        setLikes((prev) => prev + 1);
       }
     } catch (err) {
       console.error('좋아요 실패', err);
@@ -66,13 +65,8 @@ export default function EventCard({
 
   return (
     <div ref={lastRef as any} className="w-full">
-      <div className="relative w-full aspect-square overflow-hidden rounded-[1.25rem]">
-        <Image
-          src={event.thumbImage || '/images/DefaultImage.png'}
-          alt={event.title}
-          fill
-          className="object-cover"
-        />
+      <div className="relative aspect-square w-full overflow-hidden rounded-[1.25rem]">
+        <Image src={event.thumbImage || '/images/DefaultImage.png'} alt={event.title} fill className="object-cover" />
 
         <div className="absolute right-[1.5rem] top-[1.5rem] z-10">
           <Image
@@ -85,19 +79,17 @@ export default function EventCard({
           />
         </div>
 
-        <div className="absolute left-[1.5rem] bottom-[1.5rem] z-10 flex items-center space-x-[0.25rem]">
+        <div className="absolute bottom-[1.5rem] left-[1.5rem] z-10 flex items-center space-x-[0.25rem]">
           <Image src="/icons/PinkHeart.svg" alt="하트" width={16} height={16} />
-          <span className="text-[0.75rem] text-gray100">
-            {String(likes).padStart(3, '0')}
-          </span>
+          <span className="text-[0.75rem] text-gray100">{String(likes).padStart(3, '0')}</span>
         </div>
       </div>
 
       <div className="pt-4 text-white">
         <p className="text-[0.75rem] text-gray100">{event.startDate}</p>
-        <h3 className="text-subtitle-20-bold mt-1">{event.title}</h3>
-        <p className="text-[0.75rem] text-gray300 truncate mt-1">{event.content}</p>
-        <p className="text-[0.875rem] text-gray100 mt-2">{event.location}</p>
+        <h3 className="mt-1 text-subtitle-20-bold">{event.title}</h3>
+        <p className="mt-1 truncate text-[0.75rem] text-gray300">{event.content}</p>
+        <p className="mt-2 text-[0.875rem] text-gray100">{event.location}</p>
       </div>
     </div>
   );

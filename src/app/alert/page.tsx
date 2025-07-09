@@ -1,6 +1,6 @@
 'use client';
 
-import AlertList from "@/components/units/Main/Alert/AlertList";
+import AlertList from '@/components/units/Main/Alert/AlertList';
 
 export default function AlertPage() {
   return (

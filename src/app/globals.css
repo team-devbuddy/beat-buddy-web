@@ -44,11 +44,17 @@ html {
 @font-face {
   font-family: 'Queensides';
   font-weight: 500;
-  src: url('../assets/fonts/Queensides.ttf');
+  src: url('/assets/fonts/Queensides.ttf');
 }
 
 @font-face {
   font-family: poppins;
   font-weight: 100;
-  src: url('../assets/fonts/Poppins-ExtraLight.ttf');
+  src: url('/assets/fonts/Poppins-ExtraLight.ttf');
+}
+
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 500;
+  src: url('/assets/fonts/SUIT-Variable.ttf');
 }

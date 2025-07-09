@@ -19,12 +19,12 @@ export const fetchVenuesByLocation = async (
   latitude: number,
   longitude: number,
   radius: number = 5, // 기본 반경 5km
-  accessToken: string | null = null
+  accessToken: string | null = null,
 ): Promise<Club[]> => {
   try {
     // 1. 먼저 전체 클럽 목록을 가져옴
     const allVenues = await fetchVenues([], accessToken);
-    
+
     // 2. 현재 위치로부터 일정 거리 이내의 클럽만 필터링
     const nearbyVenues = allVenues.filter((venue: Club) => {
       // 클럽 주소로부터 좌표 추출 (이 부분은 이미 캐싱된 좌표가 있는 경우 사용)
@@ -35,18 +35,18 @@ export const fetchVenuesByLocation = async (
       const clubId = venue.venueId;
       const clubLatitude = latitude + (Math.random() - 0.5) * 0.02; // 약 1-2km 범위 내 무작위 위치
       const clubLongitude = longitude + (Math.random() - 0.5) * 0.02;
-      
+
       // 거리 계산
       const distance = calculateDistance(latitude, longitude, clubLatitude, clubLongitude);
-      
+
       // 지정된 반경 이내인지 확인
       return distance <= radius;
     });
-    
+
     // 거리 순으로 정렬 (가까운 순)
     return nearbyVenues.slice(0, 20); // 최대 20개까지만 반환
   } catch (error) {
     console.error('Error fetching venues by location:', error);
     return [];
   }
-}; 
+};

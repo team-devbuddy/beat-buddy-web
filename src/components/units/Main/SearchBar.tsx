@@ -14,7 +14,7 @@ export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
   const accessToken = useRecoilValue(accessTokenState);
-  const inputRef = useRef<HTMLInputElement>(null); 
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isMainPage) {
@@ -57,7 +57,7 @@ export default function SearchBar() {
           <Link href="/search" className="block w-full">
             <div className="relative w-full">
               <input
-                className="w-full cursor-pointer border-b-[1px] border-main bg-transparent py-[0.75rem] px-[0.75rem] text-gray300 placeholder:text-gray300 focus:outline-none"
+                className="w-full cursor-pointer border-b-[1px] border-main bg-transparent px-[0.75rem] py-[0.75rem] text-gray300 placeholder:text-gray300 focus:outline-none"
                 placeholder="지금 가장 인기있는 클럽은?"
                 readOnly
                 style={{ WebkitAppearance: 'none', borderRadius: 0 }}
@@ -75,8 +75,8 @@ export default function SearchBar() {
       ) : (
         <div className="relative w-full">
           <input
-            ref={inputRef} 
-            className="w-full cursor-pointer border-b-[1px] border-main bg-transparent py-[0.75rem] px-[0.75rem] text-white placeholder:text-gray300 focus:outline-none"
+            ref={inputRef}
+            className="w-full cursor-pointer border-b-[1px] border-main bg-transparent px-[0.75rem] py-[0.75rem] text-white placeholder:text-gray300 focus:outline-none"
             placeholder="지금 가장 인기있는 클럽은?"
             value={searchQuery}
             onChange={handleInputChange}

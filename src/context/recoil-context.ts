@@ -1,7 +1,7 @@
 import { atom, selector, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
-import { HeartbeatProps,ClubProps,Club, UserProfile } from '@/lib/types';
+import { HeartbeatProps, ClubProps, Club, UserProfile } from '@/lib/types';
 
 const { persistAtom } = recoilPersist();
 
@@ -32,7 +32,6 @@ export const searchQueryState = atom<string>({
   key: 'searchQueryState',
   default: '',
   effects_UNSTABLE: [persistAtom],
-  
 });
 
 //하트
@@ -115,7 +114,7 @@ export const signupBusinessState = atom({
     nickname: '',
   },
 });
-  
+
 export const signupUserTypeState = atom<'general' | 'business' | null>({
   key: 'signupUserTypeState',
   default: null,
@@ -132,7 +131,6 @@ export const recentSearchesState = atom<string[]>({
   effects_UNSTABLE: [persistAtom],
 });
 
-  
 export interface PostLikeInfo {
   [postId: number]: boolean;
 }

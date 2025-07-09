@@ -69,7 +69,7 @@ export default function TrendBar() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0 flex items-center justify-between">
             <div
-              className="relative px-[1.25rem] flex w-full cursor-pointer items-center space-x-2 pb-[0.5rem] pt-[0.5rem]"
+              className="relative flex w-full cursor-pointer items-center space-x-2 px-[1.25rem] pb-[0.5rem] pt-[0.5rem]"
               onClick={() => handleTrendClick(trends[currentTrendIndex].rankKeyword)}>
               <Image
                 src={rankIcons[currentTrendIndex % 3]}

@@ -92,7 +92,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
 
   return (
     <div className="flex w-full flex-col bg-BG-black">
-      <div className="px-[0.75rem] mb-[2.5rem] grid grid-cols-1 gap-x-[0.5rem] gap-y-[1.75rem] sm:grid-cols-2">
+      <div className="mb-[2.5rem] grid grid-cols-1 gap-x-[0.5rem] gap-y-[1.75rem] px-[0.75rem] sm:grid-cols-2">
         {clubs.map((venue, index) => {
           const { firstImageUrl, filteredTags } = memoizedValues[index];
 
@@ -138,17 +138,17 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                 <div className="mt-[1rem] flex flex-grow flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">
-                    <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
-                    <div className="flex items-end mt-auto">
-                    <div className="flex items-center space-x-[0.25rem] text-gray300">
-                      <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-                      <span className="text-body3-12-medium">
-                        {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
-                      </span>
+                      <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
+                      <div className="mt-auto flex items-end">
+                        <div className="flex items-center space-x-[0.25rem] text-gray300">
+                          <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
+                          <span className="text-body3-12-medium">
+                            {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
+                          </span>
                         </div>
-                        </div>
-                  </div>
-                    <div className=" w-1/2 mt-[0.25rem] flex flex-wrap gap-[0.5rem]">
+                      </div>
+                    </div>
+                    <div className="mt-[0.25rem] flex w-1/2 flex-wrap gap-[0.5rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span
@@ -164,7 +164,6 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                       )}
                     </div>
                   </div>
-                  
                 </div>
               </motion.div>
             </Link>

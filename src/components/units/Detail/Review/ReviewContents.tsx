@@ -55,11 +55,11 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
   }
 
   return (
-    <div className=" px-4 py-4">
+    <div className="px-4 py-4">
       {reviewsToDisplay.map((review) => {
         const isLiked = likedReviews[review.id]; // 현재 리뷰의 좋아요 상태
         return (
-          <div key={review.id} className="flex flex-col space-y-3  pb-6 last:border-none">
+          <div key={review.id} className="flex flex-col space-y-3 pb-6 last:border-none">
             {/* 유저 정보 */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -123,7 +123,7 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
 
       {/* 더보기 버튼 */}
       {filteredReviews.length > visibleReviews && (
-        <div className="flex justify-center ">
+        <div className="flex justify-center">
           <button
             onClick={handleLoadMore}
             className="rounded-xs bg-gray700 px-[0.63rem] py-[0.38rem] text-body3-12-medium text-gray100 hover:bg-gray500">

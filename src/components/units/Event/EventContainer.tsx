@@ -20,7 +20,7 @@ export interface EventType {
   liked?: boolean;
 }
 
-export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming' | 'past', refreshTrigger: boolean }) {
+export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming' | 'past'; refreshTrigger: boolean }) {
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [events, setEvents] = useState<EventType[]>([]);
   const [page, setPage] = useState(2);
@@ -40,16 +40,16 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
         return;
       }
 
-      const newEvents = res.map(event => ({
+      const newEvents = res.map((event) => ({
         ...event,
         liked: event.liked ?? false,
         likes: event.likes ?? 0,
       }));
 
       // 중복 제거
-      setEvents(prev => {
-        const ids = new Set(prev.map(e => e.eventId));
-        const filtered = newEvents.filter(e => !ids.has(e.eventId));
+      setEvents((prev) => {
+        const ids = new Set(prev.map((e) => e.eventId));
+        const filtered = newEvents.filter((e) => !ids.has(e.eventId));
         return [...prev, ...filtered];
       });
     } catch (err) {
@@ -86,12 +86,12 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
     if (observer.current) observer.current.disconnect();
 
     observer.current = new IntersectionObserver(
-      entries => {
+      (entries) => {
         if (entries[0].isIntersecting) {
-          setPage(prev => prev + 1);
+          setPage((prev) => prev + 1);
         }
       },
-      { threshold: 1 }
+      { threshold: 1 },
     );
 
     observer.current.observe(loaderRef.current);
@@ -100,7 +100,7 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
   useEffect(() => {
     if (page > 2) fetchMoreEvents(); // page가 올라갔을 때만 호출
   }, [page]);
-    
+
   useEffect(() => {
     // 새로고침 트리거가 바뀔 때마다 리스트 초기화 후 새로 fetch
     const refresh = async () => {
@@ -108,21 +108,20 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
         tab === 'upcoming'
           ? await getUpcomingEvent(accessToken, 'latest', 1, 10)
           : await getPastEvent(accessToken, 'latest', 1, 10);
-  
+
       const newEvents = (res || []).map((event: EventType) => ({
         ...event,
         liked: event.liked ?? false,
         likes: event.likes ?? 0,
       }));
-  
+
       setEvents(newEvents);
       setPage(2);
       setHasMore(true);
     };
-  
+
     refresh();
   }, [refreshTrigger]);
-  
 
   return (
     <div className="min-h-screen bg-BG-black">

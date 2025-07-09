@@ -39,21 +39,21 @@ export async function createComment(
   content: string,
   isAnonymous: boolean,
   accessToken: string,
-  nickname?: string
+  nickname?: string,
 ): Promise<CommentResponse> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': '*/*',
-        'Access': `Bearer ${accessToken}`,
+        Accept: '*/*',
+        Access: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
         content,
         isAnonymous,
         memberName: nickname,
-        replyId: 0 // 일반 댓글의 경우 0
+        replyId: 0, // 일반 댓글의 경우 0
       }),
     });
 
@@ -73,17 +73,17 @@ export async function getComments(
   postId: string | number,
   page: number = 0,
   size: number = 10,
-  accessToken: string
+  accessToken: string,
 ): Promise<CommentListResponse> {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/comments?page=${page}&size=${size}`,
       {
         headers: {
-          'Accept': '*/*',
-          'Access': `Bearer ${accessToken}`,
+          Accept: '*/*',
+          Access: `Bearer ${accessToken}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -98,22 +98,15 @@ export async function getComments(
   }
 }
 
-export async function deleteComment(
-  postId: string | number,
-  commentId: number,
-  accessToken: string
-): Promise<void> {
+export async function deleteComment(postId: string | number, commentId: number, accessToken: string): Promise<void> {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/comments/${commentId}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Accept': '*/*',
-          'Access': `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: '*/*',
+        Access: `Bearer ${accessToken}`,
+      },
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -129,8 +122,8 @@ export async function getCurrentUser(accessToken: string) {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/nickname`, {
       headers: {
-        'Accept': '*/*',
-        'Access': `Bearer ${accessToken}`,
+        Accept: '*/*',
+        Access: `Bearer ${accessToken}`,
       },
     });
 

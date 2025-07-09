@@ -89,7 +89,7 @@ export default function BeatBuddyPick({
   return (
     <div className="flex flex-col bg-BG-black">
       <div
-        className={`flex ${clubs.length > 1 ? 'space-x-[0.5rem]' : ''} snap-x snap-mandatory overflow-x-auto bg-BG-black px-[1.25rem]  hide-scrollbar`}>
+        className={`flex ${clubs.length > 1 ? 'space-x-[0.5rem]' : ''} snap-x snap-mandatory overflow-x-auto bg-BG-black px-[1.25rem] hide-scrollbar`}>
         {clubs.map((club) => {
           const imageUrl = getImageSrc(club);
           const filteredTags = getFilteredTags(club.tagList || []);

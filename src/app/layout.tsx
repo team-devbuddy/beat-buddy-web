@@ -18,6 +18,7 @@ export const metadata = {
   },
 };
 
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={`${pretendard.variable} bg-[#f5f5f5]`}>

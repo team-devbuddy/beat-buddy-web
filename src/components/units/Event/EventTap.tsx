@@ -13,15 +13,14 @@ export default function EventTab({ activeTab, setActiveTab }: EventTabProps) {
   ];
 
   return (
-    <div className="flex w-full mt-4 border-b border-gray700">
+    <div className="mt-4 flex w-full border-b border-gray700">
       {tabs.map(({ label, key }) => (
         <button
           key={key}
           onClick={() => setActiveTab(key)}
-          className={`flex-1 py-[0.66rem] text-center border-b-2 ${
-            activeTab === key ? 'border-main text-main font-bold' : 'border-transparent text-gray100'
-          }`}
-        >
+          className={`flex-1 border-b-2 py-[0.66rem] text-center ${
+            activeTab === key ? 'border-main font-bold text-main' : 'border-transparent text-gray100'
+          }`}>
           <span className="text-[0.875rem]">{label}</span>
         </button>
       ))}

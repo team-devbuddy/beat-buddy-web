@@ -92,14 +92,14 @@ export default function BoardSearchPage() {
     (node: HTMLDivElement | null) => {
       if (loading || !hasMore) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
+      observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          setPage(prev => prev + 1);
+          setPage((prev) => prev + 1);
         }
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore]
+    [loading, hasMore],
   );
 
   const fetchSearchPosts = useCallback(
@@ -111,17 +111,17 @@ export default function BoardSearchPage() {
         if (selectedTags.length === 0) {
           const newPosts = await postSearch(keyword, accessToken, targetPage, PAGE_SIZE);
           if (newPosts.length < PAGE_SIZE) setHasMore(false);
-          setPosts(prevPosts => (targetPage === 1 ? newPosts : [...prevPosts, ...newPosts]));
+          setPosts((prevPosts) => (targetPage === 1 ? newPosts : [...prevPosts, ...newPosts]));
         } else {
           const postLists = await Promise.all(
-            selectedTags.map(tag => postSearch(tag, accessToken, targetPage, PAGE_SIZE))
+            selectedTags.map((tag) => postSearch(tag, accessToken, targetPage, PAGE_SIZE)),
           );
           const merged = postLists.flat();
           if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
-          
-          setPosts(prevPosts => {
+
+          setPosts((prevPosts) => {
             const combined = targetPage === 1 ? merged : [...prevPosts, ...merged];
-            const unique = [...new Map(combined.map(post => [post.id, post])).values()];
+            const unique = [...new Map(combined.map((post) => [post.id, post])).values()];
             return unique;
           });
         }
@@ -132,7 +132,7 @@ export default function BoardSearchPage() {
       }
     },
     // 🔥 최종 수정된 의존성 배열: loading을 제거하여 무한 루프를 방지합니다.
-    [keyword, accessToken, selectedTags]
+    [keyword, accessToken, selectedTags],
   );
 
   // 검색어나 태그 변경 시, 상태를 초기화하고 첫 페이지 로드
@@ -187,11 +187,10 @@ export default function BoardSearchPage() {
 
   return (
     <main
-      className=" bg-BG-black text-white"
+      className="bg-BG-black text-white"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
+      onTouchEnd={handleTouchEnd}>
       <BoardSearchHeader placeholder="궁금한 소식을 검색해주세요." onSearchSubmit={handleSearchSubmit} />
       {keyword === '' && <BoardRecentTerm />}
 
@@ -204,9 +203,7 @@ export default function BoardSearchPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="text-center text-sm text-gray300"
-          >
-          </motion.div>
+            className="text-center text-sm text-gray300"></motion.div>
         )}
       </AnimatePresence>
 
@@ -222,19 +219,16 @@ export default function BoardSearchPage() {
         }
       })}
 
-      {!loading && posts.length === 0 && keyword !== '' && (
-         <NoResults/>
-      )}
+      {!loading && posts.length === 0 && keyword !== '' && <NoResults />}
       <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
-  <div className="w-full max-w-[600px] px-4">
-    <Link
-      href="/board/write"
-      className="ml-auto flex h-14 w-14 items-center justify-center border border-main2 rounded-full bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90"
-    >
-      <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
-    </Link>
-  </div>
-</div>
+        <div className="w-full max-w-[600px] px-4">
+          <Link
+            href="/board/write"
+            className="ml-auto flex h-14 w-14 items-center justify-center rounded-full border border-main2 bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90">
+            <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
+          </Link>
+        </div>
+      </div>
     </main>
   );
 }

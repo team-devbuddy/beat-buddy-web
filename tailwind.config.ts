@@ -11,6 +11,7 @@ const config: Config = {
     fontFamily: {
       poppins: ['poppins', 'sans-serif'],
       queensides: ['Queensides'],
+      suit: ['SUIT', 'sans-serif'],
     },
     extend: {
       scrollbarHide: {

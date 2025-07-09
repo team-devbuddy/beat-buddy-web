@@ -58,7 +58,7 @@ export default function BoardComments({ postId }: Props) {
   }, [isLastPage]);
 
   return (
-    <div className="pb-[6.5rem] bg-transparent">
+    <div className="bg-transparent pb-[6.5rem]">
       {comments.map((comment) => (
         <BoardReply key={comment.id} reply={comment} />
       ))}

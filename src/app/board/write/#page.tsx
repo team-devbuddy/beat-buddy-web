@@ -55,8 +55,8 @@ const BoardWritePage = () => {
   // 게시글 제출 핸들러
   const handleSubmit = async () => {
     if (!accessToken) {
-      alert("로그인이 필요합니다.");
-      router.push("/login");
+      alert('로그인이 필요합니다.');
+      router.push('/login');
       return;
     }
 
@@ -72,15 +72,15 @@ const BoardWritePage = () => {
           minParticipants: Number(formData.minParticipants),
           maxParticipants: Number(formData.maxParticipants),
           cost: Number(formData.cost.replace(/,/g, '')),
-          date: formData.date
-        })
+          date: formData.date,
+        }),
       };
 
       await createPost(type, postData, accessToken);
       setStep(2);
     } catch (error) {
-      console.error("게시글 등록 실패:", error);
-      alert("게시글 등록 중 오류가 발생했습니다.");
+      console.error('게시글 등록 실패:', error);
+      alert('게시글 등록 중 오류가 발생했습니다.');
     }
   };
 
@@ -89,7 +89,7 @@ const BoardWritePage = () => {
     if (type === 'free') {
       return formData.title.trim() && formData.content.trim();
     }
-    
+
     return (
       formData.title.trim() &&
       formData.minParticipants.trim() &&
@@ -126,19 +126,15 @@ const BoardWritePage = () => {
         <div
           className="mt-40 flex flex-col items-center justify-center bg-BG-black text-center"
           onClick={() => router.push(`/board/${venueId}`)} // 완료 후 이동
-          style={{ cursor: 'pointer' }}
-        >
+          style={{ cursor: 'pointer' }}>
           <h2 className="text-title-24-bold text-main">게시글이 등록되었습니다!</h2>
           {venueEngName !== 'venueEngName' ? (
             <p className="mt-4 text-body2-15-medium text-gray300">
               {venueEngName}에 대한 소중한 게시글을 공유해주셔서 감사합니다.
             </p>
           ) : (
-            <p className="mt-4 text-body2-15-medium text-gray300">
-              소중한 게시글을 공유해주셔서 감사합니다.
-            </p>
+            <p className="mt-4 text-body2-15-medium text-gray300">소중한 게시글을 공유해주셔서 감사합니다.</p>
           )}
-          
         </div>
       );
     }

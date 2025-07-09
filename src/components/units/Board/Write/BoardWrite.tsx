@@ -9,9 +9,17 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { getPostDetail, editPost } from '@/lib/actions/detail-controller/board/boardWriteUtils';
 
 const FIXED_HASHTAGS = [
-  '압구정로데오', '홍대', '이태원', '강남.신사',
-  '뮤직', '자유', '번개 모임', 'International',
-  '19+', 'LGBTQ', '짤.밈'
+  '압구정로데오',
+  '홍대',
+  '이태원',
+  '강남.신사',
+  '뮤직',
+  '자유',
+  '번개 모임',
+  'International',
+  '19+',
+  'LGBTQ',
+  '짤.밈',
 ];
 
 export default function BoardWrite() {
@@ -28,11 +36,7 @@ export default function BoardWrite() {
   const searchParams = useSearchParams();
   const postId = Number(searchParams.get('postId'));
 
-
-  const orderedTags = [
-    ...selectedTags,
-    ...FIXED_HASHTAGS.filter(tag => !selectedTags.includes(tag))
-  ];
+  const orderedTags = [...selectedTags, ...FIXED_HASHTAGS.filter((tag) => !selectedTags.includes(tag))];
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -65,19 +69,19 @@ export default function BoardWrite() {
   }, []);
 
   const handleAnonymous = () => {
-    setAnonymous(prev => !prev);
+    setAnonymous((prev) => !prev);
   };
 
   const handleTagClick = (tag: string) => {
     if (selectedTags.includes(tag)) {
-      setSelectedTags(prev => prev.filter(t => t !== tag));
+      setSelectedTags((prev) => prev.filter((t) => t !== tag));
       setTagLimitMessage(''); // 메시지 제거
     } else {
       if (selectedTags.length >= 3) {
         setTagLimitMessage('해시태그는 최대 3개까지만 선택할 수 있어요.');
         return;
       }
-      setSelectedTags(prev => [...prev, tag]);
+      setSelectedTags((prev) => [...prev, tag]);
       setTagLimitMessage(''); // 메시지 제거
     }
   };
@@ -89,33 +93,32 @@ export default function BoardWrite() {
         alert('이미지는 최대 20장까지 업로드할 수 있어요.');
         return;
       }
-      setImages(prev => [...prev, ...newImages]);
+      setImages((prev) => [...prev, ...newImages]);
     }
   };
-  
 
   const handleImageRemove = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleUpload = async () => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       if (!accessToken) {
         alert('로그인 후 이용해주세요.');
         router.push('/login');
         return;
       }
-  
+
       // 기존 이미지 URL 리스트
       const originalImageUrls = (await getPostDetail('free', postId, accessToken)).imageUrls || [];
       console.log(originalImageUrls);
       const currentImageUrls = images.filter((img: File | string) => typeof img === 'string') as string[];
-      const newImageFiles = images.filter(img => typeof img !== 'string') as File[];
-  
+      const newImageFiles = images.filter((img) => typeof img !== 'string') as File[];
+
       const deleteImageUrls = originalImageUrls.filter((url: string) => !currentImageUrls.includes(url));
-  
+
       const dto = {
         title,
         content,
@@ -123,13 +126,13 @@ export default function BoardWrite() {
         hashtags: selectedTags,
         deleteImageUrls, // 수정 시 삭제할 이미지들
       };
-  
+
       if (postId) {
         await editPost(accessToken, postId, dto, newImageFiles);
       } else {
         await createNewPost(accessToken, dto, newImageFiles);
       }
-  
+
       alert('업로드 성공');
       router.push(`/board/free/${postId}`); // 혹은 성공 후 이동할 경로
     } catch (e) {
@@ -138,17 +141,21 @@ export default function BoardWrite() {
       setIsLoading(false);
     }
   };
-  
-
-
-  
 
   return (
-    <div className="flex flex-col bg-BG-black text-white pb-[140px]">
+    <div className="flex flex-col bg-BG-black pb-[140px] text-white">
       {/* 헤더 */}
-      <header className="flex items-center justify-between pl-[0.62rem] pr-4 py-4">
-        <Image  onClick={() => router.back()} src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={35} height={35} />
-        <h1 onClick={handleUpload} className="text-[0.875rem] font-bold text-gray300">글쓰기</h1>
+      <header className="flex items-center justify-between py-4 pl-[0.62rem] pr-4">
+        <Image
+          onClick={() => router.back()}
+          src="/icons/line-md_chevron-left.svg"
+          alt="뒤로가기"
+          width={35}
+          height={35}
+        />
+        <h1 onClick={handleUpload} className="text-[0.875rem] font-bold text-gray300">
+          글쓰기
+        </h1>
       </header>
 
       {/* 입력 영역 */}
@@ -157,38 +164,33 @@ export default function BoardWrite() {
           <input
             type="text"
             value={title}
-            onChange={e => setTitle(e.target.value)}
-            className="w-full bg-transparent border-none text-[1rem] font-bold text-white placeholder:text-gray200 focus:outline-none"
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full border-none bg-transparent text-[1rem] font-bold text-white placeholder:text-gray200 focus:outline-none"
             placeholder="(선택) 제목을 입력해주세요"
           />
         </div>
 
-        <hr className="border-gray500 h-[0.0625rem] my-4" />
+        <hr className="my-4 h-[0.0625rem] border-gray500" />
 
         <textarea
-  ref={textareaRef}
-  value={content}
-  onChange={(e) => {
-    setContent(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }}
-  className="w-full bg-transparent border-none text-[0.75rem] text-gray200 placeholder:text-gray200 focus:outline-none whitespace-pre-wrap overflow-hidden"
-  style={{ minHeight: '2rem', resize: 'none' }}
-  placeholder={`광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.\n건강한 커뮤니티 문화를 함께 만들어가요.`}
-/>
+          ref={textareaRef}
+          value={content}
+          onChange={(e) => {
+            setContent(e.target.value);
+            if (textareaRef.current) {
+              textareaRef.current.style.height = 'auto';
+              textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+            }
+          }}
+          className="w-full overflow-hidden whitespace-pre-wrap border-none bg-transparent text-[0.75rem] text-gray200 placeholder:text-gray200 focus:outline-none"
+          style={{ minHeight: '2rem', resize: 'none' }}
+          placeholder={`광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.\n건강한 커뮤니티 문화를 함께 만들어가요.`}
+        />
 
         {!content && (
-          <div className="text-[0.75rem] text-gray200 mt-[-0.4rem]">
+          <div className="mt-[-0.4rem] text-[0.75rem] text-gray200">
             자세한 내용은{' '}
-            <a
-              href="/rules"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline text-gray200"
-            >
+            <a href="/rules" target="_blank" rel="noopener noreferrer" className="text-gray200 underline">
               커뮤니티 이용 규칙
             </a>
             을 참고해주세요.
@@ -197,95 +199,65 @@ export default function BoardWrite() {
 
         {/* 이미지 미리보기 */}
         {images.length > 0 && (
-  <div className="mt-4 overflow-x-auto scrollbar-hide">
-    <div className="flex gap-3 w-max pr-4">
-      {images.map((img, idx) => {
-        const src = typeof img === 'string' ? img : URL.createObjectURL(img);
-        return (
-          <div
-            key={idx}
-            className="relative max-w-[13.125rem]  flex-shrink-0 rounded-md overflow-hidden border border-gray600"
-          >
-            <img
-              src={src}
-              alt={`업로드 이미지 ${idx + 1}`}
-              className="w-full h-full object-cover"
-            />
-            <Image
-              onClick={() => handleImageRemove(idx)}
-              className="absolute top-[0.62rem] right-[0.62rem]"
-              src="/icons/imageout.svg"
-              alt="삭제"
-              width={18.75}
-              height={18.75}
-            />
+          <div className="mt-4 overflow-x-auto scrollbar-hide">
+            <div className="flex w-max gap-3 pr-4">
+              {images.map((img, idx) => {
+                const src = typeof img === 'string' ? img : URL.createObjectURL(img);
+                return (
+                  <div
+                    key={idx}
+                    className="relative max-w-[13.125rem] flex-shrink-0 overflow-hidden rounded-md border border-gray600">
+                    <img src={src} alt={`업로드 이미지 ${idx + 1}`} className="h-full w-full object-cover" />
+                    <Image
+                      onClick={() => handleImageRemove(idx)}
+                      className="absolute right-[0.62rem] top-[0.62rem]"
+                      src="/icons/imageout.svg"
+                      alt="삭제"
+                      width={18.75}
+                      height={18.75}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        );
-      })}
-    </div>
-  </div>
-)}
-
-
+        )}
       </div>
 
       {/* 하단 고정 바 */}
-{/* 하단 고정 바 */}
-<div className="fixed inset-x-0 bottom-[3rem] z-50 bg-BG-black px-[1.25rem] py-[0.75rem]">
-  {/* 해시태그 선택 제한 메시지 */}
-  {tagLimitMessage && (
-    <p className="text-main text-[0.75rem] mb-1">{tagLimitMessage}</p>
-  )}
+      {/* 하단 고정 바 */}
+      <div className="fixed inset-x-0 bottom-[3rem] z-50 bg-BG-black px-[1.25rem] py-[0.75rem]">
+        {/* 해시태그 선택 제한 메시지 */}
+        {tagLimitMessage && <p className="mb-1 text-[0.75rem] text-main">{tagLimitMessage}</p>}
 
-  {/* 해시태그 */}
-  <div className="overflow-x-auto scrollbar-hide">
-    <div className="flex gap-2">
-      {orderedTags.map(tag => (
-        <span
-          key={tag}
-          onClick={() => handleTagClick(tag)}
-          className={`whitespace-nowrap px-[0.63rem] py-[0.25rem] rounded-[0.5rem] text-[0.75rem] cursor-pointer ${
-            selectedTags.includes(tag)
-              ? 'bg-sub2 text-main'
-              : 'bg-gray700 text-gray300'
-          }`}
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
-  </div>
-
+        {/* 해시태그 */}
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2">
+            {orderedTags.map((tag) => (
+              <span
+                key={tag}
+                onClick={() => handleTagClick(tag)}
+                className={`cursor-pointer whitespace-nowrap rounded-[0.5rem] px-[0.63rem] py-[0.25rem] text-[0.75rem] ${
+                  selectedTags.includes(tag) ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
+                }`}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
 
         <div className="fixed inset-x-0 bottom-0 z-50 bg-gray700 px-[1.25rem]">
-          <div className="flex bg-gray700 justify-between items-center py-[0.88rem]">
+          <div className="flex items-center justify-between bg-gray700 py-[0.88rem]">
             {/* 사진 업로드 */}
-            <button
-              className="flex items-center text-white"
-              onClick={() => fileInputRef.current?.click()}
-            >
+            <button className="flex items-center text-white" onClick={() => fileInputRef.current?.click()} title="사진 업로드">
               <Image src="/icons/add_a_photo.svg" alt="사진" width={24} height={24} />
             </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/*"
-              hidden
-              onChange={handleImageChange}
-            />
+            <input ref={fileInputRef} type="file" multiple accept="image/*" hidden onChange={handleImageChange} />
 
             {/* 익명 */}
-            <div
-              className="flex items-center gap-x-[0.12rem] cursor-pointer"
-              onClick={handleAnonymous}
-            >
+            <div className="flex cursor-pointer items-center gap-x-[0.12rem]" onClick={handleAnonymous}>
               <Image
-                src={
-                  anonymous
-                    ? '/icons/check_box.svg'
-                    : '/icons/check_box_outline_blank.svg'
-                }
+                src={anonymous ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
                 alt="익명"
                 width={18}
                 height={18}

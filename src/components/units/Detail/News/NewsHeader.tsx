@@ -7,13 +7,11 @@ interface NewsHeaderProps {
   venueName: string;
 }
 
-const NewsHeader = ({ venueName}: NewsHeaderProps) => {
+const NewsHeader = ({ venueName }: NewsHeaderProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [selectedSortOption, setSelectedSortOption] = React.useState('최신순');
 
   const sortOptions = ['최신순', '인기순'];
-
- 
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -31,8 +29,6 @@ const NewsHeader = ({ venueName}: NewsHeaderProps) => {
 
       {/* 우측 옵션 */}
       <div className="relative flex items-center space-x-4">
-       
-
         {/* 드롭다운 */}
         <div className="relative">
           <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body2-15-medium">
@@ -72,8 +68,8 @@ const NewsHeader = ({ venueName}: NewsHeaderProps) => {
                         index === 0
                           ? 'rounded-t-md' // 첫 번째 옵션에만 top border-radius
                           : index === sortOptions.length - 1
-                          ? 'rounded-b-md' // 마지막 옵션에만 bottom border-radius
-                          : '' // 중간 옵션에는 border-radius 없음
+                            ? 'rounded-b-md' // 마지막 옵션에만 bottom border-radius
+                            : '' // 중간 옵션에는 border-radius 없음
                       }`}>
                       {option}
                     </button>

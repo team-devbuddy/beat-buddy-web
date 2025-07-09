@@ -9,7 +9,7 @@ export async function postSearch(keyword: string, accessToken: string, page: num
           Access: `Bearer ${accessToken}`,
         },
         cache: 'no-store',
-      }
+      },
     );
 
     const json = await res.json();

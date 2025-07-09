@@ -33,34 +33,33 @@ export default function MagazineListPage() {
   }, [accessToken]);
 
   return (
-      <div className="flex min-h-screen flex-col bg-BG-black text-white">
-          <div className="flex items-center ">
-      <HeaderBack url="/"  />
-        <p className="text-body1-16-bold text-white ml-[-0.2rem]">전체보기</p>
-          </div>
-      <main className="px-[1.25rem] bg-BG-black pb-[1rem] pt-[0.88rem]">
+    <div className="flex min-h-screen flex-col bg-BG-black text-white">
+      <div className="flex items-center">
+        <HeaderBack url="/" />
+        <p className="ml-[-0.2rem] text-body1-16-bold text-white">전체보기</p>
+      </div>
+      <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.88rem]">
         {loading ? (
           <BBPListSkeleton />
         ) : magazines.length === 0 ? (
           <NoResults />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem]">
-  {magazines.map((magazine, index) => (
-    <MagazineCard
-      key={magazine.magazineId}
-      magazineId={magazine.magazineId}
-      thumbImageUrl={magazine.thumbImageUrl}
-      title={magazine.title}
-      content={magazine.content}
-      isLiked={magazine.isLiked}
-      currentIndex={index + 1}
-      totalCount={magazines.length}
-    />
-  ))}
-</div>
+          <div className="grid grid-cols-1 gap-[1.5rem] md:grid-cols-2">
+            {magazines.map((magazine, index) => (
+              <MagazineCard
+                key={magazine.magazineId}
+                magazineId={magazine.magazineId}
+                thumbImageUrl={magazine.thumbImageUrl}
+                title={magazine.title}
+                content={magazine.content}
+                isLiked={magazine.isLiked}
+                currentIndex={index + 1}
+                totalCount={magazines.length}
+              />
+            ))}
+          </div>
         )}
       </main>
-
     </div>
   );
 }

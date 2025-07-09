@@ -105,44 +105,31 @@ const iconMap: Record<string, string> = {
 export default function AlertList() {
   const router = useRouter();
 
-    return (
-        <div className="flex flex-col">
-            <Prev url="/" onBack={() => router.back()} title="알림" />
-    <div className="flex flex-col divide-y divide-gray500 border-t border-b border-gray500 bg-BG-black">
-  {dummyAlerts.map((alert) => (
-    <div
-      key={alert.id}
-      className="flex w-full items-start gap-[0.62rem] px-[1.25rem] py-[0.88rem]"
-    >
-      <Image src={iconMap[alert.type]} alt={alert.type} width={24} height={24} />
-          <div className="flex-1">
+  return (
+    <div className="flex flex-col">
+      <Prev url="/" onBack={() => router.back()} title="알림" />
+      <div className="flex flex-col divide-y divide-gray500 border-b border-t border-gray500 bg-BG-black">
+        {dummyAlerts.map((alert) => (
+          <div key={alert.id} className="flex w-full items-start gap-[0.62rem] px-[1.25rem] py-[0.88rem]">
+            <Image src={iconMap[alert.type]} alt={alert.type} width={24} height={24} />
+            <div className="flex-1">
               <div className="flex items-center justify-between">
-        <div
-          className={clsx(
-            'text-[0.875rem] font-bold',
-            alert.read ? 'text-gray200' : 'text-white'
-          )}
-        >
-          {alert.title}
+                <div className={clsx('text-[0.875rem] font-bold', alert.read ? 'text-gray200' : 'text-white')}>
+                  {alert.title}
+                </div>
+                <div className="whitespace-nowrap text-body3-12-medium text-gray200">{alert.time}</div>
               </div>
-              <div className="text-body3-12-medium text-gray200 whitespace-nowrap">{alert.time}</div>
-</div>
-{alert.content && (
-  <div
-    className={clsx(
-      'text-[0.75rem] mt-[0.22rem]',
-      alert.read ? 'text-gray200' : 'text-gray200'
-    )}
-  >
-    {alert.content.split('\n').map((line, idx) => (
-      <div key={idx}>{line}</div>
-    ))}
-  </div>
-)}
+              {alert.content && (
+                <div className={clsx('mt-[0.22rem] text-[0.75rem]', alert.read ? 'text-gray200' : 'text-gray200')}>
+                  {alert.content.split('\n').map((line, idx) => (
+                    <div key={idx}>{line}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
-  ))}
-</div>
-</div>
   );
 }

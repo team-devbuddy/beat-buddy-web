@@ -19,15 +19,18 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [isReady, setIsReady] = useState(false);
 
-  const lastPostElementRef = useCallback((node: HTMLDivElement | null) => {
-    if (observerRef.current) observerRef.current.disconnect();
-    observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage(prev => prev + 1);
-      }
-    });
-    if (node) observerRef.current.observe(node);
-  }, [hasMore]);
+  const lastPostElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (observerRef.current) observerRef.current.disconnect();
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prev) => prev + 1);
+        }
+      });
+      if (node) observerRef.current.observe(node);
+    },
+    [hasMore],
+  );
 
   // 탭이 바뀌면 초기화 후 요청 준비
   useEffect(() => {
@@ -40,12 +43,11 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
   // 실제 fetch는 페이지 변경이나 탭 변경 직후 실행
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = activeTab === 'my'
-        ? await getMyPosts(accessToken, page, 10)
-        : await getMyScraps(accessToken, page, 10);
+      const res =
+        activeTab === 'my' ? await getMyPosts(accessToken, page, 10) : await getMyScraps(accessToken, page, 10);
 
       if (res.length < 10) setHasMore(false);
-      setPosts(prev => [...prev, ...res]);
+      setPosts((prev) => [...prev, ...res]);
       setIsReady(true);
     };
 
@@ -55,23 +57,15 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
   return (
     <div>
       {/* 탭 바 */}
-      <div className="relative flex justify-around text-[0.9375rem] text-gray300 border-b border-gray700">
+      <div className="relative flex justify-around border-b border-gray700 text-[0.9375rem] text-gray300">
         <button
           onClick={() => setActiveTab('my')}
-          className={classNames(
-            'py-[0.75rem] w-1/2 z-10',
-            activeTab === 'my' ? 'text-main font-bold' : ''
-          )}
-        >
+          className={classNames('z-10 w-1/2 py-[0.75rem]', activeTab === 'my' ? 'font-bold text-main' : '')}>
           내가 쓴 글
         </button>
         <button
           onClick={() => setActiveTab('scrap')}
-          className={classNames(
-            'py-[0.75rem] w-1/2 z-10',
-            activeTab === 'scrap' ? 'text-main font-bold' : ''
-          )}
-        >
+          className={classNames('z-10 w-1/2 py-[0.75rem]', activeTab === 'scrap' ? 'font-bold text-main' : '')}>
           스크랩
         </button>
 
@@ -79,7 +73,7 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
         <motion.div
           layout
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="absolute bottom-0 w-1/2 h-[2px] bg-main"
+          className="absolute bottom-0 h-[2px] w-1/2 bg-main"
           style={{
             left: activeTab === 'my' ? '0%' : '50%',
           }}
@@ -96,8 +90,7 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25 }}
-              className="absolute top-0 left-0 w-full"
-            >
+              className="absolute left-0 top-0 w-full">
               {activeTab === 'my' ? (
                 <MyPosts posts={posts} lastPostRef={lastPostElementRef} />
               ) : (

@@ -41,7 +41,7 @@ export default function SignUpBusiness1({ onNext }: Props) {
     <div className="min-h-screen bg-BG-black text-white">
       <Prev url="/onBoarding?userType=business" />
       <div className="px-4">
-        <h1 className="text-title-24-bold pb-[2rem]">실명을 입력해주세요.</h1>
+        <h1 className="pb-[2rem] text-title-24-bold">실명을 입력해주세요.</h1>
 
         <label className="block text-body1-16-bold">이름</label>
         <input
@@ -51,13 +51,11 @@ export default function SignUpBusiness1({ onNext }: Props) {
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           placeholder="이름을 입력해 주세요"
-          className="w-full pt-4 pb-2 px-2 bg-transparent border-b border-white text-white placeholder-gray400 outline-none"
+          className="w-full border-b border-white bg-transparent px-2 pb-2 pt-4 text-white placeholder-gray400 outline-none"
         />
 
         {/* 유효하지 않은 경우 메시지 */}
-        {isInvalid && (
-          <p className="mt-2 text-main text-[0.875rem]">실명을 입력해 주세요</p>
-        )}
+        {isInvalid && <p className="mt-2 text-[0.875rem] text-main">실명을 입력해 주세요</p>}
       </div>
     </div>
   );

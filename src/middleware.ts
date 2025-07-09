@@ -20,6 +20,5 @@ export function middleware(request: NextRequest) {
 
 // middleware가 적용될 경로 지정
 export const config = {
-    matcher: ['/((?!_next|favicon.ico|icons).*)'], // icons 폴더도 예외로 추가
-  };
-  
+  matcher: ['/((?!_next|favicon.ico|icons).*)'], // icons 폴더도 예외로 추가
+};

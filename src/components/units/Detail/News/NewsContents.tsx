@@ -96,7 +96,7 @@ const NewsContents = ({ newsList }: NewsContentsProps) => {
           <Link key={news.id} href={`/news/${news.id}`} passHref>
             <div className="flex cursor-pointer flex-col overflow-hidden rounded-[0.25rem]">
               {/* 이미지 */}
-              <div className="h-[160px] w-full rounded-[0.25rem] overflow-hidden">
+              <div className="h-[160px] w-full overflow-hidden rounded-[0.25rem]">
                 <img src={news.imageUrl} alt={news.title} className="h-full w-full object-cover object-top" />
               </div>
 

@@ -37,8 +37,8 @@ const NavigateFooter = () => {
   }, [pathname, setActivePage]);
 
   return (
-<footer className="fixed bottom-0 left-0 right-0 z-50 text-navigate-queen rounded-t-[1.25rem] w-full max-w-[600px] mx-auto border-t border-gray500 bg-BG-black py-[1rem] font-queensides">
-<div className="flex items-center justify-around">
+    <footer className="fixed bottom-0 left-0 right-0 z-50 mx-auto w-full max-w-[600px] rounded-t-[1.25rem] border-t border-gray500 bg-BG-black py-[1rem] font-queensides text-navigate-queen">
+      <div className="flex items-center justify-around">
         <Link href="/">
           <div
             onClick={() => setActivePage('home')}

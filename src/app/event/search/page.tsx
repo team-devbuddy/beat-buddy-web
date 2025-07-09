@@ -95,14 +95,14 @@ export default function EventSearchPage() {
     (node: HTMLDivElement | null) => {
       if (loading || !hasMore) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
+      observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          setPage(prev => prev + 1);
+          setPage((prev) => prev + 1);
         }
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore]
+    [loading, hasMore],
   );
 
   const fetchSearchPosts = useCallback(
@@ -114,17 +114,17 @@ export default function EventSearchPage() {
         if (selectedTags.length === 0) {
           const newPosts = await eventSearch(keyword, accessToken, targetPage, PAGE_SIZE); // ✅ 수정
           if (newPosts.length < PAGE_SIZE) setHasMore(false);
-          setPosts(prevPosts => (targetPage === 1 ? newPosts : [...prevPosts, ...newPosts]));
+          setPosts((prevPosts) => (targetPage === 1 ? newPosts : [...prevPosts, ...newPosts]));
         } else {
           const postLists = await Promise.all(
-            selectedTags.map(tag => eventSearch(tag, accessToken, targetPage, PAGE_SIZE)) // ✅ 수정
+            selectedTags.map((tag) => eventSearch(tag, accessToken, targetPage, PAGE_SIZE)), // ✅ 수정
           );
           const merged = postLists.flat();
           if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
-          
-          setPosts(prevPosts => {
+
+          setPosts((prevPosts) => {
             const combined = targetPage === 1 ? merged : [...prevPosts, ...merged];
-            const unique = [...new Map(combined.map(post => [post.eventId, post])).values()];
+            const unique = [...new Map(combined.map((post) => [post.eventId, post])).values()];
             return unique;
           });
         }
@@ -134,7 +134,7 @@ export default function EventSearchPage() {
         setLoading(false);
       }
     },
-    [keyword, accessToken, selectedTags]
+    [keyword, accessToken, selectedTags],
   );
 
   useEffect(() => {
@@ -189,8 +189,7 @@ export default function EventSearchPage() {
       className="bg-BG-black text-white"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
+      onTouchEnd={handleTouchEnd}>
       <BoardSearchHeader placeholder="이벤트를 입력해주세요." onSearchSubmit={handleSearchSubmit} isEvent={true} />
       {keyword === '' && <BoardRecentTerm isEvent={true} />}
 
@@ -223,14 +222,13 @@ export default function EventSearchPage() {
       {!loading && posts.length === 0 && keyword !== '' && <NoResults />}
 
       {userProfile?.role === 'BUSINESS' && (
-      <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
-        <div className="w-full max-w-[600px] px-4">
-          <Link
-            href="/board/write"
-            className="ml-auto flex h-14 w-14 items-center justify-center border border-main2 rounded-full bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90"
-          >
-            <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
-          </Link>
+        <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
+          <div className="w-full max-w-[600px] px-4">
+            <Link
+              href="/board/write"
+              className="ml-auto flex h-14 w-14 items-center justify-center rounded-full border border-main2 bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90">
+              <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
+            </Link>
           </div>
         </div>
       )}

@@ -192,16 +192,16 @@ export default function SearchResults({
             setSelectedLocation={setSelectedLocation}
             selectedOrder={selectedOrder}
             setSelectedOrder={setSelectedOrder}
+          />
+
+          {filteredClubs.length > 0 ? (
+            <div className="px-[1.25rem] pb-[2.5rem] pt-[1.25rem]">
+              <ClubList
+                clubs={filteredClubs}
+                likedClubs={likedClubs}
+                heartbeatNums={heartbeatNums}
+                handleHeartClickWrapper={handleHeartClickWrapper}
               />
-              
-              {filteredClubs.length > 0 ? (
-                <div className='px-[1.25rem] pt-[1.25rem]  pb-[2.5rem]'>
-            <ClubList
-              clubs={filteredClubs}
-              likedClubs={likedClubs}
-              heartbeatNums={heartbeatNums}
-              handleHeartClickWrapper={handleHeartClickWrapper}
-            />
             </div>
           ) : (
             <NoResults />

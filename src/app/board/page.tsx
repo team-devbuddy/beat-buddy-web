@@ -30,6 +30,9 @@ interface PostType {
   hasCommented: boolean;
   scrapped: boolean;
   isAuthor: boolean;
+  isFollowing: boolean;
+  isAnonymous: boolean;
+  thumbImage: string;
 }
 
 const PAGE_SIZE = 10;

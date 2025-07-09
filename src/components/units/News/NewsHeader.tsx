@@ -24,19 +24,15 @@ const NewsHeader: React.FC<NewsHeaderProps> = ({ onSortChange }) => {
   };
 
   return (
-    <div className="bg-BG-black text-white px-4 py-3 relative">
+    <div className="relative bg-BG-black px-4 py-3 text-white">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-           
           <h1 className="text-title-24-bold font-bold">NEWS</h1>
         </div>
-        
+
         {/* 드롭다운 */}
         <div className="relative">
-          <button 
-            onClick={handleDropdownToggle} 
-            className="flex items-center space-x-2 text-body2-15-medium"
-          >
+          <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body2-15-medium">
             <span className={`${selectedSort ? 'text-main' : 'text-gray-200'}`}>{selectedSort}</span>
             <img
               src="/icons/chevron-down.svg"
@@ -63,8 +59,7 @@ const NewsHeader: React.FC<NewsHeaderProps> = ({ onSortChange }) => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 z-20 mt-2 w-[6rem] rounded-xs bg-gray700 shadow-lg"
-                >
+                  className="absolute right-0 z-20 mt-2 w-[6rem] rounded-xs bg-gray700 shadow-lg">
                   {sortOptions.map((option, index) => (
                     <button
                       key={option}
@@ -77,8 +72,7 @@ const NewsHeader: React.FC<NewsHeaderProps> = ({ onSortChange }) => {
                           : index === sortOptions.length - 1
                             ? 'rounded-b-xs' // 마지막 옵션에만 bottom border-radius
                             : '' // 중간 옵션에는 border-radius 없음
-                      }`}
-                    >
+                      }`}>
                       {option}
                     </button>
                   ))}

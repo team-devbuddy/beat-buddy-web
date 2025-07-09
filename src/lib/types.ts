@@ -109,15 +109,13 @@ export interface MapClub {
   isHeartbeat: boolean;
 }
 
-
-
 export interface MagazineProps {
   magazineId: number;
   thumbImageUrl: string;
   title: string;
   content: string;
   currentIndex: number;
-  totalCount: number; 
+  totalCount: number;
   isLiked: boolean;
 }
 
@@ -130,4 +128,3 @@ export interface UserProfile {
   followerCount: number;
   followingCount: number;
 }
-

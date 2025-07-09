@@ -12,6 +12,5 @@ export async function getBBP(accessToken: string) {
   }
 
   const resJson = await response.json();
-  return resJson.data;  
+  return resJson.data;
 }
-
