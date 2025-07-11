@@ -58,20 +58,36 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE === 'true';
 
   // 푸터를 숨겨야 하는 경우:
-  const shouldHideFooter = pathname.includes('onBoarding') || !isAuth || pathname.includes('detail') || pathname.includes('write') || pathname.includes('news') || pathname.includes('bbp-list') || pathname.includes('bbp-detail') || pathname.includes('free') || pathname.includes('piece')
-  || pathname.includes('search') || pathname.includes('profile')|| pathname.includes('bbp-list') || pathname.includes('alert') || pathname.includes('magazine')  || pathname.includes('maintenance') || pathname.includes('signup') || isMaintenance || pathname.includes('withdrawal');
+  const shouldHideFooter =
+    pathname.includes('onBoarding') ||
+    !isAuth ||
+    pathname.includes('detail') ||
+    pathname.includes('write') ||
+    pathname.includes('news') ||
+    pathname.includes('bbp-list') ||
+    pathname.includes('bbp-detail') ||
+    pathname.includes('free') ||
+    pathname.includes('piece') ||
+    pathname.includes('search') ||
+    pathname.includes('profile') ||
+    pathname.includes('bbp-list') ||
+    pathname.includes('alert') ||
+    pathname.includes('magazine') ||
+    pathname.includes('maintenance') ||
+    pathname.includes('signup') ||
+    isMaintenance ||
+    pathname.includes('event/') ||
+    pathname.includes('withdrawal');
 
   return (
-    <div className="flex h-screen  w-full items-center justify-center">
-  {/* 모바일 컨테이너 */}
-  <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
-  <div className={`flex h-full flex-col overflow-y-auto ${shouldHideFooter ? '' : 'pb-[64px]'}`}>
-    {children}
-  </div>
-</div>
+    <div className="flex h-screen w-full items-center justify-center">
+      {/* 모바일 컨테이너 */}
+      <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
+        <div className={`flex h-full flex-col overflow-y-auto ${shouldHideFooter ? '' : 'pb-[64px]'}`}>{children}</div>
+      </div>
 
-{!shouldHideFooter && <NavigateFooter />}
-</div>
+      {!shouldHideFooter && <NavigateFooter />}
+    </div>
   );
 }
 

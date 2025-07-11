@@ -61,6 +61,8 @@ export default function Main() {
           const data = await getMagazineList(accessToken);
           setMagazine(data);
           console.log(data);
+          console.log(data.length);
+          const totalCount = data.length;
         }
       } catch (error) {
         console.error('Error fetching magazine:', error);
@@ -178,8 +180,8 @@ export default function Main() {
                     thumbImageUrl={item.thumbImageUrl}
                     title={item.title}
                     content={item.content}
-                    currentIndex={item.currentIndex}
-                    totalCount={item.totalCount}
+                    totalCount={magazine.length}
+                    orderInHome={item.orderInHome}
                   />
                 </div>
               ))}

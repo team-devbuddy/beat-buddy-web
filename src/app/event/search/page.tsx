@@ -220,18 +220,6 @@ export default function EventSearchPage() {
       })}
 
       {!loading && posts.length === 0 && keyword !== '' && <NoResults />}
-
-      {userProfile?.role === 'BUSINESS' && (
-        <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
-          <div className="w-full max-w-[600px] px-4">
-            <Link
-              href="/board/write"
-              className="ml-auto flex h-14 w-14 items-center justify-center rounded-full border border-main2 bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90">
-              <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
-            </Link>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

@@ -9,8 +9,8 @@ interface MagazineCardProps {
   thumbImageUrl: string;
   title: string;
   content: string;
-  currentIndex: number;
   totalCount: number;
+  orderInHome: number;
 }
 
 export default function Magazine({
@@ -18,8 +18,9 @@ export default function Magazine({
   thumbImageUrl,
   title,
   content,
-  currentIndex,
   totalCount,
+  orderInHome,
+
 }: MagazineCardProps) {
   const router = useRouter();
 
@@ -42,7 +43,7 @@ export default function Magazine({
         {/* 우측 상단 - 개수 + > 아이콘 */}
         <div className="absolute right-4 top-4 z-10 flex items-center space-x-1 rounded-full bg-black/50 px-3 py-1 text-sm font-medium text-white">
           <span>
-            {currentIndex} / {totalCount}
+            {orderInHome} / {totalCount}
           </span>
           <button
             onClick={(e) => {

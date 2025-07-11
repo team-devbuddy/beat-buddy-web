@@ -114,8 +114,8 @@ export interface MagazineProps {
   thumbImageUrl: string;
   title: string;
   content: string;
-  currentIndex: number;
   totalCount: number;
+  orderInHome: number;
   isLiked: boolean;
 }
 
@@ -127,4 +127,40 @@ export interface UserProfile {
   postCount: number;
   followerCount: number;
   followingCount: number;
+}
+
+export interface EventDetail {
+    eventId: number;
+    title: string;
+    content: string;
+    images: string[];
+    liked: boolean;
+    likes: number;
+    views: number;
+    startDate: string;
+    endDate: string;
+    receiveInfo: boolean;
+    receiveName: boolean;
+    receiveGender: boolean;
+    receivePhoneNumber: boolean;
+    receiveSNSId: boolean;
+    receiveMoney: boolean;
+    depositAccount: string;
+    depositAmount: number;
+    isAuthor: boolean;
+    region: string;
+    ticketCost: string;
+  notice: string;
+  location: string;
+}
+
+export interface Participant {
+  eventId: number;
+  memberId: number;
+  name: string;
+  gender: string;
+  phoneNumber: string;
+  isPaid: boolean;
+  totalMember: number;
+  createdAt: string;
 }

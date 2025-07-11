@@ -1,7 +1,7 @@
 import { atom, selector, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
-import { HeartbeatProps, ClubProps, Club, UserProfile } from '@/lib/types';
+import { HeartbeatProps, ClubProps, Club, UserProfile, EventDetail } from '@/lib/types';
 
 const { persistAtom } = recoilPersist();
 
@@ -165,4 +165,39 @@ export const likeCountState = atom<{ [eventId: number]: number }>({
 export const userProfileState = atom<UserProfile | null>({
   key: 'userProfileState',
   default: null,
+});
+
+export const followMapState = atom<Record<number, boolean>>({
+  key: 'followMapState',
+  default: {},
+});
+
+export const isScrappedState = atom<boolean>({
+  key: 'isScrappedState',
+  default: false,
+});
+
+export const regionState = atom<string[]>({
+  key: 'regionState',
+  default: [],
+});
+
+export const sortState = atom<string>({
+  key: 'sortState',
+  default: 'latest',
+});
+
+export const eventState = atom<EventDetail | null>({
+  key: 'eventState',
+  default: null,
+});
+
+export const eventTabState = atom<'now' | 'upcoming' | 'past'>({
+  key: 'eventTabState',
+  default: 'now',
+});
+
+export const eventDetailTabState = atom<'info' | 'qna'>({
+  key: 'eventDetailTabState',
+  default: 'info',
 });

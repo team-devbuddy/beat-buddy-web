@@ -5,7 +5,8 @@ import EventLists from './EventLists';
 import { getUpcomingEvent } from '@/lib/actions/event-controller/getUpcomingEvent';
 import { getPastEvent } from '@/lib/actions/event-controller/getPastEvent';
 import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { accessTokenState, sortState } from '@/context/recoil-context';
+import { regionState } from '@/context/recoil-context';
 
 export interface EventType {
   eventId: number;
@@ -27,13 +28,14 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
-
+  const region = useRecoilValue(regionState);
+  const sort = useRecoilValue(sortState);
   const fetchMoreEvents = useCallback(async () => {
     try {
       const res =
         tab === 'upcoming'
-          ? await getUpcomingEvent(accessToken, 'latest', page, 10)
-          : await getPastEvent(accessToken, 'latest', page, 10);
+          ? await getUpcomingEvent(accessToken, sort, page, 10, region)
+          : await getPastEvent(accessToken, page, 10, region);
 
       if (!Array.isArray(res) || res.length === 0) {
         setHasMore(false);
@@ -56,15 +58,15 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
       console.error('이벤트 불러오기 실패', err);
       setHasMore(false);
     }
-  }, [tab, page, accessToken]);
+  }, [tab, page, accessToken, region, sort]);
 
   useEffect(() => {
     // 탭 바뀌면 초기화 후 첫 페이지 fetch
     const init = async () => {
       const res =
         tab === 'upcoming'
-          ? await getUpcomingEvent(accessToken, 'latest', 1, 10)
-          : await getPastEvent(accessToken, 'latest', 1, 10);
+          ? await getUpcomingEvent(accessToken, sort, 1, 10, region)
+          : await getPastEvent(accessToken, 1, 10, region);
 
       const newEvents = (res || []).map((event: EventType) => ({
         ...event,
@@ -78,7 +80,7 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
     };
 
     init();
-  }, [tab, accessToken]);
+  }, [tab, accessToken, region, sort]);
 
   useEffect(() => {
     if (!loaderRef.current || !hasMore) return;
@@ -106,8 +108,8 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
     const refresh = async () => {
       const res =
         tab === 'upcoming'
-          ? await getUpcomingEvent(accessToken, 'latest', 1, 10)
-          : await getPastEvent(accessToken, 'latest', 1, 10);
+          ? await getUpcomingEvent(accessToken, sort, 1, 10, region)
+          : await getPastEvent(accessToken, 1, 10, region);
 
       const newEvents = (res || []).map((event: EventType) => ({
         ...event,
@@ -121,7 +123,7 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
     };
 
     refresh();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, region, sort]);
 
   return (
     <div className="min-h-screen bg-BG-black">

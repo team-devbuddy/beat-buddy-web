@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { accessTokenState, followMapState } from '@/context/recoil-context';
 import { getPostDetail } from '@/lib/actions/detail-controller/board/boardWriteUtils';
 import BoardDetail from '@/components/units/Board/Detail/BoardDetail';
 import NoResults from '@/components/units/Search/NoResult';
@@ -30,13 +30,14 @@ interface PostType {
   isAuthor: boolean;
   views: number;
   imageUrls?: string[];
+  isFollowing: boolean;
 }
 
 export default function BoardDetailPage({ postId, category }: { postId: number; category: string }) {
   const [post, setPost] = useState<PostType | null>(null);
   const accessToken = useRecoilValue(accessTokenState) || '';
   const router = useRouter();
-
+  const [followMap, setFollowMap] = useRecoilState(followMapState);
   useEffect(() => {
     const fetchPost = async () => {
       if (!postId || isNaN(postId)) {
@@ -56,6 +57,12 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
 
     fetchPost();
   }, [postId, category]);
+
+  useEffect(() => {
+    if (post) {
+      setFollowMap((prev) => ({ ...prev, [post.writerId]: post.isFollowing }));
+    }
+  }, [post]);
 
   return (
     <main className="relative min-h-screen bg-BG-black pb-[5.5rem] text-white">

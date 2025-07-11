@@ -15,6 +15,8 @@ interface MagazineDetailData {
   imageUrls: string[];
   views: number;
   likes: number;
+  orderInHome: number;
+  totalCount: number;
 }
 
 export default function MagazineDetail() {
@@ -33,6 +35,8 @@ export default function MagazineDetail() {
 
         // 🔧 writerId → memberId로 매핑
         const data = res.data;
+        console.log('키 개수:', Object.keys(data).length);
+        const dataLength = Object.keys(data).length;
         setMagazine({
           magazineId: data.magazineId,
           title: data.title,
@@ -41,6 +45,8 @@ export default function MagazineDetail() {
           imageUrls: data.imageUrls,
           views: data.views,
           likes: data.likes,
+          orderInHome: data.orderInHome,
+          totalCount: dataLength,
         });
       } catch (err) {
         console.error('Fetch error:', err);

@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NoResults from '@/components/units/Search/NoResult';
 import Link from 'next/link';
 
+
 interface PostType {
   profileImageUrl: string;
   role: string;
@@ -46,7 +47,8 @@ export default function BoardPage() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
-
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isScrapped, setIsScrapped] = useState(false);
   const accessToken = useRecoilValue(accessTokenState) || '';
   const pathname = usePathname();
 
@@ -133,7 +135,7 @@ export default function BoardPage() {
       }
       setLoading(false);
     },
-    [accessToken, selectedTags, posts, page]
+    [accessToken, selectedTags, posts, page, isFollowing]
   );
 
   useEffect(() => {

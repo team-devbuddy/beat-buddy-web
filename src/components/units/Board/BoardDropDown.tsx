@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
@@ -27,9 +27,10 @@ interface DropdownProps {
   position: { top: number; left: number };
   postId: number;
   eventId?: number;
+  type?: 'event' | 'board';
 }
 
-const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId }: DropdownProps) => {
+const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId, type }: DropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
@@ -37,8 +38,9 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId }: Dropdow
   const [reportReason, setReportReason] = useState('');
   const [post, setPost] = useState<PostProps>({ nickname: '' });
 
-  const items: DropdownItem[] = isAuthor
-    ? [
+  const items: DropdownItem[] = useMemo(() => {
+    if (isAuthor) {
+      return [
         {
           label: '공유',
           icon: '/icons/material-symbols_share-outline.svg',
@@ -57,17 +59,35 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId }: Dropdow
             router.push('/board');
           },
         },
-      ]
-    : [
+      ];
+    }
+  
+    if (type === 'event') {
+      return [
         {
           label: '공유',
           icon: '/icons/material-symbols_share-outline.svg',
-          onClick: () => navigator.share({ title: '게시글', url: window.location.href }),
+          onClick: () => navigator.share({ title: '이벤트', url: window.location.href }),
         },
-        { label: '차단', icon: '/icons/block.svg', modalType: 'block' },
-        { label: '신고', icon: '/icons/material-symbols_siren-outline.svg', modalType: 'report' },
+        {
+          label: '신고',
+          icon: '/icons/material-symbols_siren-outline.svg',
+          modalType: 'report',
+        },
       ];
-
+    }
+  
+    return [
+      {
+        label: '공유',
+        icon: '/icons/material-symbols_share-outline.svg',
+        onClick: () => navigator.share({ title: '게시글', url: window.location.href }),
+      },
+      { label: '차단', icon: '/icons/block.svg', modalType: 'block' },
+      { label: '신고', icon: '/icons/material-symbols_siren-outline.svg', modalType: 'report' },
+    ];
+  }, [isAuthor, type]);
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

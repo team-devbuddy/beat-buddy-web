@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { postLikeEvent } from '@/lib/actions/event-controller/postLikeEvent';
 import { deleteLikeEvent } from '@/lib/actions/event-controller/deleteLikeEvent';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface EventType {
   eventId: number;
@@ -31,7 +32,7 @@ export default function EventCard({
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(0);
   const [isLiking, setIsLiking] = useState(false);
-
+  const router = useRouter();
   // ✅ 서버에서 받은 초기값 반영 (1회만 실행)
   useEffect(() => {
     setLiked(event.liked ?? false);
@@ -64,7 +65,7 @@ export default function EventCard({
   };
 
   return (
-    <div ref={lastRef as any} className="w-full">
+    <div ref={lastRef as any} className="w-full cursor-pointer" onClick={() => router.push(`/event/${event.eventId}`)}>
       <div className="relative aspect-square w-full overflow-hidden rounded-[1.25rem]">
         <Image src={event.thumbImage || '/images/DefaultImage.png'} alt={event.title} fill className="object-cover" />
 

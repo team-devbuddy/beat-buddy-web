@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import EventHeader from '@/components/units/Event/EventHeader';
-import EventTap from '@/components/units/Event/EventTap';
+import EventTab from '@/components/units/Event/EventTap';
 import EventNow from '@/components/units/Event/EventNow';
 import EventContainer from '@/components/units/Event/EventContainer';
 import LocationFilter from '@/components/units/Event/LocationFilter';
+import { useRecoilState } from 'recoil';
+import { eventTabState } from '@/context/recoil-context';
 
 export default function EventPage() {
-  const [activeTab, setActiveTab] = useState<'now' | 'upcoming' | 'past'>('now');
+  const [activeTab, setActiveTab] = useRecoilState(eventTabState);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -57,7 +59,7 @@ export default function EventPage() {
       className="bg-BG-black"
     >
       <EventHeader />
-      <EventTap activeTab={activeTab} setActiveTab={setActiveTab} />
+      <EventTab />
       <LocationFilter />
 
       <div

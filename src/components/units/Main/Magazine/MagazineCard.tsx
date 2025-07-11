@@ -16,8 +16,8 @@ export default function MagazineCard({
   thumbImageUrl,
   title,
     content,
-  currentIndex,
-    totalCount,
+  orderInHome,
+  totalCount,
   isLiked,
 }: Props) {
   const router = useRouter();

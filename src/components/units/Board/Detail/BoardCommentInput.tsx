@@ -12,7 +12,7 @@ interface Props {
 
 export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
   const [content, setContent] = useState('');
-  const [isAnonymous, setIsAnonymous] = useState(true);
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const accessToken = useRecoilValue(accessTokenState) || '';
 
   const handleSubmit = async () => {
@@ -30,9 +30,9 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
     <div className="space-y-2 px-[1.25rem]">
       <div className="flex items-center justify-between rounded-[0.75rem] bg-gray500 px-[0.75rem] py-[0.5rem]">
         <label
-          className={`flex items-center gap-[0.12rem] text-[0.75rem] ${isAnonymous ? 'text-gray300' : 'text-main'}`}>
+          className={`flex items-center gap-[0.12rem] text-[0.75rem] ${isAnonymous ? 'text-main' : 'text-gray300'}`}>
           <Image
-            src={isAnonymous ? '/icons/check_box_outline_blank.svg' : '/icons/check_box.svg'}
+            src={isAnonymous ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
             alt="check"
             width={18}
             height={18}

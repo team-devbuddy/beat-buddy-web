@@ -19,6 +19,7 @@
     "@use-gesture/react": "^10.3.1",
     "babel-plugin-glsl": "^1.0.0",
     "core-js": "^3.40.0",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.2.11",
     "jquery": "^3.7.1",
@@ -42,7 +43,8 @@
     "tailwind-scrollbar-hide": "^1.1.7",
     "three": "^0.158.0",
     "three-mesh-bvh": "^0.9.1",
-    "vue2-google-maps": "^0.10.7"
+    "vue2-google-maps": "^0.10.7",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/google.maps": "^3.55.11",

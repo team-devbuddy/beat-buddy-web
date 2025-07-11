@@ -5,7 +5,7 @@ import BoardImageModal from '../BoardImageModal';
 import { useState, useEffect, useRef } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
-import { accessTokenState, postLikeState, postScrapState } from '@/context/recoil-context';
+import { accessTokenState, followMapState, postLikeState, postScrapState } from '@/context/recoil-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
 import { deletePostLike } from '@/lib/actions/post-interaction-controller/deleteLike';
@@ -36,6 +36,7 @@ interface PostProps {
     isAuthor: boolean;
     role: string;
     views: number;
+    isFollowing: boolean;
   };
 }
 
@@ -43,7 +44,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [followMap, setFollowMap] = useRecoilState(followMapState);
   const [loadingFollow, setLoadingFollow] = useState(false);
   const [isLoadingLike, setIsLoadingLike] = useState(false);
   const [isLoadingScrap, setIsLoadingScrap] = useState(false);
@@ -58,7 +59,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
   // 🔥 렌더링 시점에 상태를 파생시켜 불필요한 재렌더링을 방지
   const liked = likeMap[post.id] ?? post.liked;
   const scrapped = scrapMap[post.id] ?? post.scrapped;
-
+  const isFollowing = followMap[post.writerId] ?? post.isFollowing;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
@@ -89,10 +90,10 @@ export default function BoardDetail({ postId, post }: PostProps) {
       setLoadingFollow(true);
       if (!isFollowing) {
         await postFollow(post.writerId, accessToken);
-        setIsFollowing(true);
+        setFollowMap((prev) => ({ ...prev, [post.writerId]: true }));
       } else {
         await deleteFollow(post.writerId, accessToken);
-        setIsFollowing(false);
+        setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
       }
     } catch (err: any) {
       alert(err.message ?? '요청 실패');

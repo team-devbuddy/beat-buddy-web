@@ -13,7 +13,7 @@ import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap
 import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
 import BoardDropdown from './BoardDropDown';
 import { useRouter } from 'next/navigation';
-
+import { followMapState } from '@/context/recoil-context';
 import { useRef } from 'react';
 
 interface PostProps {
@@ -70,17 +70,18 @@ export default function BoardThread({ postId, post }: PostProps) {
   const [likes, setLikes] = useState(post.likes);
   const [scraps, setScraps] = useState(post.scraps);
   const [isAnonymous, setIsAnonymous] = useState(post.isAnonymous);
-  const [isFollowing, setIsFollowing] = useState(post.isFollowing);
   const dropdownTriggerRef = useRef<HTMLImageElement | null>(null);
 
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [likeMap, setLikeMap] = useRecoilState(postLikeState);
   const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
-
+  const [followMap, setFollowMap] = useRecoilState(followMapState);
   const liked = likeMap[post.id] ?? false;
   const scrapped = scrapMap[post.id] ?? false;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
+
+  const isFollowing = followMap[post.writerId] ?? post.isFollowing;
 
   const category = 'free';
 
@@ -107,10 +108,10 @@ export default function BoardThread({ postId, post }: PostProps) {
       setLoadingFollow(true);
       if (!isFollowing) {
         await postFollow(post.writerId, accessToken);
-        setIsFollowing(true);
+        setFollowMap((prev) => ({ ...prev, [post.writerId]: true }));
       } else {
         await deleteFollow(post.writerId, accessToken);
-        setIsFollowing(false);
+        setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
       }
     } catch (err: any) {
       alert(err.message ?? '요청 실패');
