@@ -1,17 +1,38 @@
-// components/units/EventWrite/EventTitleInput.tsx
 'use client';
 
+import { useState } from 'react';
+
 export default function EventNoticeInput() {
+  const [notice, setNotice] = useState('');
+  const [focused, setFocused] = useState(false);
+
   return (
-    <div className="px-5 pt-7 bg-BG-black">
-      <label className="flex items-center text-white text-[1rem] font-bold mb-[0.62rem]">
-        <span>공지</span>
+    <div className="bg-BG-black px-5 pt-7">
+      {/* 라벨 */}
+      <label className=" mb-4 flex items-center text-[1rem] font-bold text-white">
+        <span>중요 공지</span>
       </label>
-      <input
-        type="text"
-        className="w-full border-b px-4 py-3 bg-BG-black text-gray100 border-gray300 placeholder-gray300 text-[0.75rem] focus:outline-none"
-        placeholder="공지를 입력해주세요."
-      />
+
+      {/* 입력창 + 안내 문구 */}
+      <div className="relative">
+        {/* 안내 문구 (입력 없고 focus도 안 됐을 때만 보임) */}
+        {!focused && !notice && (
+          <div className="pointer-events-none absolute left-4 top-4 -translate-y-1/2 text-sm leading-tight text-gray300">
+            <div>중요 공지 및 주의 사항을 입력해주세요.</div>
+            <div>(ex. 연령 제한, 신분증 검사 등)</div>
+          </div>
+        )}
+
+        <input
+          type="text"
+          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-[0.75rem] text-gray100 placeholder-gray300 focus:outline-none"
+          placeholder=""
+          value={notice}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          onChange={(e) => setNotice(e.target.value.replace(/\n/g, ' '))}
+        />
+      </div>
     </div>
   );
 }

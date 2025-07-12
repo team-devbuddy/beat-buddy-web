@@ -307,6 +307,7 @@ export default function BoardThread({ postId, post }: PostProps) {
       </div>
       {isDropdownOpen && dropdownPosition && (
         <BoardDropdown
+          
           isAuthor={post.isAuthor}
           onClose={() => setIsDropdownOpen(false)}
           position={dropdownPosition}

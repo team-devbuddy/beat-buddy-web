@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
@@ -9,6 +9,7 @@ import { deletePost } from '@/lib/actions/post-controller/deletePost';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { getPostDetail } from '@/lib/actions/detail-controller/board/boardWriteUtils';
+import { deleteComment } from '@/lib/actions/comment-controller/deleteComment';
 
 interface PostProps {
   nickname: string;
@@ -26,11 +27,12 @@ interface DropdownProps {
   onClose: () => void;
   position: { top: number; left: number };
   postId: number;
+  commentId?: number | null;
   eventId?: number;
-  type?: 'event' | 'board';
+  type?: 'event' | 'board' | 'comment';
 }
 
-const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId, type }: DropdownProps) => {
+const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId, type }: DropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
@@ -38,30 +40,59 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId, type }: D
   const [reportReason, setReportReason] = useState('');
   const [post, setPost] = useState<PostProps>({ nickname: '' });
 
+  const handleDeleteComment = useCallback(async () => {
+    console.log('댓글 삭제 요청:', { postId, commentId });
+    if (!commentId) return alert('댓글 ID가 없습니다.');
+    try {
+      await deleteComment(postId, commentId, accessToken);
+      onClose();
+      // ✅ 필요시 댓글 목록에서 제거도 가능
+    } catch (e) {
+      console.error('댓글 삭제 실패', e);
+    }
+  }, [commentId, postId, accessToken, onClose]);
+
+
+  
   const items: DropdownItem[] = useMemo(() => {
     if (isAuthor) {
-      return [
-        {
-          label: '공유',
-          icon: '/icons/material-symbols_share-outline.svg',
-          onClick: () => navigator.share({ title: '게시글', url: window.location.href }),
-        },
-        {
-          label: '수정',
-          icon: '/icons/edit.svg',
-          onClick: () => router.push(`/board/write?postId=${postId}`),
-        },
-        {
-          label: '삭제',
-          icon: '/icons/trashcan.svg',
-          onClick: async () => {
-            await deletePost(accessToken, postId);
-            router.push('/board');
+      if (type === 'comment') {
+        return [
+          {
+            label: '공유',
+            icon: '/icons/material-symbols_share-outline.svg',
+            onClick: () => navigator.share({ title: '게시글', url: window.location.href }),
           },
-        },
-      ];
+          {
+            label: '삭제',
+            icon: '/icons/trashcan.svg',
+            onClick: handleDeleteComment,
+          },
+        ];
+      } else {
+        return [
+          {
+            label: '공유',
+            icon: '/icons/material-symbols_share-outline.svg',
+            onClick: () => navigator.share({ title: '게시글', url: window.location.href }),
+          },
+          {
+            label: '수정',
+            icon: '/icons/edit.svg',
+            onClick: () => router.push(`/board/write?postId=${postId}`),
+          },
+          {
+            label: '삭제',
+            icon: '/icons/trashcan.svg',
+            onClick: async () => {
+              await deletePost(accessToken, postId);
+              router.push('/board');
+            },
+          },
+        ];
+      }
     }
-  
+
     if (type === 'event') {
       return [
         {
@@ -76,7 +107,7 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId, type }: D
         },
       ];
     }
-  
+
     return [
       {
         label: '공유',
@@ -87,7 +118,7 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId, type }: D
       { label: '신고', icon: '/icons/material-symbols_siren-outline.svg', modalType: 'report' },
     ];
   }, [isAuthor, type]);
-  
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -117,7 +148,7 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId, type }: D
     <>
       {/* ✅ 배경 */}
       <div
-        className="fixed inset-0 z-40 bg-black/50"
+        className="fixed inset-0 z-30 bg-black/50 pointer-events-none"
         // 모달이 열려있으면 모달을 닫고, 그렇지 않으면 전체 드롭다운을 닫습니다.
         onClick={() => (modalType ? setModalType(null) : onClose())}
       />
@@ -131,7 +162,7 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId, type }: D
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="fixed z-50 min-w-[100px] space-y-2 rounded-[0.75rem] bg-gray700 px-4 py-3 shadow-lg"
+            className="fixed z-50 min-w-[100px] space-y-2 rounded-[0.75rem] bg-gray700 px-4 py-3 shadow-lg pointer-events-auto"
             style={{ top: position.top, left: position.left }}
             onClick={(e) => e.stopPropagation()}>
             {items.map((item) => (
@@ -139,13 +170,18 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, eventId, type }: D
                 key={item.label}
                 className="flex w-full items-center justify-between rounded-md text-body3-12-medium text-white"
                 // 🔥 수정된 클릭 핸들러
-                onClick={() => {
-                  if (item.onClick) {
-                    item.onClick();
-                    onClose(); // 즉시 실행되는 액션은 드롭다운을 닫음
-                  } else if (item.modalType) {
-                    // 모달을 띄울 때는 onClose를 호출하지 않고 내부 상태만 변경
+                onClick={async () => {
+                  if (item.modalType) {
                     setModalType(item.modalType);
+                    return;
+                  }
+                  if (item.onClick) {
+                    try {
+                      await item.onClick();
+                    } catch (e) {
+                      console.error('실행 중 오류 발생:', e);
+                    }
+                    onClose();
                   }
                 }}>
                 <span>{item.label}</span>

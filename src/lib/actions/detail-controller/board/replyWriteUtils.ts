@@ -98,7 +98,7 @@ export async function getComments(
   }
 }
 
-export async function deleteComment(postId: string | number, commentId: number, accessToken: string): Promise<void> {
+export async function deleteComment(postId: string | number, commentId: number | null, accessToken: string): Promise<void> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/comments/${commentId}`, {
       method: 'DELETE',

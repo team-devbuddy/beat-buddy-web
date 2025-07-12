@@ -6,7 +6,7 @@ export const getUserProfileInfo = async (
   ) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/post/user/${userId}?type=free&page=${page}&size=${size}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/post/user/${userId}/page=${page}&size=${size}`,
         {
           method: 'GET',
           headers: {

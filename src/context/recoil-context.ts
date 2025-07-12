@@ -201,3 +201,18 @@ export const eventDetailTabState = atom<'info' | 'qna'>({
   key: 'eventDetailTabState',
   default: 'info',
 });
+
+export const replyingToState = atom<{ parentId: number; parentName: string } | null>({
+  key: 'replyingToState',
+  default: null,
+});
+
+export const commentInputFocusState = atom<number>({
+  key: 'commentInputFocusState',
+  default: 0,
+});
+
+export const scrollToCommentState = atom<number | 'bottom' | null>({
+  key: 'scrollToCommentState',
+  default: null,
+});
