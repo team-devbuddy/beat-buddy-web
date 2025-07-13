@@ -6,13 +6,12 @@ import EventCalendar from '@/components/units/Event/Write/EventCalendar';
 import { AnimatePresence, motion } from 'framer-motion';
 import EventTimePicker from '@/components/units/Event/Write/EventTimePicker';
 import classNames from 'classnames';
+import { useRecoilState } from 'recoil';
+import { eventFormState } from '@/context/recoil-context';
 
 export default function EventDateInput() {
+  const [eventForm, setEventForm] = useRecoilState(eventFormState);
   const [isAllDay, setIsAllDay] = useState(false);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
   const [activePopup, setActivePopup] = useState<'startCalendar' | 'endCalendar' | 'startTime' | 'endTime' | null>(
     null,
   );
@@ -20,12 +19,15 @@ export default function EventDateInput() {
   const popupWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isAllDay && startDate) {
-      setEndDate(startDate);
-      setStartTime('');
-      setEndTime('');
+    if (isAllDay && eventForm.startDate) {
+      setEventForm({
+        ...eventForm,
+        endDate: eventForm.startDate,
+        startTime: '',
+        endTime: '',
+      });
     }
-  }, [isAllDay, startDate]);
+  }, [isAllDay, eventForm.startDate]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -65,7 +67,7 @@ export default function EventDateInput() {
             <div
               className="w-full cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-gray100"
               onClick={() => setActivePopup(activePopup === 'startCalendar' ? null : 'startCalendar')}>
-              {startDate || 'YYYY. MM. DD.'}
+              {eventForm.startDate || 'YYYY. MM. DD.'}
             </div>
           </div>
 
@@ -75,7 +77,7 @@ export default function EventDateInput() {
               <div
                 className="cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-gray100"
                 onClick={() => setActivePopup(activePopup === 'startTime' ? null : 'startTime')}>
-                {startTime || '00:00'}
+                {eventForm.startTime || '00:00'}
               </div>
             </div>
           )}
@@ -97,24 +99,31 @@ export default function EventDateInput() {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}>
                 {activePopup === 'startCalendar' && (
                   <EventCalendar
-                    selectedDate={startDate}
+                    selectedDate={eventForm.startDate}
                     onSelectDate={(date) => {
-                      setStartDate(date === startDate ? '' : date);
-                      if (isAllDay) setEndDate(date);
+                      const newStartDate = date === eventForm.startDate ? '' : date;
+                      setEventForm({
+                        ...eventForm,
+                        startDate: newStartDate,
+                        endDate: isAllDay ? newStartDate : eventForm.endDate,
+                      });
                       setActivePopup(null);
                     }}
                     onClose={() => setActivePopup(null)}
-                    maxDate={endDate}
+                    maxDate={eventForm.endDate}
                   />
                 )}
                 {/* 🔥 수정된 시작 시간 피커 래퍼 */}
                 {activePopup === 'startTime' && !isAllDay && (
                   <div className="flex justify-end py-2">
                     <EventTimePicker
-                      selectedHour={Number(startTime.split(':')[0] || '0')}
-                      selectedMinute={Number(startTime.split(':')[1] || '0')}
+                      selectedHour={Number(eventForm.startTime.split(':')[0] || '0')}
+                      selectedMinute={Number(eventForm.startTime.split(':')[1] || '0')}
                       onChange={(hour, minute) =>
-                        setStartTime(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+                        setEventForm({
+                          ...eventForm,
+                          startTime: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+                        })
                       }
                     />
                   </div>
@@ -132,7 +141,7 @@ export default function EventDateInput() {
             <div
               className="w-full cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-gray100"
               onClick={() => setActivePopup(activePopup === 'endCalendar' ? null : 'endCalendar')}>
-              {endDate || 'YYYY. MM. DD.'}
+              {eventForm.endDate || 'YYYY. MM. DD.'}
             </div>
           </div>
           {!isAllDay && (
@@ -141,7 +150,7 @@ export default function EventDateInput() {
               <div
                 className="cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-gray100"
                 onClick={() => setActivePopup(activePopup === 'endTime' ? null : 'endTime')}>
-                {endTime || '00:00'}
+                {eventForm.endTime || '00:00'}
               </div>
             </div>
           )}
@@ -163,23 +172,29 @@ export default function EventDateInput() {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}>
                 {activePopup === 'endCalendar' && (
                   <EventCalendar
-                    selectedDate={endDate}
+                    selectedDate={eventForm.endDate}
                     onSelectDate={(date) => {
-                      setEndDate(date === endDate ? '' : date);
+                      setEventForm({
+                        ...eventForm,
+                        endDate: date === eventForm.endDate ? '' : date,
+                      });
                       setActivePopup(null);
                     }}
                     onClose={() => setActivePopup(null)}
-                    minDate={startDate}
+                    minDate={eventForm.startDate}
                   />
                 )}
                 {/* 🔥 수정된 종료 시간 피커 래퍼 */}
                 {activePopup === 'endTime' && !isAllDay && (
                   <div className="flex justify-end py-2">
                     <EventTimePicker
-                      selectedHour={Number(endTime.split(':')[0] || '0')}
-                      selectedMinute={Number(endTime.split(':')[1] || '0')}
+                      selectedHour={Number(eventForm.endTime.split(':')[0] || '0')}
+                      selectedMinute={Number(eventForm.endTime.split(':')[1] || '0')}
                       onChange={(hour, minute) =>
-                        setEndTime(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+                        setEventForm({
+                          ...eventForm,
+                          endTime: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+                        })
                       }
                     />
                   </div>

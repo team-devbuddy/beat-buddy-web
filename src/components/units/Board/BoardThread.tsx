@@ -86,7 +86,7 @@ export default function BoardThread({ postId, post }: PostProps) {
   const category = 'free';
 
   const goToUserProfile = () => {
-    router.push(`/profile?writerId=${post.writerId}`);
+    router.push(`/board/profile?writerId=${post.writerId}`);
   };
 
   const openDropdown = () => {

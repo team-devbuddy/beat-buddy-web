@@ -44,17 +44,17 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
 
       {eventDetailTab === 'info' && (
         <>
-          {userProfile?.role !== 'BUSINESS' && (
+          {!eventDetail?.isAuthor && (
             <div className="fixed bottom-0 left-0 w-full border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"
-                onClick={() => router.push(`/event/${eventId}/participate-info`)}
+                onClick={() => router.push(`/event/${eventId}/participate`)}
                 className="w-full rounded-md border-none bg-main py-4 text-[1rem] font-bold text-sub2">
                 참석하기
               </button>
             </div>
           )}
-          {userProfile?.role === 'BUSINESS' && (
+          {eventDetail?.isAuthor && (
             <div className="fixed bottom-0 left-0 w-full border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"

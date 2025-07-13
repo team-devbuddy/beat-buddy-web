@@ -17,7 +17,7 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
   const event = useRecoilValue(eventState);
 
   const onClick = () => {
-    if (userProfile?.role === 'BUSINESS') {
+    if (eventDetail.isAuthor) {
       router.push(`/event/${eventDetail.eventId}/participate-info`);
     } else {
       router.push(`/event/${eventDetail.eventId}/participate`);

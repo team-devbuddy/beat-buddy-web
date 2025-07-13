@@ -1,16 +1,22 @@
-// components/units/EventWrite/EventTitleInput.tsx
 'use client';
 
+import { useRecoilState } from 'recoil';
+import { eventFormState } from '@/context/recoil-context';
+
 export default function EventTitleInput() {
+  const [eventForm, setEventForm] = useRecoilState(eventFormState);
+
   return (
-    <div className="px-5 pt-7 bg-BG-black">
-      <label className="flex items-center text-white text-[1rem] font-bold mb-[0.62rem]">
+    <div className="bg-BG-black px-5 pt-7">
+      <label className="mb-[0.62rem] flex items-center text-[1rem] font-bold text-white">
         <span>이벤트명</span>
       </label>
       <input
         type="text"
-        className="w-full border-b px-4 py-3 bg-BG-black text-gray100 border-gray300 placeholder-gray300 py-2 text-sm focus:outline-none"
+        className="w-full border-b border-gray300 bg-BG-black px-4 py-2 py-3 text-sm text-gray100 placeholder-gray300 focus:outline-none"
         placeholder="이벤트명을 입력해주세요."
+        value={eventForm.title}
+        onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
       />
     </div>
   );

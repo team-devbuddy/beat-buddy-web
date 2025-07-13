@@ -23,13 +23,13 @@ export default function BoardProfilePosts({ posts, lastPostRef }: BoardProfilePo
       {posts.map((post, i) => {
         if (i === posts.length - 1 && lastPostRef) {
           return (
-            <div key={post.id} ref={lastPostRef}>
+            <div key={`${post.id}-${i}`} ref={lastPostRef}>
               {/* post 컴포넌트 예시 */}
               <PostItem post={post} />
             </div>
           );
         }
-        return <PostItem key={post.id} post={post} />;
+        return <PostItem key={`${post.id}-${i}`} post={post} />;
       })}
     </div>
   );

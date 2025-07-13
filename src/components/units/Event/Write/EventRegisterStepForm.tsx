@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import classNames from 'classnames';
+import { useRecoilState } from 'recoil';
+import { eventFormState } from '@/context/recoil-context';
 
 export default function EventRegisterStepForm() {
+  const [eventForm, setEventForm] = useRecoilState(eventFormState);
   const [step, setStep] = useState(1);
-  const [isReceivingInfo, setIsReceivingInfo] = useState<null | boolean>(null);
+  const [isReceivingInfo, setIsReceivingInfo] = useState<boolean | null>(null);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [bankName, setBankName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
@@ -17,7 +20,7 @@ export default function EventRegisterStepForm() {
     if (value) {
       setStep(2);
     } else {
-      setStep(3); // 정보 안 받더라도 사전예약금은 보여야 함
+      setStep(3);
     }
   };
 
@@ -30,6 +33,40 @@ export default function EventRegisterStepForm() {
       setStep(3);
     }
   }, [selectedFields, isReceivingInfo]);
+
+  useEffect(() => {
+    const options: string[] = [];
+
+    if (isReceivingInfo !== null) {
+      options.push(isReceivingInfo ? '정보 수집' : '정보 수집 안함');
+    }
+
+    if (selectedFields.length > 0) {
+      options.push(...selectedFields);
+    }
+
+    if (bankName.trim() && accountNumber.trim()) {
+      options.push(`${bankName} ${accountNumber}`);
+    }
+
+    if (amount.trim()) {
+      options.push(`예약금 ${amount}원`);
+    }
+
+    // boolean 필드들 업데이트
+    setEventForm({
+      ...eventForm,
+      receiveInfo: isReceivingInfo === true,
+      receiveName: selectedFields.includes('이름'),
+      receiveGender: selectedFields.includes('성별'),
+      receivePhoneNumber: selectedFields.includes('전화번호'),
+      receiveTotalCount: selectedFields.includes('동행 인원'),
+      receiveSNSId: selectedFields.includes('SNS 아이디'),
+      receiveMoney: selectedFields.includes('사전 예약금 입금 여부'),
+      depositAccount: bankName.trim() && accountNumber.trim() ? `${bankName} ${accountNumber}` : '',
+      depositAmount: amount.trim() ? amount : '',
+    });
+  }, [isReceivingInfo, selectedFields, bankName, accountNumber, amount]);
 
   const fields = [
     { label: '이름', row: 0 },
@@ -47,16 +84,20 @@ export default function EventRegisterStepForm() {
         <button
           onClick={() => handleReceiveClick(true)}
           className={classNames(
-            'flex-1 rounded-md py-2 transition-colors',
-            isReceivingInfo === true ? 'bg-white font-semibold text-black' : 'bg-gray700 text-white hover:bg-gray600',
+            'flex-1 rounded-[0.38rem] py-3 transition-colors',
+            isReceivingInfo === true
+              ? 'border border-main bg-sub1 text-[0.875rem] font-bold text-white'
+              : 'bg-gray500 text-[0.875rem] text-gray300 hover:bg-gray400',
           )}>
           받을게요
         </button>
         <button
           onClick={() => handleReceiveClick(false)}
           className={classNames(
-            'flex-1 rounded-md py-2 transition-colors',
-            isReceivingInfo === false ? 'bg-white font-semibold text-black' : 'bg-gray700 text-white hover:bg-gray600',
+            'flex-1 rounded-[0.38rem] py-3 transition-colors',
+            isReceivingInfo === false
+              ? 'border border-main bg-sub1 text-[0.875rem] font-bold text-white'
+              : 'bg-gray500 text-[0.875rem] text-gray300 hover:bg-gray400',
           )}>
           받지 않을게요
         </button>
@@ -81,10 +122,10 @@ export default function EventRegisterStepForm() {
                     key={f.label}
                     onClick={() => toggleField(f.label)}
                     className={classNames(
-                      'rounded-md py-2 text-sm transition-colors',
+                      'rounded-[0.38rem] py-3 text-[0.875rem] transition-colors',
                       selectedFields.includes(f.label)
-                        ? 'bg-white font-semibold text-black'
-                        : 'bg-gray700 text-gray300',
+                        ? 'border border-main bg-sub1 text-white'
+                        : 'bg-gray500 text-[0.875rem] text-gray300 hover:bg-gray400',
                     )}>
                     {f.label}
                   </button>
@@ -99,10 +140,10 @@ export default function EventRegisterStepForm() {
                     key={f.label}
                     onClick={() => toggleField(f.label)}
                     className={classNames(
-                      'rounded-md py-2 text-sm transition-colors',
+                      'rounded-[0.38rem] py-3 text-[0.875rem] transition-colors',
                       selectedFields.includes(f.label)
-                        ? 'bg-white font-semibold text-black'
-                        : 'bg-gray700 text-gray300',
+                        ? 'border border-main bg-sub1 text-white'
+                        : 'bg-gray500 text-[0.875rem] text-gray300 hover:bg-gray400',
                     )}>
                     {f.label}
                   </button>
@@ -117,10 +158,10 @@ export default function EventRegisterStepForm() {
                     key={f.label}
                     onClick={() => toggleField(f.label)}
                     className={classNames(
-                      'w-full rounded-md py-2 text-sm transition-colors',
+                      'w-full rounded-[0.38rem] py-3 text-[0.875rem] transition-colors',
                       selectedFields.includes(f.label)
-                        ? 'bg-white font-semibold text-black'
-                        : 'bg-gray700 text-gray300',
+                        ? 'border border-main bg-sub1 text-white'
+                        : 'bg-gray500 text-[0.875rem] text-gray300 hover:bg-gray400',
                     )}>
                     {f.label}
                   </button>
@@ -136,49 +177,46 @@ export default function EventRegisterStepForm() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}>
-            <h2 className="mb-4 text-lg font-bold">사전 예약금 정보</h2>
+            {/* 입금 계좌 */}
+            <div className="mb-6 flex items-center gap-4 px-1">
+              <label className="whitespace-nowrap text-[0.875rem] font-semibold text-white">입금 받을 계좌</label>
 
-            {/* 입금 계좌 */}
-            {/* 입금 계좌 */}
-            <div className="mb-4">
-              <label className="mb-1 block text-sm font-semibold text-white">입금 계좌</label>
-              <div className="flex flex-wrap gap-2">
-                {/* 은행명 */}
-                <input
-                  placeholder="은행명"
-                  value={bankName}
-                  onChange={(e) => setBankName(e.target.value)}
-                  className="max-w-[100px] rounded-md border border-gray500 bg-black px-3 py-2 text-white placeholder-gray500"
-                />
-                {/* 계좌번호 */}
+              <div className="border-pink500 flex items-center border-b px-3 py-2">
                 <input
                   type="text"
-                  placeholder="계좌번호"
+                  placeholder="은행"
+                  value={bankName}
+                  onChange={(e) => setBankName(e.target.value)}
+                  className="w-[80px] bg-transparent text-center text-sm text-white placeholder-gray500 focus:outline-none"
+                />
+              </div>
+
+              <div className="border-pink500 flex flex-1 items-center border-b px-3 py-2">
+                <input
+                  type="text"
+                  placeholder="계좌번호 입력"
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value)}
-                  className="min-w-[100px] flex-1 rounded-md border border-gray500 bg-black px-3 py-2 text-white placeholder-gray500"
+                  className="w-full bg-transparent text-sm text-white placeholder-gray500 focus:outline-none"
                 />
               </div>
             </div>
 
             {/* 입금 금액 */}
-            <div className="mb-6">
-              <label className="mb-1 block text-sm font-semibold text-white">입금 금액</label>
-              <div className="flex items-center gap-2">
+            <div className="mb-6 flex items-center gap-4 px-1">
+              <label className="whitespace-nowrap text-[0.875rem] font-semibold text-white">입금 받을 금액</label>
+
+              <div className="border-pink500 flex flex-1 items-center gap-2 border-b px-3 py-2">
                 <input
                   type="number"
                   placeholder="0"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="flex-1 rounded-md border border-gray500 bg-black px-3 py-2 text-white placeholder-gray500"
+                  className="w-full bg-transparent text-right text-sm text-white placeholder-gray500 focus:outline-none"
                 />
-                <span className="text-sm text-gray300">원</span>
+                <span className="text-pink500 whitespace-nowrap text-sm font-semibold">원</span>
               </div>
             </div>
-
-            <button className="bg-primary hover:bg-primary-dark w-full rounded-md py-3 text-white">
-              이벤트 등록하기
-            </button>
           </motion.div>
         )}
       </AnimatePresence>

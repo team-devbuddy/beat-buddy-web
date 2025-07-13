@@ -190,6 +190,7 @@ export const sortState = atom<string>({
 export const eventState = atom<EventDetail | null>({
   key: 'eventState',
   default: null,
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const eventTabState = atom<'now' | 'upcoming' | 'past'>({
@@ -215,4 +216,60 @@ export const commentInputFocusState = atom<number>({
 export const scrollToCommentState = atom<number | 'bottom' | null>({
   key: 'scrollToCommentState',
   default: null,
+});
+
+
+export const eventFormState = atom({
+  key: 'eventFormState',
+  default: {
+    venueId: 0,
+    title: '',
+    content: '', // intro → content 로 통일
+    startDate: '',
+    endDate: '',
+    startTime: '',
+    endTime: '',
+    location: '', // 장소 주소
+    region: '',
+    isFreeEntrance: false, // ✅ isFreeEntrance → freeEntrance
+    entranceFee: '', // string으로 입력 받고 숫자로 변환
+    entranceNotice: '',
+    notice: '',
+    receiveInfo: false,
+    receiveName: false,
+    receiveGender: false,
+    receivePhoneNumber: false,
+    receiveTotalCount: false,
+    receiveSNSId: false,
+    receiveMoney: false,
+    depositAccount: '',
+    depositAmount: '', // string으로 받고 숫자 변환
+    isAuthor: true,
+    isAttending: false,
+  },
+});
+
+
+
+export interface ParticipateFormState {
+  name: string;
+  gender: string;
+  phoneNumber: string;
+  snsType: string;
+  snsId: string;
+  totalNumber: number;
+  isPaid: boolean;
+}
+
+export const participateFormState = atom<ParticipateFormState>({
+  key: 'participateFormState',
+  default: {
+    name: '',
+    gender: '',
+    phoneNumber: '',
+    snsType: '',
+    snsId: '',
+    totalNumber: 1,
+    isPaid: false,
+  },
 });

@@ -2,29 +2,29 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRecoilState } from 'recoil';
+import { eventFormState } from '@/context/recoil-context';
 
 export default function EventEntranceFee() {
-  const [fee, setFee] = useState('');
-  const [isFree, setIsFree] = useState(false);
-  const [note, setNote] = useState('');
+  const [eventForm, setEventForm] = useRecoilState(eventFormState);
   const [noteFocused, setNoteFocused] = useState(false);
 
   const handleToggleFree = () => {
-    const nextFree = !isFree;
-    setIsFree(nextFree);
-    if (nextFree) {
-      setFee('0');
-    } else {
-      setFee('');
-    }
+    const nextFree = !eventForm.isFreeEntrance;
+    setEventForm({
+      ...eventForm,
+      isFreeEntrance: nextFree,
+      entranceFee: nextFree ? '0' : '',
+    });
   };
 
   const handleFeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
-    setFee(value);
-    if (value !== '0') {
-      setIsFree(false);
-    }
+    setEventForm({
+      ...eventForm,
+      entranceFee: value,
+      isFreeEntrance: value === '0',
+    });
   };
 
   return (
@@ -34,10 +34,9 @@ export default function EventEntranceFee() {
         <span className="text-[1rem] font-bold">입장료</span>
         <div
           onClick={handleToggleFree}
-          className="flex cursor-pointer items-center justify-center gap-[0.25rem] text-[0.75rem] text-gray300"
-        >
+          className="flex cursor-pointer items-center justify-center gap-[0.25rem] text-[0.75rem] text-gray300">
           <Image
-            src={isFree ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
+            src={eventForm.isFreeEntrance ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
             alt="checkbox"
             width={18}
             height={18}
@@ -52,16 +51,16 @@ export default function EventEntranceFee() {
           type="text"
           placeholder="ex. 10,000"
           className="w-full border-b border-gray300 bg-BG-black px-4 py-3 pr-10 text-sm text-gray100 placeholder-gray300 focus:outline-none"
-          value={fee ? Number(fee).toLocaleString() : ''}
+          value={eventForm.entranceFee ? Number(eventForm.entranceFee).toLocaleString() : ''}
           onChange={handleFeeChange}
-          disabled={isFree}
+          disabled={eventForm.isFreeEntrance}
         />
         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray300">원</span>
       </div>
 
       {/* 특이사항 입력창 + 안내 텍스트 */}
       <div className="relative">
-        {!noteFocused && !note && (
+        {!noteFocused && !eventForm.entranceNotice && (
           <div className="pointer-events-none absolute left-4 top-4 -translate-y-1/2 text-sm leading-tight text-gray300">
             <div>[선택] 입장료 관련 특이 사항을 입력해주세요.</div>
             <div>(ex. 프리드링크, 환불 조건 등)</div>
@@ -71,12 +70,12 @@ export default function EventEntranceFee() {
           type="text"
           placeholder=""
           className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-sm text-gray100 placeholder-gray300 focus:outline-none"
-          value={note}
+          value={eventForm.entranceNotice}
           onFocus={() => setNoteFocused(true)}
           onBlur={() => setNoteFocused(false)}
           onChange={(e) => {
             const clean = e.target.value.replace(/\n/g, ' ');
-            setNote(clean);
+            setEventForm({ ...eventForm, entranceNotice: clean });
           }}
         />
       </div>

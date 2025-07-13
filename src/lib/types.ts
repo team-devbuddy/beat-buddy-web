@@ -164,3 +164,14 @@ export interface Participant {
   totalMember: number;
   createdAt: string;
 }
+
+export interface EventForm {
+  title: string;
+  content: string;
+  images: string[];
+  liked: boolean;
+  likes: number;
+  views: number;
+  startDate: string;
+  endDate: string;
+}

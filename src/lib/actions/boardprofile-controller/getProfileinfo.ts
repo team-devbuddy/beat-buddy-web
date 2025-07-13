@@ -1,5 +1,5 @@
-export async function getProfileinfo(accessToken: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/profile/summary`, {
+export async function getProfileinfo(accessToken: string, memberId?: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/profile/summary${memberId ? `/${memberId}` : ''}`, {
     method: 'GET',
     headers: {
       'accept': 'application/json',

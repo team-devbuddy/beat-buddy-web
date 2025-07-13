@@ -68,7 +68,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
   };
 
   const goToUserProfile = () => {
-    router.push(`/profile?writerId=${post.writerId}`);
+    router.push(`/board/profile?writerId=${post.writerId}`);
   };
 
   const openDropdown = () => {

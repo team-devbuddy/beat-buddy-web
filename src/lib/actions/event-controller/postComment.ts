@@ -14,7 +14,7 @@ export interface postCommentPayload {
       parentCommentId: payload.parentCommentId === '' ? '' : payload.parentCommentId,
     };
   
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/events/${eventId}/comments`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/event-comments/${eventId}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

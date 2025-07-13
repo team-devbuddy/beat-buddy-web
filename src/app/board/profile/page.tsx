@@ -10,7 +10,6 @@ import BoardProfileInfo from '@/components/units/Board/Profile/BoardProfileInfo'
 import BoardProfileTab from '@/components/units/Board/Profile/BoardProfileTab';
 
 import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
-import { getUserProfileInfo } from '@/lib/actions/boardprofile-controller/getUserProfileInfo';
 
 interface UserData {
   nickname: string;
@@ -25,8 +24,11 @@ interface UserData {
 
 export default function BoardProfilePage() {
   const searchParams = useSearchParams();
-  const userId = searchParams.get('userId');
   const accessToken = useRecoilValue(accessTokenState) || '';
+
+  // ✅ writerId, userId 둘 다 시도
+  const userId = searchParams.get('userId');
+  const writerId = searchParams.get('writerId');
 
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isAuthor, setIsAuthor] = useState(false);
@@ -35,8 +37,9 @@ export default function BoardProfilePage() {
     const fetchData = async () => {
       let data;
 
-      if (userId) {
-        data = await getUserProfileInfo(userId, accessToken);
+      if (writerId || userId) {
+        const targetId = writerId || userId || '';
+        data = await getProfileinfo(accessToken, targetId);
         setIsAuthor(false);
       } else {
         data = await getProfileinfo(accessToken);
@@ -47,7 +50,7 @@ export default function BoardProfilePage() {
     };
 
     fetchData();
-  }, [accessToken, userId]);
+  }, [accessToken, writerId, userId]);
 
   if (!userData) return null;
 
@@ -62,10 +65,10 @@ export default function BoardProfilePage() {
         followerCount={userData.followerCount}
         followingCount={userData.followingCount}
         isFollowing={userData.isFollowing}
-        isAuthor={isAuthor} // ✅ 전달
+        isAuthor={isAuthor}
         userId={userData.userId}
       />
-      <BoardProfileTab isAuthor={isAuthor} /> {/* ✅ 전달 */}
+      <BoardProfileTab isAuthor={isAuthor} />
     </div>
   );
 }
