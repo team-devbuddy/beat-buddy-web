@@ -117,6 +117,7 @@ export interface MagazineProps {
   totalCount: number;
   orderInHome: number;
   isLiked: boolean;
+  currentIndex: number;
 }
 
 export interface UserProfile {

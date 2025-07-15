@@ -53,8 +53,9 @@ export default function MagazineListPage() {
                 title={magazine.title}
                 content={magazine.content}
                 isLiked={magazine.isLiked}
-                currentIndex={index + 1}
-                totalCount={magazines.length}
+                currentIndex={magazine.currentIndex}
+                totalCount={magazine.totalCount}
+                orderInHome={magazine.orderInHome}
               />
             ))}
           </div>
