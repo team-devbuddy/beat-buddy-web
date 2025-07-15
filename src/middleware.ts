@@ -4,7 +4,9 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const maintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE === 'true';
+  const maintenanceMode = false; // 일시적으로 비활성화
+  // const maintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE === 'true';
+  console.log('maintenanceMode:', maintenanceMode);
 
   if (maintenanceMode) {
     const isMaintenancePage = request.nextUrl.pathname.startsWith('/maintenance');
