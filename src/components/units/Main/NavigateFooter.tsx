@@ -74,8 +74,8 @@ const NavigateFooter = () => {
             <Image
               src={getIconSrc('venue', '/icons/map.svg', '/icons/footerMap-clicked.svg')}
               alt="Venue icon"
-              width={32}
-              height={32}
+              width={24}
+              height={24}
               className="safari-icon-fix"
             />
           </div>
@@ -95,12 +95,12 @@ const NavigateFooter = () => {
           </div>
         </Link>
 
-        <Link href="/profile">
+        <Link href="/mypage">
           <div
             onClick={() => setActivePage('profile')}
             className={`flex transform flex-col items-center transition-transform active:scale-95 ${activePage === 'profile' ? 'text-main' : 'text-gray-500'}`}>
             <Image
-              src={getIconSrc('profile', '/icons/footerProfile.svg', '/icons/footerProfile-clicked.svg')}
+              src={getIconSrc('profile', '/icons/footerProfile.svg', '/icons/footerProfileClicked.svg')}
               alt="Profile icon"
               width={32}
               height={32}

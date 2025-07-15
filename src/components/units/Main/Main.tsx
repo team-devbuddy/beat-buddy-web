@@ -173,8 +173,10 @@ export default function Main() {
         {magazine.length > 0 && (
           <section className="snap-x snap-mandatory overflow-x-auto px-[0.5rem] hide-scrollbar">
             <div className="flex w-max gap-4">
-              {magazine.map((item) => (
-                <div key={item.magazineId} className="min-w-[20.9375rem] snap-center">
+              {magazine.map((item, i) => (
+                <div
+                  key={`${item.magazineId}-${i}`}
+                  className={`min-w-[20.9375rem] snap-center ${i === 0 ? 'ml-2' : ''}`}>
                   <Magazine
                     magazineId={item.magazineId}
                     thumbImageUrl={item.thumbImageUrl}

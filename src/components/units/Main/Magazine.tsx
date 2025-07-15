@@ -26,9 +26,10 @@ export default function Magazine({
 
   return (
     <Link href={`/magazine/${magazineId}`}>
-      <div className="relative mx-auto h-[24rem] w-full max-w-[400px] cursor-pointer overflow-hidden rounded-xl shadow-lg transition-transform duration-300 ease-in-out hover:scale-105">
+      
+      <div className="relative mx-auto h-[24rem] w-full max-w-[400px] cursor-pointer overflow-hidden rounded-xl shadow-lg">
         <Image
-          src={thumbImageUrl}
+          src={thumbImageUrl || '/images/DefaultImage.png'}
           alt={title}
           layout="fill"
           className="object-cover"
