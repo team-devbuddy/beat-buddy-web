@@ -64,7 +64,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
     }
   };
   return (
-    <div className="space-y-2 px-[1.25rem]">
+    <div className="space-y-2 whitespace-nowrap  px-[1.25rem]">
       <div className="flex items-center justify-between rounded-[0.75rem] bg-gray500 px-[0.75rem] py-[0.5rem]">
         <label
           className={`flex items-center gap-[0.12rem] text-[0.75rem] ${isAnonymous ? 'text-main' : 'text-gray300'}`}>

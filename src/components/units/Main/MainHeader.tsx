@@ -22,7 +22,7 @@ export default function MainHeader() {
   };
 
   return (
-    <div className="safari-padding-fix">
+    <div className="">
       <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] py-[1rem]">
         <Link href="/">
           <Image

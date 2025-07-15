@@ -33,7 +33,7 @@ const HotPost = ({ posts }: HotPostProps) => {
       <div className="mb-2 text-[1.25rem] text-main">HotPost</div>
       <div className="flex flex-col gap-y-2">
         {posts.map((post, index) => (
-          <Link href={`/community/detail/${post.id}`} key={post.id}>
+          <Link href={`/board/free/${post.id}`} key={post.id}>
             <div className="rounded-md bg-gray700 p-4 hover:brightness-90">
               <div className="flex justify-between">
                 <p className="text-body2-15-bold text-white">{post.title}</p>

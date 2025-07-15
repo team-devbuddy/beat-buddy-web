@@ -49,7 +49,8 @@ export default function BoardWrite() {
   }, [content]);
   useEffect(() => {
     const fetchPost = async () => {
-      if (postId && !isNaN(postId)) {
+      // postId가 존재하고 유효한 숫자일 때만 수정 모드로 처리
+      if (postId && !isNaN(postId) && accessToken) {
         try {
           const category = 'free'; // ✅ 필요에 따라 동적으로 처리 가능
           const post = await getPostDetail(category, postId, accessToken);
@@ -63,10 +64,11 @@ export default function BoardWrite() {
           console.error('수정할 게시글 불러오기 실패:', err);
         }
       }
+      // postId가 없으면 새 글쓰기 모드 - 아무것도 하지 않음
     };
 
     fetchPost();
-  }, []);
+  }, [postId, accessToken]); // 의존성 배열에 postId와 accessToken 추가
 
   const handleAnonymous = () => {
     setAnonymous((prev) => !prev);
@@ -226,7 +228,7 @@ export default function BoardWrite() {
 
       {/* 하단 고정 바 */}
       {/* 하단 고정 바 */}
-      <div className="fixed inset-x-0 bottom-[3rem] z-50 bg-BG-black px-[1.25rem] py-[0.75rem]">
+      <div className="fixed  bottom-[3rem]  z-50 w-full max-w-[600px] bg-BG-black px-[1.25rem] py-[0.75rem]">
         {/* 해시태그 선택 제한 메시지 */}
         {tagLimitMessage && <p className="mb-1 text-[0.75rem] text-main">{tagLimitMessage}</p>}
 
@@ -246,10 +248,13 @@ export default function BoardWrite() {
           </div>
         </div>
 
-        <div className="fixed inset-x-0 bottom-0 z-50 bg-gray700 px-[1.25rem]">
+        <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 transform bg-gray700 px-[1.25rem]">
           <div className="flex items-center justify-between bg-gray700 py-[0.88rem]">
             {/* 사진 업로드 */}
-            <button className="flex items-center text-white" onClick={() => fileInputRef.current?.click()} title="사진 업로드">
+            <button
+              className="flex items-center text-white"
+              onClick={() => fileInputRef.current?.click()}
+              title="사진 업로드">
               <Image src="/icons/add_a_photo.svg" alt="사진" width={24} height={24} />
             </button>
             <input ref={fileInputRef} type="file" multiple accept="image/*" hidden onChange={handleImageChange} />

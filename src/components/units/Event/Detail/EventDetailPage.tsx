@@ -45,7 +45,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
       {eventDetailTab === 'info' && (
         <>
           {!eventDetail?.isAuthor && (
-            <div className="fixed bottom-0 left-0 w-full border-none px-[1.25rem] pb-[1.25rem] pt-2">
+            <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"
                 onClick={() => router.push(`/event/${eventId}/participate`)}

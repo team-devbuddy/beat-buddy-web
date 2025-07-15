@@ -108,7 +108,7 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
 
       {post && (
         // ✅ 3. 댓글 입력창을 div로 감싸고 ref를 연결합니다.
-        <div ref={commentInputRef} className="fixed bottom-0 left-0 right-0 z-10 bg-BG-black py-4">
+        <div ref={commentInputRef} className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 py-4">
           <BoardCommentInput
             postId={post.id}
             onCommentAdded={(newComment) => {
