@@ -12,6 +12,7 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { Club } from '@/lib/types';
 import Loading from '@/components/common/skeleton/LoadingLottie';
+import Coupon from '@/components/units/Detail/Coupon';
 import DetailCategoryBar from '@/components/units/Detail/DetailCategoryBar';
 import DetailFooter from '@/components/units/Detail/DetailFooter';
 import VenueIntro from '@/components/units/Detail/VenueIntro';
@@ -31,6 +32,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [tagList, setTagList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('info');
+  const [isCoupon, setIsCoupon] = useState<boolean>(false);
   const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
@@ -41,6 +43,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           setVenue(data.venue);
           setIsHeartbeat(data.isHeartbeat);
           setTagList(data.tagList);
+          setIsCoupon(data.isCoupon);
         } else {
           console.error('Access token is not available');
         }
@@ -71,6 +74,11 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
       case 'info':
         return (
           <>
+            {/* {isCoupon && ( */}
+              <div className="p-5">
+                <Coupon />
+              </div>
+            {/* )} */}
             <Info venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
             <VenueIntro />
             <Location venue={venue} />

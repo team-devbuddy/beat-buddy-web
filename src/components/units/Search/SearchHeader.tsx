@@ -1,20 +1,23 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { useRecoilState } from 'recoil';
 import { generateLink } from '@/lib/utils/searchUtils';
-import { recentSearchState,isMapViewState } from '@/context/recoil-context';
+import { recentSearchState, isMapViewState } from '@/context/recoil-context';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
 
 const SearchHeader = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
-  const [isLoading, setIsLoading] = useState(true);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const hasQuery = !!searchParams.get('q');
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -22,25 +25,26 @@ const SearchHeader = () => {
       setSearchQuery(query);
     }
     setIsLoading(false);
+    inputRef.current?.focus();
   }, [searchParams]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      setRecentSearches((prevSearches) => {
-        const updatedSearches = [searchQuery, ...prevSearches.filter((search) => search !== searchQuery)];
+      setRecentSearches((prev) => {
+        const updated = [searchQuery, ...prev.filter((s) => s !== searchQuery)];
         addSearch(searchQuery);
-        return updatedSearches;
+        return updated;
       });
       router.push(generateLink('/search/results', searchQuery));
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       handleSearch();
     }
   };
@@ -49,44 +53,49 @@ const SearchHeader = () => {
     if (isMapView) {
       setIsMapView(false);
     } else {
-      router.push('/search');
+      router.back();
     }
   };
+
   return (
-    <header className="flex flex-col bg-BG-black">
-      <div className="flex w-full items-center justify-between px-[1rem] py-[0.68rem]">
-        <Image
-          src="/icons/line-md_chevron-left.svg"
-          alt="뒤로가기"
-          width={24}
-          height={24}
-          onClick={handleBackClick}
-          className="cursor-pointer"
-        />
-        <Link href="/mypage">
-          <Image
-            src="/icons/person.svg"
-            alt="프로필이미지"
-            width={32}
-            height={32}
-            className="cursor-pointer hover:brightness-125"
-          />
-        </Link>
-      </div>
-      <div className="flex w-full items-center justify-between bg-BG-black px-4 pb-3">
-        <div className="relative w-full">
-          <input
-            className="w-full border-b-2 border-main bg-transparent px-2 py-2 text-white placeholder:text-white focus:outline-none"
-            placeholder={isLoading ? "" : "지금 가장 인기있는 클럽은?"}
-            value={searchQuery}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            style={{ WebkitAppearance: 'none', borderRadius: 0 }}
-          />
-          <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
-            <Image src="/icons/search-01.svg" alt="search icon" width={24} height={24} />
+    <header className="bg-BG-black px-4 py-3">
+      <div className="relative w-full">
+        {/* 🔙 Back icon */}
+        {hasQuery && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
+            <Image
+              src="/icons/line-md_chevron-left.svg"
+              alt="뒤로가기"
+              width={24}
+              height={24}
+              onClick={handleBackClick}
+              className="cursor-pointer"
+            />
           </div>
+        )}
+
+        {/* 🔍 Search icon */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
+          <Image
+            src="/icons/search-01.svg"
+            alt="검색"
+            width={24}
+            height={24}
+            onClick={handleSearch}
+            className="cursor-pointer"
+          />
         </div>
+
+        {/* 🔤 Input */}
+        <input
+          ref={inputRef}
+          className="w-full border-b-2 border-main bg-transparent py-2 pl-7 pr-12 text-white placeholder:text-gray300 focus:outline-none"
+          placeholder={isLoading ? '' : '지금 가장 인기있는 클럽은?'}
+          value={searchQuery}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          style={{ WebkitAppearance: 'none', borderRadius: 0 }}
+        />
       </div>
     </header>
   );

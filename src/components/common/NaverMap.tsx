@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useImperativeHandle, useRef, forwardRef } from 'react';
+import { useEffect, useImperativeHandle, useRef, forwardRef, useState } from 'react';
 import { Club } from '@/lib/types';
 
 export interface NaverMapHandle {
@@ -18,174 +18,142 @@ interface NaverMapProps {
 }
 
 const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
-  { clubs, width = '100%', height = '500px', minHeight, zoom = 15, onAddressesInBounds },
+  { clubs, width = '100%', height = '100%', minHeight, zoom = 15, onAddressesInBounds },
   ref,
 ) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<any>(null);
-  const markerRefs = useRef<{ club: Club; marker: any }[]>([]);
-  const clustererRef = useRef<any>(null);
+  const [map, setMap] = useState<naver.maps.Map | null>(null);
+  const [clusterer, setClusterer] = useState<any>(null);
+  const markerRefs = useRef<{ club: Club; marker: naver.maps.Marker }[]>([]);
 
+  // 1. 지도와 클러스터러 초기화 (최초 한 번만 실행)
   useEffect(() => {
-    if (!mapRef.current || !window.naver?.maps) return;
-    console.log('[DEBUG] clubs.length:', clubs.length);
-    console.log('[DEBUG] clubs:', clubs);
+    if (!mapRef.current || !window.naver?.maps || map) return;
 
-    const defaultCenter = new window.naver.maps.LatLng(37.5666103, 126.9783882);
-
-    const map = new window.naver.maps.Map(mapRef.current, {
+    const mapInstance = new window.naver.maps.Map(mapRef.current, {
       gl: true,
-      center: defaultCenter,
+      center: new window.naver.maps.LatLng(37.5666103, 126.9783882),
       zoom,
-      customStyleId: '48547b93-96df-42da-9e2a-b0f277010e41',
+      logoControl: true,
+      logoControlOptions: {
+        position: window.naver.maps.Position.BOTTOM_LEFT,
+      },
     });
 
-    mapInstance.current = map;
+    const clusterIcon = {
+      content: `
+        <div class="custom-cluster" style="
+          width: 40px; height: 40px; background-color: #FF4493; color: white;
+          border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          font-weight: bold; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        ">
+          <span class="cluster-count"></span>
+        </div>
+      `,
+      size: new window.naver.maps.Size(40, 40),
+      anchor: new window.naver.maps.Point(20, 20),
+    };
 
-    // ✅ 기존 마커 제거
-    if (markerRefs.current.length > 0) {
-      markerRefs.current.forEach(({ marker }) => marker.setMap(null));
-      markerRefs.current = [];
+    if (window.MarkerClustering) {
+      const clustererInstance = new window.MarkerClustering({
+        minClusterSize: 2,
+        maxZoom: 15,
+        map: mapInstance,
+        markers: [],
+        disableClickZoom: false,
+        gridSize: 100,
+        icons: [clusterIcon],
+        indexGenerator: [2, 5, 10],
+        stylingFunction: function (clusterMarker: any, count: number) {
+          const el = clusterMarker.getElement();
+          const span = el?.querySelector('.cluster-count');
+          if (span) span.textContent = String(count);
+        },
+      });
+      setClusterer(clustererInstance);
+    } else {
+      console.error('MarkerClustering 라이브러리를 찾을 수 없습니다.');
     }
+    
+    setMap(mapInstance);
+  }, [zoom, map]);
+
+
+  // 2. clubs 데이터 변경 시 마커만 업데이트
+  useEffect(() => {
+    if (!map || !clusterer) return;
+
+    // 기존 마커 클린업
+    markerRefs.current.forEach(({ marker }) => marker.setMap(null));
+    markerRefs.current = [];
 
     const geocodePromises = clubs.map((club) => {
-      return new Promise<void>((resolve) => {
-        if (!club.address) return resolve();
-
+      return new Promise<naver.maps.Marker | null>((resolve) => {
+        if (!club.address) return resolve(null);
         window.naver.maps.Service.geocode({ query: club.address }, (status, response) => {
           if (status === window.naver.maps.Service.Status.OK && response?.v2?.addresses?.length > 0) {
             const { x, y } = response.v2.addresses[0];
             const position = new window.naver.maps.LatLng(+y, +x);
-
             const marker = new window.naver.maps.Marker({
               position,
-              map,
               icon: {
                 content: `
-                  <div style="
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    transform: translateY(-8px);
-                  ">
-                    <div style="
-                      background: transparent;
-                      color: #FF4493;
-                      font-size: 0.75rem;
-                      font-weight: 500;
-                      white-space: nowrap;
-                      margin-bottom: -2px;
-                      pointer-events: none;
-                    ">
-                      ${club.englishName}
+                  <div style="background-color: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(-8px);">
+                    <div style="color: #FF4493; font-size: 0.75rem; font-weight: 500; white-space: nowrap; margin-bottom: -2px; pointer-events: none;">
+                      ${club.englishName || ''}
                     </div>
-                    <img src="/icons/naver_marker.svg" style="width: 24px; height: 32px;" />
+                    <img src="/icons/naver_marker.svg" style="width: 24px; height: 32px;" alt="${club.englishName}" />
                   </div>
                 `,
                 size: new window.naver.maps.Size(24, 40),
                 anchor: new window.naver.maps.Point(12, 32),
               },
             });
-
             markerRefs.current.push({ club, marker });
+            resolve(marker);
+          } else {
+            resolve(null);
           }
-
-          resolve();
         });
       });
     });
 
-    Promise.all(geocodePromises).then(() => {
-      if (markerRefs.current.length > 0) {
-        const bounds = new window.naver.maps.LatLngBounds(markerRefs.current[0].marker.getPosition());
-        markerRefs.current.forEach(({ marker }) => {
-          bounds.extend(marker.getPosition());
-        });
-        map.fitBounds(bounds);
-      }
+    Promise.all(geocodePromises).then((newMarkers) => {
+      const validMarkers = newMarkers.filter((m): m is naver.maps.Marker => m !== null) as naver.maps.Marker[];
+      
+      clusterer.setMarkers(validMarkers);
 
-      if (clustererRef.current) {
-        clustererRef.current.setMap(null);
-        clustererRef.current = null;
-      }
-
-      const clusterIcon = {
-        content: `
-          <div class="custom-cluster" style="
-            width: 40px;
-            height: 40px;
-            background-color: #FF4493;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            pointer-events: none;
-            position: relative;
-          ">
-            <span class="cluster-count"></span>
-          </div>
-        `,
-        size: new window.naver.maps.Size(40, 40),
-        anchor: new window.naver.maps.Point(20, 20),
-      };
-
-      if (window.MarkerClustering) {
-        clustererRef.current = new window.MarkerClustering({
-          minClusterSize: 2,
-          maxZoom: 15,
-          map: mapInstance.current,
-          markers: markerRefs.current.map(({ marker }) => marker),
-          disableClickZoom: false,
-          gridSize: 100,
-          icons: [clusterIcon],
-          indexGenerator: [2, 5, 10, 20, 50, 100],
-          stylingFunction: function (clusterMarker: any, count: number) {
-            const el = clusterMarker.getElement();
-            const span = el?.querySelector('.cluster-count');
-            if (span) span.textContent = String(count);
-          },
-        });
-      } else {
-        console.error('MarkerClustering is not available');
+      if (validMarkers.length > 0) {
+        const firstPos = validMarkers[0].getPosition() as naver.maps.LatLng;
+        const bounds = new window.naver.maps.LatLngBounds(firstPos, firstPos);
+        for (let i = 1; i < validMarkers.length; i++) {
+          bounds.extend(validMarkers[i].getPosition());
+        }
+        map.fitBounds(bounds, { top: 100, right: 50, bottom: 100, left: 50 });
       }
     });
-  }, [clubs, zoom]);
 
+  }, [clubs, map, clusterer]);
+
+  
   useImperativeHandle(ref, () => ({
     filterAddressesInView: async () => {
       const visibleClubs: Club[] = [];
+      if (!map) return visibleClubs;
 
-      if (!mapInstance.current) return visibleClubs;
-
-      const bounds = mapInstance.current.getBounds();
+      const bounds = map.getBounds();
       markerRefs.current.forEach(({ club, marker }) => {
         const pos = marker.getPosition();
         if (bounds.hasPoint(pos)) {
           visibleClubs.push(club);
-          marker.setMap(mapInstance.current);
-        } else {
-          marker.setMap(null);
         }
       });
-
       return visibleClubs;
     },
   }));
 
   return (
-    <div
-      ref={mapRef}
-      style={{
-        width,
-        height,
-        minHeight,
-      }}
-    />
+    <div ref={mapRef} style={{ width, height, minHeight }} />
   );
 });
 

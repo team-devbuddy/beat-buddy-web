@@ -8,15 +8,14 @@ import EventWriteHeader from '@/components/units/Event/Write/EventWriteHeader';
 export default function ParticipatePage() {
   const params = useParams();
   const eventId = params?.eventId?.toString();
-  console.log('eventId', eventId);
-  if (!eventId) {
-    return <div>Event not found</div>;
-  }
+
+  if (!eventId) return <div>Event not found</div>;
 
   return (
     <main className="min-h-screen bg-BG-black text-white">
       <EventWriteHeader />
-      <ParticipateForm eventId={eventId} />
+      {/* ✅ key 추가해서 컴포넌트 강제 리마운트 */}
+      <ParticipateForm key={eventId} eventId={eventId} />
     </main>
   );
 }

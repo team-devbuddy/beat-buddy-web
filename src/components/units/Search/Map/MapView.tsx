@@ -15,7 +15,7 @@ import CurrentLocationButton from '@/components/units/Search/Map/CurrentLocation
 
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
-  const mapRef = useRef<{ filterAddressesInView: () => Promise<Club[]>, getMapInstance: () => any } | null>(null);
+  const mapRef = useRef<{ filterAddressesInView: () => Promise<Club[]>; getMapInstance: () => any } | null>(null);
   const [currentFilteredClubs, setCurrentFilteredClubs] = useState<Club[]>(filteredClubs);
   const [allClubs, setAllClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(false);
@@ -73,21 +73,19 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   const handleMapSearchClick = async () => {
     setClickedClub(null);
     setIsMapSearched(true);
-  
+
     if (mapRef.current) {
       if (sheetRef.current) {
         sheetRef.current.openWithSnap(2);
       }
-  
+
       const filteredClubs = await mapRef.current.filterAddressesInView();
-  
+
       // ✅ 여기서 중복 제거
-      const uniqueClubs = Array.from(
-        new Map(filteredClubs.map(club => [club.venueId, club])).values()
-      );
-  
+      const uniqueClubs = Array.from(new Map(filteredClubs.map((club) => [club.venueId, club])).values());
+
       setCurrentFilteredClubs(uniqueClubs);
-  
+
       if (sheetRef.current) {
         setTimeout(() => {
           sheetRef.current?.openWithSnap(1);
@@ -101,19 +99,19 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       alert('현재 위치 기능을 지원하지 않는 브라우저입니다.');
       return;
     }
-  
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         const userLatLng = new window.naver.maps.LatLng(lat, lng);
-  
+
         const mapInstance = mapRef.current?.getMapInstance?.();
         if (!mapInstance) {
           console.warn('지도 인스턴스를 찾을 수 없습니다.');
           return;
         }
-  
+
         // 현재 위치 마커 생성
         new window.naver.maps.Marker({
           position: userLatLng,
@@ -128,18 +126,16 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
             anchor: new window.naver.maps.Point(12, 12),
           },
         });
-  
+
         // 지도 중심 이동
         mapInstance.setCenter(userLatLng);
       },
       (error) => {
-        alert("현재 위치를 찾을 수 없습니다. 위치 정보는 지상이나 Wi-Fi 환경에서 더 정확하게 확인할 수 있어요!");
+        alert('현재 위치를 찾을 수 없습니다. 위치 정보는 지상이나 Wi-Fi 환경에서 더 정확하게 확인할 수 있어요!');
         console.error(error);
-      }
+      },
     );
   };
-  
-  
 
   // 외부 검색 결과 업데이트
   useEffect(() => {
@@ -164,23 +160,33 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   const clubsToDisplay = isEmpty ? allClubs : filteredClubs;
 
   return (
-    <>
-      <SearchHeader />
-      <NaverMap 
-        clubs={clubsToDisplay} 
-        minHeight="48.5rem" 
-        onAddressesInBounds={handleSearch} 
+    <div className="relative flex flex-col">
+      {/* 헤더 */}
+      <div className="relative z-20">
+        <SearchHeader />
+      </div>
+
+      {/* 헤더 아래 그라디언트 오버레이 */}
+      <div
+        className="pointer-events-none absolute left-0 right-0 top-[1.5rem] z-10 h-[3.5rem]"
+        style={{
+          background: 'linear-gradient(180deg, #131415 68.5%, rgba(19, 20, 21, 0.00) 100%)',
+        }}
+      />
+
+      {/* 지도 */}
+      <NaverMap
+        clubs={clubsToDisplay}
+        minHeight="calc(100dvh - 5rem)"
+        onAddressesInBounds={handleSearch}
         ref={mapRef}
         bottomSheetRef={sheetRef}
         zoom={isEmpty ? 10 : undefined}
       />
+
       <MapSearchButton onClick={handleMapSearchClick} />
       <CurrentLocationButton onClick={handleCurrentLocationClick} />
-      <BottomSheetComponent 
-        ref={sheetRef}
-        filteredClubs={currentFilteredClubs} 
-        isMapSearched={isMapSearched}
-      />
-    </>
+      <BottomSheetComponent ref={sheetRef} filteredClubs={currentFilteredClubs} isMapSearched={isMapSearched} />
+    </div>
   );
 }

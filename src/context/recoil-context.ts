@@ -190,7 +190,7 @@ export const sortState = atom<string>({
 export const eventState = atom<EventDetail | null>({
   key: 'eventState',
   default: null,
-  effects_UNSTABLE: [persistAtom],
+  
 });
 
 export const eventTabState = atom<'now' | 'upcoming' | 'past'>({

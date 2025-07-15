@@ -8,6 +8,7 @@ import { useRouter, usePathname } from 'next/navigation'; // usePathname 사용
 import NavigateFooter from '@/components/units/Main/NavigateFooter';
 import { UserProfile } from '@/lib/types';
 import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
+import { Toaster } from 'react-hot-toast';
 
 function ClientLayout({ children }: { children: React.ReactNode }) {
   const [access, setAccess] = useRecoilState(accessTokenState);
@@ -83,7 +84,13 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen w-full items-center justify-center">
       {/* 모바일 컨테이너 */}
       <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
-        <div className={`flex h-full flex-col overflow-y-auto ${shouldHideFooter ? '' : 'pb-[64px]'}`}>{children}</div>
+        <div
+          className={`flex h-full flex-col overflow-y-auto ${
+            shouldHideFooter ? '' : !pathname.includes('venue') ? 'pb-[64px]' : ''
+          }`}>
+          {children}
+        </div>
+        <Toaster position="top-center" reverseOrder={false} />
       </div>
 
       {!shouldHideFooter && <NavigateFooter />}

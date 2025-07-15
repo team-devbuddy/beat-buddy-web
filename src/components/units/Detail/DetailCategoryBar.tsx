@@ -1,3 +1,7 @@
+'use client';
+
+import { motion } from 'framer-motion';
+
 const DetailCategoryBar = ({
   activeTab,
   setActiveTab,
@@ -8,28 +12,34 @@ const DetailCategoryBar = ({
   const tabs = [
     { id: 'info', label: '정보' },
     { id: 'review', label: '리뷰' },
-    { id: 'news', label: '뉴스' },
-    { id: 'board', label: '게시판' },
+    { id: 'event', label: '이벤트' },
   ];
 
+  const activeIndex = tabs.findIndex((tab) => tab.id === activeTab);
+
   return (
-    <div className="w-full bg-BG-black py-2">
-      <div className="mx-auto grid max-w-[600px] grid-cols-4">
+    <div className="w-full bg-BG-black">
+      <div className="relative mx-auto grid max-w-[600px] grid-cols-3">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex flex-col items-center py-2 transition-all duration-500 ${
-              activeTab === tab.id ? 'border-b-2 border-main text-main' : 'border-b-2 border-transparent text-gray-100'
+            className={` py-3 text-center text-sm ${
+              activeTab === tab.id ? 'font-bold text-main' : 'font-medium text-gray-100'
             }`}>
-            <span
-              className={`text-sm ${
-                activeTab === tab.id ? 'text-body2-15-bold' : 'text-body2-15-medium'
-              }`}>
-              {tab.label}
-            </span>
+            {tab.label}
           </button>
         ))}
+
+        {/* 밑줄 애니메이션 */}
+        <motion.div
+          layout
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          className="absolute bottom-0 h-[2px] w-1/3 bg-main"
+          style={{
+            left: `${activeIndex * 33.3333}%`,
+          }}
+        />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, participateFormState } from '@/context/recoil-context';
 import { postParticipate } from '@/lib/actions/event-controller/participate-controller/postParticipate';
-
+import toast from 'react-hot-toast';
 import NameInput from './NameInput';
 import GenderSelector from './GenderSelector';
 import PhoneInput from './PhoneInput';
@@ -13,19 +13,40 @@ import DepositInfo from './DepositInfo';
 import SubmitButton from './SubmitButton';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function ParticipateForm({ eventId }: { eventId: string }) {
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [form, setForm] = useRecoilState(participateFormState);
+  const router = useRouter();
 
   const updateForm = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const resetForm = () => {
+    setForm({
+      name: '',
+      gender: '',
+      phoneNumber: '',
+      snsType: 'None',
+      snsId: '',
+      totalNumber: 1,
+      isPaid: false,
+    });
+  };
+
+  useEffect(() => {
+    resetForm();
+  }, [eventId]);
+
+  
   const handleSubmit = async () => {
     try {
       const response = await postParticipate(accessToken, eventId, form);
-      console.log('참여 완료:', response);
+      toast.success('참여 완료');
+      router.back();
     } catch (err) {
       console.error('참여 실패:', err);
     }

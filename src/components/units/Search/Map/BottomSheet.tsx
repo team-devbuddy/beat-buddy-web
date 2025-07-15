@@ -56,7 +56,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
   const sorts = ['관련도 순', '인기순'];
 
   // 바텀시트 높이 설정
-  const snapPoints = clickedClub ? [height, 300, 80] : [height, 470, 80];
+  const snapPoints = clickedClub ? [height, 300, 100] : [height, 470, 100];
 
   useImperativeHandle(ref, () => ({
     close: () => setOpen(false),
@@ -123,7 +123,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
                 </div>
               </Sheet.Header>
               <Sheet.Content className="relative z-10 w-full bg-BG-black" disableDrag={true}>
-                <div className="club-list-container flex w-full flex-col text-[0.93rem]">
+                <div className="club-list-container flex w-full flex-col text-[0.93rem] bg-BG-black">
                   <div className={`w-full flex-wrap gap-4 ${currentSnapPoint === 1 ? 'pb-[350px]' : ''}`}>
                     {loading ? (
                       <SearchListSkeleton />
