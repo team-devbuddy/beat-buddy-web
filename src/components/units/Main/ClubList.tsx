@@ -96,7 +96,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
           const { firstImageUrl, filteredTags } = memoizedValues[index];
 
           return (
-            <Link key={venue.venueId} href={`/detail/${venue.venueId}`} passHref>
+            <Link key={venue.id} href={`/detail/${venue.id}`} passHref>
               <motion.div
                 whileHover={{
                   y: -5,
@@ -119,7 +119,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
     >
       <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
       <span className="text-body3-12-medium text-gray300">
-        {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
+        {heartbeatNums[venue.id] !== undefined ? heartbeatNums[venue.id] : 0}
       </span>
     </motion.div>
                   <div className="club-gradient absolute inset-0"></div>
@@ -127,13 +127,13 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleHeartClick(e, venue.venueId);
+                      handleHeartClick(e, venue.id);
                     }}
                     variants={heartAnimation}
                     initial="initial"
-                    animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
+                    animate={clickedHeart[venue.id] ? 'clicked' : 'initial'}>
                     <Image
-                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                      src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                       alt="heart icon"
                       width={32}
                       height={32}
@@ -163,7 +163,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     <div className="flex items-center space-x-[0.25rem] text-gray300">
                       <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
                       <span className="text-body3-12-medium">
-                        {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
+                        {heartbeatNums[venue.id] !== undefined ? heartbeatNums[venue.id] : 0}
                       </span>
                     </div>
                   </div>*/}

@@ -94,17 +94,17 @@ export default function BeatBuddyPick({
           const imageUrl = getImageSrc(club);
           const filteredTags = getFilteredTags(club.tagList || []);
           return (
-            <Link key={club.venueId} href={`/detail/${club.venueId}`} passHref>
+            <Link key={club.id} href={`/detail/${club.id}`} passHref>
               <div className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card hover:brightness-75">
                 <Image src={imageUrl} alt={`${club.englishName} image`} layout="fill" className="object-cover" />
                 <motion.div
                   className="absolute right-[1.5rem] top-[1.5rem] cursor-pointer"
-                  onClick={(e) => handleHeartClick(e, club.venueId)}
+                  onClick={(e) => handleHeartClick(e, club.id)}
                   variants={heartAnimation}
                   initial="initial"
-                  animate={clickedHeart[club.venueId] ? 'clicked' : 'initial'}>
+                  animate={clickedHeart[club.id] ? 'clicked' : 'initial'}>
                   <Image
-                    src={likedClubs[club.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                    src={likedClubs[club.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                     alt="pink-heart icon"
                     width={32}
                     height={32}
@@ -129,7 +129,7 @@ export default function BeatBuddyPick({
                   <h3 className="mt-[0.5rem] text-title-32 text-white">{club.englishName}</h3>
                   <div className="z-100 mt-[1.03rem] flex items-center space-x-[0.25rem] text-body3-12-medium text-gray300">
                     <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={20} />
-                    <span>{heartbeatNums[club.venueId] !== undefined ? heartbeatNums[club.venueId] : 0}</span>
+                    <span>{heartbeatNums[club.id] !== undefined ? heartbeatNums[club.id] : 0}</span>
                   </div>
                 </div>
               </div>

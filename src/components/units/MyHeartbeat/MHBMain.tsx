@@ -26,10 +26,14 @@ export default function MyHeartbeatMain() {
           const data: HeartbeatProps[] = await getMyHearts(accessToken);
           
           const clubs: Club[] = data.map((club) => ({
+            venueId: club.venueId,
+            entranceFee: 0,
+            entranceNotice: '',
+            isHeartbeat: club.isHeartbeat,
             tagList: club.tagList,
             createdAt: '',
             updatedAt: '',
-            venueId: club.venueId,
+            id: club.venueId,
             englishName: club.englishName,
             koreanName: club.koreanName,
             region: '',
@@ -42,7 +46,6 @@ export default function MyHeartbeatMain() {
             backgroundUrl: club.backgroundUrl || [],
             heartbeatNum: club.heartbeatNum,
             smokingAllowed: false,
-            isHeartbeat: club.isHeartbeat
           }));
 
           setMyHeartbeatClubs(clubs);
