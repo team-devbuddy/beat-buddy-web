@@ -273,3 +273,21 @@ export const participateFormState = atom<ParticipateFormState>({
     isPaid: false,
   },
 });
+
+
+
+export interface CouponInfo {
+  couponId: number;
+  couponName: string;
+  couponDescription: string;
+  isUsed: boolean;
+  isDownloaded: boolean;
+  expiredAt: string;
+  [key: string]: any;
+}
+
+export const couponState = atom<CouponInfo | null>({
+  key: 'couponState',
+  default: null,
+  effects_UNSTABLE: [persistAtom],
+});

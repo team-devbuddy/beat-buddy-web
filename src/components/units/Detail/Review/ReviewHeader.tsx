@@ -29,17 +29,16 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
   };
 
   return (
-    <div className="relative flex items-center justify-between bg-BG-black px-4 py-2 text-gray-100">
+    <div className="flex items-end justify-end bg-BG-black px-4 py-2 text-gray100">
       {/* 리뷰 제목 */}
-      <h2 className="text-body1-16-bold text-white">{venueName} 리뷰</h2>
 
       {/* 우측 옵션 */}
-      <div className="relative flex items-center space-x-4">
+      <div className="flex items-center space-x-4">
         {/* 포토 리뷰만 보기 */}
         <div
           onClick={handlePhotoToggle}
-          className={`flex cursor-pointer items-center space-x-2 text-body2-15-medium ${
-            isPhotoOnly ? 'text-main' : 'text-gray-200'
+          className={`flex cursor-pointer items-center space-x-2 text-body3-12-medium ${
+            isPhotoOnly ? 'text-main' : 'text-gray200'
           }`}>
           <img
             src={isPhotoOnly ? '/icons/check-square-contained.svg' : '/icons/check-square-blanked.svg'}
@@ -51,8 +50,8 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
 
         {/* 드롭다운 */}
         <div className="relative">
-          <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body2-15-medium">
-            <span className={`${selectedSortOption ? 'text-main' : 'text-gray-200'}`}>{selectedSortOption}</span>
+          <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body3-12-medium">
+            <span className={`${selectedSortOption ? 'text-main' : 'text-gray200'}`}>{selectedSortOption}</span>
             <img
               src="/icons/chevron-down.svg"
               alt="드롭다운 화살표"
@@ -82,8 +81,8 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
                     <button
                       key={option}
                       onClick={() => handleSortOptionClick(option)}
-                      className={`w-full px-4 py-2 text-center text-body2-15-medium hover:bg-gray500 ${
-                        option === selectedSortOption ? 'text-main' : 'text-gray-100'
+                      className={`w-full px-4 py-2 text-center text-body3-12-medium hover:bg-gray500 ${
+                        option === selectedSortOption ? 'text-main' : 'text-gray100'
                       } ${
                         index === 0
                           ? 'rounded-t-md' // 첫 번째 옵션에만 top border-radius

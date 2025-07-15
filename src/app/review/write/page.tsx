@@ -10,7 +10,7 @@ import ReviewSubmitButton from '@/components/units/Detail/Review/Write/ReviewSub
 const ReviewWritePage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const venueEngName = searchParams.get('venueEngName') || 'venueEngName';
+  const venueName = searchParams.get('venue') || 'venueName';
 
   const [reviewText, setReviewText] = useState('');
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
@@ -52,7 +52,7 @@ const ReviewWritePage = () => {
           style={{ cursor: 'pointer' }} // 클릭 가능하도록 스타일 추가
         >
           <h2 className="text-title-24-bold text-main">리뷰가 등록되었습니다!</h2>
-          <p className="mt-4 text-body2-15-medium text-gray300">{venueEngName}에 대한 소중한 리뷰 감사합니다.</p>
+          <p className="mt-4 text-body2-15-medium text-gray300">{venueName}에 대한 소중한 리뷰 감사합니다.</p>
         </div>
       );
     }
@@ -62,7 +62,7 @@ const ReviewWritePage = () => {
 
   return (
     <div className="relative min-h-screen bg-BG-black text-white">
-      <ReviewWriteHeader title={venueEngName} currentStep={step} totalSteps={2} />
+      <ReviewWriteHeader title={venueName} currentStep={step} totalSteps={2} />
       {renderContent()}
     </div>
   );

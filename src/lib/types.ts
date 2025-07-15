@@ -14,7 +14,7 @@ export interface Club {
   tagList: any;
   createdAt: string;
   updatedAt: string;
-  venueId: number;
+  id: number;
   englishName: string;
   koreanName: string;
   region: string;

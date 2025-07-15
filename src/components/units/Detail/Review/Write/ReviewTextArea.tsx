@@ -27,27 +27,35 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
   };
 
   return (
-    <div className="my-[0.62rem] px-4">
+    <div className="my-4 px-5">
       {/* 텍스트 영역 */}
-      <textarea
-        ref={textareaRef}
-        value={value}
-        onChange={handleChange}
-        maxLength={400}
-        rows={1} // 기본 높이 설정
-        placeholder="즐거웠던 경험을 공유해 주세요!"
-        className="w-full resize-none rounded-xs bg-gray500 px-4 py-3 text-body2-15-medium text-white placeholder-gray200 focus:outline-none focus:ring-2 focus:ring-main"
-        style={{ overflow: 'hidden' }} // 스크롤 숨기기
-      />
+      <div className="rounded-[0.5rem] bg-gray600">
+        <textarea
+          ref={textareaRef}
+          value={value}
+          onChange={(e) => {
+            onChange(e.target.value);
+            if (textareaRef.current) {
+              textareaRef.current.style.height = 'auto';
+              textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+            }
+          }}
+          className="w-full placeholder:font-bold overflow-hidden whitespace-pre-wrap border-none bg-transparent px-4 pb-4 pt-5 text-[0.75rem] text-gray200 placeholder:text-gray200 focus:outline-none"
+          style={{ minHeight: '2rem', resize: 'none' }}
+          placeholder="즐거웠던 경험을 공유해 주세요!"
+        />
 
-      {/* 글자 수 표시 */}
-      <div className="mt-1 flex justify-between">
-        <button className="text-sm text-gray400 underline" onClick={toggleBottomSheet}>
-          리뷰 작성 시 유의 사항
-        </button>
-        <span className={`text-sm ${value.length >= 400 ? 'text-red500' : 'text-gray300'}`}>{value.length}/400</span>
+        {!value && (
+          <div className="mt-[-2.3rem] rounded-[0.5rem] text-[0.75rem] pl-4 pr-5 pb-4 text-gray300">
+            광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.
+            자세한 내용은{' '}
+            <a href="/rules" target="_blank" rel="noopener noreferrer" className="text-gray300 underline">
+              리뷰 작성 규칙
+            </a>
+            을 참고해주세요.
+          </div>
+        )}
       </div>
-
       {/* 배경 (고정) */}
       {isBottomSheetOpen && <div className="fixed inset-0 z-40 bg-black/60" onClick={toggleBottomSheet}></div>}
 

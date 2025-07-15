@@ -26,15 +26,15 @@ const ImageUploader = ({ onUpload, uploadedImages }: ImageUploaderProps) => {
   };
 
   return (
-    <div className="relative px-4">
+    <div className="relative px-5">
       {uploadedImages.length === 0 ? (
         // 초기 UI: 이미지가 없는 상태
-        <div className="mt-7 rounded-xs border border-gray300 bg-gray500 py-[2.5rem]">
+        <div className="mt-7 rounded-[0.5rem] bg-gray600 py-[2.5rem]">
           <label
             htmlFor="image-upload"
             className="flex cursor-pointer flex-col items-center justify-center text-gray100">
-            <img src="/icons/folder-plus-02.svg" alt="Upload Icon" className="mb-2 h-12 w-12" />
-            <span>사진이나 영상을 추가해주세요.</span>
+            <Image src="/icons/folder-plus-02.svg" alt="Upload Icon" width={48} height={48} />
+            <span className="text-[0.875rem] text-gray100">사진이나 영상을 추가해주세요.</span>
           </label>
           <input
             id="image-upload"

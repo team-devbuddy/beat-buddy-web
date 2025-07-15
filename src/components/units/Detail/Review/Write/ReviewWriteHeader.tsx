@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface ReviewWriteHeaderProps {
   title: string;
@@ -18,25 +19,18 @@ const ReviewWriteHeader = ({ title, currentStep, totalSteps }: ReviewWriteHeader
 
   return (
     <>
-      <header className="relative flex items-center justify-between bg-BG-black px-4 py-4">
-        {/* 뒤로 가기 버튼 */}
-        <button onClick={handleBack} className="flex h-8 w-8 items-center justify-center">
-          <img src="/icons/whiteBack.svg" alt="뒤로가기" className="h-6 w-6" />
-        </button>
-
-        {/* 단계 캐러셀 */}
-        <div className="flex h-8 w-8 items-center justify-center">
-          <div className="flex space-x-2">
-            {Array.from({ length: totalSteps }).map((_, index) => (
-              <div
-                key={index}
-                className={`h-2 w-2 rounded-full ${index < currentStep ? 'bg-main' : 'bg-gray500'}`}></div>
-            ))}
-          </div>
-        </div>
-      </header>
+      <div className="relative mx-auto flex max-w-[600px] items-center justify-between py-4 pr-5 pl-[0.62rem]">
+        <Image
+          src="/icons/line-md_chevron-left.svg"
+          alt="뒤로가기"
+          width={24}
+          height={24}
+          onClick={() => router.back()}
+          className="cursor-pointer"
+        />
+      </div>
       {/* 제목 */}
-      <h1 className="flex-grow px-4 py-2 text-left text-title-24-bold text-white">
+      <h1 className="flex-grow px-5 py-2 text-left text-[1.125rem] font-bold text-white">
         {title}에서의
         <br />
         경험을 공유해주세요!

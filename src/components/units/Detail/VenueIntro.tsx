@@ -69,6 +69,7 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
 
   return (
     <div className="p-5">
+      <p className="text-[1rem] mb-2 font-bold">Info</p>
       <div className="flex flex-col gap-2 rounded-[0.75rem] bg-gray700 p-4 text-gray100">
         {/* 입장료 */}
         <div className="flex flex-row items-start gap-1">

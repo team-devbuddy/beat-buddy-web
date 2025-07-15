@@ -25,6 +25,7 @@ import { mockReviews } from '@/lib/dummyData';
 import { mockNewsList } from '@/lib/dummyData';
 import { mockBoardData } from '@/lib/dummyData';
 import VenueDescription from '@/components/units/Detail/VenueDescription';
+import ReviewWriteButton from '@/components/units/Detail/Review/ReviewWriteButton';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [isPhotoOnly, setIsPhotoOnly] = useState(false);
@@ -78,12 +79,13 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             
             <Info venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
             {/* {isCoupon && ( */}
-            <Coupon />
+            <Coupon venueId={Number(params.id)} />
             {/* )} */}
+            <VenueDescription venue={venue} />
+
             <VenueIntro venue={venue} />
             {/* <Location venue={venue} /> */}
             {/*<VenueHours hours={venue.operationHours} />*/}
-            <VenueDescription venue={venue} />
             <CustomerService />
           </>
         );
@@ -101,7 +103,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
                 isPhotoOnly={isPhotoOnly}
               />
             </div>
-            <CustomerService />
+            <ReviewWriteButton venueEngName={venue.englishName } onClick={() => {}} isDisabled={false} />
           </div>
         );
 

@@ -47,9 +47,9 @@ export default function BoardWrite() {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [content]);
+
   useEffect(() => {
     const fetchPost = async () => {
-      // postId가 존재하고 유효한 숫자일 때만 수정 모드로 처리
       if (postId && !isNaN(postId) && accessToken) {
         try {
           const category = 'free'; // ✅ 필요에 따라 동적으로 처리 가능
@@ -113,30 +113,35 @@ export default function BoardWrite() {
         return;
       }
 
-      // 기존 이미지 URL 리스트
-      const originalImageUrls = (await getPostDetail('free', postId, accessToken)).imageUrls || [];
-      console.log(originalImageUrls);
-      const currentImageUrls = images.filter((img: File | string) => typeof img === 'string') as string[];
+      let deleteImageUrls: string[] = [];
       const newImageFiles = images.filter((img) => typeof img !== 'string') as File[];
 
-      const deleteImageUrls = originalImageUrls.filter((url: string) => !currentImageUrls.includes(url));
+      // 수정 모드일 때만 기존 이미지 처리
+      if (postId && !isNaN(postId)) {
+        const originalImageUrls = (await getPostDetail('free', postId, accessToken)).imageUrls || [];
+        const currentImageUrls = images.filter((img: File | string) => typeof img === 'string') as string[];
+        deleteImageUrls = originalImageUrls.filter((url: string) => !currentImageUrls.includes(url));
+      }
 
       const dto = {
         title,
         content,
         anonymous,
         hashtags: selectedTags,
-        deleteImageUrls, // 수정 시 삭제할 이미지들
+        deleteImageUrls,
       };
 
-      if (postId) {
+      if (postId && !isNaN(postId)) {
+        // 수정 모드
         await editPost(accessToken, postId, dto, newImageFiles);
+        alert('수정 완료');
+        router.push(`/board/free/${postId}`);
       } else {
+        // 새 글쓰기 모드
         await createNewPost(accessToken, dto, newImageFiles);
+        alert('업로드 성공');
+        router.push('/board');
       }
-
-      alert('업로드 성공');
-      router.push(`/board/free/${postId}`); // 혹은 성공 후 이동할 경로
     } catch (e) {
       alert('업로드 실패');
     } finally {
@@ -228,7 +233,7 @@ export default function BoardWrite() {
 
       {/* 하단 고정 바 */}
       {/* 하단 고정 바 */}
-      <div className="fixed  bottom-[3rem]  z-50 w-full max-w-[600px] bg-BG-black px-[1.25rem] py-[0.75rem]">
+      <div className="fixed bottom-[3rem] z-50 w-full max-w-[600px] bg-BG-black px-[1.25rem] py-[0.75rem]">
         {/* 해시태그 선택 제한 메시지 */}
         {tagLimitMessage && <p className="mb-1 text-[0.75rem] text-main">{tagLimitMessage}</p>}
 

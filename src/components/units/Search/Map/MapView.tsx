@@ -82,7 +82,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       const filteredClubs = await mapRef.current.filterAddressesInView();
 
       // ✅ 여기서 중복 제거
-      const uniqueClubs = Array.from(new Map(filteredClubs.map((club) => [club.venueId, club])).values());
+      const uniqueClubs = Array.from(new Map(filteredClubs.map((club) => [club.id, club])).values());
 
       setCurrentFilteredClubs(uniqueClubs);
 

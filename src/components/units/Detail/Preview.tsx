@@ -32,9 +32,9 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   useEffect(() => {
     setLikedClubs((prevLikedClubs) => ({
       ...prevLikedClubs,
-      [venue.venueId]: isHeartbeat,
+      [venue.id]: isHeartbeat,
     }));
-  }, [isHeartbeat, setLikedClubs, venue.venueId]);
+  }, [isHeartbeat, setLikedClubs, venue.id]);
 
   useEffect(() => {
     const firstSlideVideo = document.querySelector<HTMLVideoElement>('.slick-slide.slick-active video');
@@ -46,7 +46,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   const handleHeartClickWrapper = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setClickedHeart(true); // 하트 클릭 애니메이션 상태 설정
-    await handleHeartClick(e, venue.venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
+    await handleHeartClick(e, venue.id, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
     setTimeout(() => setClickedHeart(false), 500); // 애니메이션 상태 초기화
   };
 
@@ -143,7 +143,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
             initial="initial"
             animate={clickedHeart ? 'clicked' : 'initial'}>
             <Image
-              src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+              src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
               alt="heart icon"
               width={32}
               height={32}
