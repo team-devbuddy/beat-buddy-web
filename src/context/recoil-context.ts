@@ -291,3 +291,13 @@ export const couponState = atom<CouponInfo | null>({
   default: null,
   effects_UNSTABLE: [persistAtom],
 });
+
+export const likedReviewsState = atom<{ [reviewId: string]: boolean }>({
+  key: 'likedReviewsState',
+  default: {},
+});
+
+export const reviewLikeCountState = atom<{ [reviewId: string]: number }>({
+  key: 'reviewLikeCountState',
+  default: {},
+});

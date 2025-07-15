@@ -7,16 +7,32 @@ interface ReviewHeaderProps {
   venueName: string;
   isPhotoOnly: boolean; // 포토 리뷰만 보기 상태
   setIsPhotoOnly: React.Dispatch<React.SetStateAction<boolean>>; // 포토 리뷰 상태 변경 함수
+  sortOption: 'latest' | 'popular'; // 정렬 옵션
+  setSortOption: (newSort: 'latest' | 'popular') => void; // 정렬 옵션 변경 함수
+  onPhotoFilterChange: (photoOnly: boolean) => void; // 포토 필터 변경 핸들러
 }
 
-const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderProps) => {
+const ReviewHeader = ({
+  venueName,
+  isPhotoOnly,
+  setIsPhotoOnly,
+  sortOption,
+  setSortOption,
+  onPhotoFilterChange,
+}: ReviewHeaderProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  const [selectedSortOption, setSelectedSortOption] = React.useState('최신순');
+
+  // 정렬 옵션을 한국어로 변환
+  const getSortOptionText = (sort: 'latest' | 'popular') => {
+    return sort === 'latest' ? '최신순' : '추천순';
+  };
 
   const sortOptions = ['최신순', '추천순'];
 
   const handlePhotoToggle = () => {
-    setIsPhotoOnly(!isPhotoOnly);
+    const newPhotoOnly = !isPhotoOnly;
+    setIsPhotoOnly(newPhotoOnly);
+    onPhotoFilterChange(newPhotoOnly);
   };
 
   const handleDropdownToggle = () => {
@@ -24,7 +40,8 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
   };
 
   const handleSortOptionClick = (option: string) => {
-    setSelectedSortOption(option);
+    const newSort = option === '최신순' ? 'latest' : 'popular';
+    setSortOption(newSort);
     setIsDropdownOpen(false);
   };
 
@@ -51,7 +68,7 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
         {/* 드롭다운 */}
         <div className="relative">
           <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body3-12-medium">
-            <span className={`${selectedSortOption ? 'text-main' : 'text-gray200'}`}>{selectedSortOption}</span>
+            <span className={`${sortOption ? 'text-main' : 'text-gray200'}`}>{getSortOptionText(sortOption)}</span>
             <img
               src="/icons/chevron-down.svg"
               alt="드롭다운 화살표"
@@ -82,7 +99,7 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
                       key={option}
                       onClick={() => handleSortOptionClick(option)}
                       className={`w-full px-4 py-2 text-center text-body3-12-medium hover:bg-gray500 ${
-                        option === selectedSortOption ? 'text-main' : 'text-gray100'
+                        option === getSortOptionText(sortOption) ? 'text-main' : 'text-gray100'
                       } ${
                         index === 0
                           ? 'rounded-t-md' // 첫 번째 옵션에만 top border-radius

@@ -4,21 +4,27 @@ import React, { ChangeEvent } from 'react';
 import Image from 'next/image'; // Next.js Image import
 
 interface ImageUploaderProps {
-  onUpload: (images: string[]) => void;
-  uploadedImages: string[];
+  onUpload: (images: File[]) => void;
+  uploadedImages: File[]
 }
 
 const ImageUploader = ({ onUpload, uploadedImages }: ImageUploaderProps) => {
+
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const fileArray = Array.from(e.target.files).map((file) => URL.createObjectURL(file));
-      if (uploadedImages.length + fileArray.length > 5) {
-        alert('최대 5장까지만 업로드할 수 있습니다.');
-        return;
-      }
-      onUpload([...uploadedImages, ...fileArray]);
+    
+  if (e.target.files) {
+    const selected = Array.from(e.target.files);
+
+    if (uploadedImages.length + selected.length > 5) {
+      alert('최대 5장까지만 업로드할 수 있습니다.');
+      return;
     }
-  };
+
+    // 최대 5장까지만 유지
+    const nextImages = [...uploadedImages, ...selected].slice(0, 5);
+    onUpload(nextImages);
+  }
+};
 
   const handleRemoveImage = (index: number) => {
     const updatedImages = uploadedImages.filter((_, i) => i !== index);
@@ -53,7 +59,7 @@ const ImageUploader = ({ onUpload, uploadedImages }: ImageUploaderProps) => {
             <div key={index} className="relative h-[9.8rem] w-[9.8rem] flex-shrink-0 rounded-xs bg-gray500">
               {/* 업로드된 이미지 */}
               <Image
-                src={image}
+                src={URL.createObjectURL(image)}
                 alt={`Uploaded ${index}`}
                 layout="fill" // 이미지를 컨테이너에 맞게 채움
                 objectFit="cover" // 잘리더라도 컨테이너 비율에 맞춰 채우기

@@ -5,15 +5,16 @@ import { useRouter } from 'next/navigation';
 
 interface ReviewWriteButtonProps {
   venueEngName: string;
+  venueId: string;
   onClick: () => void;
   isDisabled: boolean;
 }
 
-const ReviewWriteButton = ({ venueEngName, onClick, isDisabled }: ReviewWriteButtonProps) => {
+const ReviewWriteButton = ({ venueEngName, venueId, onClick, isDisabled }: ReviewWriteButtonProps) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/review/write?venue=${venueEngName}`);
+    router.push(`/review/write?venue=${venueEngName}&venueId=${venueId}`);
   };
 
   return (

@@ -14,7 +14,6 @@ const ImageUploader = ({ onUpload, uploadedImages }: ImageUploaderProps) => {
       const fileArray = Array.from(e.target.files);
 
       if (uploadedImages.length + fileArray.length > 5) {
-        alert('최대 5장까지만 업로드할 수 있습니다.');
         return;
       }
 

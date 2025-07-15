@@ -26,6 +26,22 @@ import { mockNewsList } from '@/lib/dummyData';
 import { mockBoardData } from '@/lib/dummyData';
 import VenueDescription from '@/components/units/Detail/VenueDescription';
 import ReviewWriteButton from '@/components/units/Detail/Review/ReviewWriteButton';
+import { getReview } from '@/lib/actions/venue-controller/getReview';
+
+interface Review {
+  venueReviewId: string;
+  nickname: string;
+  profileImageUrl?: string; // 유저 프로필 이미지
+  createdAt: string;
+  content: string;
+  likes: number;
+  imageUrls?: string[]; // 리뷰 이미지
+  isAuthor: boolean;
+  isFollowing: boolean;
+  liked: boolean;
+  role: string;
+  writerId: string;
+}
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [isPhotoOnly, setIsPhotoOnly] = useState(false);
@@ -35,7 +51,43 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('info');
   const [isCoupon, setIsCoupon] = useState<boolean>(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [sortOption, setSortOption] = useState<'latest' | 'popular'>('latest');
+  const [reviewLoading, setReviewLoading] = useState<boolean>(false);
   const accessToken = useRecoilValue(accessTokenState);
+
+  // 리뷰 데이터 조회 함수
+  const fetchReviews = async (sort: 'latest' | 'popular' = 'latest', hasImage: boolean = false) => {
+    if (!accessToken) return;
+
+    setReviewLoading(true);
+    try {
+      const reviewData = await getReview(params.id, sort, hasImage, accessToken);
+      // getReview가 실제로는 배열을 반환한다고 가정
+      if (Array.isArray(reviewData)) {
+        setReviews(reviewData);
+      } else {
+        setReviews([]);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      setReviews([]);
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
+  // 정렬 옵션 변경 핸들러
+  const handleSortChange = (newSort: 'latest' | 'popular') => {
+    setSortOption(newSort);
+    fetchReviews(newSort, isPhotoOnly);
+  };
+
+  // 포토 리뷰 필터 변경 핸들러 (기존 setState 호출 포함)
+  const handlePhotoFilterChange = (photoOnly: boolean) => {
+    setIsPhotoOnly(photoOnly);
+    fetchReviews(sortOption, photoOnly);
+  };
 
   useEffect(() => {
     const getClubDetail = async () => {
@@ -59,6 +111,13 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     getClubDetail();
   }, [params.id, accessToken]);
 
+  // 리뷰 탭으로 전환될 때 리뷰 데이터 조회
+  useEffect(() => {
+    if (activeTab === 'review' && accessToken) {
+      fetchReviews(sortOption, isPhotoOnly);
+    }
+  }, [activeTab, accessToken]);
+
   if (loading) {
     return <Loading />;
   }
@@ -76,7 +135,6 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
       case 'info':
         return (
           <>
-            
             <Info venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
             {/* {isCoupon && ( */}
             <Coupon venueId={Number(params.id)} />
@@ -96,14 +154,19 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
               venueName={venue.englishName || ''}
               isPhotoOnly={isPhotoOnly}
               setIsPhotoOnly={setIsPhotoOnly}
+              sortOption={sortOption}
+              setSortOption={handleSortChange}
+              onPhotoFilterChange={handlePhotoFilterChange}
             />
             <div className="flex-grow overflow-y-auto">
-              <ReviewContents
-                reviews={mockReviews.filter((review) => review.venueId === Number(params.id))}
-                isPhotoOnly={isPhotoOnly}
-              />
+              <ReviewContents reviews={reviews} isPhotoOnly={isPhotoOnly} />
             </div>
-            <ReviewWriteButton venueEngName={venue.englishName } onClick={() => {}} isDisabled={false} />
+            <ReviewWriteButton
+              venueEngName={venue.englishName}
+              venueId={params.id}
+              onClick={() => {}}
+              isDisabled={false}
+            />
           </div>
         );
 

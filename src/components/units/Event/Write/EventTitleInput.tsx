@@ -13,7 +13,7 @@ export default function EventTitleInput() {
       </label>
       <input
         type="text"
-        className="w-full border-b border-gray300 bg-BG-black px-4 py-2 py-3 text-sm text-gray100 placeholder-gray300 focus:outline-none"
+        className="w-full border-b border-gray300 bg-BG-black px-4  py-3 text-sm text-gray100 placeholder-gray300 focus:outline-none"
         placeholder="이벤트명을 입력해주세요."
         value={eventForm.title}
         onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}

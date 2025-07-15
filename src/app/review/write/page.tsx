@@ -6,28 +6,43 @@ import ReviewWriteHeader from '@/components/units/Detail/Review/Write/ReviewWrit
 import ImageUploader from '@/components/units/Detail/Review/Write/ImageUploader';
 import ReviewTextArea from '@/components/units/Detail/Review/Write/ReviewTextArea';
 import ReviewSubmitButton from '@/components/units/Detail/Review/Write/ReviewSubmitButton';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
+import { postReview } from '@/lib/actions/venue-controller/postReview';
 
+interface Review {
+  id: string;
+  userName: string;
+  userProfileImage?: string; // 유저 프로필 이미지
+  date: string;
+  content: string;
+  likeCount: number;
+  images?: string[]; // 리뷰 이미지
+}
 const ReviewWritePage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const venueName = searchParams.get('venue') || 'venueName';
-
+  const venueId = searchParams.get('venueId') || 'venueId';
+  const accessToken = useRecoilValue(accessTokenState);
   const [reviewText, setReviewText] = useState('');
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [step, setStep] = useState(1); // Step 상태 (1: 작성 중, 2: 완료 화면)
 
   const handleTextChange = (text: string) => {
     setReviewText(text);
   };
 
-  const handleImageUpload = (images: string[]) => {
+  const handleImageUpload = (images: File[]) => {
     setUploadedImages(images);
   };
 
   const handleSubmit = () => {
-    // 리뷰 제출 후 step을 2로 변경
-    console.log('리뷰 작성 내용:', reviewText);
-    console.log('업로드된 이미지:', uploadedImages);
+    if (!accessToken) {
+      alert('로그인 후 이용해주세요.');
+      return;
+    }
+    postReview(venueId, reviewText, uploadedImages, accessToken);
     setStep(2);
   };
 
@@ -36,9 +51,11 @@ const ReviewWritePage = () => {
       // 리뷰 작성 화면
       return (
         <>
+          <ReviewWriteHeader title={venueName} currentStep={step} totalSteps={2} />
+
           <ImageUploader onUpload={handleImageUpload} uploadedImages={uploadedImages} />
           <ReviewTextArea value={reviewText} onChange={handleTextChange} />
-          <ReviewSubmitButton onClick={handleSubmit} isDisabled={!reviewText} />
+          <ReviewSubmitButton venueId={venueId} onClick={handleSubmit} isDisabled={!reviewText} />
         </>
       );
     }
@@ -47,7 +64,7 @@ const ReviewWritePage = () => {
       // 리뷰 제출 완료 화면
       return (
         <div
-          className="mt-40 flex flex-col items-center justify-center bg-BG-black text-center"
+          className="mt-60 flex flex-col items-center justify-center bg-BG-black text-center"
           onClick={() => router.back()} // 화면 어디를 클릭하든 이전 페이지로 돌아가기
           style={{ cursor: 'pointer' }} // 클릭 가능하도록 스타일 추가
         >
@@ -60,12 +77,7 @@ const ReviewWritePage = () => {
     return null;
   };
 
-  return (
-    <div className="relative min-h-screen bg-BG-black text-white">
-      <ReviewWriteHeader title={venueName} currentStep={step} totalSteps={2} />
-      {renderContent()}
-    </div>
-  );
+  return <div className="relative min-h-screen bg-BG-black text-white">{renderContent()}</div>;
 };
 
 export default ReviewWritePage;

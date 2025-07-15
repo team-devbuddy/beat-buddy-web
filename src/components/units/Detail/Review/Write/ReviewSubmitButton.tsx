@@ -2,12 +2,12 @@
 
 
 interface ReviewSubmitButtonProps {
- 
+  venueId: string;
   onClick: () => void;
   isDisabled: boolean;
 }
 
-const ReviewSubmitButton = ({ onClick, isDisabled }: ReviewSubmitButtonProps) => {
+const ReviewSubmitButton = ({ venueId, onClick, isDisabled }: ReviewSubmitButtonProps) => {
   return (
     <div className="px-5">
       <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 border-none px-[1.25rem] pb-[1.25rem] pt-2">
