@@ -18,7 +18,7 @@ interface NaverMapProps {
 }
 
 const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
-  { clubs, width = '100%', height = '100%', minHeight, zoom = 15, onAddressesInBounds },
+  { clubs, width = '100%', height = '100%', minHeight, zoom = 10, onAddressesInBounds },
   ref,
 ) {
   const mapRef = useRef<HTMLDivElement>(null);

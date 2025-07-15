@@ -8,6 +8,8 @@ export interface Term {
 
 // src/lib/types.ts
 export interface Club {
+  entranceFee: number;
+  entranceNotice: string;
   isHeartbeat: boolean;
   tagList: any;
   createdAt: string;

@@ -24,6 +24,7 @@ import BoardContents from '@/components/units/Detail/Board/BoardContents';
 import { mockReviews } from '@/lib/dummyData';
 import { mockNewsList } from '@/lib/dummyData';
 import { mockBoardData } from '@/lib/dummyData';
+import VenueDescription from '@/components/units/Detail/VenueDescription';
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const [isPhotoOnly, setIsPhotoOnly] = useState(false);
@@ -74,15 +75,15 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
       case 'info':
         return (
           <>
-            {/* {isCoupon && ( */}
-              <div className="p-5">
-                <Coupon />
-              </div>
-            {/* )} */}
+            
             <Info venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
-            <VenueIntro />
-            <Location venue={venue} />
-            <VenueHours hours={venue.operationHours} />
+            {/* {isCoupon && ( */}
+            <Coupon />
+            {/* )} */}
+            <VenueIntro venue={venue} />
+            {/* <Location venue={venue} /> */}
+            {/*<VenueHours hours={venue.operationHours} />*/}
+            <VenueDescription venue={venue} />
             <CustomerService />
           </>
         );
@@ -146,13 +147,13 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
       <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
       <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-grow">{renderContent()}</div>
-      <DetailFooter
+      {/*<DetailFooter
         activeTab={activeTab}
         venueEngName={venueName}
         venueId={venueId}
         venueLocation={venueLocation}
         venueKorName={venueKorName}
-      />
+      />*/}
     </div>
   );
 };

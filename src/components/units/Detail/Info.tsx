@@ -36,7 +36,7 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
   const isPhoneAvailable = !!venue.phoneNum;
 
   return (
-    <div className="bg-BG-black py-[2rem]">
+    <div className="bg-BG-black pt-5 pb-4">
       <div className="flex justify-around">
         <div
           className={`flex flex-1 flex-col items-center ${isPhoneAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}`}

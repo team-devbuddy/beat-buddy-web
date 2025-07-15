@@ -38,7 +38,7 @@ export default function MagazineListPage() {
         <HeaderBack url="/" />
         <p className="ml-[-0.2rem] text-body1-16-bold text-white">전체보기</p>
       </div>
-      <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.88rem]">
+      <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.44rem]">
         {loading ? (
           <BBPListSkeleton />
         ) : magazines.length === 0 ? (

@@ -28,7 +28,7 @@ const CustomerService = () => {
   }, []);
 
   return (
-    <>
+    <div className="pt-7">
       <div className="relative  h-[5.625rem] w-full">
         <Image src="/images/AdBanner.png" alt="광고 배너" layout="fill" objectFit="cover" />
         <Link href="https://www.instagram.com/beatbuddy.kr/">
@@ -49,7 +49,7 @@ const CustomerService = () => {
         </div>
         <Image src="/icons/ArrowHeadRight.svg" alt="Arrow Head right icon" width={24} height={24} />
       </Link>
-    </>
+    </div>
   );
 };
 
