@@ -66,7 +66,7 @@ export default function CouponCard( { venueId }: { venueId: number }) {
 
         {/* 텍스트 영역 */}
         <div className="z-10 flex-1 py-[0.5rem] pl-5 pr-4">
-          <p className="mb-1 text-[0.75rem] font-medium text-main">{coupon.couponName}</p>
+          <p className="mb-[-3px] text-[0.75rem] font-medium text-main">{coupon.couponName}</p>
           <p className="text-[1rem] text-body1-16-bold text-gray100">{coupon.couponDescription}</p>
         </div>
 
