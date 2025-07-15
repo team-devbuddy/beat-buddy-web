@@ -56,7 +56,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   if (!isHydrated) {
     return null;
   }
-  const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE === 'true';
+  const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE === 'false';
 
   // 푸터를 숨겨야 하는 경우:
   const shouldHideFooter =
