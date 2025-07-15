@@ -170,7 +170,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           </div>
         );
 
-      case 'news':
+      case 'event':
         return (
           <div className="flex h-full flex-col bg-BG-black">
             <NewsHeader venueName={venue.englishName || ''} />

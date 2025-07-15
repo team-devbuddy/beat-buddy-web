@@ -96,7 +96,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
           const { firstImageUrl, filteredTags } = memoizedValues[index];
 
           return (
-            <Link key={venue.id} href={`/detail/${venue.id}`} passHref>
+            <Link key={venue.id} href={`/detail/${venue.venueId}`} passHref>
               <motion.div
                 whileHover={{
                   y: -5,
