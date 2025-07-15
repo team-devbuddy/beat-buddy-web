@@ -18,24 +18,24 @@ export const metadata = {
   },
 };
 
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={`${pretendard.variable} bg-[#f5f5f5]`}>
       <head>
-        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, viewport-fit=cover" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="format-detection" content="telephone=no" />
         <meta property="og:image" content="https://www.beatbuddy.world/icons/thumbnail.svg" />
       </head>
       <body className={`${pretendard.className}`}>
         <ClientOnlyLayout>{children}</ClientOnlyLayout>
         <Script src="https://cdn.iamport.kr/v1/iamport.js" strategy="beforeInteractive" />
         <Script
-  src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}&submodules=geocoder,gl`}
-  strategy="beforeInteractive"
+          src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}&submodules=geocoder,gl`}
+          strategy="beforeInteractive"
         />
-        <Script src="/MarkerClustering.js" strategy="beforeInteractive"/>
-
-
+        <Script src="/MarkerClustering.js" strategy="beforeInteractive" />
       </body>
     </html>
   );

@@ -31,7 +31,7 @@ html {
   }
 }
 
-/* 사파리 100vh !!!!!!!! 이느낌표 내가한건가*/
+/* Safari 100vh 호환성 */
 @layer utilities {
   @supports (-webkit-touch-callout: none) {
     .h-screen {
@@ -40,6 +40,47 @@ html {
   }
 }
 
+/* Safari 아이콘 렌더링 최적화 */
+@layer utilities {
+  @supports (-webkit-touch-callout: none) {
+    .safari-icon-fix {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
+    .safari-padding-fix {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Safari padding 강제 적용 */
+    .pt-7 {
+      padding-top: 1.75rem !important;
+    }
+
+    .py-4 {
+      padding-top: 1rem !important;
+      padding-bottom: 1rem !important;
+    }
+
+    /* Safari SVG 렌더링 최적화 */
+    svg {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+  }
+}
+
+/* Safari 전용 이미지 최적화 */
+@supports (-webkit-touch-callout: none) {
+  img {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
 
 @font-face {
   font-family: 'Queensides';

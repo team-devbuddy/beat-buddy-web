@@ -37,8 +37,8 @@ const NavigateFooter = () => {
   }, [pathname, setActivePage]);
 
   return (
-<footer className="fixed bottom-0 left-0 right-0 z-50 text-navigate-queen rounded-t-[1.25rem] w-full max-w-[600px] mx-auto border-t border-gray500 bg-BG-black py-[1rem] font-queensides">
-<div className="flex items-center justify-around">
+    <footer className="safari-padding-fix fixed bottom-0 left-0 right-0 z-50 mx-auto w-full max-w-[600px] rounded-t-[1.25rem] border-t border-gray500 bg-BG-black py-[1rem] font-queensides text-navigate-queen">
+      <div className="flex items-center justify-around">
         <Link href="/">
           <div
             onClick={() => setActivePage('home')}
@@ -48,6 +48,7 @@ const NavigateFooter = () => {
               alt="Home icon"
               width={32}
               height={32}
+              className="safari-icon-fix"
             />
           </div>
         </Link>
@@ -61,6 +62,7 @@ const NavigateFooter = () => {
               alt="Board icon"
               width={32}
               height={32}
+              className="safari-icon-fix"
             />
           </div>
         </Link>
@@ -74,6 +76,7 @@ const NavigateFooter = () => {
               alt="Venue icon"
               width={32}
               height={32}
+              className="safari-icon-fix"
             />
           </div>
         </Link>
@@ -84,22 +87,24 @@ const NavigateFooter = () => {
             className={`flex transform flex-col items-center transition-transform active:scale-95 ${activePage === 'event' ? 'text-main' : 'text-gray-500'}`}>
             <Image
               src={getIconSrc('event', '/icons/footerEvent.svg', '/icons/footerEvent-clicked.svg')}
-              alt="News icon"
+              alt="Event icon"
               width={32}
               height={32}
+              className="safari-icon-fix"
             />
           </div>
         </Link>
 
-        <Link href="/mypage">
+        <Link href="/profile">
           <div
-            onClick={() => setActivePage('mypage')}
-            className={`flex transform flex-col items-center transition-transform active:scale-95 ${activePage === 'mypage' ? 'text-main' : 'text-gray-500'}`}>
+            onClick={() => setActivePage('profile')}
+            className={`flex transform flex-col items-center transition-transform active:scale-95 ${activePage === 'profile' ? 'text-main' : 'text-gray-500'}`}>
             <Image
-              src={getIconSrc('mypage', '/icons/mypage.svg', '/icons/footerMypage-clicked.svg')}
-              alt="My Page icon"
+              src={getIconSrc('profile', '/icons/footerProfile.svg', '/icons/footerProfile-clicked.svg')}
+              alt="Profile icon"
               width={32}
               height={32}
+              className="safari-icon-fix"
             />
           </div>
         </Link>

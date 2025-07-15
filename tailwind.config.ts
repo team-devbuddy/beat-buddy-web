@@ -29,9 +29,9 @@ const config: Config = {
         sm: '440px',
       },
       animation: {
-        'fadeIn': 'fadeIn 0.3s ease-in-out',
-        'slideDown': 'slideDown 0.3s ease-out',
-        'slideUp': 'slideUp 0.3s ease-out',
+        fadeIn: 'fadeIn 0.3s ease-in-out',
+        slideDown: 'slideDown 0.3s ease-out',
+        slideUp: 'slideUp 0.3s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -39,23 +39,23 @@ const config: Config = {
           '100%': { opacity: '1' },
         },
         slideDown: {
-          '0%': { 
+          '0%': {
             opacity: '0',
-            transform: 'translateY(-10px) scale(0.95)'
+            transform: 'translateY(-10px) scale(0.95)',
           },
-          '100%': { 
+          '100%': {
             opacity: '1',
-            transform: 'translateY(0) scale(1)'
+            transform: 'translateY(0) scale(1)',
           },
         },
         slideUp: {
-          '0%': { 
+          '0%': {
             opacity: '0',
-            transform: 'translateY(100%)'
+            transform: 'translateY(100%)',
           },
-          '100%': { 
+          '100%': {
             opacity: '1',
-            transform: 'translateY(0)'
+            transform: 'translateY(0)',
           },
         },
       },
@@ -235,6 +235,26 @@ const config: Config = {
           '&::-webkit-scrollbar': {
             display: 'none',
           },
+        },
+        // Safari 전용 유틸리티
+        '.safari-icon-fix': {
+          '-webkit-transform': 'translateZ(0)',
+          transform: 'translateZ(0)',
+          '-webkit-backface-visibility': 'hidden',
+          'backface-visibility': 'hidden',
+          '-webkit-font-smoothing': 'antialiased',
+          'image-rendering': 'auto',
+        },
+        '.safari-padding-fix': {
+          'padding-top': 'max(1rem, env(safe-area-inset-top))',
+          'padding-bottom': 'max(1rem, env(safe-area-inset-bottom))',
+        },
+        '.safari-input-fix': {
+          '-webkit-appearance': 'none',
+          appearance: 'none',
+          'border-radius': '0',
+          '-webkit-border-radius': '0',
+          'background-clip': 'padding-box',
         },
       });
     },

@@ -34,6 +34,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
       gl: true,
       center: new window.naver.maps.LatLng(37.5666103, 126.9783882),
       zoom,
+      customStyleId: '48547b93-96df-42da-9e2a-b0f277010e41',
       logoControl: true,
       logoControlOptions: {
         position: window.naver.maps.Position.BOTTOM_LEFT,
@@ -74,10 +75,9 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
     } else {
       console.error('MarkerClustering 라이브러리를 찾을 수 없습니다.');
     }
-    
+
     setMap(mapInstance);
   }, [zoom, map]);
-
 
   // 2. clubs 데이터 변경 시 마커만 업데이트
   useEffect(() => {
@@ -120,7 +120,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
 
     Promise.all(geocodePromises).then((newMarkers) => {
       const validMarkers = newMarkers.filter((m): m is naver.maps.Marker => m !== null) as naver.maps.Marker[];
-      
+
       clusterer.setMarkers(validMarkers);
 
       if (validMarkers.length > 0) {
@@ -132,10 +132,8 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
         map.fitBounds(bounds, { top: 100, right: 50, bottom: 100, left: 50 });
       }
     });
-
   }, [clubs, map, clusterer]);
 
-  
   useImperativeHandle(ref, () => ({
     filterAddressesInView: async () => {
       const visibleClubs: Club[] = [];
@@ -152,9 +150,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
     },
   }));
 
-  return (
-    <div ref={mapRef} style={{ width, height, minHeight }} />
-  );
+  return <div ref={mapRef} style={{ width, height, minHeight }} />;
 });
 
 export default NaverMap;

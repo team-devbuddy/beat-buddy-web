@@ -22,10 +22,17 @@ export default function MainHeader() {
   };
 
   return (
-    <div className="">
+    <div className="safari-padding-fix">
       <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] py-[1rem]">
         <Link href="/">
-          <Image src="/icons/Headers/Symbol.svg" alt="logo" width={42} height={40} className="cursor-pointer" />
+          <Image
+            src="/icons/Headers/Symbol.svg"
+            alt="logo"
+            width={42}
+            height={40}
+            className="safari-icon-fix cursor-pointer"
+            priority
+          />
         </Link>
 
         {isAuth ? (
@@ -38,7 +45,7 @@ export default function MainHeader() {
                   alt="alert"
                   width={32}
                   height={32}
-                  className="cursor-pointer hover:brightness-125"
+                  className="safari-icon-fix cursor-pointer hover:brightness-125"
                 />
               </Link>
             )}
