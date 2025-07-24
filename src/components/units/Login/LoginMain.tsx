@@ -30,6 +30,8 @@ export default function LoginMain() {
       linear-gradient(180deg, rgba(23, 24, 28, 1) 0%, rgba(23, 24, 28, 0.7) 30%, rgba(23, 24, 28, 0) 100%),
       url('/images/loginBackground.png')
     `,
+          // 아이폰에서 배경 이미지 스크롤 문제 방지
+          backgroundAttachment: 'scroll',
         }}
       />
 
@@ -39,21 +41,37 @@ export default function LoginMain() {
         style={{
           backdropFilter: 'blur(5px)',
           WebkitBackdropFilter: 'blur(5px)',
+          // 사파리에서 블러가 안될 경우 대체 배경
+          backgroundColor: 'rgba(23, 24, 28, 0.3)',
         }}
       />
 
-     
-      <div className="relative z-20 flex h-full flex-col items-center justify-center text-white">
+      <div
+        className="relative z-20 flex h-full flex-col items-center justify-center text-white"
+        style={{
+          // 아이폰에서 탭 하이라이트 제거
+          WebkitTapHighlightColor: 'transparent',
+          // 텍스트 선택 방지
+          WebkitUserSelect: 'none',
+          userSelect: 'none',
+        }}>
         {/* 로고 영역 */}
         <div className="flex flex-col items-center justify-center">
           <Image
-            src="/icons/로그인/Group 26086712.svg"
+            src="/icons/로그인/Group 26086712.png"
             alt="Beat Buddy Logo"
-            width={200}
-            height={200}
+            width={250}
+            height={160}
             className="mx-auto"
+            // 이미지 드래그 방지
+            draggable={false}
+            style={{
+              // 이미지 선택 방지
+              WebkitUserSelect: 'none',
+              userSelect: 'none',
+            }}
           />
-           {/* 콘텐츠 
+          {/* 콘텐츠 
           <Image
             src="/icons/로그인/Group 26086777.svg"
             alt="Beat Buddy Logo"
@@ -72,31 +90,76 @@ export default function LoginMain() {
           <p className="mb-[1.25rem] text-body2-15-medium">SNS 계정으로 간편 가입하기</p>
           <div className="flex flex-row items-center justify-center space-x-8">
             <div className="flex space-x-8">
-              <Image
-                src="/icons/로그인/KakaoLogo.svg"
-                alt="Kakao Icon"
-                width={58}
-                height={58}
+              <div
                 onClick={() => handleJoinModalOpen('kakao')}
-                className="cursor-pointer"
-              />
-              <Image
-                src="/icons/로그인/GoogleLogo.svg"
-                alt="Google Icon"
-                width={58}
-                height={58}
+                className="cursor-pointer rounded-full transition-transform hover:scale-105"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                  willChange: 'transform',
+                  // 아이폰 터치 최적화
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitUserSelect: 'none',
+                  userSelect: 'none',
+                  // 터치 영역 확대
+                  minWidth: '58px',
+                  minHeight: '58px',
+                }}>
+                <Image
+                  src="/icons/로그인/KakaoLogo.svg"
+                  alt="Kakao Icon"
+                  width={58}
+                  height={58}
+                  className="block"
+                  draggable={false}
+                />
+              </div>
+              <div
                 onClick={() => handleJoinModalOpen('google')}
-                className="cursor-pointer"
+                className="cursor-pointer rounded-full transition-transform hover:scale-105"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                  willChange: 'transform',
+                  // 아이폰 터치 최적화
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitUserSelect: 'none',
+                  userSelect: 'none',
+                  // 터치 영역 확대
+                  minWidth: '58px',
+                  minHeight: '58px',
+                }}>
+                <Image
+                  src="/icons/로그인/GoogleLogo.svg"
+                  alt="Google Icon"
+                  width={58}
+                  height={58}
+                  className="block"
+                  draggable={false}
+                />
+              </div>
+            </div>
+            <div
+              className="mt-1 cursor-pointer rounded-full transition-transform hover:scale-105"
+              onClick={() => handleJoinModalOpen('apple')}
+              style={{
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                willChange: 'transform',
+                // 아이폰 터치 최적화
+                WebkitTapHighlightColor: 'transparent',
+                WebkitUserSelect: 'none',
+                userSelect: 'none',
+                // 터치 영역 확대
+                minWidth: '68px',
+                minHeight: '68px',
+              }}>
+              <Image
+                src="/icons/로그인/AppleLogo.svg"
+                alt="Apple Icon"
+                width={68}
+                height={68}
+                className="block"
+                draggable={false}
               />
             </div>
-            <Image
-              src="/icons/로그인/AppleLogo.svg"
-              alt="Apple Icon"
-              width={68}
-              height={68}
-              className="mt-1 cursor-pointer"
-              onClick={() => handleJoinModalOpen('apple')}
-            />
           </div>
         </div>
 
