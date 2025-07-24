@@ -22,12 +22,7 @@ export default function LoginMain() {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-BG-black">
-      <div
-        className="relative w-full max-w-[600px] overflow-hidden"
-        style={{
-          // 높이 100vh로 고정
-          height: '100vh',
-        }}>
+      <div className="login-container relative w-full max-w-[600px] overflow-hidden">
         {/* 배경 이미지 + 딥 컬러 그라데이션 오버레이 */}
         <div
           className="absolute inset-0 bg-cover bg-center"

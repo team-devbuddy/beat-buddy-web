@@ -99,3 +99,18 @@ html {
   font-weight: 500;
   src: url('/assets/fonts/SUIT-Variable.ttf');
 }
+
+/* iOS 사파리 전용 높이 설정 */
+.login-container {
+  height: calc(100vh - 1rem);
+  min-height: calc(100vh - 1rem);
+  max-height: 100vh;
+}
+
+/* iOS 사파리에서만 적용되는 스타일 */
+@supports (-webkit-touch-callout: none) {
+  .login-container {
+    height: -webkit-fill-available;
+    min-height: -webkit-fill-available;
+  }
+}
