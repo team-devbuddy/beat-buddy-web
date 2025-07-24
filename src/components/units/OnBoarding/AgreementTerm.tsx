@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Term } from '@/lib/types';
 import { termsData } from '@/lib/data';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useRecoilState } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { accessTokenState, isBusinessState } from '@/context/recoil-context';
 import { PostAgree } from '@/lib/action';
 import Loading from '@/app/loading';
 import Prev from '@/components/common/Prev';
@@ -16,21 +16,48 @@ export default function AgreementTerm() {
   const [allChecked, setAllChecked] = useState(false);
   const [buttonEnabled, setButtonEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isInitialLoad = useRef(true); // 초기 로드 플래그
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-
-  const userType = searchParams.get('userType'); // ⬅️ business or null
+  const isBusiness = useRecoilValue(isBusinessState); // recoil state에서 비즈니스 여부 확인
+  const setIsBusiness = useSetRecoilState(isBusinessState);
 
   useEffect(() => {
     const access = searchParams.get('access');
     if (access) setAccessToken(access);
   }, [searchParams, setAccessToken]);
 
+  // 초기 로드 시 localStorage 백업에서 복원
+  useEffect(() => {
+    if (isInitialLoad.current) {
+      console.log('페이지 로드시 isBusiness 상태:', isBusiness);
+
+      // localStorage 백업에서 복원 시도
+      const backupUserType = localStorage.getItem('userType');
+      const backupIsBusiness = localStorage.getItem('isBusiness');
+
+      console.log('localStorage 백업 확인 - userType:', backupUserType);
+      console.log('localStorage 백업 확인 - isBusiness:', backupIsBusiness);
+
+      // recoil state가 초기값이고 localStorage에 백업이 있으면 복원
+      if (!isBusiness && backupIsBusiness === 'true') {
+        console.log('localStorage에서 비즈니스 상태 복원');
+        setIsBusiness(true);
+      }
+
+      isInitialLoad.current = false; // 초기 로드 완료 표시
+    }
+  }, [isBusiness, setIsBusiness]);
+
   useEffect(() => {
     const requiredTermsChecked = terms.filter((t) => t.isRequired).every((t) => t.checked);
     setButtonEnabled(requiredTermsChecked);
+
+    // 모든 약관이 선택되었는지 확인하여 allChecked 상태 업데이트
+    const allTermsChecked = terms.every((t) => t.checked);
+    setAllChecked(allTermsChecked);
   }, [terms]);
 
   const handleCheckboxClick = (id: number) => {
@@ -44,6 +71,10 @@ export default function AgreementTerm() {
   };
 
   const onClickSubmit = async () => {
+    console.log('약관 동의 버튼 클릭');
+    console.log('현재 isBusiness 상태:', isBusiness);
+    console.log('현재 URL 파라미터들:', Object.fromEntries(searchParams));
+
     const locationConsent = terms.find((t) => t.id === 3)?.checked || false;
     const marketingConsent = terms.find((t) => t.id === 4)?.checked || false;
 
@@ -57,18 +88,24 @@ export default function AgreementTerm() {
         setLoading(true);
         const response = await PostAgree(accessToken, requestData);
         if (response.ok) {
-          // ✅ 쿼리에 따라 라우팅
-          if (userType === 'business') {
+          // ✅ recoil state에 따라 라우팅
+          if (isBusiness) {
+            console.log('비즈니스 사용자 -> /signup/business로 이동');
             router.push('/signup/business');
           } else {
+            console.log('일반 사용자 -> /onBoarding/name으로 이동');
             router.push('/onBoarding/name');
           }
+        } else {
+          console.error('API 응답 실패:', response.status);
         }
       } catch (error) {
         console.error('Error submitting agreement:', error);
       } finally {
         setLoading(false);
       }
+    } else {
+      console.error('accessToken이 없습니다');
     }
   };
 
@@ -92,7 +129,9 @@ export default function AgreementTerm() {
             className="cursor-pointer"
             onClick={handleAllCheckboxClick}
           />
-          <p className="cursor-pointer text-white hover:brightness-75" onClick={handleAllCheckboxClick}>
+          <p
+            className={`cursor-pointer ${allChecked ? 'text-white' : 'text-gray400'}`}
+            onClick={handleAllCheckboxClick}>
             모두 동의 (선택 동의 포함)
           </p>
         </div>
@@ -100,7 +139,7 @@ export default function AgreementTerm() {
         <div className="flex flex-col pt-3">
           {terms.map((term) => (
             <div key={term.id} className="flex justify-between py-3 pl-[0.38rem]">
-              <div className="flex gap-2 hover:brightness-75">
+              <div className="flex gap-2">
                 <Image
                   src={term.checked ? '/icons/Check.svg' : '/icons/NotCheck.svg'}
                   alt="check"
@@ -109,7 +148,9 @@ export default function AgreementTerm() {
                   className="cursor-pointer"
                   onClick={() => handleCheckboxClick(term.id)}
                 />
-                <p className="cursor-pointer text-[0.9375rem] text-white" onClick={() => handleCheckboxClick(term.id)}>
+                <p
+                  className={`cursor-pointer text-[0.9375rem] ${term.checked ? 'text-white' : 'text-gray400'}`}
+                  onClick={() => handleCheckboxClick(term.id)}>
                   {term.label}
                 </p>
               </div>
@@ -130,7 +171,7 @@ export default function AgreementTerm() {
           onClick={onClickSubmit}
           disabled={!buttonEnabled}
           className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold ${
-            buttonEnabled ? 'bg-[#EE1171] text-sub2 hover:brightness-105' : 'bg-gray400 text-gray300'
+            buttonEnabled ? 'bg-main text-sub2' : 'bg-gray400 text-gray300'
           }`}>
           동의하고 가입하기
         </button>

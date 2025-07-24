@@ -120,6 +120,12 @@ export const signupUserTypeState = atom<'general' | 'business' | null>({
   default: null,
 });
 
+export const isBusinessState = atom<boolean>({
+  key: 'isBusinessState',
+  default: false,
+  effects_UNSTABLE: [persistAtom],
+});
+
 export const businessVerifyCodeState = atom<string>({
   key: 'businessVerifyCodeState',
   default: '',
@@ -190,7 +196,6 @@ export const sortState = atom<string>({
 export const eventState = atom<EventDetail | null>({
   key: 'eventState',
   default: null,
-  
 });
 
 export const eventTabState = atom<'now' | 'upcoming' | 'past'>({
@@ -217,7 +222,6 @@ export const scrollToCommentState = atom<number | 'bottom' | null>({
   key: 'scrollToCommentState',
   default: null,
 });
-
 
 export const eventFormState = atom({
   key: 'eventFormState',
@@ -249,8 +253,6 @@ export const eventFormState = atom({
   },
 });
 
-
-
 export interface ParticipateFormState {
   name: string;
   gender: string;
@@ -273,8 +275,6 @@ export const participateFormState = atom<ParticipateFormState>({
     isPaid: false,
   },
 });
-
-
 
 export interface CouponInfo {
   couponId: number;

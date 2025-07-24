@@ -106,7 +106,7 @@ export default function OnBoardingGenre() {
               <div
                 key={index}
                 onClick={() => toggleGenre(genre)}
-                className={`text-body-16-medium relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[1.37rem] hover:brightness-75 ${
+                className={`text-body-16-medium relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[1.37rem]  ${
                   selectedGenres.includes(genre) ? 'text-main' : 'text-white'
                 }`}
                 style={{
@@ -130,7 +130,7 @@ export default function OnBoardingGenre() {
           onClick={onClickSubmit}
           disabled={!isButtonEnabled}
           className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
-            isButtonEnabled ? 'bg-main text-sub2 hover:brightness-105' : 'cursor-not-allowed bg-gray500 text-gray300'
+            isButtonEnabled ? 'bg-main text-sub2 ' : 'cursor-not-allowed bg-gray500 text-gray300'
           }`}>
           다음{' '}
         </button>
