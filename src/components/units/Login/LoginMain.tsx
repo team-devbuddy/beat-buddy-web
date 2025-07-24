@@ -42,24 +42,25 @@ export default function LoginMain() {
         }}
       />
 
-      {/* 콘텐츠 */}
+     
       <div className="relative z-20 flex h-full flex-col items-center justify-center text-white">
         {/* 로고 영역 */}
         <div className="flex flex-col items-center justify-center">
           <Image
-            src="/icons/로그인/Group 26086710.svg"
+            src="/icons/로그인/Group 26086712.svg"
             alt="Beat Buddy Logo"
             width={200}
             height={200}
             className="mx-auto"
           />
+           {/* 콘텐츠 
           <Image
             src="/icons/로그인/Group 26086777.svg"
             alt="Beat Buddy Logo"
             width={250}
             height={160}
             className="mx-auto mt-[-3.5rem]"
-          />
+          />*/}
           <div className="mt-[1rem] text-center font-poppins text-[1.125rem] font-normal leading-[130%] tracking-[-0.0125rem]">
             <p>Feel the Beat</p>
             <p>Live the Night</p>
