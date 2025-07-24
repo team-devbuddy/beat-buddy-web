@@ -70,8 +70,8 @@ export default function LoginMain() {
           boxSizing: 'border-box',
           overflow: 'hidden',
         }}>
-        {/* 상단 여백 */}
-        <div className="flex-1" />
+        {/* 상단 여백 - 줄임 */}
+        <div style={{ flex: '0.4' }} />
 
         {/* 로고 영역 - 중앙 배치 */}
         <div className="flex flex-col items-center justify-center">
@@ -86,10 +86,10 @@ export default function LoginMain() {
               willChange: 'filter',
             }}>
             <Image
-              src="/icons/로그인/Group 26086712.svg"
+              src="/icons/로그인/Group 26086712.png"
               alt="Beat Buddy Logo"
-              width={250}
-              height={160}
+              width={220}
+              height={140}
               className="mx-auto"
               // 이미지 드래그 방지
               draggable={false}
@@ -100,17 +100,17 @@ export default function LoginMain() {
               }}
             />
           </div>
-          <div className="mt-[1rem] text-center font-poppins text-[1.125rem] font-normal leading-[130%] tracking-[-0.0125rem]">
+          <div className="mt-[0.5rem] text-center font-poppins text-[1rem] font-normal leading-[130%] tracking-[-0.0125rem]">
             <p>Feel the Beat</p>
             <p>Live the Night</p>
           </div>
         </div>
 
-        {/* 중앙 여백 */}
-        <div className="flex-1" />
+        {/* 중앙 여백 - 줄임 */}
+        <div style={{ flex: '0.45' }} />
 
         {/* SNS 로그인 */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center pb-4">
           <p className="mb-[1.25rem] text-body2-15-medium">SNS 계정으로 간편 가입하기</p>
           <div className="flex flex-row items-center justify-center space-x-8">
             <div className="flex space-x-8">
