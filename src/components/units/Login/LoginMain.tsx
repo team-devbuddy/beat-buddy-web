@@ -22,7 +22,19 @@ export default function LoginMain() {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-BG-black">
-      <div className="login-container relative w-full max-w-[600px] overflow-hidden">
+      <div
+        className="relative w-full max-w-[600px] overflow-hidden"
+        style={{
+          // 동적 뷰포트 높이 지원 체크
+          height:
+            typeof window !== 'undefined' && CSS.supports && CSS.supports('height', '100dvh')
+              ? '100dvh'
+              : 'calc(100vh - 1rem)',
+          minHeight:
+            typeof window !== 'undefined' && CSS.supports && CSS.supports('height', '100dvh')
+              ? '100dvh'
+              : 'calc(100vh - 1rem)',
+        }}>
         {/* 배경 이미지 + 딥 컬러 그라데이션 오버레이 */}
         <div
           className="absolute inset-0 bg-cover bg-center"
