@@ -21,7 +21,13 @@ export default function LoginMain() {
   };
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden">
+    <div
+      className="relative w-screen overflow-hidden"
+      style={{
+        // 아이폰 safe area 대응 - 동적 높이 사용
+        height: '100dvh', // dynamic viewport height
+        minHeight: '100vh',
+      }}>
       {/* 배경 이미지 + 딥 컬러 그라데이션 오버레이 */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -46,47 +52,61 @@ export default function LoginMain() {
         }}
       />
 
+      {/* 메인 컨텐츠 영역 */}
       <div
-        className="relative z-20 flex h-full flex-col items-center justify-center text-white"
+        className="relative z-20 flex h-full flex-col text-white"
         style={{
           // 아이폰에서 탭 하이라이트 제거
           WebkitTapHighlightColor: 'transparent',
           // 텍스트 선택 방지
           WebkitUserSelect: 'none',
           userSelect: 'none',
+          // safe area 패딩 적용
+          paddingTop: 'max(env(safe-area-inset-top), 2rem)',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 2rem)',
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+          // 실제 가용 공간에서 중앙 정렬
+          boxSizing: 'border-box',
         }}>
-        {/* 로고 영역 */}
-        <div className="flex flex-col items-center justify-center">
-          <Image
-            src="/icons/로그인/Group 26086712.png"
-            alt="Beat Buddy Logo"
-            width={250}
-            height={160}
-            className="mx-auto"
-            // 이미지 드래그 방지
-            draggable={false}
-            style={{
-              // 이미지 선택 방지
-              WebkitUserSelect: 'none',
-              userSelect: 'none',
-            }}
-          />
-          {/* 콘텐츠 
-          <Image
-            src="/icons/로그인/Group 26086777.svg"
-            alt="Beat Buddy Logo"
-            width={250}
-            height={160}
-            className="mx-auto mt-[-3.5rem]"
-          />*/}
-          <div className="mt-[1rem] text-center font-poppins text-[1.125rem] font-normal leading-[130%] tracking-[-0.0125rem]">
-            <p>Feel the Beat</p>
-            <p>Live the Night</p>
+        {/* 로고와 텍스트를 중앙에 배치 */}
+        <div className="flex flex-1 flex-col items-center justify-center">
+          {/* 로고 영역 */}
+          <div className="flex flex-col items-center justify-center">
+            <div
+              style={{
+                // SVG에 drop shadow 적용 (사파리 호환)
+                filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25))',
+                WebkitFilter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25))',
+                // GPU 가속 활성화
+                transform: 'translateZ(0)',
+                WebkitTransform: 'translateZ(0)',
+                willChange: 'filter',
+              }}>
+              <Image
+                src="/icons/로그인/Group 26086712.svg"
+                alt="Beat Buddy Logo"
+                width={250}
+                height={160}
+                className="mx-auto"
+                // 이미지 드래그 방지
+                draggable={false}
+                style={{
+                  // 이미지 선택 방지
+                  WebkitUserSelect: 'none',
+                  userSelect: 'none',
+                }}
+              />
+            </div>
+            <div className="mt-[1rem] text-center font-poppins text-[1.125rem] font-normal leading-[130%] tracking-[-0.0125rem]">
+              <p>Feel the Beat</p>
+              <p>Live the Night</p>
+            </div>
           </div>
         </div>
 
-        {/* SNS 로그인 */}
-        <div className="mt-[7.37rem] flex flex-col items-center">
+        {/* SNS 로그인을 하단에 고정 */}
+        <div className="flex flex-col items-center">
           <p className="mb-[1.25rem] text-body2-15-medium">SNS 계정으로 간편 가입하기</p>
           <div className="flex flex-row items-center justify-center space-x-8">
             <div className="flex space-x-8">

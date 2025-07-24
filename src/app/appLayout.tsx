@@ -77,6 +77,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     pathname.includes('signup') ||
     isMaintenance ||
     pathname.includes('event/') ||
+    pathname.includes('login') ||
     pathname.includes('withdrawal');
 
   return (
