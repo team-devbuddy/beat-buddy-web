@@ -34,29 +34,45 @@ export default function LoginMain() {
           }}
         />
 
-        {/* 블러 오버레이 */}
+        {/* 블러 오버레이 - 강도 줄임 */}
         <div
           className="absolute inset-0 bg-transparent"
           style={{
-            backdropFilter: 'blur(5px)',
-            WebkitBackdropFilter: 'blur(5px)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)',
           }}
         />
 
         {/* 콘텐츠 */}
         <div className="relative z-20 flex h-full flex-col items-center justify-center text-white">
-          {/* 로고 영역 */}
-          <div className="flex flex-col items-center justify-center">
-            <Image
-              src="/icons/로그인/Group 26086712.svg"
-              alt="Beat Buddy Logo"
-              width={250}
-              height={160}
-              className="mx-auto"
+          {/* 로고 영역 - 클리어 존 */}
+          <div className="relative flex flex-col items-center justify-center px-8 py-6">
+            {/* 로고 뒤 선명한 배경 */}
+            <div
+              className="absolute inset-0 rounded-2xl bg-black/30"
+              style={{
+                backdropFilter: 'blur(0px)',
+                WebkitBackdropFilter: 'blur(0px)',
+              }}
             />
-            <div className="mt-[1rem] text-center font-poppins text-[1.125rem] font-normal leading-[130%] tracking-[-0.0125rem]">
-              <p>Feel the Beat</p>
-              <p>Live the Night</p>
+            <div className="relative z-10">
+              <Image
+                src="/icons/로그인/Group 26086712.svg"
+                alt="Beat Buddy Logo"
+                width={250}
+                height={160}
+                className="mx-auto"
+                priority
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                  imageRendering: 'crisp-edges',
+                  shapeRendering: 'geometricPrecision',
+                }}
+              />
+              <div className="mt-[1rem] text-center font-poppins text-[1.125rem] font-normal leading-[130%] tracking-[-0.0125rem]">
+                <p className="drop-shadow-lg">Feel the Beat</p>
+                <p className="drop-shadow-lg">Live the Night</p>
+              </div>
             </div>
           </div>
 
