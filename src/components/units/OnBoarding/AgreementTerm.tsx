@@ -32,39 +32,27 @@ export default function AgreementTerm() {
   // 초기 로드 시 localStorage 백업에서 복원
   useEffect(() => {
     if (isInitialLoad.current) {
-      console.log('=== 약관동의 페이지 디버깅 시작 ===');
-      console.log('페이지 로드시 isBusiness 상태:', isBusiness);
 
-      // localStorage 전체 상태 확인
-      console.log('localStorage 전체 키 목록:', Object.keys(localStorage));
-      console.log('recoil-persist:', localStorage.getItem('recoil-persist'));
 
       // localStorage 백업에서 복원 시도
       const backupUserType = localStorage.getItem('userType');
       const backupIsBusiness = localStorage.getItem('isBusiness');
 
-      console.log('localStorage 백업 확인 - userType:', backupUserType);
-      console.log('localStorage 백업 확인 - isBusiness:', backupIsBusiness);
 
       // recoil-persist 내용 파싱
       try {
         const recoilPersist = localStorage.getItem('recoil-persist');
         if (recoilPersist) {
           const parsedRecoil = JSON.parse(recoilPersist);
-          console.log('recoil-persist 파싱됨:', parsedRecoil);
-          console.log('recoil-persist 내 isBusinessState:', parsedRecoil.isBusinessState);
         }
       } catch (error) {
-        console.error('recoil-persist 파싱 오류:', error);
       }
 
       // recoil state가 초기값이고 localStorage에 백업이 있으면 복원
       if (!isBusiness && backupIsBusiness === 'true') {
-        console.log('localStorage에서 비즈니스 상태 복원');
         setIsBusiness(true);
       }
 
-      console.log('=== 디버깅 완료 ===');
       isInitialLoad.current = false; // 초기 로드 완료 표시
     }
   }, [isBusiness, setIsBusiness]);
@@ -89,9 +77,6 @@ export default function AgreementTerm() {
   };
 
   const onClickSubmit = async () => {
-    console.log('약관 동의 버튼 클릭');
-    console.log('현재 isBusiness 상태:', isBusiness);
-    console.log('현재 URL 파라미터들:', Object.fromEntries(searchParams));
 
     const locationConsent = terms.find((t) => t.id === 3)?.checked || false;
     const marketingConsent = terms.find((t) => t.id === 4)?.checked || false;
@@ -108,22 +93,17 @@ export default function AgreementTerm() {
         if (response.ok) {
           // ✅ recoil state에 따라 라우팅
           if (isBusiness) {
-            console.log('비즈니스 사용자 -> /signup/business로 이동');
             router.push('/signup/business');
           } else {
-            console.log('일반 사용자 -> /onBoarding/name으로 이동');
             router.push('/onBoarding/name');
           }
         } else {
-          console.error('API 응답 실패:', response.status);
         }
       } catch (error) {
-        console.error('Error submitting agreement:', error);
       } finally {
         setLoading(false);
       }
     } else {
-      console.error('accessToken이 없습니다');
     }
   };
 

@@ -29,8 +29,6 @@ const NewsWritePage = () => {
 
   // 뉴스 작성 완료 핸들러
   const handleSubmit = () => {
-    console.log('뉴스 작성 내용:', formData);
-    console.log('업로드된 이미지:', uploadedImages);
     setStep(2); // Step을 2로 변경
   };
 

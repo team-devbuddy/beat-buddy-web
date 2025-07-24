@@ -18,7 +18,6 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname(); // 현재 경로 감지
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
   const userProfileValue = useRecoilValue(userProfileState);
-  console.log(userProfileValue);
   useEffect(() => {
     setIsHydrated(true);
   }, []);

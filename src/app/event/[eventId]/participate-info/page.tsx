@@ -13,7 +13,6 @@ export default function ParticipateInfoPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [participants, setParticipants] = useState<Participant[]>([]);
-  console.log(participants);
   useEffect(() => {
     const fetchData = async () => {
       const res = await getParticipants(eventId, accessToken); // accessToken 필요 시 함께 전달

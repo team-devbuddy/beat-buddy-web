@@ -41,7 +41,6 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId
   const [post, setPost] = useState<PostProps>({ nickname: '' });
 
   const handleDeleteComment = useCallback(async () => {
-    console.log('댓글 삭제 요청:', { postId, commentId });
     if (!commentId) return alert('댓글 ID가 없습니다.');
     try {
       await deleteComment(postId, commentId, accessToken);
