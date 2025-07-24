@@ -317,7 +317,7 @@ export default function SignUpBusiness() {
               <p className="py-2 px-2 border-b border-gray200">{signupBusiness.name}</p>
             </div>
 
-            <div className="fixed bottom-10 left-0 w-full px-4">
+            <div className="fixed bottom-5 left-0 w-full px-4">
               <button
                 onClick={handleComplete}
                 disabled={!phoneNumber || phoneNumber.length < 10}

@@ -1,14 +1,15 @@
 'use client';
 import { accessTokenState } from '@/context/recoil-context';
 import { GetNickname } from '@/lib/action';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function OnBoardingCustom() {
   const access = useRecoilValue(accessTokenState) || '';
   const [nickname, setNickname] = useState<string>('');
-
+  const router = useRouter();
   useEffect(() => {
     const getNickname = async () => {
       const response = await GetNickname(access);
@@ -21,30 +22,26 @@ export default function OnBoardingCustom() {
   }, []);
 
   return (
-    <div
-      className="relative flex min-h-screen w-full bg-center bg-no-repeat"
-      // style={{
-      // backgroundImage: `url('/onboarding_custom.webp')`,
-      //  backgroundSize: 'cover', // 비율 유지
-      // }}
-    >
-      <video autoPlay loop muted className="absolute inset-0 h-full w-full object-cover">
-        <source src="/beatbuddy.mp4" type="video/mp4" />
-        beat buddy
-      </video>
-      <div className="relative mt-[3.5rem] flex w-full flex-col px-4">
-        <h1 className="py-5 text-2xl font-bold leading-9 text-white">
-          {nickname} 버디님의
-          <br />
-          취향 저격 베뉴를 추천받으세요.
-        </h1>
+    <>
+      <div className="flex w-full flex-col px-5">
+        <div className="flex py-10">
+          <Image src="/icons/pinkMainLogo.svg" alt="onboarding_custom" width={43.6} height={40} />
+        </div>
+        <div className="flex flex-col items-start">
+          <p className="text-start text-title-24-bold text-white">
+            지금 바로 {nickname}버디님의
+            <br />
+            취향 저격 베뉴들을 둘러보세요
+          </p>
+        </div>
       </div>
-
-      <Link href="/onBoarding/myTaste/genre" className="">
-        <button className="absolute bottom-0 left-0 flex w-full justify-center bg-[#EE1171] py-4 text-lg font-bold text-BG-black hover:brightness-105">
-          추천 받기
+      <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
+        <button
+          onClick={() => router.push('/onBoarding/myTaste/genre')}
+          className="w-full max-w-md rounded-[0.5rem] bg-main py-4 text-[1rem] font-bold text-sub2 hover:brightness-105">
+          베뉴 추천받기
         </button>
-      </Link>
-    </div>
+      </div>
+    </>
   );
 }

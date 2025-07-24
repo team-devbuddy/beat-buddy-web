@@ -55,6 +55,12 @@ export default function OnBoardingGenre() {
   };
 
   const onClickSubmit = async () => {
+    // 선택된 장르가 없으면 함수 실행 중단
+    if (selectedGenres.length === 0) {
+      setError('최소 1개 이상의 장르를 선택해주세요');
+      return;
+    }
+
     const genreData = genres.reduce(
       (acc, genre) => {
         acc[genreMap[genre]] = selectedGenres.includes(genre) ? 1.0 : 0.0;
@@ -75,29 +81,32 @@ export default function OnBoardingGenre() {
     }
   };
 
+  // 버튼 활성화 상태 확인
+  const isButtonEnabled = selectedGenres.length > 0;
+
   return (
     <>
-      <div className="relative flex h-full w-full flex-col justify-center bg-BG-black px-4 pb-20">
+      <div className="relative flex h-full w-full flex-col justify-center bg-BG-black px-5 pb-20">
         <Image
           src="/icons/landing_step_1.svg"
           alt="prev"
           width={55}
           height={24}
-          className="absolute right-5 top-[-32px]"
+          className="absolute right-5 top-[-36px]"
         />
-        <h1 className="py-5 text-2xl font-bold leading-9 text-white">
-          선호 장르를
+        <h1 className="pb-[1.25rem] pt-[0.62rem] text-title-24-bold text-white">
+          선호하는 장르를
           <br />
           모두 선택해주세요
         </h1>
 
-        <div className="mt-7 flex w-full justify-center gap-2">
-          <div className="grid w-full grid-cols-3 gap-2">
+        <div className="mt-[0.53rem] flex w-full justify-center gap-2">
+          <div className="grid w-full grid-cols-2 gap-2">
             {genres.map((genre, index) => (
               <div
                 key={index}
                 onClick={() => toggleGenre(genre)}
-                className={`relative flex h-[6.8rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-lg hover:brightness-75 ${
+                className={`text-body-16-medium relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[1.37rem] hover:brightness-75 ${
                   selectedGenres.includes(genre) ? 'text-main' : 'text-white'
                 }`}
                 style={{
@@ -116,14 +125,16 @@ export default function OnBoardingGenre() {
 
         {error && <div className="mt-4 text-main">{error}</div>}
       </div>
-      <button
-        onClick={onClickSubmit}
-        disabled={selectedGenres.length === 0}
-        className={`fixed bottom-0 z-50 flex w-full max-w-[600px] justify-center py-4 text-lg font-bold ${
-          selectedGenres.length > 0 ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
-        }`}>
-        다음
-      </button>
+      <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
+        <button
+          onClick={onClickSubmit}
+          disabled={!isButtonEnabled}
+          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
+            isButtonEnabled ? 'bg-main text-sub2 hover:brightness-105' : 'cursor-not-allowed bg-gray500 text-gray300'
+          }`}>
+          다음{' '}
+        </button>
+      </div>
     </>
   );
 }

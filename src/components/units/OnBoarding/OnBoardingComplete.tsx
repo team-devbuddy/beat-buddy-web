@@ -4,6 +4,7 @@ import { accessTokenState, memberGenreIdState, memberMoodIdState } from '@/conte
 import { GetNickname, PostArchive } from '@/lib/action';
 import { useRecoilValue } from 'recoil';
 import { use, useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export default function OnBoardingComplete() {
   const memberMoodId = useRecoilValue(memberMoodIdState);
@@ -42,21 +43,30 @@ export default function OnBoardingComplete() {
   };
 
   return (
-    <div>
+    <div className="relative flex w-full flex-col bg-BG-black px-5 ">
       <div className="flex w-full flex-col">
-        <div className="flex w-full flex-col px-4 pt-[3.5rem]">
-          <h1 className="py-5 text-2xl font-bold leading-9 text-white">
-            {nickname} 버디님을 위한
+        <Image
+          src="/icons/landing_step_3.svg"
+          alt="prev"
+          width={55}
+          height={24}
+          className="absolute right-5 top-[-36px] z-10"
+        />
+        <div className="flex w-full flex-col ">
+          <h1 className="pb-[1.25rem] pt-[0.62rem] text-title-24-bold text-white">
+            {nickname}버디님을 위한
             <br />
             맞춤 베뉴를 찾았어요!
           </h1>
         </div>
 
-        <button
-          onClick={onClickSubmit}
-          className={`absolute bottom-0 flex w-full justify-center bg-main py-4 text-lg font-bold text-BG-black hover:brightness-105`}>
-          확인하러 가기
-        </button>
+        <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
+          <button
+            onClick={onClickSubmit}
+            className={`w-full max-w-md rounded-[0.5rem] bg-main py-4 text-[1rem] font-bold text-sub2 hover:brightness-105`}>
+            확인하러 가기
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -85,7 +85,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
           <div className="flex flex-col py-3">
             <div className="relative flex">
               <input
-                className="w-full border-b border-white bg-transparent py-4 pl-2 text-white outline-none placeholder:text-gray400"
+                className="safari-input-fix w-full border-b border-white bg-transparent py-4 pl-2 text-white outline-none placeholder:text-gray400"
                 placeholder="Text Field"
                 value={inputValue}
                 onChange={handleChange}
@@ -110,18 +110,20 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
           </div>
         </div>
       </div>
-      <button
-        onClick={onClickSubmit}
-        disabled={!isDuplicateChecked || !isDuplicateValid}
-        className={`absolute bottom-0 flex w-full justify-center py-4 text-lg font-bold ${
-          isDuplicateChecked && isDuplicateValid
-            ? 'bg-[#EE1171] text-BG-black hover:brightness-105'
-            : 'bg-gray400 text-gray300'
-        }`}>
-        {buttonText}
-      </button>
+      <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
+        <button
+          onClick={onClickSubmit}
+          disabled={!isDuplicateChecked || !isDuplicateValid}
+          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold ${
+            isDuplicateChecked && isDuplicateValid
+              ? 'bg-[#EE1171] text-sub2 hover:brightness-105'
+              : 'bg-gray400 text-gray300'
+          }`}>
+          {buttonText}
+        </button>
+      </div>
       {showBanner && (
-        <div className="fixed bottom-20 left-1/2 flex w-[20rem] -translate-x-1/2 transform justify-center rounded bg-gray500 px-16 py-3 text-white">
+        <div className="z-100 fixed bottom-5 left-1/2 flex w-[20rem] -translate-x-1/2 transform justify-center rounded bg-gray500 px-16 py-3 text-white">
           사용 가능한 닉네임이에요!
         </div>
       )}

@@ -87,6 +87,13 @@ const config: Config = {
         xs: '0.13rem',
       },
       fontSize: {
+        'subtitle-20-medium': [
+          '20px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+          },
+        ],
         'subtitle-20-bold': [
           '20px',
           {

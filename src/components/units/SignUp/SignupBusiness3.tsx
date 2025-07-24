@@ -89,7 +89,7 @@ export default function SignUpBusiness3({ onNext, onBack }: Props) {
         </div>
 
         {/* 버튼 */}
-        <div className="fixed bottom-10 left-0 w-full px-4">
+        <div className="fixed bottom-5 left-0 w-full px-4">
           <button
             onClick={handleNext}
             disabled={!telecom}

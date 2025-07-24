@@ -76,7 +76,7 @@ export default function AgreementTerm() {
     <div className="w-full">
       <Prev url={'/login'} />
       {loading && <Loading />}
-      <div className="flex w-full flex-col px-4">
+      <div className="flex w-full flex-col px-5">
         <h1 className="pt-[1.25rem] text-title-24-bold text-white">
           서비스 이용 동의서에
           <br />
@@ -125,12 +125,12 @@ export default function AgreementTerm() {
         </div>
       </div>
 
-      <div className="fixed bottom-10 z-50 flex w-full justify-center px-4">
+      <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
         <button
           onClick={onClickSubmit}
           disabled={!buttonEnabled}
-          className={`w-full max-w-md rounded-md py-4 text-lg font-bold ${
-            buttonEnabled ? 'bg-[#EE1171] text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
+          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold ${
+            buttonEnabled ? 'bg-[#EE1171] text-sub2 hover:brightness-105' : 'bg-gray400 text-gray300'
           }`}>
           동의하고 가입하기
         </button>

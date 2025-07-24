@@ -66,7 +66,7 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
           </p>
         </div>
 
-        <div className="fixed bottom-10 left-0 w-full px-4">
+        <div className="fixed bottom-5 left-0 w-full px-4">
           <button
             onClick={handleNext}
             disabled={ssnFront.length !== 6 || ssnBack.length !== 1}

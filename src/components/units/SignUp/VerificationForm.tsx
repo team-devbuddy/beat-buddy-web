@@ -96,7 +96,7 @@ export default function VerificationForm() {
             : '시간 초과되었습니다.'}
         </p>
 
-        <div className="fixed bottom-10 left-0 w-full px-4">
+        <div className="fixed bottom-5 left-0 w-full px-4">
           <button
             onClick={handleNext}
             disabled={!verified}

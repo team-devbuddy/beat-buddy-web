@@ -17,6 +17,7 @@ const moodMap: { [key: string]: string } = {
   칠한: 'CHILL',
   이국적인: 'EXOTIC',
   헌팅: 'HUNTING',
+  '바 & 카페': 'BAR&CAFE',
 };
 
 const moodImages: { [key: string]: string } = {
@@ -28,6 +29,7 @@ const moodImages: { [key: string]: string } = {
   헌팅: '/images/onBoarding/background/onboarding-6.webp',
   이국적인: '/images/onBoarding/background/onboarding-4.webp',
   루프탑: '/images/onBoarding/background/onboarding-8.webp',
+  '바 & 카페': '/images/onBoarding/background/onboarding-9.webp',
 };
 
 const moods = Object.keys(moodMap);
@@ -75,18 +77,20 @@ export default function OnBoardingMood() {
     setIsModalOpen(!isModalOpen);
   };
 
+  const isButtonEnabled = selectedMoods.length > 0;
+
   return (
     <>
-      <div className="relative flex w-full flex-col bg-BG-black px-4 pb-20">
+      <div className="relative flex w-full flex-col bg-BG-black px-5 pb-20">
         <Image
           src="/icons/landing_step_2.svg"
           alt="prev"
           width={55}
           height={24}
-          className="absolute right-5 top-[-32px]"
+          className="absolute right-5 top-[-36px]"
         />
-        <div className="flex items-start justify-between py-5">
-          <h1 className="text-2xl font-bold leading-9 text-white">
+        <div className="flex items-start justify-between pb-[1.25rem] pt-[0.62rem]">
+          <h1 className="text-title-24-bold text-white">
             어떤 분위기를
             <br />
             좋아하세요?
@@ -104,14 +108,14 @@ export default function OnBoardingMood() {
           </div>
         </div>
 
-        <div className="mt-7 grid w-full grid-cols-2 gap-2">
+        <div className="mt-[0.53rem] grid w-full grid-cols-3 gap-2">
           {moods.map((mood, index) => (
             <div
               key={index}
               onClick={() => toggleMood(mood)}
-              className={`relative flex h-[3.75rem] w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-lg hover:brightness-75 ${
+              className={`text-body-16-medium relative aspect-square w-full cursor-pointer items-center justify-center rounded-[0.25rem] hover:brightness-75 ${
                 selectedMoods.includes(mood) ? 'text-main' : 'text-white'
-              }`}
+              } flex`} // ← flex로 텍스트 정렬 추가
               style={{
                 backgroundImage: `url(${moodImages[mood]})`,
                 backgroundSize: 'cover',
@@ -124,16 +128,19 @@ export default function OnBoardingMood() {
             </div>
           ))}
         </div>
+
         {error && <div className="mt-4 text-main">{error}</div>}
       </div>
-      <button
-        onClick={onClickSubmit}
-        disabled={selectedMoods.length === 0}
-        className={`fixed bottom-0 z-50 flex w-full max-w-[600px] justify-center py-4 text-lg font-bold ${
-          selectedMoods.length > 0 ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
-        }`}>
-        다음
-      </button>
+      <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
+        <button
+          onClick={onClickSubmit}
+          disabled={!isButtonEnabled}
+          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
+            isButtonEnabled ? 'bg-main text-sub2 hover:brightness-105' : 'cursor-not-allowed bg-gray500 text-gray300'
+          }`}>
+          다음{' '}
+        </button>
+      </div>
     </>
   );
 }

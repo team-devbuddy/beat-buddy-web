@@ -186,7 +186,7 @@ export default function SignUpBusinessNickname() {
           )}
         </div>
 
-        <div className="fixed bottom-10 left-0 w-full px-4">
+        <div className="fixed bottom-5 left-0 w-full px-4">
           {step === 2 && (
             <button
               onClick={handleSubmit}
