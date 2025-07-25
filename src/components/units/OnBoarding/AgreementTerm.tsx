@@ -27,17 +27,25 @@ export default function AgreementTerm() {
   useEffect(() => {
     const access = searchParams.get('access');
     if (access) setAccessToken(access);
-  }, [searchParams, setAccessToken]);
+
+    // 쿼리 파라미터에서 userType 확인
+    const userType = searchParams.get('userType');
+    console.log('AgreementTerm - URL userType:', userType);
+    console.log('AgreementTerm - recoil isBusiness:', isBusiness);
+
+    // 쿼리 파라미터가 business이면 recoil state 업데이트
+    if (userType === 'business') {
+      console.log('쿼리 파라미터에서 비즈니스 확인 -> recoil state 업데이트');
+      setIsBusiness(true);
+    }
+  }, [searchParams, setAccessToken, setIsBusiness]);
 
   // 초기 로드 시 localStorage 백업에서 복원
   useEffect(() => {
     if (isInitialLoad.current) {
-
-
       // localStorage 백업에서 복원 시도
       const backupUserType = localStorage.getItem('userType');
       const backupIsBusiness = localStorage.getItem('isBusiness');
-
 
       // recoil-persist 내용 파싱
       try {
@@ -45,8 +53,7 @@ export default function AgreementTerm() {
         if (recoilPersist) {
           const parsedRecoil = JSON.parse(recoilPersist);
         }
-      } catch (error) {
-      }
+      } catch (error) {}
 
       // recoil state가 초기값이고 localStorage에 백업이 있으면 복원
       if (!isBusiness && backupIsBusiness === 'true') {
@@ -77,7 +84,6 @@ export default function AgreementTerm() {
   };
 
   const onClickSubmit = async () => {
-
     const locationConsent = terms.find((t) => t.id === 3)?.checked || false;
     const marketingConsent = terms.find((t) => t.id === 4)?.checked || false;
 
