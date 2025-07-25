@@ -42,6 +42,7 @@
     "recoil-persist": "^5.1.0",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.12",
+    "swiper": "^11.2.10",
     "tailwind-scrollbar-hide": "^1.1.7",
     "three": "^0.158.0",
     "three-mesh-bvh": "^0.9.1",

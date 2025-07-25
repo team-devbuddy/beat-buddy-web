@@ -23,6 +23,9 @@ import NavigateFooter from './NavigateFooter';
 import { getMagazineList } from '@/lib/actions/magazine-controller/getMagazine';
 import VenueFor from './VenueFor';
 import { getHotPost, RawHotPost } from '@/lib/actions/post-controller/getHotPost';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+
 const MainHeader = dynamic(() => import('./MainHeader'), { ssr: false });
 
 export default function Main() {
@@ -169,27 +172,34 @@ export default function Main() {
       <div className="flex-grow bg-BG-black">
         <MainHeader />
         <SearchBar />
-        <TrendBar />
-        {magazine.length > 0 && (
-          <section className="snap-x snap-mandatory overflow-x-auto px-[0.5rem] hide-scrollbar">
-            <div className="flex w-max gap-4">
-              {magazine.map((item, i) => (
-                <div
-                  key={`${item.magazineId}-${i}`}
-                  className={`min-w-[20.9375rem] snap-center ${i === 0 ? 'ml-2' : ''}`}>
-                  <Magazine
-                    magazineId={item.magazineId}
-                    thumbImageUrl={item.thumbImageUrl}
-                    title={item.title}
-                    content={item.content}
-                    totalCount={magazine.length}
-                    orderInHome={item.orderInHome}
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        <div className="flex w-full items-center justify-center py-[0.88rem]">
+          {magazine.length > 0 && (
+            <section>
+              <Swiper
+                loop={true}
+                centeredSlides={true}
+                slidesPerView={1.2}
+                spaceBetween={10}
+                speed={300}
+                touchRatio={1}
+                threshold={10}
+                className="magazine-swiper">
+                {magazine.map((item) => (
+                  <SwiperSlide key={item.magazineId}>
+                    <Magazine
+                      magazineId={item.magazineId}
+                      thumbImageUrl={item.thumbImageUrl}
+                      title={item.title}
+                      content={item.content}
+                      totalCount={magazine.length}
+                      orderInHome={item.orderInHome}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </section>
+          )}
+        </div>
         <VenueFor userName={userName} />
         {!accessToken && <LoggedOutBanner />}
         <Heartbeat />

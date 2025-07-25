@@ -22,14 +22,14 @@ export default function MainHeader() {
   };
 
   return (
-    <div className="">
-      <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] py-[1rem]">
+    <div className="scrollbar-none">
+      <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] pt-[0.62rem] pb-[0.88rem]">
         <Link href="/">
           <Image
-            src="/icons/Headers/Symbol.svg"
+            src="/icons/logotype.svg"
             alt="logo"
-            width={42}
-            height={40}
+            width={126}
+            height={26}
             className="safari-icon-fix cursor-pointer"
             priority
           />
@@ -43,8 +43,8 @@ export default function MainHeader() {
                 <Image
                   src="/icons/Headers/bell-02.svg"
                   alt="alert"
-                  width={32}
-                  height={32}
+                  width={24}
+                  height={24}
                   className="safari-icon-fix cursor-pointer hover:brightness-125"
                 />
               </Link>

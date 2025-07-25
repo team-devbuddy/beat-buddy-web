@@ -20,14 +20,13 @@ export default function Magazine({
   content,
   totalCount,
   orderInHome,
-
 }: MagazineCardProps) {
   const router = useRouter();
 
   return (
     <Link href={`/magazine/${magazineId}`}>
-      
-      <div className="relative mx-auto h-[24rem] w-full max-w-[400px] cursor-pointer overflow-hidden rounded-xl shadow-lg">
+      {/* 정사각형으로 변경: w-[20rem] h-[20rem] */}
+      <div className="relative h-[20rem] w-[20rem] cursor-pointer overflow-hidden rounded-xl shadow-lg">
         <Image
           src={thumbImageUrl || '/images/DefaultImage.png'}
           alt={title}
@@ -41,17 +40,15 @@ export default function Magazine({
         {/* 상단 그라디언트 */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-        {/* 우측 상단 - 개수 + > 아이콘 */}
-        <div className="absolute right-4 top-4 z-10 flex items-center space-x-1 rounded-full bg-black/50 px-3 py-1 text-sm font-medium text-white">
-          <span>
-            {orderInHome} / {totalCount}
-          </span>
+        {/* 우측 상단 - 전체보기 마크 */}
+        <div className="absolute right-4 top-4 z-10">
           <button
             onClick={(e) => {
               e.preventDefault(); // 부모 링크 막기
               router.push('/magazine');
-            }}>
-            <span className="text-white">{'>'}</span>
+            }}
+            className="flex items-center justify-center rounded-full bg-black/50 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-black/70">
+            전체보기
           </button>
         </div>
 
