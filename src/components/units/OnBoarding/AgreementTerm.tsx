@@ -83,6 +83,20 @@ export default function AgreementTerm() {
     setTerms((prev) => prev.map((term) => ({ ...term, checked: newState })));
   };
 
+  // 약관 상세 페이지로 이동하는 함수
+  const handleTermsView = (termId: number) => {
+    const routeMap: { [key: number]: string } = {
+      1: '/onBoarding/terms/service', // 서비스 이용약관
+      3: '/onBoarding/terms/location', // 위치 정보 사용 동의
+      4: '/onBoarding/terms/marketing', // 마케팅 수신 동의
+    };
+
+    const route = routeMap[termId];
+    if (route) {
+      router.push(route);
+    }
+  };
+
   const onClickSubmit = async () => {
     const locationConsent = terms.find((t) => t.id === 3)?.checked || false;
     const marketingConsent = terms.find((t) => t.id === 4)?.checked || false;
@@ -103,13 +117,12 @@ export default function AgreementTerm() {
           } else {
             router.push('/onBoarding/name');
           }
-        } else {
         }
       } catch (error) {
+        console.error('Error submitting agreement:', error);
       } finally {
         setLoading(false);
       }
-    } else {
     }
   };
 
@@ -118,7 +131,7 @@ export default function AgreementTerm() {
       <Prev url={'/login'} />
       {loading && <Loading />}
       <div className="flex w-full flex-col px-5">
-        <h1 className="pt-[1.25rem] text-title-24-bold text-white">
+        <h1 className="pt-[0.62rem] text-title-24-bold text-white">
           서비스 이용 동의서에
           <br />
           동의해주세요
@@ -161,7 +174,7 @@ export default function AgreementTerm() {
               {term.url && (
                 <div
                   className="cursor-pointer pr-2 text-xs text-gray400 hover:text-main"
-                  onClick={() => window.open(term.url, '_blank')}>
+                  onClick={() => handleTermsView(term.id)}>
                   보기
                 </div>
               )}
@@ -174,8 +187,8 @@ export default function AgreementTerm() {
         <button
           onClick={onClickSubmit}
           disabled={!buttonEnabled}
-          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold ${
-            buttonEnabled ? 'bg-main text-sub2' : 'bg-gray400 text-gray300'
+          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
+            buttonEnabled ? 'bg-main text-sub2' : 'bg-gray500 text-gray300'
           }`}>
           동의하고 가입하기
         </button>

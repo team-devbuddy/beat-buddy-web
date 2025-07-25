@@ -16,7 +16,7 @@ export const termsData: Term[] = [
     isRequired: false,
     url: 'https://admitted-xenon-54c.notion.site/a49a675744af458c8e99570a5bacb903?pvs=4',
   },
-  { id: 4, label: '[선택] 마케팅 수신 동의', isRequired: false, url: '' },
+  { id: 4, label: '[선택] 마케팅 수신 동의', isRequired: false, url: 'https://admitted-xenon-54c.notion.site/a49a675744af458c8e99570a5bacb903?pvs=4' },
 ];
 
 //검색!
