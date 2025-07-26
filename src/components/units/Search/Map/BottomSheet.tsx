@@ -53,7 +53,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
 
   const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'];
   const locations = ['홍대', '이태원', '강남/신사', '압구정', '기타'];
-  const sorts = ['관련도 순', '인기순'];
+  const sorts = ['가까운 순', '인기순'];
 
   // 바텀시트 높이 설정
   const snapPoints = clickedClub ? [height, 300, 100] : [height, 470, 100];

@@ -47,7 +47,7 @@ const locationsMap: { [key: string]: string } = {
 };
 
 const criteriaMap: { [key: string]: string } = {
-  '관련도 순': '관련도순',
+  '가까운 순': '가까운 순',
   인기순: '인기순',
 };
 
@@ -73,7 +73,7 @@ export default function SearchResults({
   );
   const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정', '기타'], []);
 
-  const criteria = useMemo(() => ['관련도순', '인기순'], []);
+  const criteria = useMemo(() => ['가까운 순', '인기순'], []);
 
   const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
@@ -103,7 +103,7 @@ export default function SearchResults({
       keyword: searchQuery ? queryArray : [],
       genreTag: genresMap[selectedGenre] || '',
       regionTag: locationsMap[selectedLocation] || '',
-      sortCriteria: criteriaMap[selectedOrder] || '관련도순',
+      sortCriteria: criteriaMap[selectedOrder] || '가까운 순',
     };
     const clubs = await filterDropdown(filters, accessToken);
     setFilteredClubs(clubs);
@@ -117,7 +117,7 @@ export default function SearchResults({
       venueList: filteredClubs,
       genreTag: genresMap[selectedGenre] || '',
       regionTag: locationsMap[selectedLocation] || '',
-      sortCriteria: criteriaMap[selectedOrder] || '관련도순',
+      sortCriteria: criteriaMap[selectedOrder] || '가까운 순',
     };
 
     try {
@@ -153,7 +153,7 @@ export default function SearchResults({
   }, [setIsMapView]);
 
   useEffect(() => {
-    setSelectedOrder('관련도 순');
+    setSelectedOrder('가까운 순');
   }, [resetSelectedOrder, resetSelectedGenre, resetSelectedLocation]);
 
   return (

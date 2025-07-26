@@ -58,13 +58,13 @@ const SearchHeader = () => {
   };
 
   return (
-    <header className="bg-BG-black px-4 py-3">
+    <header className="bg-BG-black px-5 py-[0.63rem]">
       <div className="relative w-full">
         {/* 🔙 Back icon */}
         {hasQuery && (
-          <div className="absolute left-0 top-1/2 z-10 -translate-y-1/2">
+          <div className="absolute left-[0.88rem] top-1/2 z-10 -translate-y-1/2">
             <Image
-              src="/icons/line-md_chevron-left.svg"
+              src="/icons/arrow_back_ios.svg"
               alt="뒤로가기"
               width={24}
               height={24}
@@ -75,27 +75,27 @@ const SearchHeader = () => {
         )}
 
         {/* 🔍 Search icon */}
-        <div className="absolute right-0 top-1/2 z-10 -translate-y-1/2">
-          <Image
-            src="/icons/search-01.svg"
-            alt="검색"
-            width={24}
-            height={24}
-            onClick={handleSearch}
-            className="cursor-pointer"
-          />
-        </div>
 
         {/* 🔤 Input */}
-        <input
-          ref={inputRef}
-          className="w-full border-b-2 border-main bg-transparent py-2 pl-7 pr-12 text-white safari-input-fix placeholder:text-gray300 focus:outline-none"
-          placeholder={isLoading ? '' : '지금 가장 인기있는 클럽은?'}
-          value={searchQuery}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          style={{ WebkitAppearance: 'none', borderRadius: 0 }}
-        />
+        <div className="relative w-full rounded-[0.5rem] bg-gray700">
+          <input
+            ref={inputRef}
+            className="w-full cursor-pointer bg-transparent pl-[2.37rem] pr-[3rem] py-[0.94rem] text-[0.8125rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none"
+            placeholder="지금 인기 있는 베뉴를 검색해보세요."
+            value={searchQuery}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            autoFocus // 모바일에서 자동으로 키패드 올라오게 autoFocus 추가
+            style={{ WebkitAppearance: 'none', borderRadius: 0 }}
+          />
+          <div onClick={handleSearch} className="absolute bottom-[0.94rem] right-[1rem] cursor-pointer">
+            {searchQuery ? (
+              <Image src="/icons/search-01-pink.svg" alt="search icon" width={24} height={24} />
+            ) : (
+              <Image src="/icons/search-01.svg" alt="search icon" width={24} height={24} />
+            )}
+          </div>
+        </div>
       </div>
     </header>
   );
