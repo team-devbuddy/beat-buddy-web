@@ -216,20 +216,18 @@ export default function SignUpBusiness() {
             </div>
             <div className="pt-6 text-gray200">
               <label className="mb-[0.62rem] block text-body1-16-bold">주민등록번호</label>
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <div className="mt-[0.62rem] grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                 <input
                   value={signupBusiness.ssnFront}
                   disabled
-                  // 👇 클래스를 step 2와 통일하고, 색상만 gray200으로 유지합니다.
-                  className="font-mono w-full border-b border-gray200 bg-transparent px-2 py-2 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
+                  className="font-mono w-full border-b border-gray200 bg-transparent px-2 py-2 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none safari-input-fix"
                 />
                 <span className="text-gray200">-</span>
                 <div className="flex items-center justify-center border-b border-gray200 py-2">
                   <input
                     value={signupBusiness.ssnBack}
                     disabled
-                    // 👇 클래스를 step 2와 통일하고, 색상만 gray200으로 유지합니다.
-                    className="font-mono min-w-[20px] bg-transparent text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
+                    className="font-mono w-4 bg-transparent text-center text-[0.9375rem] tracking-widest text-gray200 outline-none safari-input-fix"
                   />
                   <span className="font-mono text-[0.9375rem] tracking-widest text-gray200">●●●●●●</span>
                 </div>
@@ -262,14 +260,14 @@ export default function SignUpBusiness() {
             </div>
             <div className="pt-6 text-gray200">
               <label className="mb-[0.62rem] block text-body1-16-bold">주민등록번호</label>
-              <div className="flex items-center gap-2">
+              <div className="mt-[0.62rem] grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                 <input
                   value={signupBusiness.ssnFront}
                   disabled
-                  className="font-mono flex-1 border-b border-gray200 bg-transparent px-2 py-2 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
+                  className="font-mono w-full border-b border-gray200 bg-transparent px-2 py-2 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none safari-input-fix"
                 />
                 <span className="text-gray200">-</span>
-                <div className="flex flex-1 items-center justify-center gap-[2px] border-b border-gray200 py-2">
+                <div className="flex items-center justify-center border-b border-gray200 py-2">
                   <input
                     value={signupBusiness.ssnBack}
                     disabled
