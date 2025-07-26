@@ -6,12 +6,10 @@ import { signupBusinessState } from '@/context/recoil-context';
 import Prev from '@/components/common/Prev';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { requestBusinessVerificationCode } from '@/lib/actions/signup/businessCodeReuest'; 
+import { requestBusinessVerificationCode } from '@/lib/actions/signup/businessCodeReuest';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-import { businessVerifyCodeState } from '@/context/recoil-context'
-
-
+import { businessVerifyCodeState } from '@/context/recoil-context';
 
 export default function SignUpBusiness() {
   const [signupBusiness, setSignupBusiness] = useRecoilState(signupBusinessState);
@@ -25,12 +23,11 @@ export default function SignUpBusiness() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const setVerifyCode = useSetRecoilState(businessVerifyCodeState);
-    const router = useRouter();
-    
-    useEffect(() => {
-        // step이 바뀔 때 드롭다운을 무조건 닫는다
-        setDropdownOpen(false);
-      }, [step]);
+  const router = useRouter();
+
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [step]);
 
   const tryStepAdvance = () => {
     if (step === 1 && /^[가-힣]{2,5}$/.test(name)) {
@@ -50,14 +47,10 @@ export default function SignUpBusiness() {
       setDropdownOpen(false);
       return;
     }
-  
-    if (step === 2) {
-      setStep(1);
-    } else if (step === 3) {
-      setStep(2);
-    } else if (step === 4) {
-      setStep(3);
-    }
+
+    if (step === 2) setStep(1);
+    else if (step === 3) setStep(2);
+    else if (step === 4) setStep(3);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -78,11 +71,10 @@ export default function SignUpBusiness() {
     }
   };
 
-    
   const handleComplete = async () => {
     if (phoneNumber) {
       const residentRegistration = ssnFront + ssnBack;
-  
+
       setSignupBusiness((prev) => ({
         ...prev,
         phoneNumber,
@@ -91,50 +83,47 @@ export default function SignUpBusiness() {
         name,
         telecom,
       }));
-  
+
       try {
-        const result = await requestBusinessVerificationCode({
-          realName: name,
-          phoneNumber,
-          telCarrier: telecom,
-          residentRegistration,
-        }, accessToken || '');
-      
-        console.log('인증번호 요청 결과:', result);
-      
-          if (result?.code) {
-            console.log('인증번호:', result.code);
-          setVerifyCode(result.data.code); 
+        const result = await requestBusinessVerificationCode(
+          {
+            realName: name,
+            phoneNumber,
+            telCarrier: telecom,
+            residentRegistration,
+          },
+          accessToken || '',
+        );
+
+        if (result?.code) {
+          setVerifyCode(result.data.code);
         }
-      
+
         router.push('/signup/business/auth');
       } catch (err: any) {
         alert(err.message || '인증번호 요청에 실패했습니다.');
       }
-      
     }
   };
-    
-
 
   return (
     <>
-      <Prev
-        onBack={step > 1 ? handleBack : undefined}
-        url={step === 1 ? '/onBoarding?userType=business' : undefined}
-      />
+      <Prev onBack={step > 1 ? handleBack : undefined} url={step === 1 ? '/onBoarding?userType=business' : undefined} />
       <div
-        className="min-h-screen bg-BG-black text-white px-4"
+        className="min-h-screen w-full bg-BG-black px-4 text-white"
         tabIndex={0}
         onClick={handleBlur}
-        onKeyDown={handleKeyDown}
-      >
-        {step === 1 && <h1 className="text-title-24-bold pb-8">실명을 입력해주세요.</h1>}
-        {step === 2 && <h1 className="text-title-24-bold pb-8">주민등록번호의<br />앞 7자리를 입력해주세요.</h1>}
-        {step === 3 && <h1 className="text-title-24-bold pb-8">통신사를 선택해주세요.</h1>}
-        {step === 4 && <h1 className="text-title-24-bold pb-8">전화번호를 입력해주세요.</h1>}
+        onKeyDown={handleKeyDown}>
+        {step === 1 && <h1 className="pb-8 text-title-24-bold">실명을 입력해주세요.</h1>}
+        {step === 2 && (
+          <h1 className="pb-8 text-title-24-bold">
+            주민등록번호의
+            <br />앞 7자리를 입력해주세요.
+          </h1>
+        )}
+        {step === 3 && <h1 className="pb-8 text-title-24-bold">통신사를 선택해주세요.</h1>}
+        {step === 4 && <h1 className="pb-8 text-title-24-bold">전화번호를 입력해주세요.</h1>}
 
-        {/* Step 1 Input */}
         {step === 1 && (
           <div className="transition-all duration-500">
             <label className="block pt-4 text-body1-16-bold">이름</label>
@@ -142,94 +131,81 @@ export default function SignUpBusiness() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="이름을 입력해 주세요"
-              className="w-full pt-4 pb-2 px-2 safari-input-fix bg-transparent border-b border-white text-white placeholder-gray400 outline-none"
+              className="w-full border-b border-white bg-transparent px-2 pb-2 pt-4 text-white placeholder-gray400 outline-none safari-input-fix"
             />
             {name.length > 0 && !/^[가-힣]{2,5}$/.test(name) && (
-              <p className="mt-2 text-main text-[0.875rem]">실명을 입력해 주세요</p>
+              <p className="mt-2 text-[0.875rem] text-main">실명을 입력해 주세요</p>
             )}
           </div>
         )}
 
-        {/* Step 2 Input */}
         {step === 2 && (
           <div className="transition-all duration-500">
             <label className="block pt-4 text-body1-16-bold">주민등록번호</label>
-            <div className="flex items-center gap-2 mt-[0.62rem]">
+            <div className="mt-[0.62rem] grid grid-cols-[1fr_auto_1fr] items-center gap-2">
               <input
                 value={ssnFront}
                 onChange={(e) => setSsnFront(e.target.value)}
                 maxLength={6}
                 placeholder="앞 6자리"
-                className="flex-1 pt-2 pb-2 bg-transparent border-b border-white text-white text-[0.9375rem] text-center placeholder-gray400 outline-none font-mono tracking-widest safari-input-fix"
+                className="font-mono w-full border-b border-white bg-transparent pb-2 pt-2 text-center text-[0.9375rem] tracking-widest text-white placeholder-gray400 outline-none safari-input-fix"
               />
               <span className="text-white">-</span>
-              <div className="flex-1 flex items-center justify-center border-b border-white py-2 gap-[2px]">
+              <div className="flex items-center justify-center border-b border-white py-2">
                 <input
                   value={ssnBack}
                   onChange={(e) => setSsnBack(e.target.value)}
                   maxLength={1}
-                  className="w-4 bg-transparent text-white text-[0.9375rem] text-center outline-none font-mono tracking-widest safari-input-fix"
+                  className="font-mono w-4 bg-transparent text-center text-[0.9375rem] tracking-widest text-white outline-none safari-input-fix"
                 />
-                <span className="text-white text-[0.9375rem] font-mono tracking-widest">●●●●●●</span>
+                <span className="font-mono text-[0.9375rem] tracking-widest text-white">●●●●●●</span>
               </div>
             </div>
 
-            {/* 이름 요약 */}
             <div className="pt-6 text-gray200">
-              <label className="block text-body1-16-bold mb-[0.62rem]">이름</label>
-              <p className="py-2 px-2 border-b border-gray200">{signupBusiness.name}</p>
+              <label className="mb-[0.62rem] block text-body1-16-bold">이름</label>
+              <p className="border-b border-gray200 px-2 py-2">{signupBusiness.name}</p>
             </div>
           </div>
         )}
 
-        {/* Step 3 Input */}
+        {/* 나머지 코드는 동일 */}
         {step === 3 && (
           <div className="transition-all duration-500">
             <label className="block pt-4 text-body1-16-bold">통신사</label>
             <div className="relative">
               <div
-                className="w-full py-3 border-b border-white text-[0.9375rem] text-white flex justify-between items-center cursor-pointer"
+                className="flex w-full cursor-pointer items-center justify-between border-b border-white py-3 text-[0.9375rem] text-white"
                 onClick={(e) => {
                   e.stopPropagation();
                   setDropdownOpen(!dropdownOpen);
-                }}
-              >
-                <span className={telecom ? 'pl-2' : 'text-gray400 pl-2'}>
-                  {telecom || '통신사 선택'}
-                </span>
+                }}>
+                <span className={telecom ? 'pl-2' : 'pl-2 text-gray400'}>{telecom || '통신사 선택'}</span>
                 <Image src="/icons/chevron-down.svg" alt="arrow-down" width={24} height={24} />
               </div>
-
-              {/* Dropdown List */}
               {dropdownOpen && (
                 <>
+                  <div className="fixed inset-0 z-20 bg-black bg-opacity-60" onClick={() => setDropdownOpen(false)} />
                   <div
-                    className="fixed inset-0 bg-black bg-opacity-60 z-20"
-                    onClick={() => setDropdownOpen(false)}
-                  />
-                  <div
-                    className="fixed bottom-0 left-0 w-full bg-gray700 rounded-t-[1.25rem] z-30 animate-slideUp"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="text-white text-body1-16-bold px-5 py-4 border-b border-gray500 text-center">통신사</div>
-                    <div className="py-2 text-gray200 text-body2-15-medium">
-                      {[
-                        'SKT', 'KT', 'LG U+',
-                        'SKT 알뜰폰', 'KT 알뜰폰', 'LG U+ 알뜰폰'
-                      ].map((option) => (
+                    className="fixed bottom-0 left-0 z-30 w-full animate-slideUp rounded-t-[1.25rem] bg-gray700"
+                    onClick={(e) => e.stopPropagation()}>
+                    <div className="border-b border-gray500 px-5 py-4 text-center text-body1-16-bold text-white">
+                      통신사
+                    </div>
+                    <div className="py-2 text-body2-15-medium text-gray200">
+                      {['SKT', 'KT', 'LG U+', 'SKT 알뜰폰', 'KT 알뜰폰', 'LG U+ 알뜰폰'].map((option) => (
                         <div
                           key={option}
-                          className={`px-5 py-3 cursor-pointer text-center transition-colors ${
+                          className={`cursor-pointer px-5 py-3 text-center transition-colors ${
                             telecom === option
                               ? 'text-main hover:bg-gray400'
-                              : 'text-gray200 hover:text-white hover:bg-gray500'
+                              : 'text-gray200 hover:bg-gray500 hover:text-white'
                           }`}
                           onClick={() => {
                             setTelecom(option);
-                            setTelecomSelected(true);  // 선택됨 표시
+                            setTelecomSelected(true);
                             setDropdownOpen(false);
-                          }}
-                        >
+                          }}>
                           {option}
                         </div>
                       ))}
@@ -238,37 +214,32 @@ export default function SignUpBusiness() {
                 </>
               )}
             </div>
-
-            {/* 주민번호 요약 */}
             <div className="pt-6 text-gray200">
-              <label className="block text-body1-16-bold mb-[0.62rem]">주민등록번호</label>
+              <label className="mb-[0.62rem] block text-body1-16-bold">주민등록번호</label>
               <div className="flex items-center gap-2">
                 <input
                   value={signupBusiness.ssnFront}
                   disabled
-                  className="flex-1 py-2 px-2 bg-transparent border-b border-gray200 text-gray200 text-[0.9375rem] text-center outline-none font-mono tracking-widest"
+                  className="font-mono flex-1 border-b border-gray200 bg-transparent px-2 py-2 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
                 />
                 <span className="text-gray200">-</span>
-                <div className="flex-1 flex items-center justify-center border-b border-gray200 py-2 gap-[2px]">
+                <div className="flex flex-1 items-center justify-center gap-[2px] border-b border-gray200 py-2">
                   <input
                     value={signupBusiness.ssnBack}
                     disabled
-                    className="w-4 bg-transparent text-gray200 text-[0.9375rem] text-center outline-none font-mono tracking-widest"
+                    className="font-mono w-4 bg-transparent text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
                   />
-                  <span className="text-gray200 text-[0.9375rem] font-mono tracking-widest">●●●●●●</span>
+                  <span className="font-mono text-[0.9375rem] tracking-widest text-gray200">●●●●●●</span>
                 </div>
               </div>
             </div>
-
-            {/* 이름 요약 */}
             <div className="pt-6 text-gray200">
-              <label className="block text-body1-16-bold mb-[0.62rem]">이름</label>
-              <p className="py-2 px-2 border-b border-gray200">{signupBusiness.name}</p>
+              <label className="mb-[0.62rem] block text-body1-16-bold">이름</label>
+              <p className="border-b border-gray200 px-2 py-2">{signupBusiness.name}</p>
             </div>
           </div>
         )}
 
-        {/* Step 4 Input */}
         {step === 4 && (
           <div className="transition-all duration-500">
             <label className="block pt-4 text-body1-16-bold">전화번호</label>
@@ -281,52 +252,44 @@ export default function SignUpBusiness() {
                 }
               }}
               placeholder="전화번호를 입력해 주세요"
-              className="w-full pt-4 pb-2 px-2 safari-input-fix bg-transparent border-b border-white text-white placeholder-gray400 outline-none"
+              className="w-full border-b border-white bg-transparent px-2 pb-2 pt-4 text-white placeholder-gray400 outline-none safari-input-fix"
             />
-
-            {/* 통신사 요약 */}
             <div className="pt-6 text-gray200">
-              <label className="block text-body1-16-bold mb-[0.62rem]">통신사</label>
-              <p className="py-2 px-2 border-b border-gray200">{signupBusiness.telecom}</p>
+              <label className="mb-[0.62rem] block text-body1-16-bold">통신사</label>
+              <p className="border-b border-gray200 px-2 py-2">{signupBusiness.telecom}</p>
             </div>
-
-            {/* 주민번호 요약 */}
             <div className="pt-6 text-gray200">
-              <label className="block text-body1-16-bold mb-[0.62rem]">주민등록번호</label>
+              <label className="mb-[0.62rem] block text-body1-16-bold">주민등록번호</label>
               <div className="flex items-center gap-2">
                 <input
                   value={signupBusiness.ssnFront}
                   disabled
-                  className="flex-1 py-2 px-2 bg-transparent border-b border-gray200 text-gray200 text-[0.9375rem] text-center outline-none font-mono tracking-widest"
+                  className="font-mono flex-1 border-b border-gray200 bg-transparent px-2 py-2 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
                 />
                 <span className="text-gray200">-</span>
-                <div className="flex-1 flex items-center justify-center border-b border-gray200 py-2 gap-[2px]">
+                <div className="flex flex-1 items-center justify-center gap-[2px] border-b border-gray200 py-2">
                   <input
                     value={signupBusiness.ssnBack}
                     disabled
-                    className="w-4 bg-transparent safari-input-fix text-gray200 text-[0.9375rem] text-center outline-none font-mono tracking-widest"
+                    className="font-mono w-4 bg-transparent text-center text-[0.9375rem] tracking-widest text-gray200 outline-none safari-input-fix"
                   />
-                  <span className="text-gray200 text-[0.9375rem] font-mono tracking-widest">●●●●●●</span>
+                  <span className="font-mono text-[0.9375rem] tracking-widest text-gray200">●●●●●●</span>
                 </div>
               </div>
             </div>
-
-            {/* 이름 요약 */}
             <div className="pt-6 text-gray200">
-              <label className="block text-body1-16-bold mb-[0.62rem]">이름</label>
-              <p className="py-2 px-2 border-b border-gray200">{signupBusiness.name}</p>
+              <label className="mb-[0.62rem] block text-body1-16-bold">이름</label>
+              <p className="border-b border-gray200 px-2 py-2">{signupBusiness.name}</p>
             </div>
-
             <div className="fixed bottom-5 left-0 w-full px-4">
               <button
                 onClick={handleComplete}
                 disabled={!phoneNumber || phoneNumber.length < 10}
-                className={`w-full py-4 rounded-md font-bold ${
+                className={`w-full rounded-md py-4 font-bold ${
                   phoneNumber && phoneNumber.length >= 10
                     ? 'bg-main text-BG-black hover:brightness-105'
                     : 'bg-gray400 text-gray300'
-                }`}
-              >
+                }`}>
                 다음
               </button>
             </div>

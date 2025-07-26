@@ -13,7 +13,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NoResults from '@/components/units/Search/NoResult';
 import Link from 'next/link';
 
-
 interface PostType {
   profileImageUrl: string;
   role: string;
@@ -74,11 +73,7 @@ export default function BoardPage() {
   };
 
   const handleTouchEnd = () => {
-    if (
-      touchStartY.current !== null &&
-      touchEndY.current !== null &&
-      touchEndY.current - touchStartY.current > 50
-    ) {
+    if (touchStartY.current !== null && touchEndY.current !== null && touchEndY.current - touchStartY.current > 50) {
       setIsRefreshing(true);
       setPosts([]);
       setPage(1);
@@ -99,14 +94,14 @@ export default function BoardPage() {
     (node: HTMLDivElement | null) => {
       if (loading || !hasMore) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
+      observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          setPage(prev => prev + 1);
+          setPage((prev) => prev + 1);
         }
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore]
+    [loading, hasMore],
   );
 
   const fetchPosts = useCallback(
@@ -116,16 +111,14 @@ export default function BoardPage() {
         if (selectedTags.length === 0) {
           const newPosts = await getAllPosts(accessToken, targetPage, PAGE_SIZE);
           if (newPosts.length < PAGE_SIZE) setHasMore(false);
-          setPosts(prev => [...(targetPage === 1 ? [] : prev), ...newPosts]);
+          setPosts((prev) => [...(targetPage === 1 ? [] : prev), ...newPosts]);
         } else {
           const postLists = await Promise.all(
-            selectedTags.map(tag => postHashtagSearch(tag, accessToken, targetPage, PAGE_SIZE))
+            selectedTags.map((tag) => postHashtagSearch(tag, accessToken, targetPage, PAGE_SIZE)),
           );
           const merged = postLists.flat();
           const unique = [
-            ...new Map(
-              [...(targetPage === 1 ? [] : posts), ...merged].map(post => [post.id, post])
-            ).values(),
+            ...new Map([...(targetPage === 1 ? [] : posts), ...merged].map((post) => [post.id, post])).values(),
           ];
           if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
           setPosts(unique);
@@ -135,7 +128,7 @@ export default function BoardPage() {
       }
       setLoading(false);
     },
-    [accessToken, selectedTags, posts, page, isFollowing]
+    [accessToken, selectedTags, posts, page, isFollowing],
   );
 
   useEffect(() => {
@@ -178,18 +171,13 @@ export default function BoardPage() {
 
   return (
     <main
-      className=" bg-BG-black text-white"
+      className="bg-BG-black text-white"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
+      onTouchEnd={handleTouchEnd}>
       <BoardHeader />
 
-      <BoardHashtag
-        selectedTags={selectedTags}
-        setSelectedTags={setSelectedTags}
-        onUpdatePosts={handleUpdatePosts}
-      />
+      <BoardHashtag selectedTags={selectedTags} setSelectedTags={setSelectedTags} onUpdatePosts={handleUpdatePosts} />
 
       {/* 🔽 여기서 해시태그 아래 여백 */}
       <div
@@ -207,9 +195,7 @@ export default function BoardPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="text-center text-sm text-gray300"
-          >
-          </motion.div>
+            className="text-center text-sm text-gray300"></motion.div>
         )}
       </AnimatePresence>
 
@@ -225,19 +211,16 @@ export default function BoardPage() {
         }
       })}
 
-      {!loading && posts.length === 0 && (
-         <NoResults/>
-      )}
-<div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
-  <div className="w-full max-w-[600px] px-4">
-    <Link
-      href="/board/write"
-      className="ml-auto flex h-14 w-14 items-center justify-center border border-main2 rounded-full bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90"
-    >
-      <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
-    </Link>
-  </div>
-</div>
+      {!loading && posts.length === 0 && <NoResults />}
+      <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
+        <div className="w-full max-w-[600px] px-4">
+          <Link
+            href="/board/write"
+            className="ml-auto flex h-14 w-14 items-center justify-center rounded-full  bg-main text-sub2 shadow-lg transition-transform duration-150 ease-in-out active:scale-90">
+            <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
+          </Link>
+        </div>
+      </div>
     </main>
   );
 }

@@ -34,13 +34,13 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
         </h1>
 
         <label className="mb-2 block text-body1-16-bold">주민등록번호</label>
-        <div className="mt-[0.62rem] flex items-center justify-center gap-2">
+        <div className="mx-auto mt-[0.62rem] flex max-w-[280px] items-center justify-center gap-2">
           {/* 앞 6자리 */}
           <input
             value={ssnFront}
             onChange={(e) => setSsnFront(e.target.value)}
             maxLength={6}
-            className="w-[120px] border-b border-white bg-transparent px-2 pb-2 pt-4 text-center text-[0.9375rem] tracking-[0.2em] text-white placeholder-gray400 outline-none safari-input-fix"
+            className="w-[100px] border-b border-white bg-transparent px-1 pb-2 pt-4 text-center text-[0.9375rem] tracking-[0.05em] text-white placeholder-gray400 outline-none safari-input-fix"
             placeholder="앞 6자리"
           />
 
@@ -48,14 +48,14 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
           <span className="text-white">-</span>
 
           {/* 뒷자리 입력 + ●●●●●● */}
-          <div className="flex w-[120px] items-center justify-center gap-[1px] border-b border-white py-3">
+          <div className="flex w-[100px] items-center justify-center gap-[1px] border-b border-white py-3">
             <input
               value={ssnBack}
               onChange={(e) => setSsnBack(e.target.value)}
               maxLength={1}
-              className="w-4 bg-transparent text-center text-[0.9375rem] text-white outline-none safari-input-fix"
+              className="w-3 bg-transparent text-center text-[0.9375rem] text-white outline-none safari-input-fix"
             />
-            <span className="text-[0.9375rem] tracking-[0.1em] text-white">●●●●●●</span>
+            <span className="text-[0.9375rem] tracking-[0.05em] text-white">●●●●●●</span>
           </div>
         </div>
 

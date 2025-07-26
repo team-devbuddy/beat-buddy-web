@@ -150,23 +150,24 @@ export default function BoardDetail({ postId, post }: PostProps) {
     <div className="border-b border-gray700 bg-BG-black px-[1.25rem] pb-[1.25rem]">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-[0.5rem]">
-          <div
-            className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center rounded-full bg-gray500"
-            onClick={goToUserProfile}>
-            <Image
-              src={post.profileImageUrl || '/icons/mask Group.svg'}
-              alt="profile"
-              width={37}
-              height={37}
-              className="rounded-full object-cover"
-            />
+          <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
+            <div className="h-full w-full overflow-hidden rounded-full bg-gray500" onClick={goToUserProfile}>
+              <Image
+                src={post.profileImageUrl || '/icons/mask Group.svg'}
+                alt="profile"
+                width={37}
+                height={37}
+                className="h-full w-full rounded-full object-cover safari-icon-fix"
+                style={{ aspectRatio: '1/1' }}
+              />
+            </div>
             {post.role === 'BUSINESS' && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"
                 width={9}
                 height={9}
-                className="absolute -right-[1px] -top-[-1px]"
+                className="absolute -right-[-0.5px] -top-[-1px] z-10 safari-icon-fix"
               />
             )}
           </div>

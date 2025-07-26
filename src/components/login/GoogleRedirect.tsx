@@ -49,8 +49,8 @@ const GoogleRedirect: React.FC = () => {
           // 성인 인증 O && 장르, 분위기, 지역 선택 O responseJson.adultCert &&
           else if (responseJson.genre && responseJson.mood && responseJson.region) {
             if (isBusiness) {
-              console.log('비즈니스 사용자 -> /signup/business로 이동');
-              router.push('/signup/business');
+              console.log('비즈니스 사용자 -> /onBoarding?userType=business로 이동');
+              router.push(`/onBoarding?userType=business`);
             } else {
               setIsAuth(true);
               router.push('/');

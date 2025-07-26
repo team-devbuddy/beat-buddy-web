@@ -43,8 +43,8 @@ const AppleRedirect: React.FC = () => {
           else if (responseJson.genre && responseJson.mood && responseJson.region) {
             setIsAuth(true);
             if (isBusiness) {
-              console.log('비즈니스 사용자 -> /signup/business로 이동');
-              router.push('/signup/business');
+              console.log('비즈니스 사용자 -> /onBoarding?userType=business로 이동');
+              router.push(`/onBoarding?userType=business`);
             } else {
               setIsAuth(true);
               router.push('/');
