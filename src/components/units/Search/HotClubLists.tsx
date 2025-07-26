@@ -10,7 +10,7 @@ export default function HotClubsList() {
   const [hotData, setHotData] = useState<{ rankKeyword: string; score: number }[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const accessToken = useRecoilValue(accessTokenState);
   const router = useRouter();
 
@@ -40,37 +40,29 @@ export default function HotClubsList() {
 
   // 주기적으로 강조할 항목 업데이트
   useEffect(() => {
-    const interval = setInterval(() => {
-      setHighlightedIndex((prev) => (prev + 1) % 10);
-    }, 2000); // 2초마다 업데이트
+    let interval: NodeJS.Timeout;
 
-    return () => clearInterval(interval);
+    // 2초 후부터 애니메이션 시작 (더 긴 지연)
+    const startDelay = setTimeout(() => {
+      let currentIndex = 0;
+      setHighlightedIndex(currentIndex);
+
+      interval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % 10;
+        setHighlightedIndex(currentIndex);
+      }, 2000);
+    }, 2000); // 2초 후 시작
+
+    return () => {
+      clearTimeout(startDelay);
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, []);
 
   const handleKeywordClick = (keyword: string) => {
     router.push(`/search/results?q=${encodeURIComponent(keyword)}`);
-  };
-
-  const getItemStyle = (index: number) => {
-    return index === highlightedIndex
-      ? {
-          color: '#FFF',
-          fontFamily: 'Pretendard',
-          fontSize: '1rem',
-          fontStyle: 'normal' as const,
-          fontWeight: 700,
-          lineHeight: '1.2rem', // 고정값으로 변경하여 높이 변화 방지
-          letterSpacing: '-0.02rem',
-        }
-      : {
-          color: '', // 기본 색상은 CSS 클래스에서 처리
-          fontFamily: 'Pretendard',
-          fontSize: '0.8125rem',
-          fontStyle: 'normal' as const,
-          fontWeight: 400,
-          lineHeight: '1.2rem', // 기본 상태에서도 동일한 line-height 적용
-          letterSpacing: 'normal',
-        };
   };
 
   if (loading) {
@@ -100,16 +92,20 @@ export default function HotClubsList() {
               onClick={() => handleKeywordClick(club.rankKeyword)}
               whileTap={{ scale: 0.95 }}>
               <span className="mr-[0.25rem] w-[1.125rem] text-main">{index + 1}</span>
-              <motion.span
-                className="mt-[0.12rem] text-[0.8125rem]"
-                animate={getItemStyle(index)}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}>
+              <span
+                className={`mt-[0.12rem] transition-all duration-300 ease-in-out ${
+                  index === highlightedIndex ? 'text-white' : ''
+                }`}
+                style={{
+                  fontSize: index === highlightedIndex ? '1rem' : '0.8125rem',
+                  fontWeight: index === highlightedIndex ? 700 : 400,
+                }}>
                 {club.rankKeyword}
-              </motion.span>
+              </span>
             </motion.li>
           ))}
         </ul>
-        <ul className="flex w-[10rem]  list-none flex-col gap-y-[0.5rem]">
+        <ul className="flex w-[10rem] list-none flex-col gap-y-[0.5rem]">
           {hotData.slice(5, 10).map((club, index) => (
             <motion.li
               key={index + 5}
@@ -117,12 +113,16 @@ export default function HotClubsList() {
               onClick={() => handleKeywordClick(club.rankKeyword)}
               whileTap={{ scale: 0.95 }}>
               <span className="mr-[0.25rem] w-[1.125rem] text-main">{index + 6}</span>
-              <motion.span
-                className="mt-[0.12rem] text-[0.8125rem]"
-                animate={getItemStyle(index + 5)}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}>
+              <span
+                className={`mt-[0.12rem] transition-all duration-300 ease-in-out ${
+                  index + 5 === highlightedIndex ? 'text-white' : ''
+                }`}
+                style={{
+                  fontSize: index + 5 === highlightedIndex ? '1rem' : '0.8125rem',
+                  fontWeight: index + 5 === highlightedIndex ? 700 : 400,
+                }}>
                 {club.rankKeyword}
-              </motion.span>
+              </span>
             </motion.li>
           ))}
         </ul>

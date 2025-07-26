@@ -13,7 +13,6 @@ export default function Mypage() {
         <div className="pt-10">
           <Footer />
         </div>
-        <NavigateFooter/>
 
       </div>
     </>
