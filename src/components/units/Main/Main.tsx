@@ -181,9 +181,11 @@ export default function Main() {
               centeredSlides={true}
               slidesPerView={1.2}
               breakpoints={{
-                320: { slidesPerView: 1.11 },
+                320: { slidesPerView: 1.01 },
+                360: { slidesPerView: 1.11 },
                 375: { slidesPerView: 1.11 },
-                480: { slidesPerView: 1.11 },
+                440: { slidesPerView: 1.15 },
+                480: { slidesPerView: 1.2 },
                 600: { slidesPerView: 1.68 },
               }}
               spaceBetween={10}

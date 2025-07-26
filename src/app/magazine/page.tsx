@@ -36,7 +36,7 @@ export default function MagazineListPage() {
     <div className="flex min-h-screen flex-col bg-BG-black text-white">
       <div className="flex items-center">
         <HeaderBack url="/" />
-        <p className="ml-[-0.2rem] text-body1-16-bold text-white">전체보기</p>
+        <p className="ml-[-0.2rem] text-[1.125rem] font-bold text-white">전체보기</p>
       </div>
       <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.44rem]">
         {loading ? (
@@ -44,7 +44,7 @@ export default function MagazineListPage() {
         ) : magazines.length === 0 ? (
           <NoResults />
         ) : (
-          <div className="grid grid-cols-1 gap-[1.5rem] md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-[0.88rem] md:grid-cols-2">
             {magazines.map((magazine, index) => (
               <MagazineCard
                 key={magazine.magazineId}

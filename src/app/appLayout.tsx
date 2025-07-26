@@ -55,12 +55,19 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   if (!isHydrated) {
     return null;
   }
-  const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE === 'false';
+  const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE === 'true'; // 'false'가 아니라 'true'로 수정
+
+  // 디버깅을 위한 로그
+  console.log('🔍 Footer Debug Info:');
+  console.log('pathname:', pathname);
+  console.log('isAuth:', isAuth);
+  console.log('isMaintenance:', isMaintenance);
+  console.log('NEXT_PUBLIC_MAINTENANCE:', process.env.NEXT_PUBLIC_MAINTENANCE);
 
   // 푸터를 숨겨야 하는 경우:
   const shouldHideFooter =
     pathname.includes('onBoarding') ||
-    !isAuth ||
+    // !isAuth || // 로그인하지 않은 상태에서도 하단 네비바 표시
     pathname.includes('detail') ||
     pathname.includes('write') ||
     pathname.includes('news') ||
@@ -68,7 +75,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     pathname.includes('bbp-detail') ||
     pathname.includes('free') ||
     pathname.includes('piece') ||
-    pathname.includes('search') ||
+    pathname.includes('search/results') || // search 대신 search/results로 더 구체적으로 변경
     pathname.includes('profile') ||
     pathname.includes('bbp-list') ||
     pathname.includes('alert') ||
@@ -79,6 +86,8 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     pathname.includes('event/') ||
     pathname.includes('login') ||
     pathname.includes('withdrawal');
+
+  console.log('shouldHideFooter:', shouldHideFooter);
 
   return (
     <div className="flex h-screen w-full items-center justify-center">

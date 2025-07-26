@@ -15,7 +15,7 @@ export default function MagazineCard({
   magazineId,
   thumbImageUrl,
   title,
-    content,
+  content,
   orderInHome,
   totalCount,
   isLiked,
@@ -36,15 +36,14 @@ export default function MagazineCard({
 
       setLiked(!liked);
     } catch (err: any) {
-        console.error('Error liking magazine:', err);
+      console.error('Error liking magazine:', err);
     }
   };
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-[0.63rem] shadow-md mx-auto cursor-pointer"
-      onClick={() => router.push(`/magazine/${magazineId}`)}
-    >
+      className="relative mx-auto w-full cursor-pointer overflow-hidden rounded-[0.63rem] shadow-md"
+      onClick={() => router.push(`/magazine/${magazineId}`)}>
       {/* 배경 이미지 */}
       <Image
         src={thumbImageUrl}
@@ -58,9 +57,9 @@ export default function MagazineCard({
       />
 
       {/* 상단 그라데이션 오버레이 */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-0" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-      {/* 하트 아이콘 */}
+      {/* 하트 아이콘 
       <div className="absolute right-[1.64rem] top-[1.75rem] z-10">
         <Image
           src={liked ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
@@ -70,7 +69,7 @@ export default function MagazineCard({
           className="cursor-pointer"
           onClick={handleHeartClick}
         />
-      </div>
+      </div>*/}
 
       {/* 콘텐츠 */}
       <div className="absolute bottom-0 left-0 right-0 z-10 px-[1.5rem] pb-[1.75rem] text-white">
@@ -84,12 +83,10 @@ export default function MagazineCard({
           </span>
         )}
 
-        <h2 className="text-[1.5rem] font-semibold leading-snug drop-shadow-md">
-          {title}
-        </h2>
+        <h2 className="text-[1.5rem] font-semibold leading-snug drop-shadow-md">{title}</h2>
         <div className="my-[0.75rem] h-px w-full bg-gray200" />
 
-        <p className="text-xs text-gray200 font-light drop-shadow-md">{content}</p>
+        <p className="text-xs font-light text-gray200 drop-shadow-md">{content}</p>
       </div>
     </div>
   );

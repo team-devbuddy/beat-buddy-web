@@ -27,13 +27,13 @@ export default function Magazine({
 
   return (
     <Link href={`/magazine/${magazineId}`}>
-      {/* 화면 크기에 맞는 반응형 정사각형 */}
-      <div className="relative h-[min(22rem,_calc(100vw_-_1.25rem))] max-h-[95vw] w-[min(22rem,_calc(100vw_-_1.25rem))] max-w-[95vw] cursor-pointer overflow-hidden rounded-xl shadow-lg">
+      {/* 양쪽 1.25rem 패딩을 고려한 너비 */}
+      <div className="relative  max-h-[21rem] h-[calc(100vw_-_2.5rem)] w-[calc(100vw_-_2.5rem)] max-w-none cursor-pointer overflow-hidden rounded-xl shadow-lg md:max-h-[21rem] md:max-w-[21rem]">
         <Image
           src={thumbImageUrl || '/images/DefaultImage.png'}
           alt={title}
           fill
-          sizes="(max-width: 768px) 95vw, (max-width: 1200px) 22rem, 22rem"
+          sizes="(max-width: 768px) calc(100vw - 2.5rem), (max-width: 1200px) 22rem, 22rem"
           className="object-cover"
           onError={(e) => {
             e.currentTarget.src = '/images/DefaultImage.png';
