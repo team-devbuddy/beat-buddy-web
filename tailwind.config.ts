@@ -13,7 +13,6 @@ const config: Config = {
       queensides: ['Queensides'],
       suit: ['SUIT', 'sans-serif'],
       paperlogy: ['Paperlogy-4Regular', 'sans-serif'],
-      
     },
     extend: {
       scrollbarHide: {
@@ -264,6 +263,8 @@ const config: Config = {
           'border-radius': '0',
           '-webkit-border-radius': '0',
           'background-clip': 'padding-box',
+          'transform-origin': 'center',
+          zoom: '1',
         },
       });
     },

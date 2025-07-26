@@ -142,7 +142,7 @@ export default function SignUpBusiness() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="이름을 입력해 주세요"
-              className="w-full pt-4 pb-2 px-2 bg-transparent border-b border-white text-white placeholder-gray400 outline-none"
+              className="w-full pt-4 pb-2 px-2 safari-input-fix bg-transparent border-b border-white text-white placeholder-gray400 outline-none"
             />
             {name.length > 0 && !/^[가-힣]{2,5}$/.test(name) && (
               <p className="mt-2 text-main text-[0.875rem]">실명을 입력해 주세요</p>
@@ -160,7 +160,7 @@ export default function SignUpBusiness() {
                 onChange={(e) => setSsnFront(e.target.value)}
                 maxLength={6}
                 placeholder="앞 6자리"
-                className="flex-1 pt-2 pb-2 bg-transparent border-b border-white text-white text-[0.9375rem] text-center placeholder-gray400 outline-none font-mono tracking-widest"
+                className="flex-1 pt-2 pb-2 bg-transparent border-b border-white text-white text-[0.9375rem] text-center placeholder-gray400 outline-none font-mono tracking-widest safari-input-fix"
               />
               <span className="text-white">-</span>
               <div className="flex-1 flex items-center justify-center border-b border-white py-2 gap-[2px]">
@@ -168,7 +168,7 @@ export default function SignUpBusiness() {
                   value={ssnBack}
                   onChange={(e) => setSsnBack(e.target.value)}
                   maxLength={1}
-                  className="w-4 bg-transparent text-white text-[0.9375rem] text-center outline-none font-mono tracking-widest"
+                  className="w-4 bg-transparent text-white text-[0.9375rem] text-center outline-none font-mono tracking-widest safari-input-fix"
                 />
                 <span className="text-white text-[0.9375rem] font-mono tracking-widest">●●●●●●</span>
               </div>
@@ -281,7 +281,7 @@ export default function SignUpBusiness() {
                 }
               }}
               placeholder="전화번호를 입력해 주세요"
-              className="w-full pt-4 pb-2 px-2 bg-transparent border-b border-white text-white placeholder-gray400 outline-none"
+              className="w-full pt-4 pb-2 px-2 safari-input-fix bg-transparent border-b border-white text-white placeholder-gray400 outline-none"
             />
 
             {/* 통신사 요약 */}
@@ -304,7 +304,7 @@ export default function SignUpBusiness() {
                   <input
                     value={signupBusiness.ssnBack}
                     disabled
-                    className="w-4 bg-transparent text-gray200 text-[0.9375rem] text-center outline-none font-mono tracking-widest"
+                    className="w-4 bg-transparent safari-input-fix text-gray200 text-[0.9375rem] text-center outline-none font-mono tracking-widest"
                   />
                   <span className="text-gray200 text-[0.9375rem] font-mono tracking-widest">●●●●●●</span>
                 </div>
