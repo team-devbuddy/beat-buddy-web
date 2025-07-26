@@ -109,7 +109,7 @@ export default function SignUpBusinessNickname() {
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="ex. 클럽 사운드, UPA"
-                className="w-full border-b border-white bg-transparent px-3 py-3 text-white placeholder-gray400 outline-none"
+                className="w-full border-b border-white bg-transparent px-3 py-3 text-white placeholder-gray400 safari-input-fix outline-none"
               />
             </>
           )}
@@ -128,7 +128,7 @@ export default function SignUpBusinessNickname() {
                     setNicknameChecked(false);
                   }}
                   placeholder="닉네임을 입력해 주세요."
-                  className="w-full border-b border-white bg-transparent px-3 py-3 pr-10 text-white placeholder-gray400 outline-none"
+                  className="w-full border-b border-white bg-transparent px-3 py-3 pr-10 text-white placeholder-gray400 safari-input-fix outline-none"
                 />
                 {nicknameChecked && isAvailable ? (
                   <Image

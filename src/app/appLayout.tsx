@@ -95,7 +95,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
       <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
         <div
           className={`flex h-full flex-col overflow-y-auto ${
-            shouldHideFooter ? '' : !pathname.includes('venue') ? 'pb-[64px]' : ''
+            shouldHideFooter ? '' : !pathname.includes('venue') && !pathname.includes('search') ? 'pb-[64px]' : ''
           }`}>
           {children}
         </div>

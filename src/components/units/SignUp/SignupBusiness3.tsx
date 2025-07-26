@@ -68,14 +68,14 @@ export default function SignUpBusiness3({ onNext, onBack }: Props) {
             <input
               value={signupBusiness.ssnFront}
               disabled
-              className="font-mono flex-1 border-b border-gray200 bg-transparent py-3 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
+              className="font-mono flex-1 border-b border-gray200 bg-transparent py-3 text-center text-[0.9375rem] safari-input-fix tracking-widest text-gray200 outline-none"
             />
             <span className="text-gray200">-</span>
             <div className="flex flex-1 items-center justify-center gap-[2px] border-b border-gray200 py-3">
               <input
                 value={signupBusiness.ssnBack}
                 disabled
-                className="font-mono w-4 bg-transparent text-center text-[0.9375rem] tracking-widest text-gray200 outline-none"
+                className="font-mono w-4 bg-transparent text-center text-[0.9375rem] safari-input-fix tracking-widest text-gray200 outline-none"
               />
               <span className="font-mono text-[0.9375rem] tracking-widest text-gray200">••••••</span>
             </div>

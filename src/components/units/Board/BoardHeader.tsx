@@ -12,8 +12,8 @@ const BoardHeader = ({ profileImageUrl }: BoardHeaderProps) => {
   const defaultProfileImage = '/icons/mask Group.svg';
 
   return (
-    <div className="flex items-center justify-between px-[1.25rem] py-[1rem] bg-BG-black">
-      <h1 className="text-white text-[1.125rem] font-bold">게시판</h1>
+    <div className="flex items-center justify-between px-[1.25rem] pt-[0.62rem] pb-[0.88rem] bg-BG-black">
+      <h1 className="text-white text-[1.25rem] font-bold">게시판</h1>
       <div className="flex items-center gap-[0.88rem]">
         <Image
           src="/icons/search-01-gray.svg"

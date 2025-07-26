@@ -78,7 +78,7 @@ export default function VerificationForm() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="인증번호를 입력해 주세요."
-            className="w-full py-3 px-3 bg-transparent border-b border-white text-white placeholder-gray400 outline-none"
+            className="w-full py-3 px-3 bg-transparent border-b border-white text-white placeholder-gray400 safari-input-fix outline-none"
           />
           <button
             onClick={handleVerify}

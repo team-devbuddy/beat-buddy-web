@@ -45,11 +45,11 @@ const BoardHashtag = ({ selectedTags, setSelectedTags, onUpdatePosts }: BoardHas
   };
 
   return (
-    <div className="px-[1.25rem] pb-[1rem]">
+    <div className="px-[1.25rem] pb-[0.62rem]">
       <div className="flex items-start gap-[0.5rem]">
         {/* # 버튼 */}
         <button
-          className={`flex h-[1.8125rem] w-[1.8125rem] items-center justify-center rounded-full ${
+          className={`flex h-[1.8125rem] w-[1.8125rem] items-center justify-center rounded-[0.5rem] ${
             selectedTags.length > 0 ? 'bg-sub2' : 'bg-gray700'
           }`}
           onClick={toggleOpen}>
