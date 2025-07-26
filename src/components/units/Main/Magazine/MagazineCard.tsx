@@ -50,7 +50,7 @@ export default function MagazineCard({
         alt={title}
         width={335}
         height={343}
-        className="h-[21.4375rem] w-full object-cover"
+        className="min-h-[21.4375rem] w-full object-cover"
         onError={(e) => {
           e.currentTarget.src = '/images/DefaultImage.png';
         }}

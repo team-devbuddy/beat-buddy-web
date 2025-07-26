@@ -10,6 +10,8 @@ import BBPListSkeleton from '@/components/common/skeleton/BBPListSkeleton';
 import NoResults from '@/components/units/Search/NoResult';
 import MainFooter from '@/components/units/Main/MainFooter';
 import HeaderBack from '@/components/common/HeaderBack';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function MagazineListPage() {
   const accessToken = useRecoilValue(accessTokenState);
@@ -34,9 +36,11 @@ export default function MagazineListPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-BG-black text-white">
-      <div className="flex items-center">
-        <HeaderBack url="/" />
-        <p className="ml-[-0.2rem] text-[1.125rem] font-bold text-white">전체보기</p>
+      <div className="flex items-center px-[0.63rem] py-[0.53rem]">
+        <Link href="/">
+          <Image src="/icons/line-md_chevron-left.svg" alt="back" width={35} height={35} />
+        </Link>
+        <p className="ml-[0.12rem] text-[1.125rem] font-bold text-white">전체보기</p>
       </div>
       <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.44rem]">
         {loading ? (

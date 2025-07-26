@@ -143,7 +143,7 @@ export default function EventCommentItem({
         <div className="relative">
           <input
             type="text"
-            className="w-full rounded-md bg-gray700 px-4 py-3 pr-10 text-[0.75rem] text-gray100 placeholder-gray300 outline-none"
+            className="w-full rounded-md bg-gray700 px-4 py-3 pr-10 text-[0.75rem] text-gray100 placeholder-gray300 outline-none safari-input-fix"
             placeholder="대댓글을 입력해주세요"
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}

@@ -51,7 +51,7 @@ export default function SignUpBusiness1({ onNext }: Props) {
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           placeholder="이름을 입력해 주세요"
-          className="w-full border-b border-white bg-transparent px-2 pb-2 pt-4 text-white placeholder-gray400 outline-none"
+          className="w-full border-b border-white bg-transparent px-2 pb-2 pt-4 text-white placeholder-gray400 outline-none safari-input-fix"
         />
 
         {/* 유효하지 않은 경우 메시지 */}

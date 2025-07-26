@@ -187,7 +187,7 @@ export default function EventRegisterStepForm() {
                   placeholder="은행"
                   value={bankName}
                   onChange={(e) => setBankName(e.target.value)}
-                  className="w-[80px] bg-transparent text-center text-sm text-white placeholder-gray500 focus:outline-none"
+                  className="w-[80px] bg-transparent text-center text-sm text-white placeholder-gray500 safari-input-fix focus:outline-none"
                 />
               </div>
 
@@ -197,7 +197,7 @@ export default function EventRegisterStepForm() {
                   placeholder="계좌번호 입력"
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value)}
-                  className="w-full bg-transparent text-sm text-white placeholder-gray500 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-white placeholder-gray500 safari-input-fix focus:outline-none"
                 />
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function EventRegisterStepForm() {
                   placeholder="0"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full bg-transparent text-right text-sm text-white placeholder-gray500 focus:outline-none"
+                  className="w-full bg-transparent text-right text-sm text-white placeholder-gray500 safari-input-fix focus:outline-none"
                 />
                 <span className="text-pink500 whitespace-nowrap text-sm font-semibold">원</span>
               </div>

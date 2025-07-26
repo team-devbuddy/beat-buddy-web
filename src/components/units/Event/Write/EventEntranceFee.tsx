@@ -50,7 +50,7 @@ export default function EventEntranceFee() {
         <input
           type="text"
           placeholder="ex. 10,000"
-          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 pr-10 text-sm text-gray100 placeholder-gray300 focus:outline-none"
+          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 pr-10 text-sm text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
           value={eventForm.entranceFee ? Number(eventForm.entranceFee).toLocaleString() : ''}
           onChange={handleFeeChange}
           disabled={eventForm.isFreeEntrance}
@@ -69,7 +69,7 @@ export default function EventEntranceFee() {
         <input
           type="text"
           placeholder=""
-          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-sm text-gray100 placeholder-gray300 focus:outline-none"
+          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-sm text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
           value={eventForm.entranceNotice}
           onFocus={() => setNoteFocused(true)}
           onBlur={() => setNoteFocused(false)}

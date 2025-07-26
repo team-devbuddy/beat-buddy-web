@@ -55,7 +55,7 @@ export default function SNSSelector({ snsType, snsId, onTypeChange, onIdChange }
         <input
           type="text"
           placeholder="인스타그램 아이디를 입력해주세요."
-          className="mt-3 focus:outline-none w-full border-b border-gray300 bg-BG-black px-4 py-3 text-gray100 placeholder-gray300"
+          className="mt-3 w-full border-b border-gray300 bg-BG-black px-4 py-3 text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
           value={snsId}
           onChange={(e) => onIdChange(e.target.value)}
         />
@@ -65,7 +65,7 @@ export default function SNSSelector({ snsType, snsId, onTypeChange, onIdChange }
         <input
           type="text"
           placeholder="페이스북 아이디를 입력해주세요."
-          className="mt-3 focus:outline-none w-full border-b border-gray300 bg-BG-black px-4 py-3 text-gray100 placeholder-gray300"
+          className="mt-3 w-full border-b border-gray300 bg-BG-black px-4 py-3 text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
           value={snsId}
           onChange={(e) => onIdChange(e.target.value)}
         />

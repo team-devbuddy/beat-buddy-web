@@ -62,7 +62,7 @@ const SearchHeader = () => {
       <div className="relative w-full">
         {/* 🔙 Back icon */}
         {hasQuery && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
+          <div className="absolute left-0 top-1/2 z-10 -translate-y-1/2">
             <Image
               src="/icons/line-md_chevron-left.svg"
               alt="뒤로가기"
@@ -75,7 +75,7 @@ const SearchHeader = () => {
         )}
 
         {/* 🔍 Search icon */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
+        <div className="absolute right-0 top-1/2 z-10 -translate-y-1/2">
           <Image
             src="/icons/search-01.svg"
             alt="검색"
@@ -89,7 +89,7 @@ const SearchHeader = () => {
         {/* 🔤 Input */}
         <input
           ref={inputRef}
-          className="w-full border-b-2 border-main bg-transparent py-2 pl-7 pr-12 text-white placeholder:text-gray300 focus:outline-none"
+          className="w-full border-b-2 border-main bg-transparent py-2 pl-7 pr-12 text-white safari-input-fix placeholder:text-gray300 focus:outline-none"
           placeholder={isLoading ? '' : '지금 가장 인기있는 클럽은?'}
           value={searchQuery}
           onChange={handleInputChange}

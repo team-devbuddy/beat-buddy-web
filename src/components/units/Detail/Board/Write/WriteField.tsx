@@ -15,7 +15,8 @@ const WriteField = ({ value, onChange, placeholder, className, isTextArea }: Wri
     onChange(e.target.value);
   };
 
-  const baseStyles = "w-full rounded-xs border border-gray300 bg-gray700 px-4 py-3 text-gray100 placeholder-gray300 focus:border-main focus:outline-none";
+  const baseStyles =
+    'w-full rounded-xs border border-gray300 bg-gray700 px-4 py-3 text-gray100 placeholder-gray300 focus:border-main focus:outline-none';
 
   if (isTextArea) {
     return (
@@ -34,7 +35,7 @@ const WriteField = ({ value, onChange, placeholder, className, isTextArea }: Wri
       value={value}
       onChange={handleChange}
       placeholder={placeholder}
-      className={`${baseStyles} ${className}`}
+      className={`safari-input-fix ${baseStyles} ${className}`}
     />
   );
 };

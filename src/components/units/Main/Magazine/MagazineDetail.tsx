@@ -2,11 +2,12 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { getMagazineDetail } from '@/lib/actions/magazine-controller/getMagazineDetail';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-
+import Prev from '@/components/common/Prev';
+import Link from 'next/link';
 interface MagazineDetailData {
   magazineId: number;
   title: string;
@@ -17,6 +18,8 @@ interface MagazineDetailData {
   likes: number;
   orderInHome: number;
   totalCount: number;
+  thumbImage: string;
+  picked: boolean;
 }
 
 export default function MagazineDetail() {
@@ -25,7 +28,7 @@ export default function MagazineDetail() {
   const [magazine, setMagazine] = useState<MagazineDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const accessToken = useRecoilValue(accessTokenState);
-
+  const router = useRouter();
   useEffect(() => {
     if (!magazineId || isNaN(magazineId)) return;
 
@@ -47,6 +50,8 @@ export default function MagazineDetail() {
           likes: data.likes,
           orderInHome: data.orderInHome,
           totalCount: dataLength,
+          thumbImage: data.thumbImage,
+          picked: data.picked,
         });
       } catch (err) {
         console.error('Fetch error:', err);
@@ -62,28 +67,57 @@ export default function MagazineDetail() {
   if (!magazine) return <div className="mt-10 text-center">데이터를 불러올 수 없습니다.</div>;
 
   return (
-    <div className="mx-auto max-w-3xl p-6">
-      <h1 className="mb-4 text-3xl font-bold text-white">{magazine.title}</h1>
+    <div className="mx-auto">
+      {/* 이미지와 텍스트 오버레이 */}
+      {magazine.thumbImage && (
+        <div className="relative w-full">
+          <Image
+            src={magazine.thumbImage}
+            alt={magazine.title}
+            width={800}
+            height={800}
+            className="h-auto min-h-[31.25rem] w-full rounded-md object-cover"
+          />
 
-      {/* 이미지 */}
-      {magazine.imageUrls?.[0] && (
-        <Image
-          src={magazine.imageUrls[0]}
-          alt={magazine.title}
-          width={800}
-          height={500}
-          className="mb-6 h-auto w-full rounded-md object-cover"
-        />
+          {/* 그라디언트 오버레이 */}
+          <div className="absolute inset-0 rounded-md bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+          {/* Prev 컴포넌트 - 맨 위 */}
+          <div className="z-100 absolute left-0 top-0 px-[0.63rem] py-[0.53rem]">
+            <button onClick={() => router.back()} title="뒤로가기">
+              <Image src="/icons/line-md_chevron-left.svg" alt="back" width={35} height={35} />
+            </button>
+          </div>
+
+          {/* 하단 콘텐츠 */}
+          <div className="absolute bottom-0 left-0 right-0 z-10 p-[1.5rem] text-white">
+            {magazine.picked ? (
+              <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-white">
+                BeatBuddy Pick!
+              </span>
+            ) : (
+              <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-white">
+                Magazine
+              </span>
+            )}
+
+            <h2 className="line-height-[140%] py-2 text-[1.375rem] font-bold tracking-[-0.0275rem] drop-shadow-md">
+              {magazine.title.split('\n').map((line, index, array) => (
+                <span key={index}>
+                  {line}
+                  {index < array.length - 1 && <br />}
+                </span>
+              ))}
+            </h2>
+          </div>
+        </div>
       )}
-
-      {/* 콘텐츠 */}
-      <p className="mb-6 whitespace-pre-line text-lg text-white">{magazine.content}</p>
-
-      {/* 통계 정보 */}
-      <div className="flex items-center gap-6 text-sm text-white">
-        <span>조회수: {magazine.views}</span>
-        <span>좋아요: {magazine.likes}</span>
-        <span>작성자 ID: {magazine.memberId}</span>
+      <div className="p-[1.25rem]">
+        <p
+          className="line-height-[150%] text-[0.875rem] tracking-[-0.0175rem] text-[#C3C5C9] drop-shadow-md"
+          style={{ color: 'rgba(255, 255, 255, 0.60)' }}>
+          {magazine.content}
+        </p>
       </div>
     </div>
   );

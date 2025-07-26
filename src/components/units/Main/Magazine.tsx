@@ -28,7 +28,7 @@ export default function Magazine({
   return (
     <Link href={`/magazine/${magazineId}`}>
       {/* 양쪽 1.25rem 패딩을 고려한 너비 */}
-      <div className="relative  max-h-[21rem] h-[calc(100vw_-_2.5rem)] w-[calc(100vw_-_2.5rem)] max-w-none cursor-pointer overflow-hidden rounded-xl shadow-lg md:max-h-[21rem] md:max-w-[21rem]">
+      <div className="relative h-[calc(100vw_-_2.5rem)] max-h-[21rem] w-[calc(100vw_-_2.5rem)] max-w-none cursor-pointer overflow-hidden rounded-xl shadow-lg md:max-h-[21rem] md:max-w-[21rem]">
         <Image
           src={thumbImageUrl || '/images/DefaultImage.png'}
           alt={title}

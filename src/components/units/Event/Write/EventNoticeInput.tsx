@@ -27,7 +27,7 @@ export default function EventNoticeInput() {
 
         <input
           type="text"
-          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-[0.75rem] text-gray100 placeholder-gray300 focus:outline-none"
+          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-[0.75rem] text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
           placeholder=""
           value={eventForm.notice}
           onFocus={() => setFocused(true)}
