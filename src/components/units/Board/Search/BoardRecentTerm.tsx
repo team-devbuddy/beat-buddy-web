@@ -30,9 +30,9 @@ const BoardRecentTerm = ({ isEvent }: { isEvent?: boolean }) => {
   if (recentSearches.length === 0) return null;
 
   return (
-    <div className="flex w-full flex-col bg-BG-black px-[1.25rem] pt-[0.25rem]">
+    <div className="flex w-full flex-col bg-BG-black px-[1.25rem] py-[0.62rem]">
       {/* 제목 */}
-      <h3 className="mb-[0.5rem] text-body3-12-bold text-gray300">최근 검색어</h3>
+      <h3 className="mb-[0.62rem] text-[0.75rem] text-gray300">최근 검색어</h3>
 
       {/* 리스트 */}
       <div className="flex items-center gap-[0.38rem] overflow-x-auto whitespace-nowrap scrollbar-hide">
@@ -46,12 +46,12 @@ const BoardRecentTerm = ({ isEvent }: { isEvent?: boolean }) => {
               whileTap="pressed"
               variants={variants}
               transition={{ duration: 0.3 }}
-              className="flex flex-shrink-0 flex-row items-center gap-x-[0.13rem] rounded-[0.5rem] bg-gray700 px-[0.62rem] py-[0.25rem] text-body2-15-medium text-main">
-              <span className="cursor-pointer text-[0.875rem]" onClick={() => handleTermClick(search)}>
+              className="flex flex-shrink-0 flex-row items-center gap-x-[0.13rem] rounded-[0.5rem] bg-gray700 px-[0.62rem] py-[0.25rem] text-main">
+              <span className="cursor-pointer text-[0.8125rem]" onClick={() => handleTermClick(search)}>
                 {search}
               </span>
               <div className="cursor-pointer" onClick={() => handleRemoveSearchTerm(search)}>
-                <Image src="/icons/Close.svg" alt="remove" width={16} height={16} className="mb-[0.14rem]" />
+                <Image src="/icons/Close.svg" alt="remove" width={16} height={16} />
               </div>
             </motion.div>
           ))}

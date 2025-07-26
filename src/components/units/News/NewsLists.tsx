@@ -48,9 +48,7 @@ export default function EventLists({
     if (sortBy === '인기순') {
       return [...filtered].sort((a, b) => (likeNums[b.id] || 0) - (likeNums[a.id] || 0));
     }
-    return [...filtered].sort(
-      (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    );
+    return [...filtered].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
   }, [filtered, sortBy, likeNums]);
 
   // 하트 클릭 처리
@@ -71,30 +69,27 @@ export default function EventLists({
                 y: -5,
                 boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
               }}
-              className="relative flex flex-col rounded-md overflow-hidden">
+              className="relative flex flex-col overflow-hidden rounded-md">
               {/* 이미지 */}
               <div className="relative w-full pb-[100%]">
                 <Image
                   src={event.thumbImage || '/images/DefaultImage.png'}
                   alt={event.title}
                   fill
-                  className="object-cover rounded-md"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
+                  className="rounded-md object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
 
                 {/* 좋아요 */}
                 <motion.div
-                  className="absolute top-3 right-3 cursor-pointer z-10"
+                  className="absolute right-3 top-3 z-10 cursor-pointer"
                   onClick={(e) => handleHeartClick(e, event.id)}
                   variants={heartAnimation}
                   initial="initial"
                   animate={clickedHeart[event.id] ? 'clicked' : 'initial'}>
                   <Image
-                    src={
-                      likedEvents[event.id]
-                        ? '/icons/FilledHeart.svg'
-                        : '/icons/PinkHeart.svg'
-                    }
+                    src={likedEvents[event.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                     alt="heart"
                     width={28}
                     height={28}
@@ -102,7 +97,7 @@ export default function EventLists({
                 </motion.div>
 
                 {/* 좋아요 수 */}
-                <div className="absolute bottom-3 left-3 flex items-center space-x-1 z-10">
+                <div className="absolute bottom-3 left-3 z-10 flex items-center space-x-1">
                   <Image src="/icons/PinkHeart.svg" alt="heart" width={16} height={16} />
                   <span className="text-[0.75rem] text-gray100">
                     {String(likeNums[event.id] || 0).padStart(3, '0')}
@@ -115,8 +110,8 @@ export default function EventLists({
                 <p className="text-[0.75rem] text-gray100">
                   {event.startDate} ~ {event.endDate}
                 </p>
-                <h3 className="text-[0.875rem] font-bold mt-1 truncate">{event.title}</h3>
-                <p className="text-[0.75rem] text-gray300 mt-1 truncate">{event.location}</p>
+                <h3 className="mt-1 truncate text-[0.875rem] font-bold">{event.title}</h3>
+                <p className="mt-1 truncate text-[0.75rem] text-gray300">{event.location}</p>
               </div>
             </motion.div>
           </Link>

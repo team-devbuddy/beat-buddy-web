@@ -49,18 +49,15 @@ function Heartbeat() {
       <Link href="/myheartbeat">
         <div className="flex items-center justify-between rounded-md hover:brightness-75">
           <div className="flex flex-col">
-            <span
-              className="text-[1.125rem] text-main font-paperlogy font-semibold line-height-[150%] tracking-[-0.0225rem]">
+            <span className="font-paperlogy line-height-[150%] text-[1.125rem] font-semibold tracking-[-0.0225rem] text-main">
               My Heart Beat
             </span>
-            <div className="cursor-pointer text-[0.875rem] text-gray300">
-              관심있는 베뉴들의 정보를 확인하세요
-            </div>
+            <div className="cursor-pointer text-[0.875rem] text-gray300">관심있는 베뉴들의 정보를 확인하세요</div>
           </div>
           <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
         </div>
       </Link>
-      <div className="flex space-x-[0.75rem] overflow-x-auto hide-scrollbar mt-[0.88rem]">
+      <div className="mt-[0.88rem] flex space-x-[0.75rem] overflow-x-auto hide-scrollbar">
         {heartbeats.length === 0 ? (
           <motion.div
             className="relative h-16 w-16 cursor-pointer hover:brightness-75"
@@ -83,9 +80,9 @@ function Heartbeat() {
                 <Image
                   src={getDefaultImageIfInvalid(heartbeat.logoUrl)}
                   alt={`${heartbeat.koreanName} image`}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-full"
+                  fill
+                  sizes="4rem"
+                  className="rounded-full object-cover"
                 />
               </motion.div>
             </Link>

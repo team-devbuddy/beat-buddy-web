@@ -51,13 +51,7 @@ const ImageUploader = ({ onUpload, uploadedImages }: ImageUploaderProps) => {
           {uploadedImages.map((image, index) => (
             <div key={index} className="relative h-[9.8rem] w-[9.8rem] flex-shrink-0 rounded-xs bg-gray500">
               {/* 업로드된 이미지 */}
-              <Image
-                src={image}
-                alt={`Uploaded ${index}`}
-                layout="fill" // 이미지를 컨테이너에 맞게 채움
-                objectFit="cover" // 잘리더라도 컨테이너 비율에 맞춰 채우기
-                className="rounded-xs"
-              />
+              <Image src={image} alt={`Uploaded ${index}`} fill sizes="9.8rem" className="rounded-xs object-cover" />
               {/* 삭제 버튼 */}
               <div onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1">
                 <Image

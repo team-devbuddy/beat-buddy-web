@@ -17,6 +17,7 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
           src={eventDetail.images?.[0] || '/images/defaultImage.png'}
           alt="event"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

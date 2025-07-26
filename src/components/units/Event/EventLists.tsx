@@ -75,6 +75,7 @@ export default function EventLists({
                   src={event.thumbImage || '/images/DefaultImage.png'}
                   alt={event.title}
                   fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
                   className="rounded-[0.75rem] object-cover"
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/80 to-transparent" />

@@ -32,7 +32,8 @@ export default function Magazine({
         <Image
           src={thumbImageUrl || '/images/DefaultImage.png'}
           alt={title}
-          layout="fill"
+          fill
+          sizes="(max-width: 768px) 95vw, (max-width: 1200px) 22rem, 22rem"
           className="object-cover"
           onError={(e) => {
             e.currentTarget.src = '/images/DefaultImage.png';
