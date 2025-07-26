@@ -121,6 +121,7 @@ export interface MagazineProps {
   orderInHome: number;
   isLiked: boolean;
   currentIndex: number;
+  picked: boolean;
 }
 
 export interface UserProfile {

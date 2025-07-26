@@ -19,6 +19,7 @@ export default function MagazineCard({
   orderInHome,
   totalCount,
   isLiked,
+  picked,
 }: Props) {
   const router = useRouter();
   const [liked, setLiked] = useState(isLiked); // 좋아요 상태
@@ -73,9 +74,15 @@ export default function MagazineCard({
 
       {/* 콘텐츠 */}
       <div className="absolute bottom-0 left-0 right-0 z-10 px-[1.5rem] pb-[1.75rem] text-white">
-        <span className="mb-2 inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.56rem] py-[0.25rem] text-[0.75rem] font-medium">
-          BeatBuddy Pick!
-        </span>
+        {picked ? (
+          <span className="mb-2 inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.56rem] py-[0.25rem] text-[0.75rem] font-medium">
+            BeatBuddy Pick!
+          </span>
+        ) : (
+          <span className="mb-2 inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.56rem] py-[0.25rem] text-[0.75rem] font-medium">
+            Magazine
+          </span>
+        )}
 
         <h2 className="text-[1.5rem] font-semibold leading-snug drop-shadow-md">
           {title}

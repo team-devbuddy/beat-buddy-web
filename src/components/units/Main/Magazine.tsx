@@ -11,6 +11,7 @@ interface MagazineCardProps {
   content: string;
   totalCount: number;
   orderInHome: number;
+  picked: boolean;
 }
 
 export default function Magazine({
@@ -20,13 +21,14 @@ export default function Magazine({
   content,
   totalCount,
   orderInHome,
+  picked,
 }: MagazineCardProps) {
   const router = useRouter();
 
   return (
     <Link href={`/magazine/${magazineId}`}>
-      {/* 정사각형으로 변경: w-[20rem] h-[20rem] */}
-      <div className="relative h-[20rem] w-[20rem] cursor-pointer overflow-hidden rounded-xl shadow-lg">
+      {/* 화면 크기에 맞는 반응형 정사각형 */}
+      <div className="relative h-[min(22rem,_calc(100vw_-_1.25rem))] max-h-[95vw] w-[min(22rem,_calc(100vw_-_1.25rem))] max-w-[95vw] cursor-pointer overflow-hidden rounded-xl shadow-lg">
         <Image
           src={thumbImageUrl || '/images/DefaultImage.png'}
           alt={title}
@@ -47,20 +49,36 @@ export default function Magazine({
               e.preventDefault(); // 부모 링크 막기
               router.push('/magazine');
             }}
-            className="flex items-center justify-center rounded-full bg-black/50 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-black/70">
+            className="flex items-center justify-center rounded-[0.5rem] bg-black/70 px-[0.38rem] py-[0.19rem] text-[0.6875rem] font-medium text-gray200">
             전체보기
           </button>
         </div>
 
         {/* 하단 콘텐츠 */}
         <div className="absolute bottom-0 left-0 right-0 z-10 p-[1.5rem] text-white">
-          <span className="mb-2 inline-block rounded-md bg-[#F93A7B] px-[0.56rem] py-[0.25rem] text-[0.75rem] text-white">
-            BeatBuddy Pick!
-          </span>
+          {picked ? (
+            <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-white">
+              BeatBuddy Pick!
+            </span>
+          ) : (
+            <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-white">
+              Magazine
+            </span>
+          )}
 
-          <h2 className="text-[1.5rem] font-semibold leading-tight drop-shadow-md">{title}</h2>
-          <div className="my-[0.75rem] h-[0.03125rem] w-full bg-gray200" />
-          <p className="text-[0.75rem] font-light text-gray200 drop-shadow-md">{content}</p>
+          <h2 className="line-height-[140%] py-2 text-[1.375rem] font-bold tracking-[-0.0275rem] drop-shadow-md">
+            {title.split('\n').map((line, index, array) => (
+              <span key={index}>
+                {line}
+                {index < array.length - 1 && <br />}
+              </span>
+            ))}
+          </h2>
+          <p
+            className="line-height-[150%] text-[0.8125rem] tracking-[-0.01625rem] text-[#FFFFFF] drop-shadow-md"
+            style={{ color: 'rgba(255, 255, 255, 0.60)' }}>
+            {content}
+          </p>
         </div>
       </div>
     </Link>

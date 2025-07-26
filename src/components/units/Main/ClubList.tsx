@@ -90,8 +90,8 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
   };
 
   return (
-    <div className="flex w-full  flex-col bg-BG-black">
-      <div className="grid grid-cols-2 gap-x-[1rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3 ">
+    <div className="flex w-full flex-col bg-BG-black">
+      <div className="grid grid-cols-2 gap-x-[1rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue, index) => {
           const { firstImageUrl, filteredTags } = memoizedValues[index];
 
@@ -103,7 +103,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   //boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
                   //backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
-                className="relative flex h-full flex-col rounded-[0.5rem] ">
+                className="relative flex h-full flex-col rounded-[0.5rem]">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}
@@ -113,15 +113,14 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     className="rounded-[0.5rem]"
                   />
                   <motion.div
-      className="absolute bottom-[0.62rem] left-[0.62rem] flex items-center space-x-[0.25rem]"
-      initial="initial"
-      animate="initial"
-    >
-      <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-      <span className="text-body3-12-medium text-gray300">
-        {heartbeatNums[venue.id] !== undefined ? heartbeatNums[venue.id] : 0}
-      </span>
-    </motion.div>
+                    className="absolute bottom-[0.62rem] left-[0.62rem] flex items-center space-x-[0.25rem]"
+                    initial="initial"
+                    animate="initial">
+                    <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15} height={13} />
+                    <span className="text-[0.75rem] text-gray300">
+                      {heartbeatNums[venue.id] !== undefined ? heartbeatNums[venue.id] : 0}
+                    </span>
+                  </motion.div>
                   <div className="club-gradient absolute inset-0"></div>
                   <motion.div
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
@@ -135,25 +134,27 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     <Image
                       src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                       alt="heart icon"
-                      width={32}
-                      height={32}
+                      width={27}
+                      height={24}
                     />
                   </motion.div>
                 </div>
-                <div className="mt-[0.5rem] flex flex-grow flex-col justify-between">
+                <div className="mt-[0.75rem] flex flex-grow flex-col justify-between">
                   <div>
-                    <h3 className="text-ellipsis line-height-[1.6rem] text-body1-16-bold text-white">{venue.englishName}</h3>
-                    <div className=" mt-[0.25rem] flex  flex-wrap gap-[0.25rem]">
+                    <h3 className="line-height-[1.6rem] text-ellipsis text-[0.875rem] font-bold text-white">
+                      {venue.englishName}
+                    </h3>
+                    <div className="mt-[0.38rem] flex flex-wrap gap-[0.25rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span
                             key={index}
-                            className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-body3-12-medium text-gray300">
+                            className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
-                        <span className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-body3-12-medium text-gray300">
+                        <span className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
                           No tagList
                         </span>
                       )}

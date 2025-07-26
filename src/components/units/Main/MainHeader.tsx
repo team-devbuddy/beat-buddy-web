@@ -30,7 +30,7 @@ export default function MainHeader() {
             alt="logo"
             width={126}
             height={26}
-            className="safari-icon-fix cursor-pointer"
+            className="safari-icon-fix mt-[0.13rem] cursor-pointer"
             priority
           />
         </Link>

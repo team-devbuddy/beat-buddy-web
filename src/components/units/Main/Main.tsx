@@ -172,44 +172,59 @@ export default function Main() {
       <div className="flex-grow bg-BG-black">
         <MainHeader />
         <SearchBar />
+
+        {/* 👇 Swiper를 위한 Full-width 컨테이너 (좌우 패딩 없음) */}
         <div className="flex w-full items-center justify-center py-[0.88rem]">
           {magazine.length > 0 && (
-            <section>
-              <Swiper
-                loop={true}
-                centeredSlides={true}
-                slidesPerView={1.2}
-                spaceBetween={10}
-                speed={300}
-                touchRatio={1}
-                threshold={10}
-                className="magazine-swiper">
-                {magazine.map((item) => (
-                  <SwiperSlide key={item.magazineId}>
-                    <Magazine
-                      magazineId={item.magazineId}
-                      thumbImageUrl={item.thumbImageUrl}
-                      title={item.title}
-                      content={item.content}
-                      totalCount={magazine.length}
-                      orderInHome={item.orderInHome}
-                    />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </section>
+            <Swiper
+              loop={true}
+              centeredSlides={true}
+              slidesPerView={1.2}
+              breakpoints={{
+                320: { slidesPerView: 1.11 },
+                375: { slidesPerView: 1.11 },
+                480: { slidesPerView: 1.11 },
+                600: { slidesPerView: 1.68 },
+              }}
+              spaceBetween={10}
+              watchOverflow={true}
+              observer={true}
+              observeParents={true}
+              allowTouchMove={true}
+              speed={300}
+              touchRatio={1}
+              threshold={10}
+              className="magazine-swiper w-full max-w-[100vw]">
+              {magazine.map((item) => (
+                <SwiperSlide key={item.magazineId}>
+                  <Magazine
+                    magazineId={item.magazineId}
+                    thumbImageUrl={item.thumbImageUrl}
+                    title={item.title}
+                    content={item.content}
+                    totalCount={magazine.length}
+                    orderInHome={item.orderInHome}
+                    picked={item.picked}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
           )}
         </div>
-        <VenueFor userName={userName} />
-        {!accessToken && <LoggedOutBanner />}
-        <Heartbeat />
-        <HotPost posts={hotPosts} />
-        <HotVenues
-          clubs={hotClubs}
-          likedClubs={likedClubs}
-          heartbeatNums={heartbeatNums}
-          handleHeartClickWrapper={handleHeartClickWrapper}
-        />
+
+        {/* 👇 나머지 콘텐츠를 위한 컨테이너 (좌우 패딩 적용) */}
+        <div className="flex flex-col gap-y-5 px-5">
+          <VenueFor userName={userName} />
+          {!accessToken && <LoggedOutBanner />}
+          <Heartbeat />
+          <HotPost posts={hotPosts} />
+          <HotVenues
+            clubs={hotClubs}
+            likedClubs={likedClubs}
+            heartbeatNums={heartbeatNums}
+            handleHeartClickWrapper={handleHeartClickWrapper}
+          />
+        </div>
       </div>
       <NavigateFooter />
     </div>

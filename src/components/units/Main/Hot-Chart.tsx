@@ -12,11 +12,13 @@ interface HotVenuesProps {
 const HotVenues = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: HotVenuesProps) => {
   return (
     <div className="flex flex-col">
-      <div className="flex cursor-pointer flex-col items-start px-[1rem] hover:brightness-75">
-        <span className="text-[1.25rem] text-main">Hot</span>
-        <span className="text-[0.875rem] text-gray200">실시간으로 인기있는 베뉴 정보입니다.</span>
+      <div className="flex cursor-pointer flex-col items-start ">
+        <span className="text-[1.125rem] text-main font-paperlogy font-semibold line-height-[150%] tracking-[-0.0225rem]">
+          Hot
+        </span>
+        <span className="text-[0.875rem] text-gray300">실시간으로 인기있는 베뉴 정보입니다.</span>
       </div>
-      <div className="px-[1rem] py-[1.5rem]">
+      <div className="py-[0.88rem]">
         <ClubList
           clubs={clubs}
           likedClubs={likedClubs}

@@ -29,31 +29,36 @@ const HotPost = ({ posts }: HotPostProps) => {
   }, [posts]);
 
   return (
-    <div className="bg-BG-black px-4 pb-[1.5rem]">
-      <div className="mb-2 text-[1.25rem] text-main">HotPost</div>
+    <div className="bg-BG-black">
+      <div className="flex flex-col">
+        <div className="font-paperlogy line-height-[150%] text-[1.125rem] font-semibold tracking-[-0.0225rem] text-main">
+          HotPost
+        </div>
+        <p className="text-[0.875rem] pb-[0.88rem] text-gray300">실시간 인기 게시물을 확인하세요</p>
+      </div>
       <div className="flex flex-col gap-y-2">
         {posts.map((post, index) => (
           <Link href={`/board/free/${post.id}`} key={post.id}>
-            <div className="rounded-md bg-gray700 p-4 hover:brightness-90">
+            <div className="rounded-md bg-gray700 px-4 py-3 ">
               <div className="flex justify-between">
-                <p className="text-body2-15-bold text-white">{post.title}</p>
-                <span className="text-xs text-[#7C7F83]">{timeDiffs[index]}</span>
+                <p className="text-[0.875rem] font-bold text-white">{post.title}</p>
+                <span className="text-[0.6875rem] text-[#7C7F83]">{timeDiffs[index]}</span>
               </div>
-              <p className="mt-1 truncate text-sm text-[#BFBFBF]">{post.content}</p>
+              <p className="mt-1 truncate text-[0.75rem] text-[#BFBFBF]">{post.content}</p>
 
               <div className="mt-2 flex items-center justify-between">
                 {/* 왼쪽: 해시태그 */}
-                <p className="text-xs text-[#7C7F83]">{post.hashtags.map((hashtag) => `#${hashtag}`).join(' ')}</p>
+                <p className="text-[0.6875rem] text-[#7C7F83]">{post.hashtags.map((hashtag) => `#${hashtag}`).join(' ')}</p>
 
                 {/* 오른쪽: 좋아요 & 댓글 */}
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center space-x-[0.12rem]">
                     <Image src="/icons/favorite.svg" alt="thumbs up icon" width={20} height={20} />
-                    <span className="text-body3-12-medium text-gray300">{post.likes}</span>
+                    <span className="text-[0.75rem] text-gray300">{post.likes}</span>
                   </div>
                   <div className="flex items-center space-x-[0.12rem]">
                     <Image src="/icons/maps_ugc.svg" alt="comment icon" width={20} height={20} />
-                    <span className="text-body3-12-medium text-gray300">{post.comments}</span>
+                    <span className="text-[0.75rem] text-gray300">{post.comments}</span>
                   </div>
                 </div>
               </div>
