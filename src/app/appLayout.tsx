@@ -91,9 +91,8 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
         <Toaster position="top-center" reverseOrder={false} />
+        {!shouldHideFooter && <NavigateFooter />}
       </div>
-
-      {!shouldHideFooter && <NavigateFooter />}
     </div>
   );
 }

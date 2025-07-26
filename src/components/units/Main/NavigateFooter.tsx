@@ -38,7 +38,7 @@ const NavigateFooter = () => {
 
   return (
     <footer
-      className="safari-icon-fix safari-padding-fix fixed bottom-0 left-0 right-0 z-50 mx-auto w-full max-w-[600px] rounded-t-[1.25rem] border-t border-gray500 bg-BG-black font-queensides text-navigate-queen"
+      className="safari-icon-fix safari-padding-fix absolute bottom-0 left-0 right-0 z-50 mx-auto w-full max-w-[600px] rounded-t-[1.25rem] border-t border-gray500 bg-BG-black font-queensides text-navigate-queen"
       style={{
         minHeight: '2rem',
         paddingBottom: 'max(0.25rem, env(safe-area-inset-bottom))',
