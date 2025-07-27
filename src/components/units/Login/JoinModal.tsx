@@ -73,22 +73,22 @@ export default function JoinModal({ onBusinessClick, onClose, loginType }: Props
         ref={modalRef}
         className={`flex w-full max-w-md flex-col rounded-t-3xl bg-BG-black px-[1.25rem] pb-[2.25rem] pt-[1.5rem] transition-all duration-300 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
         <p className="mb-[1.25rem] text-center text-[1.125rem] font-bold text-white">
-          가입 전, 회원 구분을 선택해주세요
+          시작하기 전, 회원 구분을 선택해주세요.
         </p>
         <div className="flex flex-1 items-stretch justify-center gap-[0.62rem]">
           {/* 일반 버디 카드 */}
           <div
             onClick={() => redirectToSNSLogin('general')}
-            className={`flex flex-1 cursor-pointer flex-col items-start rounded-[1.25rem] border border-gray700 px-[1.25rem] pb-[2.25rem] pt-[1.25rem] text-left text-white transition-all hover:scale-105`}
+            className={`flex flex-1 cursor-pointer flex-col items-start rounded-[1.25rem] border border-gray700 px-[1.25rem] pb-[2.25rem] pt-[1.25rem] text-left text-gray100 transition-all hover:scale-105`}
             style={{
               backgroundImage: `
       linear-gradient(158deg, #1E1E1E 43.05%, rgba(30, 30, 30, 0.00) 97.79%),
       linear-gradient(270deg, #7C7C7C -17.22%, #4B4B4B 16.24%, #4B4B4B 57.57%, #7C7C7C 108.33%)
     `,
             }}>
-            <Image src="/icons/GrayHeart.svg" alt="heart" width={32} height={32} className="mb-[0.75rem]" />
-            <p className="text-body1-16-bold">일반 버디</p>
-            <p className="mb-[3rem] text-body1-16-bold">회원 가입하기</p>
+            <Image src="/icons/로그인/Vector.svg" alt="heart" width={32} height={32} className="mb-[0.75rem]" />
+            <p className="text-1rem font-bold leading-[1.35rem] tracking-[-0.02rem]">일반 버디로</p>
+            <p className="mb-[3rem] text-body1-16-bold">시작하기</p>
           </div>
           {/* 비즈니스 카드 */}
           <div
@@ -106,10 +106,10 @@ export default function JoinModal({ onBusinessClick, onClose, loginType }: Props
             />
             {/* 내용 */}
             <div className="pointer-events-none z-10">
-              <Image src="/icons/Headers/Symbol.svg" alt="sound" width={32} height={32} className="mb-[0.75rem]" />
-              <p className="text-body1-16-bold text-main2">비즈니스</p>
-              <p className="text-body1-16-bold text-main2">회원 가입하기</p>
-              <p className="mt-[0.5rem] text-[0.75rem] text-white/70">
+              <Image src="/icons/로그인/Headers/Symbol.svg" alt="sound" width={32} height={32} className="mb-[0.75rem]" />
+              <p className="text-1rem font-bold leading-[1.35rem] tracking-[-0.02rem] text-main2">비즈 버디로</p>
+              <p className="text-1rem font-bold leading-[1.35rem] tracking-[-0.02rem] text-main2">시작하기</p>
+              <p className="mt-[0.5rem] text-[0.75rem] leading-[1.125rem] tracking-[-0.015rem] text-white/50">
                 업주, MD
                 <br />
                 파티팀, 아티스트 등

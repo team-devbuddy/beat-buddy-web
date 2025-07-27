@@ -430,10 +430,12 @@ const CommentItem = ({
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-start space-x-2">
-        <img
-          src={comment.isAnonymous ? '/icons/default-avatar.svg' : comment.profileImage}
+        <Image
+          src={comment.isAnonymous ? '/icons/default_profile.svg' : comment.profileImage}
           alt="Profile"
           className="h-8 w-8 rounded-full"
+          width={32}
+          height={32}
         />
         <div>
           <div className="flex items-center space-x-2">

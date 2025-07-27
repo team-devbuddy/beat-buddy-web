@@ -153,11 +153,12 @@ export default function BoardDetail({ postId, post }: PostProps) {
           <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500" onClick={goToUserProfile}>
               <Image
-                src={post.profileImageUrl || '/icons/mask Group.svg'}
+                src={post.profileImageUrl || '/icons/default-profile.svg'}
                 alt="profile"
                 width={37}
                 height={37}
                 className="h-full w-full rounded-full object-cover safari-icon-fix"
+                onClick={goToUserProfile}
                 style={{ aspectRatio: '1/1' }}
               />
             </div>

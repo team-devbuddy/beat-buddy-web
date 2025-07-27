@@ -12,7 +12,6 @@ export default function BoardProfileEdit() {
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [nickname, setNickname] = useState('');
   const [originalNickname, setOriginalNickname] = useState('');
-  const [daysLeft, setDaysLeft] = useState(3);
   const [errorMessage, setErrorMessage] = useState('');
   const [profileImage, setProfileImage] = useState('/icons/gray-profile.svg');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -86,7 +85,6 @@ export default function BoardProfileEdit() {
       </div>
 
       {/* 닉네임 입력 + 버튼 */}
-      <div className="mb-3 text-[0.875rem] text-gray200">닉네임</div>
       <div className="flex items-center gap-2">
         <input
           type="text"
@@ -94,24 +92,29 @@ export default function BoardProfileEdit() {
           onChange={(e) => setNickname(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="닉네임을 입력하세요"
-          className="flex-grow rounded-[0.63rem] bg-gray700 px-4 py-2 text-[0.9375rem] text-white placeholder:text-gray400 focus:outline-none"
+          className="flex-grow rounded-[0.63rem] bg-gray700 px-[0.88rem] py-[0.81rem] text-[0.8125rem] text-white placeholder:text-gray400 focus:outline-none"
         />
         <button
           onClick={handleNicknameChange}
-          className="whitespace-nowrap rounded-[0.63rem] bg-main px-3 py-2 text-[0.875rem] text-white disabled:bg-gray400"
+          className="whitespace-nowrap rounded-[0.63rem] bg-main px-[0.88rem] py-[0.81rem] text-[0.8125rem] text-white disabled:bg-gray400"
           disabled={!nickname || nickname === originalNickname || nickname.length < 2 || nickname.length > 10}>
           변경
         </button>
       </div>
 
-      {/* 에러 메시지 */}
-      {errorMessage && <p className="ml-2 mt-2 text-[0.75rem] text-main">{errorMessage}</p>}
-
-      {/* 안내 문구 */}
-      <div className="ml-2 mt-3 text-[0.75rem] leading-relaxed text-gray400">
-        닉네임은 14일에 두번 변경 가능해요. <br />
-        {originalNickname} 님은 {daysLeft}일 뒤에 닉네임을 변경하실 수 있어요.
-      </div>
+      {/* 안내 문구 - 에러 발생 시만 표시 */}
+      {errorMessage && (
+        <div className="ml-2 mt-3 text-[0.75rem] leading-relaxed text-main">
+          닉네임은 14일에 두번 변경 가능해요. <br />
+          {originalNickname &&
+            (() => {
+              // 에러메시지에서 숫자 추출 (예: "14일 뒤에 변경해주세요" -> 14)
+              const daysMatch = errorMessage.match(/(\d+)일/);
+              const days = daysMatch ? daysMatch[1] : '14';
+              return `${originalNickname}님은 ${days}일 뒤에 닉네임을 변경하실 수 있어요`;
+            })()}
+        </div>
+      )}
     </div>
   );
 }

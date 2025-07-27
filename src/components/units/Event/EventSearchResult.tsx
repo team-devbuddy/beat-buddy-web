@@ -149,7 +149,7 @@ export default function EventSearchResult({ eventId, event }: PostProps) {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-[0.5rem]">
           <div className="flex items-center justify-center rounded-full bg-gray500">
-            <Image src="/icons/mask Group.svg" alt="profile" width={37} height={37} />
+            <Image src="/icons/default-profile.svg" alt="profile" width={37} height={37} />
           </div>
           <div>
             <p className="text-[0.875rem] font-bold text-white">{event.title}</p>

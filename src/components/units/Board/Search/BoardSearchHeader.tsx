@@ -85,58 +85,87 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
 
   return (
     <>
-      <header className="relative flex flex-col bg-BG-black">
-        <div className="absolute left-4 top-[50%] z-10 -translate-y-1/2">
-          <Image
-            src="/icons/line-md_chevron-left.svg"
-            alt="뒤로가기"
-            width={24}
-            height={24}
-            onClick={handleBackClick}
-            className="cursor-pointer"
-          />
-        </div>
+      <header className="bg-BG-black px-5 py-[0.63rem]">
+        <div className="relative w-full">
+          {/* 🔙 Back icon - 검색창 내부 왼쪽 */}
+          <div className="absolute left-[0.88rem] top-1/2 z-10 -translate-y-1/2">
+            <Image
+              src="/icons/arrow_back_ios.svg"
+              alt="뒤로가기"
+              width={24}
+              height={24}
+              onClick={handleBackClick}
+              className="cursor-pointer"
+            />
+          </div>
 
-        <div className="w-full px-[1.25rem] py-[0.75rem]">
-          <div className="relative w-full">
+          {/* 🔤 Input */}
+          <div className="relative w-full rounded-[0.5rem] bg-gray700">
             <input
               ref={inputRef}
-              className="w-full border-b-2 border-main bg-transparent py-2 pl-7 pr-10 text-white placeholder:text-gray300 focus:outline-none"
+              className="w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-[0.9375rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none"
               placeholder={isLoading ? '' : placeholder}
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
+              autoFocus
               style={{ WebkitAppearance: 'none', borderRadius: 0 }}
             />
-            <div className="absolute right-0 top-1/2 -translate-y-1/2">
+
+            {/* 🔍 Search icon - 검색창 내부 오른쪽 */}
+            <div className="absolute bottom-[0.72rem] right-[1rem] cursor-pointer">
               {isEvent ? (
                 <div className="flex items-center gap-1">
                   <Image
                     src="/icons/uil_calender.svg"
-                    alt="search icon"
-                    width={28}
-                    height={28}
+                    alt="calendar icon"
+                    width={24}
+                    height={24}
                     onClick={handleCalendarClick}
                     className="cursor-pointer"
                   />
-                  <Image
-                    src="/icons/search-01.svg"
-                    alt="search icon"
-                    width={24}
-                    height={24}
-                    onClick={handleSearch}
-                    className="cursor-pointer"
-                  />
+                  {searchQuery ? (
+                    <Image
+                      src="/icons/search-01-pink.svg"
+                      alt="search icon"
+                      width={24}
+                      height={24}
+                      onClick={handleSearch}
+                      className="cursor-pointer"
+                    />
+                  ) : (
+                    <Image
+                      src="/icons/search-01.svg"
+                      alt="search icon"
+                      width={24}
+                      height={24}
+                      onClick={handleSearch}
+                      className="cursor-pointer"
+                    />
+                  )}
                 </div>
               ) : (
-                <Image
-                  src="/icons/search-01.svg"
-                  alt="search icon"
-                  width={24}
-                  height={24}
-                  onClick={handleSearch}
-                  className="cursor-pointer"
-                />
+                <>
+                  {searchQuery ? (
+                    <Image
+                      src="/icons/search-01-pink.svg"
+                      alt="search icon"
+                      width={24}
+                      height={24}
+                      onClick={handleSearch}
+                      className="cursor-pointer"
+                    />
+                  ) : (
+                    <Image
+                      src="/icons/search-01.svg"
+                      alt="search icon"
+                      width={24}
+                      height={24}
+                      onClick={handleSearch}
+                      className="cursor-pointer"
+                    />
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -171,11 +171,25 @@ export const likeCountState = atom<{ [eventId: number]: number }>({
 export const userProfileState = atom<UserProfile | null>({
   key: 'userProfileState',
   default: null,
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const followMapState = atom<Record<number, boolean>>({
   key: 'followMapState',
   default: {},
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 팔로워/팔로잉 수 관리 state
+export interface FollowCountInfo {
+  followerCount: number;
+  followingCount: number;
+}
+
+export const followCountState = atom<Record<number, FollowCountInfo>>({
+  key: 'followCountState',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const isScrappedState = atom<boolean>({

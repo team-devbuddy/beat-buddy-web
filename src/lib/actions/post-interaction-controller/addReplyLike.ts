@@ -1,6 +1,6 @@
 export const addReplyLike = async (postId: number, commentId: number, accessToken: string): Promise<any> => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/comments/${commentId}/like`, {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Access: `Bearer ${accessToken}`,

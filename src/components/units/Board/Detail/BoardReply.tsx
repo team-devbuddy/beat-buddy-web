@@ -53,9 +53,9 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   const [replyLikeCount, setReplyLikeCount] = useRecoilState(replyLikeCountState);
   const isReplying = replyingTo?.parentId === reply.id;
 
-  // 현재 댓글의 좋아요 상태와 개수
-  const isLiked = replyLike[reply.id] ?? reply.liked ?? false;
-  const likeCount = replyLikeCount[reply.id] ?? reply.likes;
+  // 현재 댓글의 좋아요 상태와 개수 (persist 우선, 서버 데이터 fallback)
+  const isLiked = replyLike[reply.id] !== undefined ? replyLike[reply.id] : reply.liked ?? false;
+  const likeCount = replyLikeCount[reply.id] !== undefined ? replyLikeCount[reply.id] : reply.likes;
 
   // 디버깅용 로그
   console.log(`🔍 댓글 ${reply.id} 상태:`, {
@@ -66,6 +66,16 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
     'reply.likes': reply.likes,
     likeCount: likeCount,
   });
+
+  // 댓글 좋아요 상태 초기화 (persist 데이터가 없을 때만)
+  useEffect(() => {
+    if (replyLike[reply.id] === undefined) {
+      setReplyLike((prev) => ({ ...prev, [reply.id]: reply.liked ?? false }));
+    }
+    if (replyLikeCount[reply.id] === undefined) {
+      setReplyLikeCount((prev) => ({ ...prev, [reply.id]: reply.likes }));
+    }
+  }, [reply.id, reply.liked, reply.likes]);
 
   const handleReplyClick = () => {
     if (isReplying) {
@@ -106,26 +116,19 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
       let response;
       if (previousLiked) {
         // 이미 좋아요를 눌렀다면 DELETE로 삭제
-        console.log(`🗑️ DELETE 호출 - URL: /posts/${postId}/comments/${reply.id}/like`);
         response = await deleteReplyLike(postId, reply.id, accessToken);
       } else {
         // 좋아요를 안 눌렀다면 PUT으로 추가
-        console.log(`❤️ PUT 호출 - URL: /posts/${postId}/comments/${reply.id}/like`);
         response = await addReplyLike(postId, reply.id, accessToken);
       }
 
-      console.log(`📨 서버 응답 - 댓글 ${reply.id}:`, response);
-
       // 서버 응답이 있다면 정확한 상태로 업데이트
       if (response && response.data) {
-        console.log('📨 서버 응답 데이터:', response.data);
-
         // 서버에서 정확한 liked 값이 오면 사용, 없으면 예상값 유지
         if (typeof response.data.liked === 'boolean') {
-          console.log(`✅ 서버에서 liked 업데이트: ${response.data.liked}`);
           setReplyLike((prev) => ({ ...prev, [reply.id]: response.data.liked }));
         } else {
-          console.log(`⚠️ 서버 응답에 liked 필드 없음, 예상값 유지: ${!previousLiked}`);
+          console.log(`⚠️ 서버 응답에 liked 필드 없음, 예상값 유지: ${previousLiked}`);
         }
 
         // 서버에서 정확한 likes 값이 오면 사용, 없으면 예상값 유지
@@ -194,11 +197,11 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-[0.37rem] text-[0.8125rem] font-bold text-white">
               <Image
-                src={userProfile?.profileImageUrl || '/icons/Mask group.svg'}
+                src={userProfile?.profileImageUrl || '/icons/default-profile.svg'}
                 alt="profile"
-                width={24}
-                height={24}
-                className="rounded-full"
+                width={22}
+                height={22}
+                className="h-[22px] w-[22px] rounded-full object-cover"
               />
               {reply.isAnonymous ? '익명' : reply.memberName}
               <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
@@ -222,7 +225,9 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             <button
               onClick={handleLike}
               disabled={isLoadingLike}
-              className="flex items-center gap-[0.19rem] disabled:opacity-50">
+              className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${
+                isLiked ? 'text-main' : 'text-gray300'
+              }`}>
               <Image
                 src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
                 alt="heart"
@@ -242,7 +247,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
   // 부모 댓글(최상위 댓글) UI
   return (
-    <div id={`comment-${reply.id}`} className="flex flex-col p-4">
+    <div id={`comment-${reply.id}`} className="flex flex-col gap-3 px-5 pb-5">
       <div
         className={classNames('-m-3 flex flex-col gap-[0.5rem] rounded-lg p-3 transition-colors', {
           '': isReplying,
@@ -250,11 +255,11 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-white">
             <Image
-              src={userProfile?.profileImageUrl || '/icons/Mask group.svg'}
+              src={userProfile?.profileImageUrl || '/icons/default-profile.svg'}
               alt="profile"
-              width={24}
-              height={24}
-              className="rounded-full"
+              width={22}
+              height={22}
+              className="h-[22px] w-[22px] rounded-full object-cover safari-icon-fix"
             />
             {reply.isAnonymous ? '익명' : reply.memberName}
             <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
@@ -278,7 +283,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           <button
             onClick={handleLike}
             disabled={isLoadingLike}
-            className="flex items-center gap-[0.19rem] disabled:opacity-50">
+            className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${isLiked ? 'text-main' : 'text-gray300'}`}>
             <Image
               src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
               alt="heart"
@@ -287,7 +292,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             />
             {likeCount}
           </button>
-          <button onClick={handleReplyClick} className="text-gray300">
+          <button onClick={handleReplyClick} className='text-gray300'>
             {isReplying ? '답글 취소' : '답글 달기'}
           </button>
         </div>

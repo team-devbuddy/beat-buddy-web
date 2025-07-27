@@ -5,7 +5,7 @@ import BoardImageModal from '../BoardImageModal';
 import { useState, useEffect } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
-import { accessTokenState, postLikeState, postScrapState } from '@/context/recoil-context';
+import { accessTokenState, postLikeState, postScrapState, followMapState } from '@/context/recoil-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
 import { deletePostLike } from '@/lib/actions/post-interaction-controller/deleteLike';
@@ -14,6 +14,7 @@ import { deletePostScrap } from '@/lib/actions/post-interaction-controller/delet
 import BoardDropdown from '../BoardDropDown';
 import { useRef } from 'react';
 import { formatRelativeTime } from '../BoardThread';
+import { useRouter } from 'next/navigation';
 
 interface PostProps {
   postId: number;
@@ -33,13 +34,19 @@ interface PostProps {
     hasCommented: boolean;
     scrapped: boolean;
     isAuthor: boolean;
+    writerId: number;
+    profileImageUrl?: string;
+    role?: string;
+    isFollowing?: boolean;
+    isAnonymous?: boolean;
+    thumbImage?: string;
   };
 }
 
 export default function BoardSearchResult({ postId, post }: PostProps) {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isFollowing, setIsFollowing] = useState(false);
   const [loadingFollow, setLoadingFollow] = useState(false);
   const [isLoadingLike, setIsLoadingLike] = useState(false);
   const [isLoadingScrap, setIsLoadingScrap] = useState(false);
@@ -50,19 +57,29 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [likeMap, setLikeMap] = useRecoilState(postLikeState);
   const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
+  const [followMap, setFollowMap] = useRecoilState(followMapState);
 
   const liked = likeMap[post.id] ?? false;
   const scrapped = scrapMap[post.id] ?? false;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
+  const isFollowing = followMap[post.writerId] ?? post.isFollowing ?? false;
+
+  const category = 'free';
+
+  const goToUserProfile = () => {
+    router.push(`/board/profile?writerId=${post.writerId}`);
+  };
+
   const openDropdown = () => {
     if (dropdownTriggerRef.current) {
       const rect = dropdownTriggerRef.current.getBoundingClientRect();
-      setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 }); // 160은 dropdown width
+      setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 });
       setIsDropdownOpen(true);
     }
   };
+
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index);
     setIsModalOpen(true);
@@ -74,11 +91,11 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
     try {
       setLoadingFollow(true);
       if (!isFollowing) {
-        await postFollow(post.followingId, accessToken);
-        setIsFollowing(true);
+        await postFollow(post.writerId, accessToken);
+        setFollowMap((prev) => ({ ...prev, [post.writerId]: true }));
       } else {
-        await deleteFollow(post.followingId, accessToken);
-        setIsFollowing(false);
+        await deleteFollow(post.writerId, accessToken);
+        setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
       }
     } catch (err: any) {
       alert(err.message ?? '요청 실패');
@@ -141,27 +158,71 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
     }
   }, [post.id]);
 
+  const goToPost = () => {
+    router.push(`/board/${category}/${post.id}`);
+  };
+
   return (
-    <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[1.12rem]">
-      <div className="flex items-start justify-between">
+    <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[0.88rem]">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-[0.5rem]">
-          <div className="flex items-center justify-center rounded-full bg-gray500">
-            <Image src="/icons/mask Group.svg" alt="profile" width={37} height={37} />
+          <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
+            <div className="h-full w-full overflow-hidden rounded-full bg-gray500">
+              <Image
+                src={post.profileImageUrl || '/icons/default-profile.svg'}
+                alt="profile"
+                width={37}
+                height={37}
+                className="h-full w-full rounded-full object-cover safari-icon-fix"
+                onClick={goToUserProfile}
+                style={{ aspectRatio: '1/1' }}
+              />
+            </div>
+            {post.role === 'BUSINESS' && (
+              <Image
+                src="/icons/businessMark.svg"
+                alt="business-mark"
+                width={9}
+                height={9}
+                className="absolute -right-[-0.5px] -top-[-1px] z-10 safari-icon-fix"
+              />
+            )}
           </div>
+
           <div>
             <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
-            <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
           </div>
         </div>
-        <button
-          onClick={handleFollow}
-          className="text-body2-15-bold text-main disabled:opacity-50"
-          disabled={loadingFollow}>
-          {isFollowing ? '팔로잉' : '팔로우'}
-        </button>
-      </div>
 
-      <p className="mt-[0.88rem] whitespace-pre-wrap text-[0.75rem] text-gray100">{post.content}</p>
+        {!post.isAuthor && (
+          <button
+            onClick={handleFollow}
+            className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
+            disabled={loadingFollow}>
+            {isFollowing ? '팔로잉' : '팔로우'}
+          </button>
+        )}
+      </div>
+      <div onClick={goToPost}>
+        {post.title && <p className="mb-[0.62rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>}
+        <p
+          className="whitespace-pre-wrap text-[0.8125rem] text-gray100"
+          style={{
+            lineHeight: '1.5',
+            display: 'block',
+            whiteSpace: 'pre-line',
+          }}>
+          {post.content
+            .replace(/\n\s*\n\s*\n/g, '\n\n')
+            .split('\n\n')
+            .map((paragraph, index, array) => (
+              <span key={index}>
+                {paragraph}
+                {index < array.length - 1 && <span style={{ display: 'block', height: '0.5rem' }}></span>}
+              </span>
+            ))}
+        </p>
+      </div>
 
       {post.imageUrls && post.imageUrls.length > 0 && (
         <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
@@ -191,15 +252,17 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         />
       )}
 
-      <div className="mt-[0.88rem] flex flex-wrap gap-[0.38rem]">
+      <div className="mt-[0.62rem] flex flex-wrap gap-[0.38rem]">
         {post.hashtags.map((tag) => (
-          <span key={tag} className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.75rem] text-gray300">
+          <span
+            key={tag}
+            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.25rem] text-[0.6875rem] text-gray300">
             {tag}
           </span>
         ))}
       </div>
       <div className="flex justify-between">
-        <div className="mt-[1rem] flex gap-[0.5rem] text-body3-12-medium text-gray300">
+        <div className="mt-[0.62rem] flex gap-[0.5rem] text-[0.75rem] text-gray300">
           <span className={`flex items-center gap-[0.12rem] ${liked ? 'text-main' : ''}`}>
             <button onClick={handleLike} disabled={isLoadingLike} title="좋아요" className="flex items-center">
               <Image
@@ -234,7 +297,8 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
             {scraps}
           </span>
         </div>
-        <div className="flex items-end gap-[0.5rem]">
+        <div className="flex items-end gap-[0.62rem]">
+          <p className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}
@@ -242,8 +306,8 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
             alt="bookmark"
             width={20}
             height={20}
-            className="rotate-90 cursor-pointer"
-          />{' '}
+            className="z-100 rotate-90 cursor-pointer"
+          />
         </div>
       </div>
       {isDropdownOpen && dropdownPosition && (

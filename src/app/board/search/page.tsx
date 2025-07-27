@@ -28,12 +28,11 @@ interface PostType {
   hasCommented: boolean;
   scrapped: boolean;
   isAuthor: boolean;
+  writerId: number;
 }
 
 const PAGE_SIZE = 10;
 
-// postSearch가 PostType[]을 직접 반환한다고 가정합니다.
-// 실제 API 응답이 { data: { ... } } 형태라면 반환값을 적절히 처리해주세요.
 export default function BoardSearchPage() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get('q') ?? '';
@@ -94,65 +93,129 @@ export default function BoardSearchPage() {
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
+          console.log('무한스크롤 트리거: 다음 페이지 로드', page + 1);
           setPage((prev) => prev + 1);
         }
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore],
+    [loading, hasMore, page],
   );
 
   const fetchSearchPosts = useCallback(
     async (targetPage: number) => {
-      if (loading) return; // 중복 요청 방지
+      console.log('fetchSearchPosts 호출:', { targetPage, keyword, selectedTags, hasMore });
       setLoading(true);
-
       try {
         if (selectedTags.length === 0) {
           const newPosts = await postSearch(keyword, accessToken, targetPage, PAGE_SIZE);
+          console.log('API 응답:', newPosts.length, '개 게시글');
           if (newPosts.length < PAGE_SIZE) setHasMore(false);
-          setPosts((prevPosts) => (targetPage === 1 ? newPosts : [...prevPosts, ...newPosts]));
+          setPosts((prev) => [...(targetPage === 1 ? [] : prev), ...newPosts]);
         } else {
           const postLists = await Promise.all(
             selectedTags.map((tag) => postSearch(tag, accessToken, targetPage, PAGE_SIZE)),
           );
           const merged = postLists.flat();
-          if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
-
           setPosts((prevPosts) => {
-            const combined = targetPage === 1 ? merged : [...prevPosts, ...merged];
+            const existing = targetPage === 1 ? [] : prevPosts;
+            const combined = [...existing, ...merged];
             const unique = [...new Map(combined.map((post) => [post.id, post])).values()];
             return unique;
           });
+          if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
         }
       } catch (err) {
         console.error('게시글 로드 실패:', err);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     },
-    // 🔥 최종 수정된 의존성 배열: loading을 제거하여 무한 루프를 방지합니다.
-    [keyword, accessToken, selectedTags],
+    [accessToken, selectedTags, keyword],
   );
 
-  // 검색어나 태그 변경 시, 상태를 초기화하고 첫 페이지 로드
+  // keyword나 selectedTags 변경 시 초기화 후 첫 페이지 로드
   useEffect(() => {
-    if (!isInitialized || !pathname) return;
+    if (!isInitialized) return;
+
+    console.log('keyword 또는 태그 변경:', { keyword, selectedTags });
+
+    if (!keyword && selectedTags.length === 0) {
+      setPosts([]);
+      setHasMore(false);
+      return;
+    }
+
     localStorage.setItem('selectedTags', JSON.stringify(selectedTags));
     localStorage.setItem('selectedTags_path', pathname);
+
     setPosts([]);
     setPage(1);
     setHasMore(true);
-    fetchSearchPosts(1);
-  }, [keyword, selectedTags, pathname, isInitialized, fetchSearchPosts]);
 
-  // 페이지 번호 변경 시 (무한 스크롤), 다음 페이지 로드
+    // 직접 fetchSearchPosts(1) 호출
+    const loadFirstPage = async () => {
+      setLoading(true);
+      try {
+        if (selectedTags.length === 0) {
+          const newPosts = await postSearch(keyword, accessToken, 1, PAGE_SIZE);
+          console.log('첫 페이지 API 응답:', newPosts.length, '개 게시글');
+          if (newPosts.length < PAGE_SIZE) setHasMore(false);
+          setPosts(newPosts);
+        } else {
+          const postLists = await Promise.all(selectedTags.map((tag) => postSearch(tag, accessToken, 1, PAGE_SIZE)));
+          const merged = postLists.flat();
+          const unique = [...new Map(merged.map((post) => [post.id, post])).values()];
+          if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
+          setPosts(unique);
+        }
+      } catch (err) {
+        console.error('첫 페이지 로드 실패:', err);
+      }
+      setLoading(false);
+    };
+
+    loadFirstPage();
+  }, [keyword, selectedTags, isInitialized, pathname, accessToken]);
+
+  // page 변경 시 해당 페이지 로드 (무한스크롤)
   useEffect(() => {
     if (!isInitialized || page === 1) return;
-    fetchSearchPosts(page);
-  }, [page, isInitialized, fetchSearchPosts]);
 
-  // 마운트 시 로컬 스토리지에서 태그 로드
+    console.log('페이지 변경으로 인한 로드:', { page, keyword, selectedTags });
+
+    // 검색어나 태그가 없을 경우 리턴
+    if (!keyword && selectedTags.length === 0) {
+      return;
+    }
+
+    // 직접 API 호출로 무한루프 방지
+    const loadPage = async () => {
+      setLoading(true);
+      try {
+        if (selectedTags.length === 0) {
+          const newPosts = await postSearch(keyword, accessToken, page, PAGE_SIZE);
+          console.log(`${page}페이지 API 응답:`, newPosts.length, '개 게시글');
+          if (newPosts.length < PAGE_SIZE) setHasMore(false);
+          setPosts((prev) => [...prev, ...newPosts]);
+        } else {
+          const postLists = await Promise.all(selectedTags.map((tag) => postSearch(tag, accessToken, page, PAGE_SIZE)));
+          const merged = postLists.flat();
+          setPosts((prevPosts) => {
+            const combined = [...prevPosts, ...merged];
+            const unique = [...new Map(combined.map((post) => [post.id, post])).values()];
+            return unique;
+          });
+          if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
+        }
+      } catch (err) {
+        console.error(`${page}페이지 로드 실패:`, err);
+      }
+      setLoading(false);
+    };
+
+    loadPage();
+  }, [page, isInitialized, keyword, selectedTags, accessToken]);
+
   useEffect(() => {
     if (!pathname) return;
     const stored = localStorage.getItem('selectedTags');
@@ -161,7 +224,9 @@ export default function BoardSearchPage() {
     if (stored && storedPath === pathname) {
       try {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) setSelectedTags(parsed);
+        if (Array.isArray(parsed)) {
+          setSelectedTags(parsed);
+        }
       } catch (e) {
         console.error('로컬스토리지 파싱 실패:', e);
         setSelectedTags([]);
@@ -171,18 +236,47 @@ export default function BoardSearchPage() {
       localStorage.setItem('selectedTags_path', pathname);
       setSelectedTags([]);
     }
+
     setIsInitialized(true);
   }, [pathname]);
 
   const handleUpdatePosts = (tags: string[]) => {
     setSelectedTags(tags);
-  };
-
-  const handleSearchSubmit = () => {
     setPosts([]);
     setPage(1);
     setHasMore(true);
-    fetchSearchPosts(1);
+  };
+
+  const handleSearchSubmit = async () => {
+    if (!keyword && selectedTags.length === 0) {
+      setPosts([]);
+      setHasMore(false);
+      return;
+    }
+
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+
+    // 직접 API 호출
+    setLoading(true);
+    try {
+      if (selectedTags.length === 0) {
+        const newPosts = await postSearch(keyword, accessToken, 1, PAGE_SIZE);
+        console.log('검색 제출 API 응답:', newPosts.length, '개 게시글');
+        if (newPosts.length < PAGE_SIZE) setHasMore(false);
+        setPosts(newPosts);
+      } else {
+        const postLists = await Promise.all(selectedTags.map((tag) => postSearch(tag, accessToken, 1, PAGE_SIZE)));
+        const merged = postLists.flat();
+        const unique = [...new Map(merged.map((post) => [post.id, post])).values()];
+        if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
+        setPosts(unique);
+      }
+    } catch (err) {
+      console.error('검색 실패:', err);
+    }
+    setLoading(false);
   };
 
   return (
@@ -221,13 +315,7 @@ export default function BoardSearchPage() {
 
       {!loading && posts.length === 0 && keyword !== '' && <NoResults />}
       <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
-        <div className="w-full max-w-[600px] px-4">
-          <Link
-            href="/board/write"
-            className="ml-auto flex h-14 w-14 items-center justify-center rounded-full border border-main2 bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90">
-            <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
-          </Link>
-        </div>
+        <div className="w-full max-w-[600px] px-4"></div>
       </div>
     </main>
   );

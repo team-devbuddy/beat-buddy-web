@@ -29,8 +29,8 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
           const response = await PostRefresh(access);
           if (response.ok) {
             const data = await response.json();
-            const userProfile = await getProfileinfo(access);
-            setUserProfile(userProfileValue);
+            const userProfileData = await getProfileinfo(access);
+            setUserProfile(userProfileData);
             setAccess(data.access);
             setIsAuth(true);
           } else {
@@ -85,8 +85,8 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     isMaintenance ||
     pathname.includes('event/') ||
     pathname.includes('login') ||
-    pathname.includes('withdrawal');
-
+    pathname.includes('withdrawal') ||
+    pathname.includes('/board/search');
   console.log('shouldHideFooter:', shouldHideFooter);
 
   return (

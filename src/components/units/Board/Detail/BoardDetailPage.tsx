@@ -37,10 +37,12 @@ interface PostType {
 export default function BoardDetailPage({ postId, category }: { postId: number; category: string }) {
   const [post, setPost] = useState<PostType | null>(null);
   const [comments, setComments] = useState<CommentType[]>([]);
+  const [loading, setLoading] = useState(true);
   const accessToken = useRecoilValue(accessTokenState) || '';
   const router = useRouter();
   const [followMap, setFollowMap] = useRecoilState(followMapState);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const isLoadingPost = useRef(false); // API 호출 중복 방지
 
   // ✅ 1. 답글 상태와 댓글 입력창의 ref를 가져옵니다.
   const [replyingTo, setReplyingTo] = useRecoilState(replyingToState);
@@ -50,6 +52,7 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
     const fetchPost = async () => {
       if (!postId || isNaN(postId)) {
         console.log('❌ fetchPost: 잘못된 postId', { postId });
+        setLoading(false);
         return setPost(null);
       }
 
@@ -58,6 +61,14 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
         return;
       }
 
+      // 이미 로딩 중이면 중복 호출 방지
+      if (isLoadingPost.current) {
+        console.log('⚠️ fetchPost: 이미 로딩 중, 중복 호출 방지');
+        return;
+      }
+
+      isLoadingPost.current = true;
+      setLoading(true);
       console.log('🔄 fetchPost 시작:', { postId, category, accessToken: !!accessToken });
 
       try {
@@ -72,22 +83,13 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
           accessToken: !!accessToken,
           errorMessage: error instanceof Error ? error.message : '알 수 없는 에러',
         });
-
-        // 재시도 로직 (1초 후 한 번 더 시도)
-        console.log('🔄 1초 후 재시도...');
-        setTimeout(async () => {
-          try {
-            console.log('🔄 재시도 중...');
-            const retryPost = await getPostDetail(category, postId, accessToken);
-            console.log('✅ 재시도 성공:', retryPost);
-            setPost(retryPost);
-          } catch (retryError) {
-            console.error('❌ 재시도도 실패:', retryError);
-            setPost(null);
-          }
-        }, 1000);
+        setPost(null);
+      } finally {
+        isLoadingPost.current = false;
+        setLoading(false);
       }
     };
+
     fetchPost();
   }, [postId, category, accessToken]); // accessToken을 의존성에 추가
 
@@ -133,7 +135,15 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
         />
       </div>
 
-      {post ? <BoardDetail postId={post.id} post={post} /> : <NoResults />}
+      {loading ? (
+        <div className="flex h-full items-center justify-center">
+          <p>Loading...</p>
+        </div>
+      ) : post ? (
+        <BoardDetail postId={post.id} post={post} />
+      ) : (
+        <NoResults />
+      )}
       {post && <BoardComments postId={post.id} comments={comments} setComments={setComments} bottomRef={bottomRef} />}
 
       {post && (

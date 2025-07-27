@@ -51,8 +51,6 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId
     }
   }, [commentId, postId, accessToken, onClose]);
 
-
-  
   const items: DropdownItem[] = useMemo(() => {
     if (isAuthor) {
       if (type === 'comment') {
@@ -128,6 +126,14 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [onClose]);
 
+  // 드롭다운/모달이 열려있을 때 body 스크롤 방지
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   useEffect(() => {
     // 모달을 열 때만 닉네임 정보를 가져오도록 최적화
     if (modalType === 'block') {
@@ -145,11 +151,14 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId
 
   return createPortal(
     <>
-      {/* ✅ 배경 */}
+      {/* ✅ 배경 오버레이 - 클릭을 차단하여 뒤의 요소가 클릭되지 않도록 함 */}
       <div
-        className="fixed inset-0 z-30 bg-black/50 pointer-events-none"
-        // 모달이 열려있으면 모달을 닫고, 그렇지 않으면 전체 드롭다운을 닫습니다.
-        onClick={() => (modalType ? setModalType(null) : onClose())}
+        className="fixed inset-0 z-30 bg-black/50"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          modalType ? setModalType(null) : onClose();
+        }}
       />
 
       {/* ✅ 드롭다운 메뉴 */}
@@ -161,7 +170,7 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="fixed z-50 min-w-[100px] space-y-2 rounded-[0.75rem] bg-gray700 px-4 py-3 shadow-lg pointer-events-auto"
+            className="pointer-events-auto fixed z-50 min-w-[100px] space-y-2 rounded-[0.75rem] bg-gray700 px-4 py-3 shadow-lg"
             style={{ top: position.top, left: position.left }}
             onClick={(e) => e.stopPropagation()}>
             {items.map((item) => (
