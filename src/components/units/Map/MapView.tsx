@@ -20,7 +20,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   const [loading, setLoading] = useState(false);
   const accessToken = useRecoilValue(accessTokenState);
   const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
-const isEmpty = (filteredClubs?.length ?? 0) === 0;
+  const isEmpty = (filteredClubs?.length ?? 0) === 0;
   const [isMapSearched, setIsMapSearched] = useState(false);
   const [clubsInView, setClubsInView] = useState<Club[]>([]);
   const isFirstSearch = useRef(true);
@@ -72,10 +72,10 @@ const isEmpty = (filteredClubs?.length ?? 0) === 0;
   const handleMapSearchClick = async () => {
     // 클릭된 클럽 상태 초기화
     setClickedClub(null);
-    
+
     // 지도 검색 모드 활성화
     setIsMapSearched(true);
-    
+
     // 현재 보이는 클럽들로 업데이트 (비동기 처리 대기)
     if (mapRef.current) {
       // 바텀시트를 먼저 초기화
@@ -86,7 +86,7 @@ const isEmpty = (filteredClubs?.length ?? 0) === 0;
       // 필터링 작업 수행 및 결과 직접 사용
       const filteredClubs = await mapRef.current.filterAddressesInView();
       setCurrentFilteredClubs(filteredClubs);
-      
+
       // 바텀시트 애니메이션
       if (sheetRef.current) {
         setTimeout(() => {
@@ -121,20 +121,16 @@ const isEmpty = (filteredClubs?.length ?? 0) === 0;
   return (
     <>
       <SearchHeader />
-      <NaverMap 
-        clubs={clubsToDisplay} 
-        minHeight="48.5rem" 
-        onAddressesInBounds={handleSearch} 
+      <NaverMap
+        clubs={clubsToDisplay}
+        minHeight="48.5rem"
+        onAddressesInBounds={handleSearch}
         ref={mapRef}
         bottomSheetRef={sheetRef}
         zoom={isEmpty ? 10 : undefined}
       />
       <MapSearchButton onClick={handleMapSearchClick} />
-      <BottomSheetComponent 
-        ref={sheetRef}
-        filteredClubs={currentFilteredClubs} 
-        isMapSearched={isMapSearched}
-      />
+      <BottomSheetComponent ref={sheetRef} filteredClubs={currentFilteredClubs} isMapSearched={isMapSearched} />
     </>
   );
 }

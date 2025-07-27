@@ -292,7 +292,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             />
             {likeCount}
           </button>
-          <button onClick={handleReplyClick} className='text-gray300'>
+          <button onClick={handleReplyClick} className="text-gray300">
             {isReplying ? '답글 취소' : '답글 달기'}
           </button>
         </div>

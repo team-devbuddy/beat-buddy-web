@@ -27,13 +27,9 @@ export default function LoginMain() {
         style={{
           // 동적 뷰포트 높이 지원 체크
           height:
-            typeof window !== 'undefined' && CSS.supports && CSS.supports('height', '100dvh')
-              ? '100dvh'
-              : 'calc(100vh - 1rem)',
+            typeof window !== 'undefined' && CSS.supports && CSS.supports('height', '100dvh') ? '100dvh' : '100vh',
           minHeight:
-            typeof window !== 'undefined' && CSS.supports && CSS.supports('height', '100dvh')
-              ? '100dvh'
-              : 'calc(100vh - 1rem)',
+            typeof window !== 'undefined' && CSS.supports && CSS.supports('height', '100dvh') ? '100dvh' : '100vh',
         }}>
         {/* 배경 이미지 + 딥 컬러 그라데이션 오버레이 */}
         <div
@@ -69,9 +65,8 @@ export default function LoginMain() {
             // 텍스트 선택 방지
             WebkitUserSelect: 'none',
             userSelect: 'none',
-            // safe area 패딩 적용
+            // safe area 패딩 적용 (하단 패딩 제거)
             paddingTop: 'max(env(safe-area-inset-top), 1rem)',
-            paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)',
             paddingLeft: 'max(env(safe-area-inset-left), 1rem)',
             paddingRight: 'max(env(safe-area-inset-right), 1rem)',
             // 높이 고정으로 스크롤 방지
@@ -118,7 +113,7 @@ export default function LoginMain() {
           <div style={{ flex: '0.45' }} />
 
           {/* SNS 로그인 */}
-          <div className="flex flex-col items-center pb-4">
+          <div className="flex flex-col items-center">
             <p className="mb-[1.25rem] text-body2-15-medium">SNS 계정으로 간편 가입하기</p>
             <div className="flex flex-row items-center justify-center space-x-8">
               <div className="flex space-x-8">
