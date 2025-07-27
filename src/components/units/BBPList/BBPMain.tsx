@@ -102,7 +102,7 @@ export default function BBPMain() {
       <Filter setFilteredClubs={setFilteredClubs} BBPClubs={BBPClubs} />
       <main className="pt-[1.5rem]">
         {filteredClubs.length === 0 && filteredClubs !== BBPClubs ? (
-          <NoResults />
+          <NoResults text="조건에 맞는 추천 결과가 없어요.\n취향을 다시 설정해볼까요?" />
         ) : (
           <VenueCard
               clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}
