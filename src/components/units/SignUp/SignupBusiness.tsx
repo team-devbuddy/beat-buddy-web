@@ -220,7 +220,7 @@ export default function SignUpBusiness() {
                 <input
                   value={signupBusiness.ssnFront}
                   disabled
-                  className="font-mono w-full border-b border-gray200 bg-transparent px-2 py-2 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none safari-input-fix"
+                  className="font-mono w-full border-b border-gray200 bg-transparent px-2 py-2 text-center tracking-widest text-gray200 outline-none disabled:border-gray200 disabled:bg-transparent disabled:text-gray-200 disabled:opacity-100"
                 />
                 <span className="text-gray200">-</span>
                 <div className="flex items-center justify-center border-b border-gray200 py-2">
@@ -264,14 +264,14 @@ export default function SignUpBusiness() {
                 <input
                   value={signupBusiness.ssnFront}
                   disabled
-                  className="font-mono w-full border-b border-gray200 bg-transparent px-2 py-2 text-center text-[0.9375rem] tracking-widest text-gray200 outline-none safari-input-fix"
+                  className="font-mono w-full border-b border-gray200 bg-transparent px-2 py-2 text-center tracking-widest text-gray200 outline-none disabled:border-gray200 disabled:bg-transparent disabled:text-gray-200 disabled:opacity-100"
                 />
                 <span className="text-gray200">-</span>
                 <div className="flex items-center justify-center border-b border-gray200 py-2">
                   <input
                     value={signupBusiness.ssnBack}
                     disabled
-                    className="font-mono w-4 bg-transparent text-center text-[0.9375rem] tracking-widest text-gray200 outline-none safari-input-fix"
+                    className="font-mono w-4 bg-transparent text-center text-[0.9375rem] tracking-widest text-gray200 outline-none disabled:border-gray200 disabled:bg-transparent disabled:text-gray-200 disabled:opacity-100"
                   />
                   <span className="font-mono text-[0.9375rem] tracking-widest text-gray200">●●●●●●</span>
                 </div>

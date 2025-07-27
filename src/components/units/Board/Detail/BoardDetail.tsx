@@ -147,7 +147,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
   // 🔥 불필요한 재렌더링을 유발하던 useEffect 훅들을 모두 삭제했습니다.
 
   return (
-    <div className="border-b border-gray700 bg-BG-black px-[1.25rem] pb-[1.25rem]">
+    <div className="border-b-[0.375rem] border-gray700 bg-BG-black px-[1.25rem] pb-[1.25rem]">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-[0.5rem]">
           <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
@@ -173,7 +173,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
           </div>
           <div>
             <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
-            <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
+            <p className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</p>
           </div>
         </div>
         <button
@@ -183,8 +183,8 @@ export default function BoardDetail({ postId, post }: PostProps) {
           {post.isAuthor ? '' : isFollowing ? '팔로잉' : '팔로우'}
         </button>
       </div>
-      <p className="mb-[0.5rem] mt-[0.88rem] text-body2-15-bold text-gray100">{post.title}</p>
-      <p className="whitespace-pre-wrap text-[0.75rem] text-gray100">{post.content}</p>
+      <p className="py-[0.75rem] text-[1rem] text-white">{post.title}</p>
+      <p className="whitespace-pre-wrap text-[0.8125rem] text-gray100">{post.content}</p>
 
       {post.imageUrls && post.imageUrls.length > 0 && (
         <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">

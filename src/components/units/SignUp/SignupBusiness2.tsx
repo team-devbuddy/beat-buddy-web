@@ -61,7 +61,7 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
 
         <div className="mt-8">
           <label className="mb-[0.62rem] block text-body1-16-bold text-gray200">이름</label>
-          <p className="border-b border-gray200 px-2 py-2 pb-2 pt-4 text-gray200">
+          <p className="border-b border-gray200 px-2 py-2 pb-2 pt-4 text-gray100">
             {signupBusiness.name || '이름이 없습니다'}
           </p>
         </div>

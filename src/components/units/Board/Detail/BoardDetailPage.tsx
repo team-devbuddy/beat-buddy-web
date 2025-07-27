@@ -48,21 +48,52 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
 
   useEffect(() => {
     const fetchPost = async () => {
-      if (!postId || isNaN(postId)) return setPost(null);
+      if (!postId || isNaN(postId)) {
+        console.log('❌ fetchPost: 잘못된 postId', { postId });
+        return setPost(null);
+      }
+
+      if (!accessToken) {
+        console.log('⏳ fetchPost: accessToken 없음, 대기 중...');
+        return;
+      }
+
+      console.log('🔄 fetchPost 시작:', { postId, category, accessToken: !!accessToken });
+
       try {
         const fetchedPost = await getPostDetail(category, postId, accessToken);
+        console.log('✅ fetchPost 성공:', fetchedPost);
         setPost(fetchedPost);
-      } catch {
-        setPost(null);
+      } catch (error) {
+        console.error('❌ fetchPost 실패:', {
+          error,
+          postId,
+          category,
+          accessToken: !!accessToken,
+          errorMessage: error instanceof Error ? error.message : '알 수 없는 에러',
+        });
+
+        // 재시도 로직 (1초 후 한 번 더 시도)
+        console.log('🔄 1초 후 재시도...');
+        setTimeout(async () => {
+          try {
+            console.log('🔄 재시도 중...');
+            const retryPost = await getPostDetail(category, postId, accessToken);
+            console.log('✅ 재시도 성공:', retryPost);
+            setPost(retryPost);
+          } catch (retryError) {
+            console.error('❌ 재시도도 실패:', retryError);
+            setPost(null);
+          }
+        }, 1000);
       }
     };
     fetchPost();
-  }, [postId, category]);
+  }, [postId, category, accessToken]); // accessToken을 의존성에 추가
 
   useEffect(() => {
     if (post) setFollowMap((prev) => ({ ...prev, [post.writerId]: post.isFollowing }));
   }, [post, setFollowMap]);
-
 
   // ✅ 2. 답글 모드일 때 외부 클릭을 감지하는 useEffect를 추가합니다.
   useEffect(() => {
@@ -72,11 +103,11 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
     const handleClickOutside = (event: MouseEvent) => {
       // 안전 영역 1: 하단 댓글 입력창
       const isClickInInput = commentInputRef.current?.contains(event.target as Node);
-      
+
       // 안전 영역 2: 하이라이트된 부모 댓글
       const parentCommentElement = document.getElementById(`comment-${replyingTo.parentId}`);
       const isClickInParentComment = parentCommentElement?.contains(event.target as Node);
-      
+
       // 두 안전 영역 바깥을 클릭했을 때만 답글 모드를 취소합니다.
       if (!isClickInInput && !isClickInParentComment) {
         setReplyingTo(null);
@@ -88,7 +119,6 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [replyingTo, setReplyingTo]);
-
 
   return (
     <main className="relative min-h-screen bg-BG-black pb-[5.5rem] text-white">
@@ -112,7 +142,7 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
           <BoardCommentInput
             postId={post.id}
             onCommentAdded={(newComment) => {
-              setComments((prev) => [...prev, newComment]);
+              setComments((prev) => [...prev, { ...newComment, liked: false }]);
             }}
           />
         </div>

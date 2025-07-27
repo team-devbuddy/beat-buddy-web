@@ -64,7 +64,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
     }
   };
   return (
-    <div className="space-y-2 whitespace-nowrap  px-[1.25rem]">
+    <div className="space-y-2 whitespace-nowrap  px-[0.63rem]">
       <div className="flex items-center justify-between rounded-[0.75rem] bg-gray500 px-[0.75rem] py-[0.5rem]">
         <label
           className={`flex items-center gap-[0.12rem] text-[0.75rem] ${isAnonymous ? 'text-main' : 'text-gray300'}`}>
@@ -83,7 +83,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="댓글을 입력해주세요."
-          className="mx-3 flex-1 border-none bg-transparent text-[0.875rem] text-gray300 placeholder:text-gray300 focus:outline-none"
+          className="mx-3 flex-1 border-none bg-transparent text-[0.875rem] text-white placeholder:text-gray300 focus:outline-none"
         />
 
         <button

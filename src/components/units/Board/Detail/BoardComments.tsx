@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import BoardReply, { ReplyType } from './BoardReply';
 import { getAllComments } from '@/lib/actions/comment-controller/getAllComments';
-import { useRecoilValue, useRecoilState } from 'recoil';
-import { accessTokenState, scrollToCommentState } from '@/context/recoil-context';
+import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
+import { accessTokenState, scrollToCommentState, replyLikeState, replyLikeCountState } from '@/context/recoil-context';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface CommentType {
@@ -14,9 +14,11 @@ export interface CommentType {
   replyId: number | null;
   memberName: string;
   likes: number;
+  liked?: boolean; // 현재 사용자가 좋아요를 눌렀는지 여부 (optional)
   createdAt: string;
   isAuthor: boolean;
   userId: string;
+  isBlocked?: boolean; // 차단된 사용자인지 여부
 }
 
 interface Props {
@@ -34,10 +36,37 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
   const accessToken = useRecoilValue(accessTokenState) || '';
   const size = 10;
   const [scrollToComment, setScrollToComment] = useRecoilState(scrollToCommentState);
+  const setReplyLike = useSetRecoilState(replyLikeState);
+  const setReplyLikeCount = useSetRecoilState(replyLikeCountState);
   // ✅ 초기 로드가 한 번만 실행되도록 ref로 상태를 관리합니다.
   const initialLoadRef = useRef(false);
 
+  // 댓글 초기 좋아요 상태 설정
+  useEffect(() => {
+    if (comments.length > 0) {
+      console.log('📊 댓글 데이터 확인:', comments[0]); // 첫 번째 댓글 데이터 확인
 
+      const likeCountMap: { [key: number]: number } = {};
+      const likeStateMap: { [key: number]: boolean } = {};
+
+      comments.forEach((comment) => {
+        // 차단된 사용자는 제외
+        if (!comment.isBlocked) {
+          likeCountMap[comment.id] = comment.likes;
+          likeStateMap[comment.id] = comment.liked || false; // 서버에서 받은 liked 값을 강제로 설정
+          console.log(
+            `💖 댓글 ${comment.id}: liked=${comment.liked}, likes=${comment.likes}, isBlocked=${comment.isBlocked}`,
+          );
+        }
+      });
+
+      // 서버 데이터로 Recoil 상태를 강제 업데이트 (기존 persist 데이터 무시)
+      setReplyLikeCount(() => likeCountMap); // prev를 사용하지 않고 직접 설정
+      setReplyLike(() => likeStateMap); // prev를 사용하지 않고 직접 설정
+
+      console.log('🔄 Recoil 상태 강제 업데이트 완료:', { likeStateMap, likeCountMap });
+    }
+  }, [comments, setReplyLike, setReplyLikeCount]);
 
   useEffect(() => {
     if (scrollToComment === null) return;
@@ -49,12 +78,10 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
       const targetElement = document.getElementById(`comment-${scrollToComment}`);
       targetElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-    
+
     // ✅ 명령 실행 후 상태를 다시 null로 초기화
     setScrollToComment(null);
-
   }, [scrollToComment, comments, bottomRef, setScrollToComment]); // comments가 업데이트 된 후 실행되도록 의존성 추가
-
 
   const loadMoreRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -116,7 +143,7 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
     fetchComments();
   }, [page, postId, accessToken, setComments]);
 
-  const parentComments = comments.filter((c) => c.replyId === null);
+  const parentComments = comments.filter((c) => c.replyId === null && !c.isBlocked);
 
   return (
     <div className="bg-transparent pb-[6.5rem]">

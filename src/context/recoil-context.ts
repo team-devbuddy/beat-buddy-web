@@ -301,3 +301,15 @@ export const reviewLikeCountState = atom<{ [reviewId: string]: number }>({
   key: 'reviewLikeCountState',
   default: {},
 });
+
+export const replyLikeState = atom<{ [replyId: number]: boolean }>({
+  key: 'replyLikeState',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const replyLikeCountState = atom<{ [replyId: number]: number }>({
+  key: 'replyLikeCountState',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
+});

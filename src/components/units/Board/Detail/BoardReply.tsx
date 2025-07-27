@@ -10,6 +10,9 @@ import BoardDropdown from './BoardDropdown';
 import { CommentType } from './BoardComments';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
+import { addReplyLike } from '@/lib/actions/post-interaction-controller/addReplyLike';
+import { deleteReplyLike } from '@/lib/actions/post-interaction-controller/deleteReplyLike';
+import { replyLikeState, replyLikeCountState } from '@/context/recoil-context';
 
 export type { CommentType as ReplyType };
 
@@ -27,11 +30,42 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   const [showMenu, setShowMenu] = useState(false);
   const iconRef = useRef<HTMLImageElement | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [isLoadingLike, setIsLoadingLike] = useState(false);
+
+  // 컴포넌트 마운트 시 데이터 확인
+  console.log(`🔍 BoardReply 데이터 확인:`, {
+    '📝 props로 받은 postId (게시글ID)': postId,
+    '💬 댓글 데이터': {
+      '댓글ID (reply.id)': reply.id,
+      댓글내용: reply.content.substring(0, 20) + '...',
+      좋아요수: reply.likes,
+      '부모댓글ID (replyId)': reply.replyId,
+    },
+    '🎯 API에서 사용할 값들': {
+      'postId (게시글)': postId,
+      'commentId (댓글)': reply.id,
+    },
+  });
 
   const [replyingTo, setReplyingTo] = useRecoilState(replyingToState);
   const setFocusTrigger = useSetRecoilState(commentInputFocusState);
-
+  const [replyLike, setReplyLike] = useRecoilState(replyLikeState);
+  const [replyLikeCount, setReplyLikeCount] = useRecoilState(replyLikeCountState);
   const isReplying = replyingTo?.parentId === reply.id;
+
+  // 현재 댓글의 좋아요 상태와 개수
+  const isLiked = replyLike[reply.id] ?? reply.liked ?? false;
+  const likeCount = replyLikeCount[reply.id] ?? reply.likes;
+
+  // 디버깅용 로그
+  console.log(`🔍 댓글 ${reply.id} 상태:`, {
+    'replyLike[reply.id]': replyLike[reply.id],
+    'reply.liked': reply.liked,
+    isLiked: isLiked,
+    'replyLikeCount[reply.id]': replyLikeCount[reply.id],
+    'reply.likes': reply.likes,
+    likeCount: likeCount,
+  });
 
   const handleReplyClick = () => {
     if (isReplying) {
@@ -39,6 +73,83 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
     } else {
       setReplyingTo({ parentId: reply.id, parentName: reply.isAnonymous ? '익명' : reply.memberName });
       setFocusTrigger((c) => c + 1);
+    }
+  };
+
+  const handleLike = async () => {
+    if (!accessToken || isLoadingLike) return;
+
+    // 현재 상태 저장 (에러 시 롤백용)
+    const previousLiked = isLiked;
+    const previousCount = likeCount;
+
+    console.log(`🚀 좋아요 클릭 - 댓글 ${reply.id}:`, {
+      previousLiked,
+      previousCount,
+      '호출할 API': previousLiked ? 'DELETE (좋아요 삭제)' : 'PUT (좋아요 추가)',
+      '🏠 게시글ID (postId)': postId,
+      '💬 댓글ID (reply.id)': reply.id,
+      '📡 실제 API URL': `PUT/DELETE /posts/${postId}/comments/${reply.id}/like`,
+    });
+
+    try {
+      setIsLoadingLike(true);
+
+      // UI 즉시 업데이트 (Optimistic Update)
+      setReplyLike((prev) => ({ ...prev, [reply.id]: !previousLiked }));
+      setReplyLikeCount((prev) => ({
+        ...prev,
+        [reply.id]: previousLiked ? previousCount - 1 : previousCount + 1,
+      }));
+
+      // 현재 좋아요 상태에 따라 API 호출
+      let response;
+      if (previousLiked) {
+        // 이미 좋아요를 눌렀다면 DELETE로 삭제
+        console.log(`🗑️ DELETE 호출 - URL: /posts/${postId}/comments/${reply.id}/like`);
+        response = await deleteReplyLike(postId, reply.id, accessToken);
+      } else {
+        // 좋아요를 안 눌렀다면 PUT으로 추가
+        console.log(`❤️ PUT 호출 - URL: /posts/${postId}/comments/${reply.id}/like`);
+        response = await addReplyLike(postId, reply.id, accessToken);
+      }
+
+      console.log(`📨 서버 응답 - 댓글 ${reply.id}:`, response);
+
+      // 서버 응답이 있다면 정확한 상태로 업데이트
+      if (response && response.data) {
+        console.log('📨 서버 응답 데이터:', response.data);
+
+        // 서버에서 정확한 liked 값이 오면 사용, 없으면 예상값 유지
+        if (typeof response.data.liked === 'boolean') {
+          console.log(`✅ 서버에서 liked 업데이트: ${response.data.liked}`);
+          setReplyLike((prev) => ({ ...prev, [reply.id]: response.data.liked }));
+        } else {
+          console.log(`⚠️ 서버 응답에 liked 필드 없음, 예상값 유지: ${!previousLiked}`);
+        }
+
+        // 서버에서 정확한 likes 값이 오면 사용, 없으면 예상값 유지
+        if (typeof response.data.likes === 'number') {
+          console.log(`✅ 서버에서 likes 업데이트: ${response.data.likes}`);
+          setReplyLikeCount((prev) => ({ ...prev, [reply.id]: response.data.likes }));
+        } else {
+          console.log(
+            `⚠️ 서버 응답에 likes 필드 없음, 예상값 유지: ${previousLiked ? previousCount - 1 : previousCount + 1}`,
+          );
+        }
+      } else {
+        console.log('⚠️ 서버 응답 없음 또는 data 필드 없음, 예상값 유지');
+      }
+    } catch (error) {
+      console.error('댓글 좋아요 처리 실패:', error);
+
+      // 에러 시 상태 롤백
+      setReplyLike((prev) => ({ ...prev, [reply.id]: previousLiked }));
+      setReplyLikeCount((prev) => ({ ...prev, [reply.id]: previousCount }));
+
+      alert('좋아요 처리에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsLoadingLike(false);
     }
   };
 
@@ -63,7 +174,12 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   };
 
   const formattedTime = formatRelativeTime(reply.createdAt);
-  const childReplies = allComments.filter((c) => c.replyId === reply.id);
+  const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked); // 차단된 사용자 제외
+
+  // 차단된 사용자의 댓글은 렌더링하지 않음
+  if (reply.isBlocked) {
+    return null;
+  }
 
   // ✅ isNested prop에 따라 다른 UI 구조를 반환하도록 수정
   if (isNested) {
@@ -72,11 +188,11 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
       <div id={`comment-${reply.id}`} className="w-full">
         {/* ✅ 스크린샷 디자인에 맞춰 회색 배경과 패딩을 적용합니다. */}
         <div
-          className={classNames('flex w-full flex-col gap-[0.5rem] rounded-lg bg-gray700 p-3 transition-colors', {
+          className={classNames('flex w-full flex-col gap-[0.5rem] rounded-lg transition-colors', {
             'bg-gray800': isReplying,
           })}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-white">
+            <div className="flex items-center gap-[0.37rem] text-[0.8125rem] font-bold text-white">
               <Image
                 src={userProfile?.profileImageUrl || '/icons/Mask group.svg'}
                 alt="profile"
@@ -85,7 +201,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                 className="rounded-full"
               />
               {reply.isAnonymous ? '익명' : reply.memberName}
-              <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
+              <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
             </div>
             {reply.isAuthor && (
               <div className="relative">
@@ -103,10 +219,18 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           </div>
           <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
           <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
-            <span className="flex items-center gap-[0.19rem]">
-              <Image src="/icons/favorite.svg" alt="heart" width={16} height={16} />
-              {reply.likes}
-            </span>
+            <button
+              onClick={handleLike}
+              disabled={isLoadingLike}
+              className="flex items-center gap-[0.19rem] disabled:opacity-50">
+              <Image
+                src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
+                alt="heart"
+                width={16}
+                height={16}
+              />
+              {likeCount}
+            </button>
           </div>
         </div>
         {showMenu && (
@@ -151,10 +275,18 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
         </div>
         <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
         <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
-          <span className="flex items-center gap-[0.19rem]">
-            <Image src="/icons/favorite.svg" alt="heart" width={16} height={16} />
-            {reply.likes}
-          </span>
+          <button
+            onClick={handleLike}
+            disabled={isLoadingLike}
+            className="flex items-center gap-[0.19rem] disabled:opacity-50">
+            <Image
+              src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
+              alt="heart"
+              width={16}
+              height={16}
+            />
+            {likeCount}
+          </button>
           <button onClick={handleReplyClick} className="text-gray300">
             {isReplying ? '답글 취소' : '답글 달기'}
           </button>
@@ -176,7 +308,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                 exit={{ opacity: 0, y: -10, height: 0 }}
                 transition={{ duration: 0.3 }}
                 className="flex items-start gap-2">
-                <Image src="/icons/replyArrow.svg" alt="reply arrow" width={16} height={16} className="mt-3" />
+                <Image src="/icons/replyArrow.svg" alt="reply arrow" width={16} height={16} className="mt-1" />
                 <BoardReply
                   reply={child}
                   allComments={allComments}

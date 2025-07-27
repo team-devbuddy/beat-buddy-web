@@ -49,6 +49,29 @@ export default function BoardWrite() {
   }, [content]);
 
   useEffect(() => {
+    const textarea = textareaRef.current;
+
+    if (!textarea) return;
+
+    // 높이를 조절하는 함수
+    const adjustHeight = () => {
+      textarea.style.height = 'auto'; // 높이를 초기화
+      textarea.style.height = `${textarea.scrollHeight}px`; // scrollHeight를 바탕으로 높이 재설정
+    };
+
+    // 초기 렌더링 시 높이 조절
+    adjustHeight();
+
+    // 화면 크기가 변경될 때마다 높이 조절
+    window.addEventListener('resize', adjustHeight);
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거 (메모리 누수 방지)
+    return () => {
+      window.removeEventListener('resize', adjustHeight);
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchPost = async () => {
       if (postId && !isNaN(postId) && accessToken) {
         try {
@@ -152,7 +175,7 @@ export default function BoardWrite() {
   return (
     <div className="flex flex-col bg-BG-black pb-[140px] text-white">
       {/* 헤더 */}
-      <header className="flex items-center justify-between py-4 pl-[0.62rem] pr-4">
+      <header className="flex items-center justify-between py-4 pl-[0.62rem] pr-5">
         <Image
           onClick={() => router.back()}
           src="/icons/line-md_chevron-left.svg"
@@ -160,24 +183,24 @@ export default function BoardWrite() {
           width={35}
           height={35}
         />
-        <h1 onClick={handleUpload} className="text-[0.875rem] font-bold text-gray300">
+        <h1 onClick={handleUpload} className="text-[0.875rem] font-bold text-gray200">
           글쓰기
         </h1>
       </header>
 
       {/* 입력 영역 */}
-      <div className="px-[1.25rem]">
+      <div className="px-[1.25rem] py-[0.88rem]">
         <div>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border-none bg-transparent text-[1rem] font-bold text-white placeholder:text-gray200 focus:outline-none"
+            className="w-full border-none bg-transparent text-[1rem] font-bold text-white safari-input-fix placeholder:text-gray200 focus:outline-none"
             placeholder="(선택) 제목을 입력해주세요"
           />
         </div>
 
-        <hr className="my-4 h-[0.0625rem] border-gray500" />
+        <hr className="mb-5 mt-2 h-[0.0625rem] border-gray500" />
 
         <textarea
           ref={textareaRef}
@@ -189,15 +212,15 @@ export default function BoardWrite() {
               textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
             }
           }}
-          className="w-full overflow-hidden whitespace-pre-wrap border-none bg-transparent text-[0.75rem] text-gray200 placeholder:text-gray200 focus:outline-none"
+          className="w-full overflow-hidden whitespace-pre-wrap border-none bg-transparent text-[0.8125rem] text-white placeholder:text-gray300 focus:outline-none"
           style={{ minHeight: '2rem', resize: 'none' }}
           placeholder={`광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.\n건강한 커뮤니티 문화를 함께 만들어가요.`}
         />
 
         {!content && (
-          <div className="mt-[-0.4rem] text-[0.75rem] text-gray200">
+          <div className="mt-[-0.4rem] text-[0.8125rem] text-gray300">
             자세한 내용은{' '}
-            <a href="/rules" target="_blank" rel="noopener noreferrer" className="text-gray200 underline">
+            <a href="/rules" target="_blank" rel="noopener noreferrer" className="text-gray300 underline">
               커뮤니티 이용 규칙
             </a>
             을 참고해주세요.
