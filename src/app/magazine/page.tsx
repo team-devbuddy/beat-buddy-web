@@ -46,7 +46,7 @@ export default function MagazineListPage() {
         {loading ? (
           <BBPListSkeleton />
         ) : magazines.length === 0 ? (
-          <NoResults />
+          <NoResults text="아직 매거진이 없어요.\n첫 매거진을 작성해보세요." />
         ) : (
           <div className="grid grid-cols-1 gap-[0.88rem] md:grid-cols-2">
             {magazines.map((magazine, index) => (

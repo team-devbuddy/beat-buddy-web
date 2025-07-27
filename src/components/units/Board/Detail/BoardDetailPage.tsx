@@ -142,7 +142,7 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
       ) : post ? (
         <BoardDetail postId={post.id} post={post} />
       ) : (
-        <NoResults />
+        <NoResults text="아직 게시글이 없어요." />
       )}
       {post && <BoardComments postId={post.id} comments={comments} setComments={setComments} bottomRef={bottomRef} />}
 

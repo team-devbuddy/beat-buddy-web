@@ -23,16 +23,16 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
       <div className="relative flex bg-BG-black">
         <button
           className={classNames(
-            'flex-1 py-[0.88rem] text-[0.9375rem] font-bold transition-colors duration-200',
-            activeTab === 'followers' ? 'text-white' : 'text-gray300',
+            'flex-1 py-[0.62rem] text-[0.9375rem]  transition-colors duration-200',
+            activeTab === 'followers' ? 'text-main font-bold' : 'text-gray300',
           )}
           onClick={() => setActiveTab('followers')}>
           팔로워
         </button>
         <button
           className={classNames(
-            'flex-1 py-[0.88rem] text-[0.9375rem] font-bold transition-colors duration-200',
-            activeTab === 'following' ? 'text-white' : 'text-gray300',
+            'flex-1 py-[0.62rem] text-[0.9375rem]  transition-colors duration-200',
+            activeTab === 'following' ? 'text-main font-bold' : 'text-gray300',
           )}
           onClick={() => setActiveTab('following')}>
           팔로잉

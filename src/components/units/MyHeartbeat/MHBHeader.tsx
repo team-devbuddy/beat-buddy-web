@@ -15,18 +15,16 @@ const MHBHeader = () => {
   }, []);
 
   return (
-    <header className="flex flex-col bg-BG-black px-[1rem]">
-      <div className="flex w-full items-center justify-between py-[1rem]">
+    <header className="flex flex-col bg-BG-black px-[1.25rem]">
+      <div className="flex w-full items-center  py-[0.62rem]">
         <Link href="/">
-          <div className="flex items-center text-main2">
-            <Image src="/icons/ArrowLeft.svg" alt="뒤로가기" width={24} height={24} />
+          <div className="flex items-start">
+            <Image src="/icons/arrow_back_ios.svg" alt="뒤로가기" width={24} height={24} />
           </div>
         </Link>
+        <span className="text-[1.25rem] font-bold text-white">My Heart Beat</span>
       </div>
-      <div className="flex flex-col py-[0.5rem]">
-        <span className="font-queensides text-[1.5rem] text-main2">My Heart Beat</span>
-        <span className="mt-[0.75rem] text-body2-15-medium text-gray100">내가 관심있는 베뉴들의 정보를 확인하세요</span>
-      </div>
+
     </header>
   );
 };

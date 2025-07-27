@@ -117,7 +117,7 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
   const parentComments = comments.filter((c) => c.replyId === null && !c.isBlocked);
 
   return (
-    <div className="bg-transparent pb-[3rem] pt-5">
+    <div className="bg-transparent pb-[4rem] pt-5">
       <AnimatePresence>
         {parentComments.map((comment) => (
           <motion.div

@@ -9,7 +9,7 @@ import { Club, HeartbeatProps } from '@/lib/types';
 import MainFooter from '../Main/MainFooter';
 import MyHeartbeat from './MHBVenues';
 import MyHeartBeatSkeleton from '@/components/common/skeleton/MyHeartBeatSkeleton';
-
+import NoResults from '../Search/NoResult';
 const MyHeartbeatHeader = dynamic(() => import('./MHBHeader'), { ssr: false });
 
 export default function MyHeartbeatMain() {
@@ -90,17 +90,20 @@ export default function MyHeartbeatMain() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex pb-[64px] w-full flex-col">
       <div className="flex-grow bg-BG-black">
         <MyHeartbeatHeader />
+        {myHeartbeatClubs.length > 0 ? (
         <MyHeartbeat
           clubs={myHeartbeatClubs}
           likedClubs={likedClubs}
           heartbeatNums={heartbeatNums}
           handleHeartClickWrapper={handleHeartClickWrapper}
         />
+        ) : (
+            <NoResults text="아직 하트비트가 없어요!\n좋아하는 베뉴를 찾아보세요." />
+        )}
       </div>
-      <MainFooter />
     </div>
   );
 }

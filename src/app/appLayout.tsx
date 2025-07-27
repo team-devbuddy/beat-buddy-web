@@ -90,9 +90,9 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   console.log('shouldHideFooter:', shouldHideFooter);
 
   return (
-    <div className="flex h-screen w-full items-center justify-center">
+    <div className="flex h-[100dvh] w-full items-center justify-center">
       {/* 모바일 컨테이너 */}
-      <div className="relative flex h-screen w-full max-w-[600px] flex-col bg-BG-black">
+      <div className="relative flex h-[100dvh] w-full max-w-[600px] flex-col bg-BG-black">
         <div
           className={`flex h-full flex-col overflow-y-auto ${
             shouldHideFooter ? '' : !pathname.includes('venue') && !pathname.includes('search') ? 'pb-[64px]' : ''

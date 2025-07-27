@@ -33,19 +33,6 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   const [isLoadingLike, setIsLoadingLike] = useState(false);
 
   // 컴포넌트 마운트 시 데이터 확인
-  console.log(`🔍 BoardReply 데이터 확인:`, {
-    '📝 props로 받은 postId (게시글ID)': postId,
-    '💬 댓글 데이터': {
-      '댓글ID (reply.id)': reply.id,
-      댓글내용: reply.content.substring(0, 20) + '...',
-      좋아요수: reply.likes,
-      '부모댓글ID (replyId)': reply.replyId,
-    },
-    '🎯 API에서 사용할 값들': {
-      'postId (게시글)': postId,
-      'commentId (댓글)': reply.id,
-    },
-  });
 
   const [replyingTo, setReplyingTo] = useRecoilState(replyingToState);
   const setFocusTrigger = useSetRecoilState(commentInputFocusState);
@@ -57,15 +44,6 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   const isLiked = replyLike[reply.id] !== undefined ? replyLike[reply.id] : reply.liked ?? false;
   const likeCount = replyLikeCount[reply.id] !== undefined ? replyLikeCount[reply.id] : reply.likes;
 
-  // 디버깅용 로그
-  console.log(`🔍 댓글 ${reply.id} 상태:`, {
-    'replyLike[reply.id]': replyLike[reply.id],
-    'reply.liked': reply.liked,
-    isLiked: isLiked,
-    'replyLikeCount[reply.id]': replyLikeCount[reply.id],
-    'reply.likes': reply.likes,
-    likeCount: likeCount,
-  });
 
   // 댓글 좋아요 상태 초기화 (persist 데이터가 없을 때만)
   useEffect(() => {
@@ -92,15 +70,6 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
     // 현재 상태 저장 (에러 시 롤백용)
     const previousLiked = isLiked;
     const previousCount = likeCount;
-
-    console.log(`🚀 좋아요 클릭 - 댓글 ${reply.id}:`, {
-      previousLiked,
-      previousCount,
-      '호출할 API': previousLiked ? 'DELETE (좋아요 삭제)' : 'PUT (좋아요 추가)',
-      '🏠 게시글ID (postId)': postId,
-      '💬 댓글ID (reply.id)': reply.id,
-      '📡 실제 API URL': `PUT/DELETE /posts/${postId}/comments/${reply.id}/like`,
-    });
 
     try {
       setIsLoadingLike(true);

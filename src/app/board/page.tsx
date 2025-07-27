@@ -211,7 +211,7 @@ export default function BoardPage() {
         }
       })}
 
-      {!loading && posts.length === 0 && <NoResults />}
+      {!loading && posts.length === 0 && <NoResults text="아직 게시글이 없어요.\n첫 게시글을 작성해보세요." />}
       <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
         <div className="w-full max-w-[600px] px-4">
           <Link

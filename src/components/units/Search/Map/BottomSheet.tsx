@@ -141,7 +141,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
                         handleHeartClickWrapper={handleHeartClickWrapper}
                       />
                     ) : (
-                      <NoResults />
+                      <NoResults text="조건에 맞는 검색 결과가 없어요." />
                     )}
                   </div>
                 </div>

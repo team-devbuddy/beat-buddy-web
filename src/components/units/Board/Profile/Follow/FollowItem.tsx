@@ -60,7 +60,7 @@ export default function FollowItem({ user }: FollowItemProps) {
   };
 
   return (
-    <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[1rem]">
+    <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[0.88rem]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[0.75rem]" onClick={goToUserProfile}>
           <div className="relative flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center">
@@ -93,7 +93,7 @@ export default function FollowItem({ user }: FollowItemProps) {
 
         <button
           onClick={handleFollow}
-          className={`rounded-[0.5rem] px-[0.88rem] py-[0.5rem] text-[0.875rem]  transition-colors ${
+          className={`rounded-[0.5rem] px-[0.5rem] py-[0.25rem] text-[0.8125rem]  transition-colors ${
             isFollowing ? 'bg-gray500 text-main' : 'bg-main text-white'
           } disabled:opacity-50`}
           disabled={loadingFollow}>

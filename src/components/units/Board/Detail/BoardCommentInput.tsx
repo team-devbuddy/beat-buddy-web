@@ -83,7 +83,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="댓글을 입력해주세요."
-          className="mx-4 flex-1 border-none bg-transparent text-[0.875rem] text-white placeholder:text-gray300 focus:outline-none"
+          className="flex-1 border-none bg-transparent pl-5 text-[0.875rem] text-white placeholder:text-gray300 focus:outline-none"
         />
 
         <button

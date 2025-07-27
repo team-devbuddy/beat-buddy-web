@@ -313,7 +313,7 @@ export default function BoardSearchPage() {
         }
       })}
 
-      {!loading && posts.length === 0 && keyword !== '' && <NoResults />}
+      {!loading && posts.length === 0 && keyword !== '' && <NoResults text="조건에 맞는 검색 결과가 없어요." />}
       <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
         <div className="w-full max-w-[600px] px-4"></div>
       </div>

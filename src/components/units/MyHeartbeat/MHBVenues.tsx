@@ -11,7 +11,7 @@ interface MyHeartbeatProps {
 
 const MyHeartbeat = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: MyHeartbeatProps) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex p-5 flex-col">
       <ClubList
         clubs={clubs}
         likedClubs={likedClubs}
