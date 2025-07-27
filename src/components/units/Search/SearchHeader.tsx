@@ -60,8 +60,8 @@ const SearchHeader = () => {
   return (
     <header className="bg-BG-black px-5 py-[0.63rem]">
       <div className="relative w-full">
-        {/* 🔙 Back icon */}
-        {hasQuery && (
+        {/* 
+        {hasQuery && (🔙 Back icon */}
           <div className="absolute left-[0.88rem] top-1/2 z-10 -translate-y-1/2">
             <Image
               src="/icons/arrow_back_ios.svg"
@@ -72,7 +72,7 @@ const SearchHeader = () => {
               className="cursor-pointer"
             />
           </div>
-        )}
+        {/* )} */}
 
         {/* 🔍 Search icon */}
 

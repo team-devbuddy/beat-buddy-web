@@ -7,7 +7,7 @@ import GoogleMap from '@/components/common/GoogleMap';
 import 'react-spring-bottom-sheet/dist/style.css';
 import MapSearchButton from '@/components/units/Search/Map/MapSearchButton';
 import SearchHeader from '@/components/units/Search/SearchHeader';
-import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
+import { fetchVenues, fetchAllVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, clickedClubState } from '@/context/recoil-context';
 import NaverMap from '@/components/common/NaverMap';
@@ -31,7 +31,15 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       if (isEmpty && allClubs.length === 0) {
         setLoading(true);
         try {
-          const clubs = await fetchVenues([], accessToken);
+          const clubs = await fetchAllVenues(accessToken);
+          console.log('🔍 모든 클럽 데이터 가져오기:', {
+            '총 클럽 수': clubs.length,
+            '클럽 목록': clubs.map((club: Club) => ({
+              id: club.id,
+              name: club.englishName || club.koreanName,
+              address: club.address,
+            })),
+          });
           setAllClubs(clubs);
           setCurrentFilteredClubs(clubs);
         } catch (error) {
@@ -117,6 +125,18 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
 
   // 지도에 표시할 클럽 목록
   const clubsToDisplay = isEmpty ? allClubs : filteredClubs;
+
+  console.log('🗺️ 지도에 전달되는 클럽 데이터:', {
+    isEmpty: isEmpty,
+    'allClubs.length': allClubs.length,
+    'filteredClubs.length': filteredClubs?.length || 0,
+    'clubsToDisplay.length': clubsToDisplay.length,
+    clubsToDisplay: clubsToDisplay.map((club) => ({
+      id: club.id,
+      name: club.englishName || club.koreanName,
+      address: club.address,
+    })),
+  });
 
   return (
     <>
