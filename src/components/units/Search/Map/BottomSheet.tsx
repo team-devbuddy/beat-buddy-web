@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useState, useImperativeHandle, useCallback } from 'react';
 import { Sheet } from 'react-modal-sheet';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -23,6 +23,7 @@ import { AnimatePresence } from 'framer-motion';
 import ClickedClubDetails from './ClickedClub';
 import SearchListSkeleton from '@/components/common/skeleton/SearchListSkeleton';
 import NoResults from '../NoResult';
+import { filterMapDropdown } from '@/lib/actions/search-controller/filterMapDropdown';
 
 export interface BottomSheetProps extends SearchResultsProps {
   isMapSearched?: boolean;
@@ -50,10 +51,38 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
   const [initialSnapPoint, setInitialSnapPoint] = useState<number>(2);
   const [forceUpdateKey, setForceUpdateKey] = useState(0);
   const [currentSnapPoint, setCurrentSnapPoint] = useState<number>(2);
+  const [currentFilteredClubs, setCurrentFilteredClubs] = useState(filteredClubs);
 
   const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'];
   const locations = ['홍대', '이태원', '강남/신사', '압구정', '기타'];
   const sorts = ['가까운 순', '인기순'];
+
+  // 매핑 객체들
+  const genresMap: { [key: string]: string } = {
+    힙합: 'HIPHOP',
+    'R&B': 'R&B',
+    테크노: 'TECHNO',
+    EDM: 'EDM',
+    하우스: 'HOUSE',
+    라틴: 'LATIN',
+    '소울&펑크': 'SOUL&FUNK',
+    'K-POP': 'K-POP',
+    락: 'ROCK',
+    POP: 'POP',
+  };
+
+  const locationsMap: { [key: string]: string } = {
+    홍대: 'HONGDAE',
+    이태원: 'ITAEWON',
+    '강남/신사': 'GANGNAM/SINSA',
+    압구정: 'APGUJEONG',
+    기타: 'OTHERS',
+  };
+
+  const criteriaMap: { [key: string]: string } = {
+    '가까운 순': '가까운 순',
+    인기순: '인기순',
+  };
 
   // 바텀시트 높이 설정
   const snapPoints = clickedClub ? [height, 350, 80] : [height, 470, 80];
@@ -86,6 +115,71 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
       window.removeEventListener('resize', updateSnapPoints);
     };
   }, []);
+
+  // 드롭다운 상태 변경 감지 및 필터링 실행
+  useEffect(() => {
+    console.log('🔄 드롭다운 상태 변경 감지:', {
+      selectedGenre: `"${selectedGenre}"`,
+      selectedLocation: `"${selectedLocation}"`,
+      selectedSort: `"${selectedSort}"`,
+      filteredClubsLength: filteredClubs?.length,
+      isMapSearched,
+      timestamp: new Date().toLocaleTimeString(),
+    });
+
+    // 모든 드롭다운이 해제된 상태면 원본 리스트 표시
+    const isAllFiltersEmpty = !selectedGenre && !selectedLocation && (selectedSort === '가까운 순' || !selectedSort);
+    console.log('🔍 필터 상태 체크:', {
+      isAllFiltersEmpty,
+      selectedGenre: !!selectedGenre,
+      selectedLocation: !!selectedLocation,
+      selectedSort: selectedSort === '가까운 순' || !selectedSort,
+    });
+
+    if (isAllFiltersEmpty) {
+      console.log('🔄 모든 필터 해제 - 원본 리스트 표시');
+      setCurrentFilteredClubs(filteredClubs);
+      return;
+    }
+
+    // 직접 필터링 로직 실행 (무한루프 방지)
+    const executeFiltering = async () => {
+      console.log('🔍 드롭다운 필터링 시작:', {
+        selectedGenre,
+        selectedLocation,
+        selectedSort,
+        filteredClubsLength: filteredClubs?.length,
+        currentFilteredClubsLength: currentFilteredClubs?.length,
+      });
+
+      setLoading(true);
+      try {
+        const filters = {
+          venueList: filteredClubs,
+          genreTag: genresMap[selectedGenre] || '',
+          regionTag: locationsMap[selectedLocation] || '',
+          sortCriteria: criteriaMap[selectedSort] || '가까운 순',
+        };
+
+        console.log('📤 필터 요청 데이터:', filters);
+        const data = await filterMapDropdown(filters, accessToken);
+        console.log('📥 필터 응답 데이터:', data);
+        setCurrentFilteredClubs(data);
+      } catch (error) {
+        console.error('드롭다운 필터링 에러:', error);
+        setCurrentFilteredClubs(filteredClubs);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    executeFiltering();
+  }, [selectedGenre, selectedLocation, selectedSort]); // fetchFilteredClubsByDropdown 제거
+
+  // filteredClubs 변경 시 currentFilteredClubs 초기화
+  useEffect(() => {
+    setCurrentFilteredClubs(filteredClubs);
+  }, [filteredClubs]);
 
   const handleHeartClickWrapper = async (e: React.MouseEvent, id: number) => {
     await handleHeartClick(e, id, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
@@ -133,10 +227,10 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
                         heartbeatNums={heartbeatNums}
                         handleHeartClickWrapper={handleHeartClickWrapper}
                       />
-                    ) : (filteredClubs?.length ?? 0) > 0 ? (
+                    ) : (currentFilteredClubs?.length ?? 0) > 0 ? (
                       <div className="flex px-5">
                         <ClubList
-                          clubs={filteredClubs}
+                          clubs={currentFilteredClubs}
                           likedClubs={likedClubs}
                           heartbeatNums={heartbeatNums}
                           handleHeartClickWrapper={handleHeartClickWrapper}

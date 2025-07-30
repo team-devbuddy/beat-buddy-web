@@ -54,6 +54,13 @@ function Dropdown({
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleOptionClick = (option: string) => {
+    console.log('🎯 드롭다운 옵션 클릭:', {
+      label,
+      option,
+      selectedOption,
+      timestamp: new Date().toLocaleTimeString(),
+    });
+
     if (option === selectedOption) {
       setSelectedOption(''); // 선택된 옵션을 다시 클릭하면 선택 해제
     } else {
