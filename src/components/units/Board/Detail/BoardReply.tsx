@@ -2,11 +2,12 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { formatRelativeTime } from '../BoardThread';
 import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 import { accessTokenState, userProfileState, replyingToState, commentInputFocusState } from '@/context/recoil-context';
 import { deleteComment } from '@/lib/actions/comment-controller/deleteComment';
-import BoardDropdown from './BoardDropdown';
+import BoardDropDown from '../BoardDropDown';
 import { CommentType } from './BoardComments';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export default function BoardReply({ postId, reply, allComments, isNested = false, setComments }: Props) {
+  const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
   const userProfile = useRecoilValue(userProfileState);
   const [showMenu, setShowMenu] = useState(false);
@@ -43,7 +45,6 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   // 현재 댓글의 좋아요 상태와 개수 (persist 우선, 서버 데이터 fallback)
   const isLiked = replyLike[reply.id] !== undefined ? replyLike[reply.id] : reply.liked ?? false;
   const likeCount = replyLikeCount[reply.id] !== undefined ? replyLikeCount[reply.id] : reply.likes;
-
 
   // 댓글 좋아요 상태 초기화 (persist 데이터가 없을 때만)
   useEffect(() => {
@@ -145,6 +146,12 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
     setShowMenu(true);
   };
 
+  const handleProfileClick = () => {
+    if (reply.userId) {
+      router.push(`/board/profile?writerId=${reply.userId}`);
+    }
+  };
+
   const formattedTime = formatRelativeTime(reply.createdAt);
   const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked); // 차단된 사용자 제외
 
@@ -170,24 +177,23 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                 alt="profile"
                 width={22}
                 height={22}
-                className="h-[22px] w-[22px] rounded-full object-cover"
+                className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover"
+                onClick={handleProfileClick}
               />
               {reply.isAnonymous ? '익명' : reply.memberName}
               <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
             </div>
-            {reply.isAuthor && (
-              <div className="relative">
-                <Image
-                  ref={iconRef}
-                  src="/icons/dot-vertical.svg"
-                  alt="menu"
-                  width={20}
-                  height={20}
-                  onClick={handleMenuClick}
-                  className="cursor-pointer"
-                />
-              </div>
-            )}
+            <div className="relative">
+              <Image
+                ref={iconRef}
+                src="/icons/dot-vertical.svg"
+                alt="menu"
+                width={20}
+                height={20}
+                onClick={handleMenuClick}
+                className="cursor-pointer"
+              />
+            </div>
           </div>
           <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
           <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
@@ -208,7 +214,19 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           </div>
         </div>
         {showMenu && (
-          <BoardDropdown onClose={() => setShowMenu(false)} onDelete={handleDelete} position={dropdownPosition} />
+          <BoardDropDown
+            isAuthor={reply.isAuthor}
+            onClose={() => setShowMenu(false)}
+            position={dropdownPosition}
+            postId={postId}
+            commentId={reply.id}
+            type="comment"
+            commentAuthorName={reply.isAnonymous ? '익명' : reply.memberName}
+            onCommentDelete={() =>
+              setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id))
+            }
+            writerId={reply.userId ? parseInt(reply.userId) : undefined}
+          />
         )}
       </div>
     );
@@ -228,24 +246,23 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
               alt="profile"
               width={22}
               height={22}
-              className="h-[22px] w-[22px] rounded-full object-cover safari-icon-fix"
+              className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover safari-icon-fix"
+              onClick={handleProfileClick}
             />
             {reply.isAnonymous ? '익명' : reply.memberName}
             <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
           </div>
-          {reply.isAuthor && (
-            <div className="relative">
-              <Image
-                ref={iconRef}
-                src="/icons/dot-vertical.svg"
-                alt="menu"
-                width={20}
-                height={20}
-                onClick={handleMenuClick}
-                className="cursor-pointer"
-              />
-            </div>
-          )}
+          <div className="relative">
+            <Image
+              ref={iconRef}
+              src="/icons/dot-vertical.svg"
+              alt="menu"
+              width={20}
+              height={20}
+              onClick={handleMenuClick}
+              className="cursor-pointer"
+            />
+          </div>
         </div>
         <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
         <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
@@ -297,7 +314,19 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
       )}
 
       {showMenu && (
-        <BoardDropdown onClose={() => setShowMenu(false)} onDelete={handleDelete} position={dropdownPosition} />
+        <BoardDropDown
+          isAuthor={reply.isAuthor}
+          onClose={() => setShowMenu(false)}
+          position={dropdownPosition}
+          postId={postId}
+          commentId={reply.id}
+          type="comment"
+          commentAuthorName={reply.isAnonymous ? '익명' : reply.memberName}
+          onCommentDelete={() =>
+            setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id))
+          }
+          writerId={reply.userId ? parseInt(reply.userId) : undefined}
+        />
       )}
     </div>
   );

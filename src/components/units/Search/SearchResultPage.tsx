@@ -19,11 +19,7 @@ const SearchResultsPage = () => {
 
   return (
     <div className="flex w-full flex-col bg-BG-black text-white">
-      <SearchResults 
-        filteredClubs={[]} 
-        initialFilteredClubs={[]} 
-        searchQuery={searchQuery}
-      />
+      <SearchResults filteredClubs={[]} initialFilteredClubs={[]} searchQuery={searchQuery} />
     </div>
   );
 };

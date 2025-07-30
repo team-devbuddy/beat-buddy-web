@@ -66,11 +66,10 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
   const filteredTags = getFilteredTags(clickedClub.tagList || []);
 
   return (
-    <Link key={clickedClub.venue.venueId} href={`/detail/${clickedClub.venue.venueId}`} passHref>
-      <div className="flex w-full cursor-pointer flex-col bg-BG-black p-4">
+    <Link key={clickedClub.venue.id} href={`/detail/${clickedClub.venue.id}`} passHref>
+      <div className="flex w-full cursor-pointer flex-col bg-BG-black px-4">
         <motion.div
           whileHover={{
-            y: -5,
             boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
           }}
@@ -86,38 +85,103 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
             <div
               className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
               onClick={(e) => {
-                handleHeartClickWrapper(e, clickedClub.venue.venueId);
+                handleHeartClickWrapper(e, clickedClub.venue.id);
               }}>
               <Image
-                src={likedClubs[clickedClub.venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                src={likedClubs[clickedClub.venue.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                 alt="pink-heart icon"
                 width={32}
                 height={32}
               />
             </div>
           </div>
-          <div className="flex flex-col">
-            <h3 className="text-ellipsis text-body1-16-bold text-white">{clickedClub.venue.englishName}</h3>
-            <div className="mb-[1.06rem] mt-[0.75rem] flex w-3/4 flex-wrap gap-[0.5rem]">
-              {filteredTags.length > 0 ? (
-                filteredTags.map((tag: string, index: number) => (
-                  <span
-                    key={index}
-                    className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                    {tag}
+          <div className="flex flex-col justify-between">
+            <div>
+              <h3 className="text-ellipsis text-body1-16-bold text-white">{clickedClub.venue.englishName}</h3>
+              <div className="mb-[0.5rem] mt-[0.38rem] flex w-3/4 flex-wrap gap-[0.5rem]">
+                {filteredTags.length > 0 ? (
+                  filteredTags.map((tag: string, index: number) => (
+                    <span
+                      key={index}
+                      className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+                      {tag}
+                    </span>
+                  ))
+                ) : (
+                  <span className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+                    No tagList
                   </span>
-                ))
-              ) : (
-                <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                  No tagList
+                )}
+              </div>
+              <div className="flex items-center space-x-[0.25rem] text-gray300">
+                <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
+                <span className="text-body3-12-medium">
+                  {heartbeatNums[clickedClub.venue.id] !== undefined ? heartbeatNums[clickedClub.venue.id] : 0}
                 </span>
-              )}
+              </div>
             </div>
-            <div className="flex items-center space-x-[0.25rem] text-gray300">
-              <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-              <span className="text-body3-12-medium">
-                {heartbeatNums[clickedClub.venue.venueId] !== undefined ? heartbeatNums[clickedClub.venue.venueId] : 0}
-              </span>
+
+            {/* 지도 연결 버튼들 */}
+            <div className="mt-4 flex gap-2 rounded-md bg-white px-2 py-[0.19rem]">
+              {/* 네이버지도 버튼 */}
+              <div
+                className="flex items-center justify-center gap-1"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const address = encodeURIComponent(clickedClub.venue.address);
+                  window.open(`https://map.naver.com/p/search/${address}`, '_blank');
+                }}>
+                <button
+                  title="네이버지도에서 보기"
+                  className="flex items-center justify-center rounded-full transition-colors">
+                  <Image src="/icons/image.png" alt="네이버지도" width={32} height={32} />
+                </button>
+                <p className="whitespace-nowrap text-body3-12-medium text-BG-black">네이버</p>
+              </div>
+
+              {/* 구분선 */}
+              <div className="flex items-center">
+                <span className="text-gray500">|</span>
+              </div>
+
+              {/* 카카오지도 버튼 */}
+              <div
+                className="flex items-center justify-center gap-1"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const address = encodeURIComponent(clickedClub.venue.address);
+                  window.open(`https://map.kakao.com/link/search/${address}`, '_blank');
+                }}>
+                <button
+                  title="카카오지도에서 보기"
+                  className="flex items-center justify-center rounded-full transition-colors">
+                  <Image src="/icons/kakaomap_basic.png" alt="카카오지도" width={32} height={32} />
+                </button>
+                <p className="whitespace-nowrap text-body3-12-medium text-BG-black">카카오</p>
+              </div>
+
+              {/* 구분선 */}
+              <div className="flex items-center">
+                <span className="text-gray500">|</span>
+              </div>
+
+              {/* 구글맵 버튼 */}
+              <div className="flex items-center justify-center gap-1">
+                <button
+                  title="구글맵에서 보기"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const address = encodeURIComponent(clickedClub.venue.address);
+                    window.open(`https://www.google.com/maps/search/${address}`, '_blank');
+                  }}
+                  className="flex items-center justify-center rounded-full transition-colors">
+                  <Image src="/icons/google-map-icon.svg" alt="구글맵" width={28} height={28} />
+                </button>
+                <p className="whitespace-nowrap text-body3-12-medium text-BG-black">구글맵</p>
+              </div>
             </div>
           </div>
         </motion.div>

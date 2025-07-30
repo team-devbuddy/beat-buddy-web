@@ -11,7 +11,6 @@ import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, clickedClubState } from '@/context/recoil-context';
 import NaverMap from '@/components/common/NaverMap';
-import CurrentLocationButton from '@/components/units/Search/Map/CurrentLocationButton';
 
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
@@ -94,49 +93,6 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     }
   };
 
-  const handleCurrentLocationClick = () => {
-    if (!navigator.geolocation) {
-      alert('현재 위치 기능을 지원하지 않는 브라우저입니다.');
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        const userLatLng = new window.naver.maps.LatLng(lat, lng);
-
-        const mapInstance = mapRef.current?.getMapInstance?.();
-        if (!mapInstance) {
-          console.warn('지도 인스턴스를 찾을 수 없습니다.');
-          return;
-        }
-
-        // 현재 위치 마커 생성
-        new window.naver.maps.Marker({
-          position: userLatLng,
-          map: mapInstance,
-          icon: {
-            content: `
-              <div style="transform: translateY(-8px);">
-                <img src="/icons/mapMenow.svg" style="width: 24px; height: 24px;" />
-              </div>
-            `,
-            size: new window.naver.maps.Size(24, 24),
-            anchor: new window.naver.maps.Point(12, 12),
-          },
-        });
-
-        // 지도 중심 이동
-        mapInstance.setCenter(userLatLng);
-      },
-      (error) => {
-        alert('현재 위치를 찾을 수 없습니다. 위치 정보는 지상이나 Wi-Fi 환경에서 더 정확하게 확인할 수 있어요!');
-        console.error(error);
-      },
-    );
-  };
-
   // 외부 검색 결과 업데이트
   useEffect(() => {
     if (!isEmpty) {
@@ -177,7 +133,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       {/* 지도 */}
       <NaverMap
         clubs={clubsToDisplay}
-        minHeight="calc(100dvh - 5rem)"
+        minHeight="calc(100dvh - 20rem)"
         onAddressesInBounds={handleSearch}
         ref={mapRef}
         bottomSheetRef={sheetRef}
@@ -185,7 +141,6 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       />
 
       <MapSearchButton onClick={handleMapSearchClick} />
-      <CurrentLocationButton onClick={handleCurrentLocationClick} />
       <BottomSheetComponent ref={sheetRef} filteredClubs={currentFilteredClubs} isMapSearched={isMapSearched} />
     </div>
   );

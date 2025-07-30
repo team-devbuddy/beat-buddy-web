@@ -56,7 +56,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
   const sorts = ['가까운 순', '인기순'];
 
   // 바텀시트 높이 설정
-  const snapPoints = clickedClub ? [height, 300, 100] : [height, 470, 100];
+  const snapPoints = clickedClub ? [height, 350, 80] : [height, 470, 80];
 
   useImperativeHandle(ref, () => ({
     close: () => setOpen(false),
@@ -87,8 +87,8 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
     };
   }, []);
 
-  const handleHeartClickWrapper = async (e: React.MouseEvent, venueId: number) => {
-    await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
+  const handleHeartClickWrapper = async (e: React.MouseEvent, id: number) => {
+    await handleHeartClick(e, id, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
   return (
@@ -123,7 +123,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
                 </div>
               </Sheet.Header>
               <Sheet.Content className="relative z-10 w-full bg-BG-black" disableDrag={true}>
-                <div className="club-list-container flex w-full flex-col text-[0.93rem] bg-BG-black">
+                <div className="club-list-container flex w-full flex-col bg-BG-black text-[0.93rem]">
                   <div className={`w-full flex-wrap gap-4 ${currentSnapPoint === 1 ? 'pb-[350px]' : ''}`}>
                     {loading ? (
                       <SearchListSkeleton />
@@ -134,12 +134,14 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
                         handleHeartClickWrapper={handleHeartClickWrapper}
                       />
                     ) : (filteredClubs?.length ?? 0) > 0 ? (
-                      <ClubList
-                        clubs={filteredClubs}
-                        likedClubs={likedClubs}
-                        heartbeatNums={heartbeatNums}
-                        handleHeartClickWrapper={handleHeartClickWrapper}
-                      />
+                      <div className="flex px-5">
+                        <ClubList
+                          clubs={filteredClubs}
+                          likedClubs={likedClubs}
+                          heartbeatNums={heartbeatNums}
+                          handleHeartClickWrapper={handleHeartClickWrapper}
+                        />
+                      </div>
                     ) : (
                       <NoResults text="조건에 맞는 검색 결과가 없어요." />
                     )}

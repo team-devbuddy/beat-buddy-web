@@ -31,15 +31,8 @@ const CurrentLocationButton = ({ onClick }: CurrentLocationButtonProps) => {
       className="absolute right-6 top-[9.3rem] z-40 cursor-pointer"
       onClick={onClick}
       onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-    >
-      <Image
-        src={buttonIcon}
-        alt="Current Location"
-        width={40}
-        height={40}
-        className="current-location-button"
-      />
+      onMouseUp={handleMouseUp}>
+      <Image src={buttonIcon} alt="Current Location" width={40} height={40} className="current-location-button" />
     </div>
   );
 };

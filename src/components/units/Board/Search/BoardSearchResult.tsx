@@ -195,12 +195,12 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         </div>
 
         {!post.isAuthor && (
-          <button
-            onClick={handleFollow}
+        <button
+          onClick={handleFollow}
             className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
-            disabled={loadingFollow}>
-            {isFollowing ? '팔로잉' : '팔로우'}
-          </button>
+          disabled={loadingFollow}>
+          {isFollowing ? '팔로잉' : '팔로우'}
+        </button>
         )}
       </div>
       <div onClick={goToPost}>

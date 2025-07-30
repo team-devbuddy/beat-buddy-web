@@ -13,6 +13,7 @@ import { deleteComment } from '@/lib/actions/comment-controller/deleteComment';
 
 interface PostProps {
   nickname: string;
+  memberId?: number; // 게시글 작성자 ID 추가
 }
 
 interface DropdownItem {
@@ -30,9 +31,23 @@ interface DropdownProps {
   commentId?: number | null;
   eventId?: number;
   type?: 'event' | 'board' | 'comment';
+  commentAuthorName?: string; // 댓글 작성자명 추가
+  onCommentDelete?: () => void; // 댓글 삭제 후 콜백 추가
+  writerId?: number; // 댓글 작성자의 writerId 추가
 }
 
-const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId, type }: DropdownProps) => {
+const BoardDropdown = ({
+  isAuthor,
+  onClose,
+  position,
+  postId,
+  commentId,
+  eventId,
+  type,
+  commentAuthorName,
+  onCommentDelete,
+  writerId,
+}: DropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
@@ -45,11 +60,13 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId
     try {
       await deleteComment(postId, commentId, accessToken);
       onClose();
-      // ✅ 필요시 댓글 목록에서 제거도 가능
+      // 댓글 삭제 후 UI에서 제거
+      onCommentDelete?.();
     } catch (e) {
       console.error('댓글 삭제 실패', e);
+      alert('댓글 삭제에 실패했습니다.');
     }
-  }, [commentId, postId, accessToken, onClose]);
+  }, [commentId, postId, accessToken, onClose, onCommentDelete]);
 
   const items: DropdownItem[] = useMemo(() => {
     if (isAuthor) {
@@ -137,17 +154,51 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId
   useEffect(() => {
     // 모달을 열 때만 닉네임 정보를 가져오도록 최적화
     if (modalType === 'block') {
-      const fetchPost = async () => {
-        try {
-          const postDetail = await getPostDetail('free', postId, accessToken);
-          setPost(postDetail);
-        } catch (error) {
-          console.error('게시물 정보 가져오기 실패:', error);
-        }
-      };
-      fetchPost();
+      if (type === 'comment' && commentAuthorName) {
+        // 댓글인 경우 전달받은 댓글 작성자명 사용
+        setPost({ nickname: commentAuthorName });
+      } else {
+        // 게시글인 경우 기존 로직 사용
+        const fetchPost = async () => {
+          try {
+            const postDetail = await getPostDetail('free', postId, accessToken);
+            setPost(postDetail);
+          } catch (error) {
+            console.error('게시물 정보 가져오기 실패:', error);
+          }
+        };
+        fetchPost();
+      }
     }
-  }, [modalType, postId, accessToken]);
+  }, [modalType, postId, accessToken, type, commentAuthorName]);
+
+  const handleBlock = async () => {
+    console.log('writerId', writerId);
+    console.log('postId', postId);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/block`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Access: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          blockedMemberId: type === 'comment' ? writerId : post.memberId || postId, // 게시글 작성자 ID 사용
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('차단 요청에 실패했습니다.');
+      }
+
+      console.log(`${post.nickname}님 차단 완료`);
+      setModalType(null);
+      onClose();
+    } catch (error) {
+      console.error('차단 처리 실패:', error);
+      alert('차단 처리에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
 
   return createPortal(
     <>
@@ -227,11 +278,7 @@ const BoardDropdown = ({ isAuthor, onClose, position, postId, commentId, eventId
                   취소
                 </button>
                 <button
-                  onClick={() => {
-                    // 차단 처리 로직
-                    console.log(`${post.nickname}님 차단`);
-                    setModalType(null);
-                  }}
+                  onClick={handleBlock}
                   className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] text-main">
                   차단하기
                 </button>

@@ -9,8 +9,9 @@ import MapSearchButton from '@/components/units/Search/Map/MapSearchButton';
 import SearchHeader from '@/components/units/Search/SearchHeader';
 import { fetchVenues, fetchAllVenues } from '@/lib/actions/search-controller/fetchVenues';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { accessTokenState, clickedClubState } from '@/context/recoil-context';
+import { accessTokenState, clickedClubState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import NaverMap from '@/components/common/NaverMap';
+import { getMyHearts } from '@/lib/actions/hearbeat-controller/getMyHearts';
 
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
@@ -20,10 +21,44 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   const [loading, setLoading] = useState(false);
   const accessToken = useRecoilValue(accessTokenState);
   const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
+  const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
+  const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const isEmpty = (filteredClubs?.length ?? 0) === 0;
   const [isMapSearched, setIsMapSearched] = useState(false);
   const [clubsInView, setClubsInView] = useState<Club[]>([]);
   const isFirstSearch = useRef(true);
+
+  // 좋아요 상태 초기화
+  useEffect(() => {
+    const fetchLikedStatuses = async () => {
+      if (accessToken) {
+        try {
+          const heartbeats = await getMyHearts(accessToken);
+          const likedStatuses = heartbeats.reduce(
+            (acc, heartbeat) => {
+              acc[heartbeat.venueId] = heartbeat.isHeartbeat;
+              return acc;
+            },
+            {} as { [key: number]: boolean },
+          );
+          setLikedClubs((prev) => ({ ...prev, ...likedStatuses }));
+
+          const heartbeatNumbers = heartbeats.reduce(
+            (acc, heartbeat) => {
+              acc[heartbeat.venueId] = heartbeat.heartbeatNum;
+              return acc;
+            },
+            {} as { [key: number]: number },
+          );
+          setHeartbeatNums((prev) => ({ ...prev, ...heartbeatNumbers }));
+        } catch (error) {
+          console.error('Error fetching liked statuses:', error);
+        }
+      }
+    };
+
+    fetchLikedStatuses();
+  }, [accessToken, setLikedClubs, setHeartbeatNums]);
 
   // 모든 클럽 데이터 가져오기
   useEffect(() => {
@@ -41,7 +76,10 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
             })),
           });
           setAllClubs(clubs);
-          setCurrentFilteredClubs(clubs);
+          // 초기 로드 시에만 currentFilteredClubs 설정
+          if (currentFilteredClubs.length === 0) {
+            setCurrentFilteredClubs(clubs);
+          }
         } catch (error) {
           console.error('Failed to fetch all clubs:', error);
         } finally {
@@ -104,24 +142,27 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     }
   };
 
-  // 외부 검색 결과 업데이트
+  // 통합된 useEffect: 외부 검색 결과 및 클릭된 클럽 변경 처리
   useEffect(() => {
+    // 클릭된 클럽이 있는 경우
+    if (clickedClub && clickedClub.venue) {
+      setIsMapSearched(false);
+      // 클릭된 클럽이 있으면 원래 리스트로 복원
+      const clubsToShow = isEmpty ? allClubs : filteredClubs;
+      setCurrentFilteredClubs(clubsToShow);
+      return;
+    }
+
+    // 외부 검색 결과가 있는 경우
     if (!isEmpty) {
       setCurrentFilteredClubs(filteredClubs);
       setIsMapSearched(false);
       setClickedClub(null);
-    } else if (allClubs.length > 0) {
+    } else if (allClubs.length > 0 && currentFilteredClubs.length === 0) {
+      // 검색 결과가 없고 allClubs가 있지만 currentFilteredClubs가 비어있는 경우에만 설정
       setCurrentFilteredClubs(allClubs);
     }
-  }, [filteredClubs, isEmpty, allClubs, setClickedClub]);
-
-  // 클릭된 클럽이 변경되면 바텀시트에 반영
-  useEffect(() => {
-    if (clickedClub && clickedClub.venue) {
-      setIsMapSearched(false);
-      setCurrentFilteredClubs(isEmpty ? allClubs : filteredClubs);
-    }
-  }, [clickedClub, isEmpty, allClubs, filteredClubs]);
+  }, [filteredClubs, isEmpty, allClubs, clickedClub, currentFilteredClubs.length]);
 
   // 지도에 표시할 클럽 목록
   const clubsToDisplay = isEmpty ? allClubs : filteredClubs;
@@ -141,6 +182,18 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   return (
     <>
       <SearchHeader />
+      <div
+        style={{
+          position: 'absolute',
+          top: '60px', // SearchHeader 높이에 맞춰 조정
+          left: 0,
+          right: 0,
+          height: '50px',
+          background: 'linear-gradient(180deg, #131415 15%, rgba(19, 20, 21, 0.00) 70%)',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}
+      />
       <NaverMap
         clubs={clubsToDisplay}
         minHeight="48.5rem"
