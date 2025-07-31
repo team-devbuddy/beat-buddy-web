@@ -16,7 +16,7 @@ const MHBHeader = () => {
 
   return (
     <header className="flex flex-col bg-BG-black px-[1.25rem]">
-      <div className="flex w-full items-center  py-[0.62rem]">
+      <div className="flex w-full items-center py-[0.62rem]">
         <Link href="/">
           <div className="flex items-start">
             <Image src="/icons/arrow_back_ios.svg" alt="뒤로가기" width={24} height={24} />
@@ -24,7 +24,6 @@ const MHBHeader = () => {
         </Link>
         <span className="text-[1.25rem] font-bold text-white">My Heart Beat</span>
       </div>
-
     </header>
   );
 };
