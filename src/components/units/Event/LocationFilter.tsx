@@ -36,11 +36,11 @@ export default function LocationFilter() {
   };
 
   return (
-    <div className="w-full px-[1.25rem] pt-[0.75rem]">
+    <div className="w-full px-5 pt-5">
       {/* 상단 필터 헤더 */}
       <div className="flex items-center justify-between">
         <button
-          className={`rounded-[0.38rem] px-[0.63rem] py-[0.25rem] text-[0.875rem] focus:outline-none ${
+          className={`rounded-[0.5rem] px-[0.62rem] py-[0.25rem] text-[0.875rem] focus:outline-none ${
             selectedRegions.length > 0 ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
           }`}
           onClick={() => setShowFilter(!showFilter)}>
@@ -57,8 +57,8 @@ export default function LocationFilter() {
               <Image
                 src="/icons/chevron.forward.svg"
                 alt="arrow_down"
-                width={16}
-                height={16}
+                width={12}
+                height={12}
                 className="text-gray300"
               />
             </button>
@@ -84,7 +84,9 @@ export default function LocationFilter() {
                       <button
                         key={option}
                         onClick={() => handleSortSelect(option)}
-                        className="block w-full bg-gray500 py-[0.4rem] text-center text-[0.875rem] text-gray100 hover:bg-gray700">
+                        className={`block w-full py-[0.56rem] text-center text-[0.8125rem] hover:bg-gray700 ${
+                          selectedSort === option ? 'bg-gray500 font-bold text-main' : 'bg-gray500 text-gray100'
+                        }`}>
                         {option}
                       </button>
                     ))}

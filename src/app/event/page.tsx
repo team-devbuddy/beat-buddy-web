@@ -35,13 +35,9 @@ export default function EventPage() {
   };
 
   const handleTouchEnd = () => {
-    if (
-      touchStartY.current !== null &&
-      touchEndY.current !== null &&
-      touchEndY.current - touchStartY.current > 50
-    ) {
+    if (touchStartY.current !== null && touchEndY.current !== null && touchEndY.current - touchStartY.current > 50) {
       setIsRefreshing(true);
-      setRefreshTrigger(prev => !prev);
+      setRefreshTrigger((prev) => !prev);
       setTimeout(() => {
         setIsRefreshing(false);
       }, 500);
@@ -56,8 +52,7 @@ export default function EventPage() {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="bg-BG-black"
-    >
+      className="bg-BG-black">
       <EventHeader />
       <EventTab />
       <LocationFilter />
@@ -69,14 +64,10 @@ export default function EventPage() {
         }}
       />
 
-      <div className="px-[1.25rem] pt-[1.25rem] pb-[1.25rem]">
+      <div className="p-5">
         {activeTab === 'now' && <EventNow refreshTrigger={refreshTrigger} />}
-        {activeTab === 'upcoming' && (
-          <EventContainer tab="upcoming" refreshTrigger={refreshTrigger} />
-        )}
-        {activeTab === 'past' && (
-          <EventContainer tab="past" refreshTrigger={refreshTrigger} />
-        )}
+        {activeTab === 'upcoming' && <EventContainer tab="upcoming" refreshTrigger={refreshTrigger} />}
+        {activeTab === 'past' && <EventContainer tab="past" refreshTrigger={refreshTrigger} />}
       </div>
     </div>
   );

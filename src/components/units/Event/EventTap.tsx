@@ -6,7 +6,7 @@ import { eventTabState } from '@/context/recoil-context'; // 경로 맞게 수�
 
 export default function EventTab() {
   const tabs: { label: string; key: 'now' | 'upcoming' | 'past' }[] = [
-    { label: 'NOW', key: 'now' },
+    { label: 'Now', key: 'now' },
     { label: 'Upcoming', key: 'upcoming' },
     { label: 'Past', key: 'past' },
   ];
@@ -15,7 +15,7 @@ export default function EventTab() {
   const activeIndex = tabs.findIndex((tab) => tab.key === activeTab);
 
   return (
-    <div className="relative mt-4 flex w-full border-b border-gray700">
+    <div className="relative  flex w-full border-b border-gray700">
       {tabs.map(({ label, key }) => (
         <button
           key={key}

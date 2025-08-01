@@ -8,7 +8,7 @@ import { boardRecentSearchState, isMapViewState, accessTokenState } from '@/cont
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
 import { AnimatePresence, motion } from 'framer-motion'; // ✅ 추가
 import BottomSheetCalandar from '@/components/units/Board/Search/BottomSheetCalandar';
-
+import { usePathname } from 'next/navigation';
 interface Props {
   onSearchSubmit: () => void;
   placeholder: string;
@@ -27,6 +27,8 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const [errorMessage, setErrorMessage] = useState(''); // ✅ 토스트 메시지
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const pathname = usePathname();
+  const isEventSearch = pathname.includes('/event/search');
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -70,8 +72,10 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   const handleBackClick = () => {
     if (isMapView) {
       setIsMapView(false);
-    } else {
-      router.push(`/${isEvent ? 'event' : 'board'}`);
+    } else if (isEvent) {
+      router.push(`/event`);
+    } else if (isEventSearch) {
+      router.push(`/event/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -103,7 +107,9 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
           <div className="relative w-full rounded-[0.5rem] bg-gray700">
             <input
               ref={inputRef}
-              className="w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-[0.9375rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none"
+              className={`w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-[0.9375rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none ${
+                isEvent ? 'pr-[5rem]' : ''
+              }`}
               placeholder={isLoading ? '' : placeholder}
               value={searchQuery}
               onChange={handleInputChange}
@@ -119,8 +125,8 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
                   <Image
                     src="/icons/uil_calender.svg"
                     alt="calendar icon"
-                    width={24}
-                    height={24}
+                    width={28}
+                    height={28}
                     onClick={handleCalendarClick}
                     className="cursor-pointer"
                   />
@@ -128,19 +134,19 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
                     <Image
                       src="/icons/search-01-pink.svg"
                       alt="search icon"
-                      width={24}
-                      height={24}
+                      width={22}
+                      height={22}
                       onClick={handleSearch}
-                      className="cursor-pointer"
+                      className="mt-[0.05rem] cursor-pointer"
                     />
                   ) : (
                     <Image
                       src="/icons/search-01.svg"
                       alt="search icon"
-                      width={24}
-                      height={24}
+                      width={22}
+                      height={22}
                       onClick={handleSearch}
-                      className="cursor-pointer"
+                      className="mt-[0.05rem] cursor-pointer"
                     />
                   )}
                 </div>
@@ -180,7 +186,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="absolute right-1 top-[3rem] z-50 -translate-x-1/2 bg-transparent px-4 py-2 text-sm text-main">
+              className="absolute right-1 top-[3rem] z-50 -translate-x-1/2 bg-transparent px-4 py-2 text-[0.8125rem] text-main">
               {errorMessage}
             </motion.div>
           )}

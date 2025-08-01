@@ -19,6 +19,7 @@ export interface EventType {
   startDate: string;
   endDate: string;
   liked?: boolean;
+  region: string;
 }
 
 export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming' | 'past'; refreshTrigger: boolean }) {
@@ -126,7 +127,7 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
   }, [refreshTrigger, region, sort]);
 
   return (
-    <div className="min-h-screen bg-BG-black">
+    <div className="bg-BG-black">
       <EventLists tab={tab} events={events} setEvents={setEvents} />
       {hasMore && <div ref={loaderRef} className="h-10 w-full" />}
     </div>

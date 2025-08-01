@@ -214,7 +214,7 @@ export const eventState = atom<EventDetail | null>({
 
 export const eventTabState = atom<'now' | 'upcoming' | 'past'>({
   key: 'eventTabState',
-  default: 'now',
+  default: 'upcoming',
 });
 
 export const eventDetailTabState = atom<'info' | 'qna'>({
@@ -327,4 +327,3 @@ export const replyLikeCountState = atom<{ [replyId: number]: number }>({
   default: {},
   effects_UNSTABLE: [persistAtom],
 });
-

@@ -3,9 +3,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { searchEventsByPeriod } from '@/lib/actions/event-controller/searchEventsByPeriod';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
 
 interface CalendarModalProps {
   onClose: () => void;
+  onSearchResults?: (results: any) => void;
 }
 
 interface SelectedDate {
@@ -14,23 +18,59 @@ interface SelectedDate {
   day: number;
 }
 
-const BottomSheetCalendar = ({ onClose }: CalendarModalProps) => {
+const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) => {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [startDay, setStartDay] = useState<SelectedDate | null>(null);
   const [endDay, setEndDay] = useState<SelectedDate | null>(null);
   const [clickCount, setClickCount] = useState(0);
+  const accessToken = useRecoilValue(accessTokenState);
+
+  // 날짜를 YYYYMMDD 형식으로 변환하는 함수
+  const formatDateForAPI = (date: SelectedDate) => {
+    const year = date.year;
+    const month = String(date.month + 1).padStart(2, '0');
+    const day = String(date.day).padStart(2, '0');
+    return `${year}${month}${day}`;
+  };
+
+  // 날짜 범위로 이벤트 검색
+  const searchEventsByDateRange = async () => {
+    if (!startDay || !endDay || !accessToken) return;
+
+    try {
+      const startDate = formatDateForAPI(startDay);
+      const endDate = formatDateForAPI(endDay);
+
+      console.log('Searching events from', startDate, 'to', endDate);
+
+      // 검색 결과 페이지로 이동
+      const searchUrl = `/event/search/results?startDate=${startDate}&endDate=${endDate}`;
+      window.location.href = searchUrl;
+    } catch (error) {
+      console.error('Error searching events by date range:', error);
+    }
+  };
+
+  // 바텀시트가 닫힐 때 검색 실행
+  const handleClose = () => {
+    if (startDay && endDay) {
+      searchEventsByDateRange();
+    } else {
+      onClose();
+    }
+  };
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if ((e.target as HTMLElement).id === 'calendar-backdrop') {
-        onClose();
+        handleClose();
       }
     };
     window.addEventListener('mousedown', handleOutsideClick);
     return () => window.removeEventListener('mousedown', handleOutsideClick);
-  }, [onClose]);
+  }, [handleClose]);
 
   const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
 
