@@ -130,7 +130,30 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
         </div>
 
         {/* 지도 */}
-        <div className="h-[10rem] overflow-hidden rounded-[0.25rem] border-none focus:outline-none">
+        <div
+          className="h-[10rem] overflow-hidden rounded-[0.25rem] border-none focus:outline-none"
+          style={{ touchAction: 'none', pointerEvents: 'auto' }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onTouchMove={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+          }}
+          onPointerMove={(e) => {
+            e.stopPropagation();
+          }}
+          onPointerUp={(e) => {
+            e.stopPropagation();
+          }}>
           <NaverMap clubs={clubs} zoom={10} showLocationButton={false} showZoomControl={false} clickable={true} />
         </div>
       </div>
