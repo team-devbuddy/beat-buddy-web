@@ -40,10 +40,10 @@ const CustomerService = () => {
       </div>*/}
       <Link
         href="https://forms.gle/rcSfxUegbNykLnZD7"
-        className="flex cursor-pointer items-center justify-between border-t border-gray500 bg-BG-black px-[1rem] pb-[3.75rem] pt-5 text-white">
+        className="flex cursor-pointer items-center justify-between border-t border-gray500 bg-BG-black px-5 pt-5 pb-20 text-white">
         <div>
-          <span className="block text-body2-15-bold">잘못된 정보가 있나요?</span>
-          <span className="mt-1 block pb-6 text-body3-12-medium text-gray300">
+          <span className="block text-[0.875rem] font-bold">잘못된 정보가 있나요?</span>
+          <span className="mt-1 block pb-6 text-[0.75rem] text-gray300">
             수정이 필요하거나 폐업한 업장이라면 알려주세요!
           </span>
         </div>

@@ -130,7 +130,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
       <CustomToastContainer />
       <div className="absolute z-20 flex w-full items-start justify-between px-[1rem] py-[1rem]">
         <button onClick={() => router.back()} aria-label="뒤로가기" className="text-white">
-          <Image src="/icons/ArrowLeft.svg" alt="back icon" width={24} height={24} />
+          <Image src="/icons/line-md_chevron-left.svg" alt="back icon" width={24} height={24} />
         </button>
         <div className="flex items-center space-x-[1.25rem]">
           <div onClick={handleShareClick} className="cursor-pointer">
