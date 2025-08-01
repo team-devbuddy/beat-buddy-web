@@ -88,7 +88,7 @@ function Dropdown({
             <Image
               src={
                 selectedOption && !isThirdDropdown
-                  ? '/icons/chevron.forward-pink.svg'
+                  ? '/icons/keyboard_arrow_down-pink.svg'
                   : '/icons/keyboard_arrow_down.svg'
               }
               alt="arrow down"

@@ -36,7 +36,7 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
   const isPhoneAvailable = !!venue.phoneNum;
 
   return (
-    <div className="bg-BG-black pt-5 pb-4">
+    <div className="bg-BG-black py-5">
       <div className="flex justify-around">
         <div
           className={`flex flex-1 flex-col items-center ${isPhoneAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
@@ -48,7 +48,7 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
               width={24}
               height={24}
             />
-            <p className={`mt-[0.5rem] text-body2-15-medium ${isPhoneAvailable ? 'text-gray200' : 'text-gray500'}`}>
+            <p className={`mt-[0.5rem] text-[0.875rem] ${isPhoneAvailable ? 'text-gray200' : 'text-gray500'}`}>
               전화
             </p>
           </div>
@@ -58,7 +58,7 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
           onClick={handleInstagramClick}>
           <div className="flex flex-col items-center">
             <Image src="/icons/insta.fill.svg" alt="instagram icon" width={24} height={24} />
-            <p className="mt-[0.5rem] text-body2-15-medium text-gray200">SNS</p>
+            <p className="mt-[0.5rem] text-[0.875rem] text-gray200">SNS</p>
           </div>
         </div>
         <div className="flex flex-1 flex-col items-center">
@@ -69,7 +69,7 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
               width={24}
               height={24}
             />
-            <p className="mt-[0.5rem] text-body2-15-medium text-gray200">
+            <p className="mt-[0.5rem] text-[0.875rem] text-gray200">
               {venue.smokingAllowed ? '흡연 가능' : '흡연 불가'}
             </p>
           </div>

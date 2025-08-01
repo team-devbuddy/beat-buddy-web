@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Footer from '@/components/units/Main/MainFooter';
 import Preview from '@/components/units/Detail/Preview';
 import Location from '@/components/units/Detail/Location';
@@ -26,7 +26,10 @@ import { mockNewsList } from '@/lib/dummyData';
 import { mockBoardData } from '@/lib/dummyData';
 import VenueDescription from '@/components/units/Detail/VenueDescription';
 import ReviewWriteButton from '@/components/units/Detail/Review/ReviewWriteButton';
+import EventWriteButton from '@/components/units/Detail/News/EventWriteButton';
 import { getReview } from '@/lib/actions/venue-controller/getReview';
+import { motion, PanInfo } from 'framer-motion';
+import { isBusinessState } from '@/context/recoil-context';
 
 interface Review {
   venueReviewId: string;
@@ -54,7 +57,59 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [sortOption, setSortOption] = useState<'latest' | 'popular'>('latest');
   const [reviewLoading, setReviewLoading] = useState<boolean>(false);
+  const [eventSortType, setEventSortType] = useState<'latest' | 'popular'>('latest');
+  const isBusiness = useRecoilValue(isBusinessState);
   const accessToken = useRecoilValue(accessTokenState);
+
+  // 디버깅을 위한 로그
+  console.log('DetailPage params:', params);
+  console.log('params.id:', params.id);
+
+  // 슬라이드 관련 상태
+  const [dragDirection, setDragDirection] = useState<'left' | 'right' | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const tabs = ['info', 'review', 'event'];
+
+  // 슬라이드 핸들러
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    const swipeThreshold = 20; // 임계값을 30에서 20으로 더 낮춤
+    const currentIndex = tabs.indexOf(activeTab);
+
+    // 정보 탭에서는 왼쪽으로만 슬라이드 가능
+    if (activeTab === 'info' && info.offset.x < -swipeThreshold && currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1]);
+    }
+    // 리뷰 탭에서는 양쪽으로 슬라이드 가능
+    else if (activeTab === 'review') {
+      if (info.offset.x > swipeThreshold && currentIndex > 0) {
+        // 오른쪽으로 스와이프 (이전 탭)
+        setActiveTab(tabs[currentIndex - 1]);
+      } else if (info.offset.x < -swipeThreshold && currentIndex < tabs.length - 1) {
+        // 왼쪽으로 스와이프 (다음 탭)
+        setActiveTab(tabs[currentIndex + 1]);
+      }
+    }
+    // 이벤트 탭에서는 오른쪽으로만 슬라이드 가능
+    else if (activeTab === 'event' && info.offset.x > swipeThreshold && currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1]);
+    }
+  };
+
+  // 드래그 시작 시 세로 스크롤 방지
+  const handleDragStart = () => {
+    if (containerRef.current) {
+      containerRef.current.style.overflowY = 'hidden';
+    }
+  };
+
+  // 드래그 종료 후 세로 스크롤 복원
+  const handleDragEndWithScroll = (event: any, info: PanInfo) => {
+    if (containerRef.current) {
+      containerRef.current.style.overflowY = 'auto';
+    }
+    handleDragEnd(event, info);
+  };
 
   // 리뷰 데이터 조회 함수
   const fetchReviews = async (sort: 'latest' | 'popular' = 'latest', hasImage: boolean = false) => {
@@ -130,95 +185,95 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'info':
-        return (
-          <>
-            <Info venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
-            {/* {isCoupon && ( */}
-            <Coupon venueId={Number(params.id)} />
-            {/* )} */}
-            <VenueDescription venue={venue} />
-
-            <VenueIntro venue={venue} />
-            {/* <Location venue={venue} /> */}
-            {/*<VenueHours hours={venue.operationHours} />*/}
-            <CustomerService />
-          </>
-        );
-      case 'review':
-        return (
-          <div className="flex h-full flex-col bg-BG-black">
-            <ReviewHeader
-              venueName={venue.englishName || ''}
-              isPhotoOnly={isPhotoOnly}
-              setIsPhotoOnly={setIsPhotoOnly}
-              sortOption={sortOption}
-              setSortOption={handleSortChange}
-              onPhotoFilterChange={handlePhotoFilterChange}
-            />
-            <div className="flex-grow overflow-y-auto">
-              <ReviewContents reviews={reviews} isPhotoOnly={isPhotoOnly} />
-            </div>
-            <ReviewWriteButton
-              venueEngName={venue.englishName}
-              venueId={params.id}
-              onClick={() => {}}
-              isDisabled={false}
-            />
-          </div>
-        );
-
-      case 'event':
-        return (
-          <div className="flex h-full flex-col bg-BG-black">
-            <NewsHeader venueName={venue.englishName || ''} />
-            <div className="flex-grow overflow-y-auto">
-              <NewsContents newsList={mockNewsList.filter((news) => news.venueId === Number(params.id))} />
-            </div>
-            <CustomerService />
-          </div>
-        );
-
-      case 'board':
-        return (
-          <div className="flex h-full flex-col bg-BG-black">
-            <div className="flex-grow overflow-y-auto">
-              <BoardContents
-                boardData={mockBoardData.filter((post) =>
-                  post.boardType === '조각 게시판' ? post.venueId === Number(params.id) : true,
-                )}
-                filterKorName={venue.koreanName}
-                filterEngName={venue.englishName}
-              />
-            </div>
-            <CustomerService />
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  const venueName = `${venue.englishName || ''}`;
-  const venueId = params.id;
-  const venueLocation = venue.region || '';
-  const venueKorName = venue.koreanName || '';
-
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-BG-black text-white">
-      <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
-      <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-grow">{renderContent()}</div>
-      {/*<DetailFooter
-        activeTab={activeTab}
-        venueEngName={venueName}
-        venueId={venueId}
-        venueLocation={venueLocation}
-        venueKorName={venueKorName}
-      />*/}
+    <div className="relative min-h-screen w-full bg-BG-black text-white">
+      <div className="h-screen overflow-y-auto">
+        <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
+        <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+        {/* 슬라이드 가능한 컨테이너 */}
+        <motion.div
+          ref={containerRef}
+          className="flex-grow overflow-hidden"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.1}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEndWithScroll}
+          style={{ touchAction: 'none' }}>
+          <motion.div
+            className="flex h-full w-full"
+            animate={{
+              x: `-${tabs.indexOf(activeTab) * 100}%`,
+            }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+            {/* 정보 탭 */}
+            <div className="w-full flex-shrink-0 overflow-y-auto" style={{ touchAction: 'pan-y' }}>
+              {activeTab === 'info' && venue && (
+                <>
+                  <Info venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
+                  {isCoupon && <Coupon venueId={Number(params.id)} />}
+                  <VenueIntro venue={venue} />
+                  <VenueDescription venue={venue} />
+                  <CustomerService />
+                </>
+              )}
+            </div>
+
+            {/* 리뷰 탭 */}
+            <div className="w-full flex-shrink-0" style={{ touchAction: 'none' }}>
+              {activeTab === 'review' && venue && (
+                <div className="flex h-full flex-col overflow-y-auto bg-BG-black" style={{ touchAction: 'pan-y' }}>
+                  <ReviewHeader
+                    venueName={venue.englishName || ''}
+                    isPhotoOnly={isPhotoOnly}
+                    setIsPhotoOnly={setIsPhotoOnly}
+                    sortOption={sortOption}
+                    setSortOption={handleSortChange}
+                    onPhotoFilterChange={handlePhotoFilterChange}
+                  />
+                  <div className="flex-grow overflow-y-auto" style={{ touchAction: 'pan-y' }}>
+                    <ReviewContents reviews={reviews} isPhotoOnly={isPhotoOnly} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 이벤트 탭 */}
+            <div className="w-full flex-shrink-0" style={{ touchAction: 'none' }}>
+              {activeTab === 'event' && venue && (
+                <div className="flex h-full flex-col overflow-y-auto bg-BG-black" style={{ touchAction: 'pan-y' }}>
+                  <NewsHeader
+                    venueName={venue.englishName || ''}
+                    onSortChange={setEventSortType}
+                    currentSort={eventSortType}
+                  />
+                  <div className="flex-grow" style={{ touchAction: 'pan-y' }}>
+                    <NewsContents newsList={[]} venueId={params.id} sortType={eventSortType} />
+                  </div>
+                  <CustomerService />
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+        {activeTab === 'review' && venue && (
+          <ReviewWriteButton
+            venueEngName={venue.englishName}
+            venueId={params.id}
+            onClick={() => {}}
+            isDisabled={false}
+          />
+        )}
+        {activeTab === 'event' && venue && isBusiness && (
+          <EventWriteButton
+            venueEngName={venue.englishName}
+            venueId={params.id}
+            onClick={() => {}}
+            isDisabled={false}
+          />
+        )}
+      </div>
     </div>
   );
 };

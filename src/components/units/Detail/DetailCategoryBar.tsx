@@ -24,8 +24,8 @@ const DetailCategoryBar = ({
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={` py-3 text-center text-sm ${
-              activeTab === tab.id ? 'font-bold text-main' : 'font-medium text-gray100'
+            className={`py-[0.84rem] text-center text-[0.875rem] ${
+              activeTab === tab.id ? 'font-bold text-main' : 'font-medium text-gray300'
             }`}>
             {tab.label}
           </button>

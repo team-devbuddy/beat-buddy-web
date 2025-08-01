@@ -1,6 +1,6 @@
  
-export const getCouponState = async (token: string): Promise<string> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/venue-info/1/coupons`, {
+export const getCouponState = async (token: string, venueId: number): Promise<string> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/venue-info/${venueId}/coupons`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

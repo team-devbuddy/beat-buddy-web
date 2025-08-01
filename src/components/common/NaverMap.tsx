@@ -17,6 +17,9 @@ interface NaverMapProps {
   zoom?: number;
   onAddressesInBounds?: (clubsInView: Club[]) => void;
   bottomSheetRef?: React.RefObject<any>;
+  showLocationButton?: boolean;
+  showZoomControl?: boolean;
+  clickable?: boolean;
 }
 
 // 영구 캐시 (localStorage 사용)
@@ -45,7 +48,18 @@ const saveGeocodeCache = (cache: Map<string, { lat: number; lng: number }>) => {
 };
 
 const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
-  { clubs, width = '100%', height = '100%', minHeight, zoom = 10, onAddressesInBounds, bottomSheetRef },
+  {
+    clubs,
+    width = '100%',
+    height = '100%',
+    minHeight,
+    zoom = 10,
+    onAddressesInBounds,
+    bottomSheetRef,
+    showLocationButton = true,
+    showZoomControl = true,
+    clickable = true,
+  },
   ref,
 ) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -69,107 +83,119 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
         position: window.naver.maps.Position.BOTTOM_RIGHT,
       },
       scaleControl: false,
+      zoomControl: showZoomControl,
+      zoomControlOptions: {
+        position: window.naver.maps.Position.TOP_RIGHT,
+      },
     });
 
     // 현재위치 버튼 HTML 요소 생성
-    const locationButton = document.createElement('div');
-    locationButton.innerHTML = '<img src="/icons/mapMeNow.svg" style="width: 24px; height: 24px;" />';
-    locationButton.style.cssText = `
-      position: absolute;
-      bottom: 100px;
-      right: 20px;
-      width: 40px;
-      height: 40px;
-      padding: 0.5rem;
-      background-color: #480522;
-      border-radius: 50%;
-      border: 1px solid #EE1171;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 5;
-    `;
+    if (showLocationButton) {
+      const locationButton = document.createElement('div');
+      locationButton.innerHTML = '<img src="/icons/mapMeNow.svg" style="width: 24px; height: 24px;" />';
+      locationButton.style.cssText = `
+        position: absolute;
+        bottom: 100px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        padding: 0.5rem;
+        background-color: #480522;
+        border-radius: 50%;
+        border: 1px solid #EE1171;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+      `;
 
-    // 버튼을 지도 컨테이너에 추가
-    mapRef.current.appendChild(locationButton);
+      // 버튼을 지도 컨테이너에 추가
+      mapRef.current.appendChild(locationButton);
+    }
 
     // 현재위치 마커 참조 저장
     let currentLocationMarker: naver.maps.Marker | null = null;
     let watchId: number | null = null;
 
     // 현재위치 버튼 클릭 이벤트
-    locationButton.addEventListener('click', () => {
-      if (navigator.geolocation) {
-        // 기존 위치 추적 중지
-        if (watchId) {
-          navigator.geolocation.clearWatch(watchId);
-          watchId = null;
-          return; // 토글 기능: 추적 중지
-        }
-
-        // 실시간 위치 추적 시작
-        watchId = navigator.geolocation.watchPosition(
-          (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            const userLatLng = new window.naver.maps.LatLng(lat, lng);
-
-            // 첫 번째 위치 설정 시 지도 중심 이동
-            if (!currentLocationMarker) {
-              mapInstance.setCenter(userLatLng);
-              mapInstance.setZoom(15);
-
-              // 마커 생성
-              currentLocationMarker = new window.naver.maps.Marker({
-                position: userLatLng,
-                map: mapInstance,
-                icon: {
-                  content: '<img src="/icons/MeNow.svg" style="width: 36px; height: 36px;" />',
-                  size: new window.naver.maps.Size(36, 36),
-                  anchor: new window.naver.maps.Point(18, 18),
-                },
-              });
-            } else {
-              // 기존 마커 위치만 업데이트 (자연스러운 움직임)
-              const currentPos = currentLocationMarker.getPosition() as naver.maps.LatLng;
-              const newPos = userLatLng;
-
-              // 부드러운 애니메이션으로 위치 업데이트
-              const steps = 30; // 애니메이션 단계
-              const duration = 1000; // 1초
-              const stepDuration = duration / steps;
-
-              let step = 0;
-              const animate = () => {
-                if (step >= steps || !currentLocationMarker) return;
-
-                const lat = currentPos.lat() + (newPos.lat() - currentPos.lat()) * (step / steps);
-                const lng = currentPos.lng() + (newPos.lng() - currentPos.lng()) * (step / steps);
-
-                currentLocationMarker.setPosition(new window.naver.maps.LatLng(lat, lng));
-                step++;
-
-                setTimeout(animate, stepDuration);
-              };
-
-              animate();
+    if (mapRef.current) {
+      // Ensure mapRef.current exists before adding event listener
+      const locationButton = mapRef.current.querySelector('.map-location-button');
+      if (locationButton) {
+        locationButton.addEventListener('click', () => {
+          if (navigator.geolocation) {
+            // 기존 위치 추적 중지
+            if (watchId) {
+              navigator.geolocation.clearWatch(watchId);
+              watchId = null;
+              return; // 토글 기능: 추적 중지
             }
-          },
-          (error) => {
-            alert('현재 위치를 찾을 수 없습니다.');
-            console.error(error);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0,
-          },
-        );
-      } else {
-        alert('현재 위치 기능을 지원하지 않는 브라우저입니다.');
+
+            // 실시간 위치 추적 시작
+            watchId = navigator.geolocation.watchPosition(
+              (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const userLatLng = new window.naver.maps.LatLng(lat, lng);
+
+                // 첫 번째 위치 설정 시 지도 중심 이동
+                if (!currentLocationMarker) {
+                  mapInstance.setCenter(userLatLng);
+                  mapInstance.setZoom(15);
+
+                  // 마커 생성
+                  currentLocationMarker = new window.naver.maps.Marker({
+                    position: userLatLng,
+                    map: mapInstance,
+                    icon: {
+                      content: '<img src="/icons/MeNow.svg" style="width: 36px; height: 36px;" />',
+                      size: new window.naver.maps.Size(36, 36),
+                      anchor: new window.naver.maps.Point(18, 18),
+                    },
+                  });
+                } else {
+                  // 기존 마커 위치만 업데이트 (자연스러운 움직임)
+                  const currentPos = currentLocationMarker.getPosition() as naver.maps.LatLng;
+                  const newPos = userLatLng;
+
+                  // 부드러운 애니메이션으로 위치 업데이트
+                  const steps = 30; // 애니메이션 단계
+                  const duration = 1000; // 1초
+                  const stepDuration = duration / steps;
+
+                  let step = 0;
+                  const animate = () => {
+                    if (step >= steps || !currentLocationMarker) return;
+
+                    const lat = currentPos.lat() + (newPos.lat() - currentPos.lat()) * (step / steps);
+                    const lng = currentPos.lng() + (newPos.lng() - currentPos.lng()) * (step / steps);
+
+                    currentLocationMarker.setPosition(new window.naver.maps.LatLng(lat, lng));
+                    step++;
+
+                    setTimeout(animate, stepDuration);
+                  };
+
+                  animate();
+                }
+              },
+              (error) => {
+                alert('현재 위치를 찾을 수 없습니다.');
+                console.error(error);
+              },
+              {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0,
+              },
+            );
+          } else {
+            alert('현재 위치 기능을 지원하지 않는 브라우저입니다.');
+          }
+        });
       }
-    });
+    }
 
     const clusterIcon = {
       content: `
@@ -208,6 +234,25 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
     }
 
     setMap(mapInstance);
+
+    // showLocationButton이 false이고 단일 마커인 경우 지도 이동 시 중앙 고정
+    if (!showLocationButton) {
+      window.naver.maps.Event.addListener(mapInstance, 'dragend', () => {
+        // 단일 마커가 있고 showLocationButton이 false인 경우에만 중앙 고정
+        if (markerRefs.current.length === 1) {
+          const markerPos = markerRefs.current[0].marker.getPosition() as naver.maps.LatLng;
+          mapInstance.setCenter(markerPos);
+        }
+      });
+
+      window.naver.maps.Event.addListener(mapInstance, 'zoom_changed', () => {
+        // 단일 마커가 있고 showLocationButton이 false인 경우에만 중앙 고정
+        if (markerRefs.current.length === 1) {
+          const markerPos = markerRefs.current[0].marker.getPosition() as naver.maps.LatLng;
+          mapInstance.setCenter(markerPos);
+        }
+      });
+    }
   }, [zoom, map]);
 
   // 2. clubs 데이터 변경 시 마커만 업데이트
@@ -333,13 +378,20 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
       console.log(`⚡ Immediately showing ${validMarkers.length} cached markers`);
       clusterer.setMarkers(validMarkers);
 
-      // 지도 범위 조정
-      const firstPos = validMarkers[0].getPosition() as naver.maps.LatLng;
-      const bounds = new window.naver.maps.LatLngBounds(firstPos, firstPos);
-      for (let i = 1; i < validMarkers.length; i++) {
-        bounds.extend(validMarkers[i].getPosition());
+      // showLocationButton이 false이면 단일 마커를 중앙에 고정
+      if (!showLocationButton && validMarkers.length === 1) {
+        const markerPos = validMarkers[0].getPosition() as naver.maps.LatLng;
+        map.setCenter(markerPos);
+        map.setZoom(15);
+      } else {
+        // 지도 범위 조정
+        const firstPos = validMarkers[0].getPosition() as naver.maps.LatLng;
+        const bounds = new window.naver.maps.LatLngBounds(firstPos, firstPos);
+        for (let i = 1; i < validMarkers.length; i++) {
+          bounds.extend(validMarkers[i].getPosition());
+        }
+        map.fitBounds(bounds, { top: 100, right: 50, bottom: 100, left: 50 });
       }
-      map.fitBounds(bounds, { top: 100, right: 50, bottom: 100, left: 50 });
     }
 
     // 나머지 geocoding 결과들은 비동기로 처리
@@ -348,6 +400,13 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
       Promise.all(pendingGeocodes).then((newMarkers) => {
         const additionalMarkers = newMarkers.filter((m): m is naver.maps.Marker => m !== null);
         console.log(`✨ Added ${additionalMarkers.length} new markers from geocoding`);
+
+        // showLocationButton이 false이고 단일 마커인 경우 중앙 고정
+        if (!showLocationButton && additionalMarkers.length === 1 && validMarkers.length === 0) {
+          const markerPos = additionalMarkers[0].getPosition() as naver.maps.LatLng;
+          map.setCenter(markerPos);
+          map.setZoom(15);
+        }
       });
     }
   }, [clubs, map, clusterer]);

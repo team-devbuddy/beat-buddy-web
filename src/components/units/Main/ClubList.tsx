@@ -96,7 +96,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
           const { firstImageUrl, filteredTags } = memoizedValues[index];
 
           return (
-            <Link key={venue.id} href={`/detail/${venue.id}`} passHref>
+            <Link key={venue.venueId} href={`/detail/${venue.venueId}`} passHref>
               <motion.div
                 whileHover={{
                   y: -5,
@@ -118,7 +118,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     animate="initial">
                     <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15} height={13} />
                     <span className="text-[0.75rem] text-gray300">
-                      {heartbeatNums[venue.id] !== undefined ? heartbeatNums[venue.id] : 0}
+                      {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
                     </span>
                   </motion.div>
                   <div className="club-gradient absolute inset-0"></div>
@@ -126,13 +126,13 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleHeartClick(e, venue.id);
+                      handleHeartClick(e, venue.venueId);
                     }}
                     variants={heartAnimation}
                     initial="initial"
-                    animate={clickedHeart[venue.id] ? 'clicked' : 'initial'}>
+                    animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
                     <Image
-                      src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                       alt="heart icon"
                       width={27}
                       height={24}
@@ -148,14 +148,14 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span
-                            key={`${venue.id}-${tag}-${index}`}
+                            key={`${venue.venueId}-${tag}-${index}`}
                             className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
                         <span
-                          key={`${venue.id}-no-tags`}
+                          key={`${venue.venueId}-no-tags`}
                           className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
                           No tagList
                         </span>

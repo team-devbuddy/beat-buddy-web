@@ -25,7 +25,7 @@ const DropdownGroup = ({
   setSelectedOrder,
 }: DropdownGroupProps) => {
   return (
-    <div className="flex w-full items-center justify-between space-x-[0.5rem] px-5 py-[0.25rem]">
+    <div className="flex w-full items-center justify-between space-x-[0.5rem] px-5">
       <div className="flex space-x-[0.75rem]">
         <Dropdown options={genres} selectedOption={selectedGenre} setSelectedOption={setSelectedGenre} label="장르" />
         <Dropdown

@@ -126,7 +126,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   };
 
   return (
-    <div className="relative flex h-[17.5rem] w-full flex-col justify-between">
+    <div className="relative flex h-[21.875rem] w-full flex-col justify-between">
       <CustomToastContainer />
       <div className="absolute z-20 flex w-full items-start justify-between px-[1rem] py-[1rem]">
         <button onClick={() => router.back()} aria-label="뒤로가기" className="text-white">
@@ -153,7 +153,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
       </div>
       <Slider ref={sliderRef} {...settings} className="absolute inset-0 z-10 h-full w-full">
         {media.map((url, index) => (
-          <div key={index} className="relative h-[17.5rem] w-full">
+          <div key={index} className="relative h-[21.875rem] w-full">
             {url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i) ? (
               <Image src={url} alt={`Background ${index}`} fill className="object-cover object-center" />
             ) : url.match(/\.mp4|MOV$/i) ? (
@@ -174,9 +174,9 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
           </div>
         ))}
       </Slider>
-      <div className="absolute bottom-0 z-20 flex w-full flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
+      <div className="absolute bottom-0 z-20 flex w-full flex-col items-start gap-[0.38rem] px-[1rem] py-[1.25rem] text-white">
         <h1 className="w-4/5 text-title-24-bold">
-          {venue.englishName} {venue.koreanName}
+          {venue.englishName} 
         </h1>
         <div className="flex w-full items-end justify-between">
           <div className="flex w-4/5 flex-wrap gap-2">
@@ -186,17 +186,17 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
                 return (
                   <span
                     key={index}
-                    className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                    className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.25rem] text-[0.8125rem] text-gray300">
                     {translatedTag}
                   </span>
                 );
               })
             ) : (
-              <span className="text-body3-12-medium text-gray100">No tags available</span>
+              <span className="text-[0.8125rem] text-gray300">No tags available</span>
             )}
           </div>
 
-          <div className="rounded-[1rem] bg-gray700 px-[0.75rem] py-[0.25rem] text-body3-12-bold text-white">
+          <div className="rounded-[0.5rem] bg-[#17181CB2]/70 px-[0.5rem] py-[0.19rem] text-[0.8125rem] text-gray300">
             {currentSlide + 1}&nbsp; /&nbsp; {media.length}
           </div>
         </div>

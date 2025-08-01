@@ -68,27 +68,15 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
   }, [venue]);
 
   return (
-    <div className="p-5">
-      <p className="text-[1rem] mb-2 font-bold">Info</p>
+    <div className="px-5">
       <div className="flex flex-col gap-2 rounded-[0.75rem] bg-gray700 p-4 text-gray100">
-        {/* 입장료 */}
-        <div className="flex flex-row items-start gap-1">
-          <Image src="/icons/database.svg" alt="coin" width={20} height={20} />
-          <div className="flex flex-col gap-1">
-            <p className={`text-[0.875rem] font-bold ${entranceFee ? 'text-white' : 'text-main'}`}>
-              {entranceFee ? `입장료 ${entranceFee.toLocaleString()}원` : '무료입장'}
-            </p>
-            <p className="text-[0.875rem]">{entranceNotice || '입장료 관련 특이사항이 없습니다.'}</p>
-          </div>
-        </div>
-
         {/* 운영 시간 */}
-        <div className="mb-2 flex w-full select-none items-start gap-2">
+        <div className="flex w-full select-none items-start gap-1">
           <Image src="/icons/alarm.svg" alt="clock" width={20} height={20} className="" />
 
           <div className="flex flex-col" onClick={() => setShowFullHours((prev) => !prev)}>
-            <p className="cursor-pointer text-[0.875rem]">
-              <span className={`font-bold ${getOpenStatus(operationHours) === 'OPEN' ? 'text-main' : 'text-gray100'}`}>
+            <p className="cursor-pointer text-[0.875rem] text-gray100">
+              <span className={` ${getOpenStatus(operationHours) === 'OPEN' ? 'text-main' : 'text-white'}`}>
                 {getOpenStatus(operationHours) === 'OPEN' ? 'OPEN' : 'CLOSED'}
               </span>{' '}
               • {openTime}
@@ -102,10 +90,10 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="mt-1 overflow-hidden text-[0.8125rem] text-gray300">
+                  className="mt-1 overflow-hidden text-[0.875rem] text-gray200">
                   {['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'].map((day) => (
                     <div key={day} className="flex py-[1px] pr-2">
-                      <span className="mr-3 ">{dayMap[day]}</span>
+                      <span className="mr-3 font-bold">{dayMap[day]}</span>
                       <span>{operationHours[day]}</span>
                     </div>
                   ))}
@@ -115,10 +103,21 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
           </div>
         </div>
 
+        {/* 입장료 */}
+        <div className="flex flex-row items-start gap-1">
+          <Image src="/icons/database.svg" alt="coin" width={20} height={20} />
+          <div className="flex flex-col">
+            <p className={`text-[0.875rem] ${entranceFee ? 'text-white' : 'text-main'}`}>
+              {entranceFee ? `입장료 ${entranceFee.toLocaleString()}원` : '무료입장'}
+            </p>
+            <p className="text-[0.875rem]">{entranceNotice || '입장료 관련 특이사항이 없습니다.'}</p>
+          </div>
+        </div>
+
         {/* 주소 */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Image src="/icons/detail_location.svg" alt="location" width={20} height={20} />
-          <p className="text-[0.875rem]">
+          <p className="text-[0.875rem] text-gray100">
             {address}{' '}
             <a
               href={`https://map.naver.com/v5/search/${encodeURIComponent(address)}`}
@@ -132,7 +131,7 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
 
         {/* 지도 */}
         <div className="h-[10rem] overflow-hidden rounded-[0.25rem] border-none focus:outline-none">
-          <NaverMap clubs={clubs} zoom={10} />
+          <NaverMap clubs={clubs} zoom={10} showLocationButton={false} showZoomControl={false} clickable={true} />
         </div>
       </div>
     </div>
