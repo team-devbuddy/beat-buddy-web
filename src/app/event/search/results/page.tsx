@@ -22,7 +22,7 @@ export default function EventSearchResultsPage() {
   const [showRegionFilter, setShowRegionFilter] = useState(false);
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [sortOpen, setSortOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState('가까운순');
+  const [selectedSort, setSelectedSort] = useState('다가오는 순');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -30,7 +30,7 @@ export default function EventSearchResultsPage() {
   const endDate = searchParams.get('endDate');
 
   const regionOptions = ['이태원', '홍대', '압구정 로데오', '강남 신사', '기타'];
-  const sortOptions = ['가까운순', '인기순', '최신순'];
+  const sortOptions = ['다가오는 순', '인기 순'];
 
   // URL 쿼리에서 날짜를 파싱하는 함수
   const parseDateFromQuery = (dateString: string) => {
@@ -82,7 +82,7 @@ export default function EventSearchResultsPage() {
   };
 
   const clearDateFilter = () => {
-    router.push('/event');
+    router.push('/event/search');
   };
 
   useEffect(() => {

@@ -1,9 +1,9 @@
 'use client';
 
-import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
-import { accessTokenState, authState, userProfileState } from '@/context/recoil-context';
+import { RecoilRoot, useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil'; // useSetRecoilState 추가
+import { accessTokenState, authState, userProfileState, mainScrollYState } from '@/context/recoil-context'; // mainScrollYState 추가
 import { PostRefresh } from '@/lib/action';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react'; // useRef 추가
 import { useRouter, usePathname } from 'next/navigation'; // usePathname 사용
 import NavigateFooter from '@/components/units/Main/NavigateFooter';
 import { UserProfile } from '@/lib/types';
@@ -18,6 +18,23 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname(); // 현재 경로 감지
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
   const userProfileValue = useRecoilValue(userProfileState);
+  const setScrollY = useSetRecoilState(mainScrollYState);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const scrollTop = container.scrollTop;
+      setScrollY(scrollTop); // 스크롤 위치를 Recoil 상태에 업데이트
+      console.log('🔍 Layout Scroll Debug - scrollTop:', scrollTop);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [setScrollY]);
+
   useEffect(() => {
     setIsHydrated(true);
   }, []);
@@ -94,6 +111,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
       {/* 모바일 컨테이너 */}
       <div className="relative flex h-[100dvh] w-full max-w-[600px] flex-col bg-BG-black">
         <div
+          ref={scrollContainerRef}
           className={`flex h-full flex-col overflow-y-auto ${
             shouldHideFooter ? '' : !pathname.includes('venue') && !pathname.includes('search') ? 'pb-[64px]' : ''
           }`}>

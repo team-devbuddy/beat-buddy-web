@@ -327,3 +327,9 @@ export const replyLikeCountState = atom<{ [replyId: number]: number }>({
   default: {},
   effects_UNSTABLE: [persistAtom],
 });
+
+
+export const mainScrollYState = atom({
+  key: 'mainScrollYState',
+  default: 0,
+});
