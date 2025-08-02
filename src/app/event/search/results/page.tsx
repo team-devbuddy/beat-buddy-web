@@ -23,6 +23,8 @@ export default function EventSearchResultsPage() {
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [sortOpen, setSortOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState('가까운순');
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
@@ -95,24 +97,44 @@ export default function EventSearchResultsPage() {
         setLoading(true);
         setError(null);
 
-        const response = await searchEventsByPeriod(startDate!, endDate!, 1, 10, accessToken);
+        const response = await searchEventsByPeriod(startDate!, endDate!, page, 10, accessToken);
 
         if (response.data?.eventResponseDTOS) {
-          setEvents(response.data.eventResponseDTOS);
+          const newEvents = response.data.eventResponseDTOS;
+
+          if (page === 1) {
+            setEvents(newEvents);
+          } else {
+            setEvents((prev) => [...prev, ...newEvents]);
+          }
+
+          // totalSize와 현재 로드된 데이터 수를 비교하여 hasMore 결정
+          const totalSize = response.data.totalSize || 0;
+          const currentLoaded = page * 10;
+          setHasMore(currentLoaded < totalSize);
         } else {
           setEvents([]);
+          setHasMore(false);
         }
       } catch (err) {
         console.error('Error fetching search results:', err);
         setError('검색 중 오류가 발생했습니다.');
         setEvents([]);
+        setHasMore(false);
       } finally {
         setLoading(false);
       }
     };
 
     fetchSearchResults();
-  }, [parsedStartDate, parsedEndDate, accessToken, startDate, endDate]);
+  }, [parsedStartDate, parsedEndDate, accessToken, startDate, endDate, page]);
+
+  // 날짜 범위 변경 시 초기화
+  useEffect(() => {
+    setEvents([]);
+    setPage(1);
+    setHasMore(true);
+  }, [startDate, endDate]);
 
   if (loading) {
     return (
@@ -253,9 +275,14 @@ export default function EventSearchResultsPage() {
             <p className="text-body2-15-medium text-gray300">해당 기간에 등록된 이벤트가 없습니다.</p>
           </div>
         ) : (
-          <EventLists tab="upcoming" events={events} setEvents={setEvents} onLoadMore={() => setPage((prev) => prev + 1)}
-          hasMore={hasMore}
-          loading={loading} />
+          <EventLists
+            tab="upcoming"
+            events={events}
+            setEvents={setEvents}
+            onLoadMore={() => setPage((prev) => prev + 1)}
+            hasMore={hasMore}
+            loading={loading}
+          />
         )}
       </div>
     </div>
