@@ -7,7 +7,7 @@ import EventNow from '@/components/units/Event/EventNow';
 import EventContainer from '@/components/units/Event/EventContainer';
 import LocationFilter from '@/components/units/Event/LocationFilter';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { eventTabState, accessTokenState, isBusinessState, mainScrollYState } from '@/context/recoil-context';
+import { eventTabState, accessTokenState, isBusinessState } from '@/context/recoil-context';
 import Link from 'next/link';
 
 export default function EventPage() {
@@ -17,13 +17,51 @@ export default function EventPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
-  // Recoil로부터 스크롤 위치를 가져옵니다.
-  const scrollY = useRecoilValue(mainScrollYState);
-
+  const [scrollY, setScrollY] = useState(0);
   const touchStartY = useRef<number | null>(null);
   const touchEndY = useRef<number | null>(null);
   const MAX_PULL_DISTANCE = 120;
+
+  // 직접 스크롤 감지
+  useEffect(() => {
+    const handleScroll = () => {
+      // appLayout.tsx의 스크롤 컨테이너를 직접 찾기
+      const scrollContainer = document.querySelector('.overflow-y-auto');
+      let scrollTop = 0;
+
+      if (scrollContainer) {
+        scrollTop = scrollContainer.scrollTop;
+        console.log('🔍 Found scroll container, scrollTop:', scrollTop);
+      } else {
+        // fallback: window 스크롤 확인
+        scrollTop = window.scrollY || window.pageYOffset || 0;
+        console.log('🔍 Using window scroll, scrollTop:', scrollTop);
+      }
+
+      setScrollY(scrollTop);
+      console.log('🔍 Direct Scroll Debug - scrollTop:', scrollTop);
+    };
+
+    // 스크롤 컨테이너를 찾아서 이벤트 리스너 추가
+    const scrollContainer = document.querySelector('.overflow-y-auto');
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+      console.log('🔍 Added scroll listener to container');
+    }
+
+    // window 스크롤도 추가
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // 초기 스크롤 위치 설정
+    setTimeout(handleScroll, 100); // DOM이 완전히 로드된 후 실행
+
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll);
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // scrollY 값을 기반으로 투명도를 계산하는 함수
   const getOpacity = () => {
@@ -58,10 +96,7 @@ export default function EventPage() {
     const currentY = e.touches[0].clientY;
     const distance = currentY - touchStartY.current;
     if (distance > 0) {
-      // 스크롤이 맨 위에 있을 때만 preventDefault 호출
-      if (scrollY === 0) {
-        e.preventDefault();
-      }
+      // passive 이벤트 리스너에서는 preventDefault를 호출할 수 없으므로 제거
       touchEndY.current = currentY;
       setPullDistance(Math.min(distance, MAX_PULL_DISTANCE));
     }

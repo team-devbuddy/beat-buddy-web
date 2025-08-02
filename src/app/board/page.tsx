@@ -48,11 +48,63 @@ export default function BoardPage() {
   const [pullDistance, setPullDistance] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isScrapped, setIsScrapped] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const accessToken = useRecoilValue(accessTokenState) || '';
   const pathname = usePathname();
 
   const touchStartY = useRef<number | null>(null);
   const touchEndY = useRef<number | null>(null);
+
+  // 스크롤 감지
+  useEffect(() => {
+    const handleScroll = () => {
+      // appLayout.tsx의 스크롤 컨테이너를 직접 찾기
+      const scrollContainer = document.querySelector('.overflow-y-auto');
+      let scrollTop = 0;
+
+      if (scrollContainer) {
+        scrollTop = scrollContainer.scrollTop;
+      } else {
+        // fallback: window 스크롤 확인
+        scrollTop = window.scrollY || window.pageYOffset || 0;
+      }
+
+      setScrollY(scrollTop);
+    };
+
+    // 스크롤 컨테이너를 찾아서 이벤트 리스너 추가
+    const scrollContainer = document.querySelector('.overflow-y-auto');
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    // window 스크롤도 추가
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // 초기 스크롤 위치 설정
+    setTimeout(handleScroll, 100);
+
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll);
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // 스크롤에 따른 투명도 계산
+  const getOpacity = () => {
+    const threshold = 100;
+    const maxOpacity = 1;
+    const minOpacity = 0.3;
+
+    if (scrollY < threshold) {
+      return maxOpacity;
+    }
+
+    const opacity = maxOpacity - (scrollY - threshold) / 200;
+    return Math.max(minOpacity, opacity);
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (window.scrollY === 0) {
@@ -212,11 +264,12 @@ export default function BoardPage() {
       })}
 
       {!loading && posts.length === 0 && <NoResults text="아직 게시글이 없어요.\n첫 게시글을 작성해보세요." />}
-      <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
+      <div className="pointer-events-none fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
         <div className="w-full max-w-[600px] px-4">
           <Link
             href="/board/write"
-            className="ml-auto flex h-14 w-14 items-center justify-center rounded-full  bg-main text-sub2 shadow-lg transition-transform duration-150 ease-in-out active:scale-90">
+            className="pointer-events-auto ml-auto flex h-14 w-14 items-center justify-center rounded-full bg-main text-sub2 shadow-lg transition-opacity duration-300 active:scale-90"
+            style={{ opacity: getOpacity() }}>
             <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
           </Link>
         </div>
