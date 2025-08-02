@@ -23,7 +23,12 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    if (!container) return;
+    if (!container) {
+      console.log('🔍 Layout: Container not found');
+      return;
+    }
+
+    console.log('🔍 Layout: Container found:', container);
 
     const handleScroll = () => {
       const scrollTop = container.scrollTop;
@@ -32,7 +37,18 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
+    console.log('🔍 Layout: Scroll listener added');
+
+    // 초기 스크롤 위치 설정
+    setTimeout(() => {
+      handleScroll();
+      console.log('🔍 Layout: Initial scroll check completed');
+    }, 100);
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      console.log('🔍 Layout: Scroll listener removed');
+    };
   }, [setScrollY]);
 
   useEffect(() => {
