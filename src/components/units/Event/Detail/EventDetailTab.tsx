@@ -127,7 +127,7 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
   };
 
   return (
-    <div className="relative">
+    <div className="relative" data-tab>
       {/* 탭 버튼 + 밑줄 */}
       <div className="relative flex border-b border-gray700">
         {tabs.map(({ key, label }) => (

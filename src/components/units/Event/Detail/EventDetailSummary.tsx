@@ -18,7 +18,7 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" data-summary>
       {/* 이미지 */}
       <div className="relative h-[21.875rem] w-full">
         <Image

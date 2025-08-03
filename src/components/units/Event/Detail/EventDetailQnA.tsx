@@ -70,13 +70,8 @@ export default function EventQnA({ eventDetail, observerRef }: EventQnAProps) {
       {comments.length > 0 ? (
         comments.map((comment) =>
           comment ? (
-            <div className="">
-              <EventCommentItem
-                key={comment.commentId}
-                comment={comment}
-                eventId={eventDetail.eventId}
-                refreshComments={fetchComments}
-              />
+            <div key={comment.commentId} className="">
+              <EventCommentItem comment={comment} eventId={eventDetail.eventId} refreshComments={fetchComments} />
             </div>
           ) : null,
         )

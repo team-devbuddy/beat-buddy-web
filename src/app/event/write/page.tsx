@@ -235,31 +235,26 @@ export default function EventWritePage() {
     } else {
       // 생성 모드: 전체 데이터 전송
       const eventCreateRequestDTO = {
-        venueId,
+        venueId: venueId || 0, // venueId가 0이면 기본값 사용
         title,
         content,
-        likes: 0,
-        views: 0,
-        liked: false,
         startDate: new Date(`${normalizedStartDate}T${startTime || '00:00'}:00`).toISOString(),
         endDate: new Date(`${normalizedEndDate}T${endTime || '00:00'}:00`).toISOString(),
         receiveInfo,
         receiveName,
         receiveGender,
         receivePhoneNumber,
-        receiveTotalCount,
+        receiveTotalCount: Boolean(receiveTotalCount), // boolean으로 변환
         receiveSNSId,
         receiveMoney,
         depositAccount,
         depositAmount: receiveMoney && depositAmount ? Number(depositAmount.replace(/,/g, '')) : 0,
-        isAuthor,
         entranceFee: isFreeEntrance ? 0 : Number(entranceFee.replace(/,/g, '')),
         entranceNotice: entranceNotice || '',
         notice: notice || '',
-        isFreeEntrance,
+        freeEntrance: isFreeEntrance, // isFreeEntrance를 freeEntrance로 변경
         region,
         location,
-        isAttending,
       };
 
       formData.append(

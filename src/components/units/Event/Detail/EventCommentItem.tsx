@@ -112,7 +112,7 @@ export default function EventCommentItem({
       <div className="py-[0.88rem]">
         <div className="flex items-center justify-between gap-[0.63rem] text-[0.75rem] font-bold text-white">
           <div className="flex items-center gap-1">
-            <span>{comment.isAuthor ? '담당자' : comment.authorNickname}</span>
+            <span>{comment.authorNickname}</span>
             <span className="text-[0.75rem] font-normal text-gray300">·</span>
             <span className="text-[0.75rem] font-normal text-gray300">{formatRelativeTime(comment.createdAt)}</span>
           </div>
@@ -158,7 +158,7 @@ export default function EventCommentItem({
             <div className="flex items-center justify-between gap-1 text-[0.75rem]">
               <div className="flex items-center gap-1">
                 <span className="font-bold text-main">
-                  { reply.isAuthor ? '담당자' : reply.authorNickname}
+                  { reply.authorNickname}
                 </span>
                 <span className="text-[0.75rem] font-normal text-gray300">·</span>
                 <span className="text-[0.75rem] font-normal text-gray300">{formatRelativeTime(reply.createdAt)}</span>

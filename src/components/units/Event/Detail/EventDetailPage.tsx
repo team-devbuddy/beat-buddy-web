@@ -1,81 +1,201 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
+
+import EventDetailHeader from './EventDetailHeader';
 import EventDetailSummary from './EventDetailSummary';
 import EventDetailTab from './EventDetailTab';
-import { useRouter } from 'next/navigation';
-import EventDetailHeader from './EventDetailHeader';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState, userProfileState } from '@/context/recoil-context';
+import { accessTokenState, userProfileState, eventState, eventDetailTabState } from '@/context/recoil-context';
 import { getEventDetail } from '@/lib/actions/event-controller/getEventDetail';
+import { postLikeEvent } from '@/lib/actions/event-controller/postLikeEvent';
+import { deleteLikeEvent } from '@/lib/actions/event-controller/deleteLikeEvent';
 import { EventDetail } from '@/lib/types';
-import { useState, useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { eventState } from '@/context/recoil-context';
-import { eventDetailTabState } from '@/context/recoil-context';
 
 export default function EventDetailPage({ eventId }: { eventId: string }) {
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
-  const [eventDetail, setEventDetail] = useState<EventDetail | null>(null);
-  const setRecoilState = useSetRecoilState(eventState);
   const userProfile = useRecoilValue(userProfileState);
-  const setEventDetailTab = useSetRecoilState(eventDetailTabState);
   const eventDetailTab = useRecoilValue(eventDetailTabState);
+
+  const setEventState = useSetRecoilState(eventState);
+  const setEventDetailTab = useSetRecoilState(eventDetailTabState);
+
+  const [eventDetail, setEventDetail] = useState<EventDetail | null>(null);
   const [showButton, setShowButton] = useState(false);
+  const [showSummaryHeader, setShowSummaryHeader] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+
+  // 좋아요 처리 함수
+  const handleLike = async () => {
+    if (!eventDetail || isLiking) return;
+
+    setIsLiking(true);
+    try {
+      if (eventDetail.liked) {
+        await deleteLikeEvent(eventDetail.eventId, accessToken);
+        setEventDetail((prev) => (prev ? { ...prev, liked: false, likes: Math.max(0, prev.likes - 1) } : null));
+        setEventState((prev) => (prev ? { ...prev, liked: false, likes: Math.max(0, prev.likes - 1) } : null));
+      } else {
+        await postLikeEvent(eventDetail.eventId, accessToken);
+        setEventDetail((prev) => (prev ? { ...prev, liked: true, likes: prev.likes + 1 } : null));
+        setEventState((prev) => (prev ? { ...prev, liked: true, likes: prev.likes + 1 } : null));
+      }
+    } catch (error) {
+      console.error('좋아요 처리 실패:', error);
+    } finally {
+      setIsLiking(false);
+    }
+  };
 
   useEffect(() => {
     const fetchDetail = async () => {
-      const data = await getEventDetail(accessToken, eventId);
-      setEventDetail(data);
-      setRecoilState(data);
-      setEventDetailTab('info');
+      try {
+        const data = await getEventDetail(accessToken, eventId);
+        setEventDetail(data);
+        setEventState(data);
+        setEventDetailTab('info');
+      } catch (error) {
+        console.error('Failed to fetch event details:', error);
+      }
     };
     fetchDetail();
-  }, [accessToken, eventId]);
+  }, [accessToken, eventId, setEventState, setEventDetailTab]);
 
-  // 스크롤 감지
+  // ❗ 수정된 스크롤 감지 로직
   useEffect(() => {
     const handleScroll = () => {
-      console.log('Scroll event triggered!');
+      // 스크롤 컨테이너를 더 정확하게 찾기
+      const scrollContainer =
+        document.querySelector('[ref="scrollContainerRef"]') || document.querySelector('.overflow-y-auto') || window;
+      const scrollTop = (scrollContainer as HTMLElement).scrollTop ?? window.pageYOffset;
 
-      // appLayout의 스크롤 컨테이너 찾기
-      const scrollContainer = document.querySelector('.overflow-y-auto') || document.documentElement;
-      const scrollTop = scrollContainer.scrollTop || window.pageYOffset || document.documentElement.scrollTop;
-      const scrollHeight = scrollContainer.scrollHeight || document.documentElement.scrollHeight;
-      const clientHeight = scrollContainer.clientHeight || window.innerHeight;
+      const summaryElement = document.querySelector('[data-summary]') as HTMLElement;
+
+      // Summary 높이만 고려 (탭은 고정되므로 제외)
+      const summaryHeight = summaryElement ? summaryElement.offsetHeight : 0;
+
+      console.log('Scroll Debug:', {
+        scrollTop,
+        summaryHeight,
+        shouldShowHeader: scrollTop > summaryHeight,
+        scrollContainer: scrollContainer,
+      });
+
+      // 스크롤 위치가 Summary 높이를 넘어가면 고정 헤더를 보여주고, 아니면 숨김
+      if (scrollTop > summaryHeight) {
+        setShowSummaryHeader(true);
+      } else {
+        setShowSummaryHeader(false);
+      }
 
       // 스크롤이 맨 아래에 가까우면 버튼 표시
+      const scrollHeight = (scrollContainer as HTMLElement).scrollHeight || document.documentElement.scrollHeight;
+      const clientHeight = (scrollContainer as HTMLElement).clientHeight || window.innerHeight;
       const isAtBottom = scrollTop + clientHeight >= scrollHeight - 50;
-      console.log('Scroll Debug:', { scrollTop, clientHeight, scrollHeight, isAtBottom });
       setShowButton(isAtBottom);
     };
 
-    // 초기 상태는 false로 설정
-    setShowButton(false);
+    // 여러 스크롤 컨테이너에 이벤트 리스너 추가
+    const containers = [
+      document.querySelector('[ref="scrollContainerRef"]'),
+      document.querySelector('.overflow-y-auto'),
+      window,
+    ].filter(Boolean);
 
-    // appLayout의 스크롤 컨테이너에 이벤트 리스너 추가
-    const scrollContainer = document.querySelector('.overflow-y-auto') || window;
-    console.log('Adding scroll event listener to:', scrollContainer);
-    scrollContainer.addEventListener('scroll', handleScroll);
+    containers.forEach((container) => {
+      container?.addEventListener('scroll', handleScroll, { passive: true });
+    });
+
+    // 초기 상태 설정을 위해 한 번 호출
+    setTimeout(handleScroll, 100);
 
     return () => {
-      console.log('Removing scroll event listener');
-      scrollContainer.removeEventListener('scroll', handleScroll);
+      containers.forEach((container) => {
+        container?.removeEventListener('scroll', handleScroll);
+      });
     };
-  }, []);
+  }, []); // 최초 렌더링 시 한 번만 실행
 
   return (
     <div className="relative min-h-screen bg-BG-black">
-      {/* 헤더는 최상단에 고정 */}
+      {/* 기본 헤더 */}
       <div className="absolute left-0 top-0 z-30 w-full">
         <EventDetailHeader handleBackClick={() => router.push('/event')} />
       </div>
 
-      {/* Summary는 헤더 밑에 표시 */}
-      {eventDetail && <EventDetailSummary eventDetail={eventDetail} />}
+      {/* 스크롤 시 나타나는 요약 헤더 */}
+      <AnimatePresence>
+        {showSummaryHeader && eventDetail && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed left-0 top-0 z-40 w-full  bg-BG-black">
+            <div className="relative mx-auto flex max-w-[600px] items-center justify-between px-5 pb-[0.88rem] pt-[0.62rem]">
+              {/* 왼쪽: 백버튼과 제목 */}
+              <div className="flex items-center">
+                <Image
+                  src="/icons/arrow_back_ios.svg"
+                  alt="뒤로가기"
+                  width={24}
+                  height={24}
+                  onClick={() => router.push('/event')}
+                  className="cursor-pointer"
+                />
+                <div className="flex flex-col">
+                  <h1 className="max-w-[200px] truncate text-[1.25rem] font-bold text-white">{eventDetail.title}</h1>
+                </div>
+              </div>
 
+              {/* 오른쪽: 좋아요와 메뉴 버튼 */}
+              <div className="flex items-center gap-3">
+                {/* 좋아요 버튼 */}
+                <Image
+                  src={eventDetail.liked ? '/icons/FilledHeart.svg' : '/icons/heart-white.svg'}
+                  alt="좋아요"
+                  width={28}
+                  height={24}
+                  className="cursor-pointer"
+                  onClick={handleLike}
+                />
+
+                {/* 드롭다운 메뉴 */}
+                <Image
+                  src="/icons/dot-vertical-white.svg"
+                  alt="메뉴"
+                  width={9}
+                  height={20}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 기본 정보 Summary */}
+      <AnimatePresence>
+        {eventDetail && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: showSummaryHeader ? 0 : 1 }}
+            transition={{ duration: 0.3 }}
+            data-summary // ❗ 높이 측정을 위한 속성 추가
+            className={showSummaryHeader ? 'invisible' : ''}>
+            <EventDetailSummary eventDetail={eventDetail} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 탭 & 탭 콘텐츠 */}
       {eventDetail && <EventDetailTab eventDetail={eventDetail} />}
 
+      {/* 참석하기 버튼 */}
       {eventDetailTab === 'info' && showButton && (
         <>
           {!eventDetail?.isAuthor && (
