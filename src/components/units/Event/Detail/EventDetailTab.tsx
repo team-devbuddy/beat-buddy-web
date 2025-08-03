@@ -8,7 +8,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { eventDetailTabState, accessTokenState } from '@/context/recoil-context';
 import { postComment } from '@/lib/actions/event-controller/postComment';
 import Image from 'next/image';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function EventDetailTab({ eventDetail }: { eventDetail: EventDetail }) {
   const [tab, setTab] = useRecoilState(eventDetailTabState);
@@ -24,12 +24,46 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isSwiping, setIsSwiping] = useState(false);
 
+  // 스크롤 관련 상태
+  const [showButton, setShowButton] = useState(true);
+  const lastScrollYRef = useRef(0);
+
   const tabs = [
     { key: 'info', label: '행사 소개' },
     { key: 'qna', label: '행사 문의' },
   ] as const;
 
   const activeIndex = tab === 'info' ? 0 : 1;
+
+  // 스크롤 감지
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollContainer = document.querySelector('.overflow-y-auto') as HTMLElement;
+      const scrollTop = scrollContainer ? scrollContainer.scrollTop : window.pageYOffset;
+      const currentScrollY = scrollTop;
+      const lastScrollY = lastScrollYRef.current;
+
+      // 스크롤 방향 감지
+      const isScrollingUp = currentScrollY < lastScrollY;
+      const isScrollingDown = currentScrollY > lastScrollY;
+
+      if (isScrollingUp) {
+        setShowButton(true);
+      } else if (isScrollingDown) {
+        setShowButton(false);
+      }
+
+      lastScrollYRef.current = currentScrollY;
+    };
+
+    const scrollContainer = document.querySelector('.overflow-y-auto') as HTMLElement;
+    const target = scrollContainer || window;
+    target.addEventListener('scroll', handleScroll);
+
+    return () => {
+      target.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // 스와이프 감지 함수
   const onTouchStart = (e: React.TouchEvent) => {
@@ -146,12 +180,16 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
       {tab === 'qna' && (
         <div className="fixed bottom-6 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 px-6">
           <div className="flex justify-end">
-            <button
+            <motion.button
               title="문의하기"
               onClick={() => setShowModal(true)}
-              className="flex h-14 w-14 items-center justify-center rounded-full border border-main2 bg-sub2 text-white shadow-lg transition-transform duration-150 ease-in-out active:scale-90">
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-main text-white shadow-lg transition-all duration-300 ease-in-out active:scale-90"
+              animate={{
+                opacity: showButton ? 1 : 0.3,
+              }}
+              transition={{ duration: 0.3 }}>
               <Image src="/icons/ic_baseline-plus.svg" alt="글쓰기" width={28} height={28} />
-            </button>
+            </motion.button>
           </div>
         </div>
       )}
@@ -167,7 +205,6 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 px-6"
             onClick={() => setShowModal(false)}>
             <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-4 text-[1.25rem] font-bold text-white">문의하기</h3>
               <textarea
                 value={qnaContent}
                 onChange={(e) => setQnaContent(e.target.value)}
@@ -184,7 +221,7 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
                   onClick={handleSubmit}
                   disabled={isSubmitting}
                   className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-main">
-                  등록하기
+                  문의 등록하기
                 </button>
               </div>
             </div>

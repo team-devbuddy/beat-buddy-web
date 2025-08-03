@@ -6,6 +6,7 @@ import { accessTokenState } from '@/context/recoil-context';
 import { EventDetail } from '@/lib/types';
 import EventCommentItem from './EventCommentItem';
 import { getAllQnA } from '@/lib/actions/event-controller/getAllQnA';
+import Image from 'next/image';
 
 interface CommentType {
   commentId: number;
@@ -66,15 +67,27 @@ export default function EventQnA({ eventDetail, observerRef }: EventQnAProps) {
 
   return (
     <div className="px-5 pb-24 pt-2">
-      {comments.map((comment) =>
-        comment ? (
-          <EventCommentItem
-            key={comment.commentId}
-            comment={comment}
-            eventId={eventDetail.eventId}
-            refreshComments={fetchComments}
-          />
-        ) : null,
+      {comments.length > 0 ? (
+        comments.map((comment) =>
+          comment ? (
+            <div className="">
+              <EventCommentItem
+                key={comment.commentId}
+                comment={comment}
+                eventId={eventDetail.eventId}
+                refreshComments={fetchComments}
+              />
+            </div>
+          ) : null,
+        )
+      ) : (
+        <div className="flex flex-col items-center justify-center py-[3rem]">
+          <Image src="/icons/blackLogo.svg" alt="no result" width={80} height={80} />
+          <div className="mt-3 text-center text-[0.875rem] text-gray300">
+            아직 문의가 없어요
+            <br />첫 번째 문의를 남겨보세요!
+          </div>
+        </div>
       )}
       <div ref={observerRef} />
     </div>
