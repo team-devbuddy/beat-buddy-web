@@ -10,7 +10,7 @@ export default function NameInput({ value, onChange }: { value: string; onChange
       <input
         type="text"
         placeholder="이름을 입력해주세요."
-        className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
+        className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-[0.875rem] text-white placeholder:text-[0.875rem] placeholder-gray300 safari-input-fix focus:outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />

@@ -7,7 +7,7 @@ import { postComment } from '@/lib/actions/event-controller/postComment';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import BoardDropDown from '../../Board/BoardDropDown';
-import { deleteComment } from '@/lib/actions/comment-controller/deleteComment';
+import { deleteEventComment } from '@/lib/actions/event-controller/deleteEventComment';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface CommentType {
@@ -92,13 +92,30 @@ export default function EventCommentItem({
   const handleDelete = async () => {
     if (!deleteTarget) return;
 
+    console.log('🗑️ 댓글 삭제 시작:', {
+      eventId,
+      commentId: deleteTarget.commentId,
+      isReply: deleteTarget.isReply,
+      accessToken: accessToken ? '있음' : '없음',
+    });
+
     try {
-      await deleteComment(eventId, deleteTarget.commentId, accessToken);
+      console.log('🗑️ deleteComment API 호출 중...');
+      const response = await deleteEventComment(eventId, deleteTarget.commentId, accessToken);
+      console.log('🗑️ deleteComment API 응답:', response);
+
+      console.log('🗑️ 댓글 목록 새로고침 중...');
       refreshComments();
+
       setShowDeleteModal(false);
       setDeleteTarget(null);
+      console.log('🗑️ 댓글 삭제 완료');
     } catch (error) {
-      console.error('댓글 삭제 실패:', error);
+      console.error('🗑️ 댓글 삭제 실패:', error);
+      console.error('🗑️ 에러 상세:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      });
     }
   };
 
@@ -157,9 +174,7 @@ export default function EventCommentItem({
           <div className="flex flex-1 flex-col">
             <div className="flex items-center justify-between gap-1 text-[0.75rem]">
               <div className="flex items-center gap-1">
-                <span className="font-bold text-main">
-                  { reply.authorNickname}
-                </span>
+                <span className="font-bold text-main">{reply.authorNickname}</span>
                 <span className="text-[0.75rem] font-normal text-gray300">·</span>
                 <span className="text-[0.75rem] font-normal text-gray300">{formatRelativeTime(reply.createdAt)}</span>
               </div>

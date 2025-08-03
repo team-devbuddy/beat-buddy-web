@@ -42,9 +42,9 @@ export default function SNSSelector({ snsType, snsId, onTypeChange, onIdChange }
         </button>
         <button
           type="button"
-          className={getButtonClass('None')}
+          className={getButtonClass('')}
           onClick={() => {
-            onTypeChange('None');
+            onTypeChange('');
             onIdChange('');
           }}>
           없음

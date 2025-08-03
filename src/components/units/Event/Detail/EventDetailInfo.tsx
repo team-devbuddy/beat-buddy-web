@@ -99,13 +99,13 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
           <div className="flex items-start gap-[0.25rem]">
             <Image src="/icons/locationMark.svg" alt="info" width={20} height={20} />
             <div className="flex items-end gap-1">
-              <p className="text-[0.875rem] text-gray100">{eventDetail.location}</p>
+              <p className=" text-[0.875rem] text-gray100">{eventDetail.location}</p>
               {eventDetail.location && (
                 <a
                   href={`https://map.naver.com/p/search/${encodeURIComponent(eventDetail.location)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[0.75rem] text-main hover:underline">
+                  className="whitespace-nowrap text-[0.75rem] text-main hover:underline">
                   길찾기
                 </a>
               )}

@@ -63,7 +63,7 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
   }, [showDropdown]);
 
   return (
-    <div className="relative mx-auto flex max-w-[600px] items-center justify-between px-5 pt-[0.62rem] pb-[0.88rem]">
+    <div className="relative mx-auto flex max-w-[600px] items-center justify-between px-5 pb-[0.88rem] pt-[0.62rem]">
       {/* 왼쪽: 백버튼 */}
       <Image
         src="/icons/arrow_back_ios.svg"
@@ -104,7 +104,7 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
           isAuthor={isAuthor}
           onClose={() => setShowDropdown(false)}
           position={position}
-          postId={0} // 이벤트에서는 사용하지 않음
+          postId={eventId} // 이벤트 ID 사용
           eventId={eventId} // 이벤트 ID 전달
           type="event"
         />

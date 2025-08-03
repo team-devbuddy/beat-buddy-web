@@ -9,6 +9,7 @@ import Image from 'next/image';
 import EventDetailHeader from './EventDetailHeader';
 import EventDetailSummary from './EventDetailSummary';
 import EventDetailTab from './EventDetailTab';
+import BoardDropDown from '../../Board/BoardDropDown';
 import { accessTokenState, userProfileState, eventState, eventDetailTabState } from '@/context/recoil-context';
 import { getEventDetail } from '@/lib/actions/event-controller/getEventDetail';
 import { postLikeEvent } from '@/lib/actions/event-controller/postLikeEvent';
@@ -28,7 +29,9 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
   const [showButton, setShowButton] = useState(false);
   const [showSummaryHeader, setShowSummaryHeader] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
-
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const dropdownButtonRef = useRef<HTMLImageElement>(null);
   // 좋아요 처리 함수
   const handleLike = async () => {
     if (!eventDetail || isLiking) return;
@@ -120,6 +123,24 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
     };
   }, []); // 최초 렌더링 시 한 번만 실행
 
+  // 드롭다운 위치 계산
+  useEffect(() => {
+    if (showDropdown && dropdownButtonRef.current) {
+      const rect = dropdownButtonRef.current.getBoundingClientRect();
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const scrollX = window.scrollX || document.documentElement.scrollLeft;
+
+      const DROPDOWN_WIDTH = 100;
+      let left = rect.right + scrollX - DROPDOWN_WIDTH;
+      if (left < 8) left = 8;
+
+      setDropdownPosition({
+        top: rect.bottom + scrollY + 8,
+        left,
+      });
+    }
+  }, [showDropdown]);
+
   return (
     <div className="relative min-h-screen bg-BG-black">
       {/* 기본 헤더 */}
@@ -135,7 +156,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed left-0 top-0 z-40 w-full  bg-BG-black">
+            className="fixed left-0 top-0 z-40 w-full bg-BG-black">
             <div className="relative mx-auto flex max-w-[600px] items-center justify-between px-5 pb-[0.88rem] pt-[0.62rem]">
               {/* 왼쪽: 백버튼과 제목 */}
               <div className="flex items-center">
@@ -171,12 +192,26 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
                   width={9}
                   height={20}
                   className="cursor-pointer"
+                  onClick={() => setShowDropdown((prev) => !prev)}
+                  ref={dropdownButtonRef}
                 />
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 요약 헤더 드롭다운 */}
+      {showDropdown && eventDetail && (
+        <BoardDropDown
+          isAuthor={eventDetail.isAuthor}
+          onClose={() => setShowDropdown(false)}
+          position={dropdownPosition}
+          postId={eventDetail.eventId}
+          eventId={eventDetail.eventId}
+          type="event"
+        />
+      )}
 
       {/* 기본 정보 Summary */}
       <AnimatePresence>
@@ -198,7 +233,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
       {/* 참석하기 버튼 */}
       {eventDetailTab === 'info' && showButton && (
         <>
-          {!eventDetail?.isAuthor && (
+          {!eventDetail?.isAuthor && !eventDetail?.isAttending && (
             <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"
@@ -208,13 +243,23 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
               </button>
             </div>
           )}
+          {!eventDetail?.isAuthor && eventDetail?.isAttending && (
+            <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 border-none px-[1.25rem] pb-[1.25rem] pt-2">
+              <button
+                type="button"
+                onClick={() => router.push(`/event/${eventId}/participate?mode=edit`)}
+                className="w-full rounded-md border-[0.8px] border-main bg-BG-black py-4 text-[1rem] font-bold text-main shadow-[0px_0px_20px_0px_rgba(238,17,113,0.25)]">
+                참석 정보 확인하기
+              </button>
+            </div>
+          )}
           {eventDetail?.isAuthor && eventDetail.receiveInfo && (
             <div className="fixed bottom-0 left-0 z-50 w-full border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"
                 onClick={() => router.push(`/event/${eventId}/participate-info`)}
                 className="w-full rounded-md border-[0.8px] border-main bg-BG-black py-4 text-[1rem] font-bold text-main shadow-[0px_0px_20px_0px_rgba(238,17,113,0.25)]">
-                참석정보 확인하기
+                참석 명단 확인하기
               </button>
             </div>
           )}
