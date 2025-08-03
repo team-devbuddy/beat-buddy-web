@@ -38,7 +38,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="relative z-50">
+    <div className="relative z-100">
       <div className="fixed inset-0 bg-black bg-opacity-50" onClick={handleBackgroundClick}></div>
       <motion.div
         initial={{ opacity: 0, y: -10 }}

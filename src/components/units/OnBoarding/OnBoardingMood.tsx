@@ -131,7 +131,7 @@ export default function OnBoardingMood() {
 
         {error && <div className="mt-4 text-main">{error}</div>}
       </div>
-      <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
+      <div className="fixed bottom-5 left-0 right-0 z-5 flex w-full justify-center px-5">
         <button
           onClick={onClickSubmit}
           disabled={!isButtonEnabled}

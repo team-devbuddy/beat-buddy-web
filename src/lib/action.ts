@@ -96,6 +96,18 @@ export async function PostGenre(access: string, genres: { genrePreferences: { [k
   return response;
 }
 
+export async function GetMemberGenre(access: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/member-genre/all`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Access: `Bearer ${access}`,
+    },
+  });
+
+  return response;
+}
+
 // 온보딩 - 선호 분위기
 export async function PostMood(
   access: string,

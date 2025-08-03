@@ -114,11 +114,15 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     pathname.includes('alert') ||
     pathname.includes('magazine') ||
     pathname.includes('maintenance') ||
+    pathname.includes('myheartbeat') ||
+    pathname.includes('myevent') ||
     pathname.includes('signup') ||
     isMaintenance ||
     pathname.includes('event/') ||
     pathname.includes('login') ||
     pathname.includes('withdrawal') ||
+    pathname.includes('option') ||
+    pathname.includes('manage') ||
     pathname.includes('/board/search');
   console.log('shouldHideFooter:', shouldHideFooter);
 

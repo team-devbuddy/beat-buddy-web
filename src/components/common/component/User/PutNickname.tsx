@@ -31,7 +31,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
   const validateInput = (value: string): string | null => {
     const regex = /^[a-zA-Z0-9가-힣]{1,12}$/;
     if (!regex.test(value)) {
-      return '공백없이 12자 이하로 입력해주세요. 특수 기호는 불가능해요.';
+      return '공백 없이, 12자 이하로 입력해주세요. 특수 기호는 불가능해요. ';
     }
     return null;
   };
@@ -80,13 +80,13 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
 
   return (
     <>
-      <div className="flex w-full flex-col px-4">
+      <div className="flex w-full flex-col px-5">
         <div className="mt-3">
           <div className="flex flex-col py-3">
             <div className="relative flex">
               <input
-                className="safari-input-fix w-full border-b border-white bg-transparent py-4 pl-2 text-white outline-none placeholder:text-gray400"
-                placeholder="Text Field"
+                className="safari-input-fix text-[0.875rem] w-full border-b border-white bg-transparent py-3 pl-1 text-white outline-none placeholder:text-gray200"
+                placeholder="닉네임을 입력해주세요."
                 value={inputValue}
                 onChange={handleChange}
               />
@@ -96,7 +96,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
                 </div>
               ) : (
                 <button
-                  className={`absolute right-5 top-4 rounded-[0.13rem] px-3 py-[0.38rem] text-xs font-bold ${inputValue ? 'bg-main text-BG-black' : 'bg-gray500 text-gray200'}`}
+                  className={`absolute right-1 top-1 rounded-[0.5rem] px-3 py-[0.38rem] text-[0.75rem] font-bold ${inputValue ? 'bg-main text-BG-black' : 'bg-gray500 text-gray200'}`}
                   disabled={!inputValue}
                   onClick={handleDuplicateCheck}>
                   중복확인
@@ -104,8 +104,8 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
               )}
             </div>
 
-            <p className={`px-2 py-[0.62rem] text-xs ${errorMessage ? 'text-main' : 'text-gray300'}`}>
-              {errorMessage || '공백없이 12자 이하로 입력해주세요. 특수 기호는 불가능해요.'}
+            <p className={`px-1 py-[0.38rem] text-[0.75rem] ${errorMessage ? 'text-main' : 'text-gray300'}`}>
+              {errorMessage || '공백 없이, 12자 이하로 입력해주세요. 특수 기호는 불가능해요. '}
             </p>
           </div>
         </div>

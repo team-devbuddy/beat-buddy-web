@@ -7,9 +7,9 @@ interface HeaderBackProps {
 
 const HeaderBack: React.FC<HeaderBackProps> = ({ url }) => {
   return (
-    <div className="flex items-center px-[0.63rem] py-[0.53rem]">
+    <div className="flex items-center px-5 pt-[0.62rem] pb-[0.88rem]">
       <Link href={url}>
-        <Image src="/icons/line-md_chevron-left.svg" alt="back" width={35} height={35} />
+        <Image src="/icons/arrow_back_ios.svg" alt="back" width={24} height={24} />
       </Link>
     </div>
   );

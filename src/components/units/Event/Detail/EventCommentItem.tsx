@@ -74,7 +74,7 @@ export default function EventCommentItem({
         eventId,
         {
           content: replyContent,
-          anonymous: false,
+          anonymous: true,
           parentCommentId: comment.commentId,
         },
         accessToken,
