@@ -15,6 +15,57 @@ export default function EventRegisterStepForm() {
   const [accountNumber, setAccountNumber] = useState('');
   const [amount, setAmount] = useState('');
 
+  // 서버 데이터에 따라 초기 상태 설정
+  useEffect(() => {
+    if (eventForm.receiveInfo !== null) {
+      setIsReceivingInfo(eventForm.receiveInfo);
+
+      // receiveInfo가 true면 step 2로 이동
+      if (eventForm.receiveInfo) {
+        setStep(2);
+
+        // 선택된 필드들 설정
+        const selected: string[] = [];
+        if (eventForm.receiveName) selected.push('이름');
+        if (eventForm.receiveGender) selected.push('성별');
+        if (eventForm.receivePhoneNumber) selected.push('전화번호');
+        if (eventForm.receiveTotalCount) selected.push('동행 인원');
+        if (eventForm.receiveSNSId) selected.push('SNS 아이디');
+        if (eventForm.receiveMoney) selected.push('사전 예약금 입금 여부');
+
+        setSelectedFields(selected);
+
+        // 예약금 정보 설정
+        if (eventForm.depositAccount) {
+          const [bank, account] = eventForm.depositAccount.split(' ');
+          setBankName(bank || '');
+          setAccountNumber(account || '');
+        }
+
+        if (eventForm.depositAmount) {
+          setAmount(eventForm.depositAmount);
+        }
+
+        // 모든 필수 필드가 선택되었으면 step 3로 이동
+        if (selected.length > 0) {
+          setStep(3);
+        }
+      } else {
+        setStep(3);
+      }
+    }
+  }, [
+    eventForm.receiveInfo,
+    eventForm.receiveName,
+    eventForm.receiveGender,
+    eventForm.receivePhoneNumber,
+    eventForm.receiveTotalCount,
+    eventForm.receiveSNSId,
+    eventForm.receiveMoney,
+    eventForm.depositAccount,
+    eventForm.depositAmount,
+  ]);
+
   const handleReceiveClick = (value: boolean) => {
     setIsReceivingInfo(value);
     if (value) {
@@ -33,6 +84,16 @@ export default function EventRegisterStepForm() {
       setStep(3);
     }
   }, [selectedFields, isReceivingInfo]);
+
+  // 무료 입장일 때 사전 예약금 관련 필드 자동 해제
+  useEffect(() => {
+    if (eventForm.isFreeEntrance && selectedFields.includes('사전 예약금 입금 여부')) {
+      setSelectedFields((prev) => prev.filter((field) => field !== '사전 예약금 입금 여부'));
+      setBankName('');
+      setAccountNumber('');
+      setAmount('');
+    }
+  }, [eventForm.isFreeEntrance, selectedFields]);
 
   useEffect(() => {
     const options: string[] = [];
@@ -74,7 +135,8 @@ export default function EventRegisterStepForm() {
     { label: '전화번호', row: 0 },
     { label: '동행 인원', row: 1 },
     { label: 'SNS 아이디', row: 1 },
-    { label: '사전 예약금 입금 여부', row: 2 },
+    // 무료 입장이 아닌 경우에만 사전 예약금 입금 여부 표시
+    ...(eventForm.isFreeEntrance ? [] : [{ label: '사전 예약금 입금 여부', row: 2 }]),
   ];
 
   return (

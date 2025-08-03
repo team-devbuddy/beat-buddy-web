@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { eventState } from '@/context/recoil-context';
 import { eventDetailTabState } from '@/context/recoil-context';
+
 export default function EventDetailPage({ eventId }: { eventId: string }) {
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
@@ -20,6 +21,8 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
   const userProfile = useRecoilValue(userProfileState);
   const setEventDetailTab = useSetRecoilState(eventDetailTabState);
   const eventDetailTab = useRecoilValue(eventDetailTabState);
+  const [showButton, setShowButton] = useState(false);
+
   useEffect(() => {
     const fetchDetail = async () => {
       const data = await getEventDetail(accessToken, eventId);
@@ -29,6 +32,37 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
     };
     fetchDetail();
   }, [accessToken, eventId]);
+
+  // 스크롤 감지
+  useEffect(() => {
+    const handleScroll = () => {
+      console.log('Scroll event triggered!');
+
+      // appLayout의 스크롤 컨테이너 찾기
+      const scrollContainer = document.querySelector('.overflow-y-auto') || document.documentElement;
+      const scrollTop = scrollContainer.scrollTop || window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = scrollContainer.scrollHeight || document.documentElement.scrollHeight;
+      const clientHeight = scrollContainer.clientHeight || window.innerHeight;
+
+      // 스크롤이 맨 아래에 가까우면 버튼 표시
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 50;
+      console.log('Scroll Debug:', { scrollTop, clientHeight, scrollHeight, isAtBottom });
+      setShowButton(isAtBottom);
+    };
+
+    // 초기 상태는 false로 설정
+    setShowButton(false);
+
+    // appLayout의 스크롤 컨테이너에 이벤트 리스너 추가
+    const scrollContainer = document.querySelector('.overflow-y-auto') || window;
+    console.log('Adding scroll event listener to:', scrollContainer);
+    scrollContainer.addEventListener('scroll', handleScroll);
+
+    return () => {
+      console.log('Removing scroll event listener');
+      scrollContainer.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-BG-black">
@@ -42,10 +76,10 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
 
       {eventDetail && <EventDetailTab eventDetail={eventDetail} />}
 
-      {eventDetailTab === 'info' && (
+      {eventDetailTab === 'info' && showButton && (
         <>
           {!eventDetail?.isAuthor && (
-            <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 border-none px-[1.25rem] pb-[1.25rem] pt-2">
+            <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"
                 onClick={() => router.push(`/event/${eventId}/participate`)}
@@ -55,7 +89,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
             </div>
           )}
           {eventDetail?.isAuthor && eventDetail.receiveInfo && (
-            <div className="fixed bottom-0 left-0 w-full border-none px-[1.25rem] pb-[1.25rem] pt-2">
+            <div className="fixed bottom-0 left-0 z-50 w-full border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"
                 onClick={() => router.push(`/event/${eventId}/participate-info`)}

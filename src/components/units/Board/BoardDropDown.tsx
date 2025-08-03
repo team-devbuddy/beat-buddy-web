@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import Image from 'next/image';
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import Image from 'next/image';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { accessTokenState, eventFormState, isEventEditModeState, eventState } from '@/context/recoil-context';
 import { deletePost } from '@/lib/actions/post-controller/deletePost';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
 import { getPostDetail } from '@/lib/actions/detail-controller/board/boardWriteUtils';
 import { deleteComment } from '@/lib/actions/comment-controller/deleteComment';
 
@@ -55,6 +55,53 @@ const BoardDropdown = ({
   const [reportReason, setReportReason] = useState('');
   const [post, setPost] = useState<PostProps>({ nickname: '' });
 
+  // 이벤트 수정 관련 상태
+  const setEventForm = useSetRecoilState(eventFormState);
+  const setIsEventEditMode = useSetRecoilState(isEventEditModeState);
+  const event = useRecoilValue(eventState);
+
+  const handleEventEdit = useCallback(() => {
+    if (!event) return;
+
+    // 이벤트 폼을 현재 이벤트 데이터로 채움
+    setEventForm({
+      venueId: 0, // EventDetail에 venueId가 없으므로 0으로 설정
+      title: event.title || '',
+      content: event.content || '',
+      startDate: event.startDate ? new Date(event.startDate).toLocaleDateString('ko-KR') : '',
+      endDate: event.endDate ? new Date(event.endDate).toLocaleDateString('ko-KR') : '',
+      startTime: event.startDate
+        ? new Date(event.startDate).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+        : '',
+      endTime: event.endDate
+        ? new Date(event.endDate).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+        : '',
+      location: event.location || '',
+      region: event.region || '',
+      isFreeEntrance: event.isFreeEntrance || false,
+      entranceFee: event.entranceFee ? event.entranceFee.toString() : '',
+      entranceNotice: event.entranceNotice || '',
+      notice: event.notice || '',
+      receiveInfo: event.receiveInfo || false,
+      receiveName: event.receiveName || false,
+      receiveGender: event.receiveGender || false,
+      receivePhoneNumber: event.receivePhoneNumber || false,
+      receiveTotalCount: false, // EventDetail에 없으므로 false
+      receiveSNSId: event.receiveSNSId || false,
+      receiveMoney: event.receiveMoney || false,
+      depositAccount: event.depositAccount || '',
+      depositAmount: event.depositAmount ? event.depositAmount.toString() : '',
+      isAuthor: event.isAuthor || false,
+      isAttending: event.isAttending || false,
+    });
+
+    // 수정 모드로 설정
+    setIsEventEditMode(true);
+
+    // 이벤트 작성 페이지로 이동 (올바른 경로)
+    router.push(`/event/write?eventId=${event.eventId}`);
+  }, [event, setEventForm, setIsEventEditMode, router]);
+
   const handleDeleteComment = useCallback(async () => {
     if (!commentId) return alert('댓글 ID가 없습니다.');
     try {
@@ -83,7 +130,27 @@ const BoardDropdown = ({
             onClick: handleDeleteComment,
           },
         ];
+      } else if (type === 'event') {
+        // 이벤트 수정 로직
+        return [
+          {
+            label: '공유',
+            icon: '/icons/material-symbols_share-outline.svg',
+            onClick: () => navigator.share({ title: '이벤트', url: window.location.href }),
+          },
+          {
+            label: '수정',
+            icon: '/icons/edit.svg',
+            onClick: handleEventEdit,
+          },
+          {
+            label: '신고',
+            icon: '/icons/material-symbols_siren-outline.svg',
+            modalType: 'report',
+          },
+        ];
       } else {
+        // 게시글 수정 로직
         return [
           {
             label: '공유',
@@ -131,7 +198,7 @@ const BoardDropdown = ({
       { label: '차단', icon: '/icons/block.svg', modalType: 'block' },
       { label: '신고', icon: '/icons/material-symbols_siren-outline.svg', modalType: 'report' },
     ];
-  }, [isAuthor, type]);
+  }, [isAuthor, type, postId, accessToken, handleDeleteComment, handleEventEdit]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

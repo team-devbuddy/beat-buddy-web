@@ -83,7 +83,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
         position: window.naver.maps.Position.BOTTOM_RIGHT,
       },
       scaleControl: false,
-      zoomControl: false,
+      zoomControl: showZoomControl,
       zoomControlOptions: {
         position: window.naver.maps.Position.TOP_RIGHT,
       },

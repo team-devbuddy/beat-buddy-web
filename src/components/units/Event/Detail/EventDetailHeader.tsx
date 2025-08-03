@@ -20,24 +20,23 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
       const rect = buttonRef.current.getBoundingClientRect();
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const scrollX = window.scrollX || document.documentElement.scrollLeft;
-  
+
       // 드롭다운 너비를 고려해 left 보정
       const DROPDOWN_WIDTH = 100; // 드롭다운 예상 너비 (px)
       const SCREEN_WIDTH = window.innerWidth;
-  
+
       let left = rect.right + scrollX - DROPDOWN_WIDTH; // 오른쪽 정렬 기준
       if (left < 8) left = 8; // 화면 밖으로 안 나가도록 최소값 보정
-  
+
       setPosition({
         top: rect.bottom + scrollY + 8,
         left,
       });
     }
   }, [showDropdown]);
-  
 
   return (
-    <div className="p-4 max-w-[600px] mx-auto flex items-center justify-between relative">
+    <div className="relative mx-auto flex max-w-[600px] items-center justify-between p-4">
       {/* 왼쪽: 백버튼 */}
       <Image
         src="/icons/line-md_chevron-left.svg"
@@ -65,7 +64,8 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
           isAuthor={isAuthor}
           onClose={() => setShowDropdown(false)}
           position={position}
-          postId={eventId}
+          postId={0} // 이벤트에서는 사용하지 않음
+          eventId={eventId} // 이벤트 ID 전달
           type="event"
         />
       )}

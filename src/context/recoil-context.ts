@@ -267,6 +267,11 @@ export const eventFormState = atom({
   },
 });
 
+export const isEventEditModeState = atom<boolean>({
+  key: 'isEventEditModeState',
+  default: false,
+});
+
 export interface ParticipateFormState {
   name: string;
   gender: string;
@@ -327,7 +332,6 @@ export const replyLikeCountState = atom<{ [replyId: number]: number }>({
   default: {},
   effects_UNSTABLE: [persistAtom],
 });
-
 
 export const mainScrollYState = atom({
   key: 'mainScrollYState',

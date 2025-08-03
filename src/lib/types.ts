@@ -135,28 +135,31 @@ export interface UserProfile {
 }
 
 export interface EventDetail {
-    eventId: number;
-    title: string;
-    content: string;
-    images: string[];
-    liked: boolean;
-    likes: number;
-    views: number;
-    startDate: string;
-    endDate: string;
-    receiveInfo: boolean;
-    receiveName: boolean;
-    receiveGender: boolean;
-    receivePhoneNumber: boolean;
-    receiveSNSId: boolean;
-    receiveMoney: boolean;
-    depositAccount: string;
-    depositAmount: number;
-    isAuthor: boolean;
-    region: string;
-    ticketCost: string;
+  eventId: number;
+  title: string;
+  content: string;
+  images: string[];
+  liked: boolean;
+  likes: number;
+  views: number;
+  startDate: string;
+  endDate: string;
+  receiveInfo: boolean;
+  receiveName: boolean;
+  receiveGender: boolean;
+  receivePhoneNumber: boolean;
+  receiveSNSId: boolean;
+  receiveMoney: boolean;
+  depositAccount: string;
+  depositAmount: number;
+  entranceFee: number;
+  entranceNotice: string;
   notice: string;
+  region: string;
+  isFreeEntrance: boolean;
   location: string;
+  isAttending: boolean;
+  isAuthor: boolean;
 }
 
 export interface Participant {

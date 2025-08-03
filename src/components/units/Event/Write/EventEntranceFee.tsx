@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRecoilState } from 'recoil';
 import { eventFormState } from '@/context/recoil-context';
@@ -15,6 +15,10 @@ export default function EventEntranceFee() {
       ...eventForm,
       isFreeEntrance: nextFree,
       entranceFee: nextFree ? '0' : '',
+      // 무료 입장으로 변경할 때 사전 예약금 관련 상태 초기화
+      receiveMoney: nextFree ? false : eventForm.receiveMoney,
+      depositAccount: nextFree ? '' : eventForm.depositAccount,
+      depositAmount: nextFree ? '' : eventForm.depositAmount,
     });
   };
 
@@ -23,9 +27,19 @@ export default function EventEntranceFee() {
     setEventForm({
       ...eventForm,
       entranceFee: value,
-      isFreeEntrance: value === '0',
+      isFreeEntrance: value === '0' || value === '',
     });
   };
+
+  // 무료 입장이 체크되어 있으면 입장료를 "0"으로 설정
+  useEffect(() => {
+    if (eventForm.isFreeEntrance && eventForm.entranceFee !== '0') {
+      setEventForm({
+        ...eventForm,
+        entranceFee: '0',
+      });
+    }
+  }, [eventForm.isFreeEntrance, eventForm.entranceFee, setEventForm]);
 
   return (
     <div className="bg-BG-black px-5 text-white">

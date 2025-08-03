@@ -68,6 +68,13 @@ export default function EventPlaceInput() {
     // ✅ 추천 선택은 검색이나 인풋값에 영향을 주지 않음
   };
 
+  // 초기 region 값이 설정되어 있으면 해당 버튼을 선택된 상태로 표시
+  useEffect(() => {
+    if (eventForm.region && !selectedRecommendedPlace) {
+      setSelectedRecommendedPlace(eventForm.region);
+    }
+  }, [eventForm.region, selectedRecommendedPlace]);
+
   return (
     <div className="bg-BG-black px-5">
       <label className="mb-[0.62rem] flex items-center text-[1rem] font-bold text-white">장소</label>
@@ -99,9 +106,7 @@ export default function EventPlaceInput() {
               </button>
             ))}
           </div>
-          <button
-            onClick={() => setSuggestions([])}
-            className="whitespace-nowrap text-[0.8125rem] text-gray400">
+          <button onClick={() => setSuggestions([])} className="whitespace-nowrap text-[0.8125rem] text-gray400">
             이 장소가 아니에요
           </button>
         </div>
