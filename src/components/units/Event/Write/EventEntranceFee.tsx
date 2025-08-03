@@ -28,13 +28,15 @@ export default function EventEntranceFee() {
   };
 
   return (
-    <div className="bg-BG-black px-5 pt-7 text-white">
+    <div className="bg-BG-black px-5 text-white">
       {/* 입장료 라벨 */}
-      <label className="mb-2 flex items-center justify-between">
+      <label className="mb-[0.62rem] flex items-center justify-between">
         <span className="text-[1rem] font-bold">입장료</span>
         <div
           onClick={handleToggleFree}
-          className="flex cursor-pointer items-center justify-center gap-[0.25rem] text-[0.75rem] text-gray300">
+          className={`flex cursor-pointer items-center justify-center gap-[0.25rem] text-[0.75rem] text-gray300 ${
+            eventForm.isFreeEntrance ? 'text-main' : ''
+          }`}>
           <Image
             src={eventForm.isFreeEntrance ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
             alt="checkbox"
@@ -46,22 +48,24 @@ export default function EventEntranceFee() {
       </label>
 
       {/* 입장료 입력창 */}
-      <div className="relative mb-4">
+      <div className="relative mb-[1.37rem]">
         <input
           type="text"
           placeholder="ex. 10,000"
-          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 pr-10 text-sm text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
+          className={`w-full border-b border-gray300 bg-BG-black px-4 py-3 pr-10 text-[0.8125rem] text-gray100 placeholder-gray300 safari-input-fix focus:outline-none ${
+            eventForm.entranceFee ? 'border-main text-white' : ''
+          }`}
           value={eventForm.entranceFee ? Number(eventForm.entranceFee).toLocaleString() : ''}
           onChange={handleFeeChange}
           disabled={eventForm.isFreeEntrance}
         />
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray300">원</span>
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[0.8125rem] text-gray300">원</span>
       </div>
 
       {/* 특이사항 입력창 + 안내 텍스트 */}
       <div className="relative">
         {!noteFocused && !eventForm.entranceNotice && (
-          <div className="pointer-events-none absolute left-4 top-4 -translate-y-1/2 text-sm leading-tight text-gray300">
+          <div className="pointer-events-none absolute left-4 top-4 -translate-y-1/2 text-[0.8125rem] leading-tight text-gray300">
             <div>[선택] 입장료 관련 특이 사항을 입력해주세요.</div>
             <div>(ex. 프리드링크, 환불 조건 등)</div>
           </div>
@@ -69,7 +73,9 @@ export default function EventEntranceFee() {
         <input
           type="text"
           placeholder=""
-          className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-sm text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
+          className={`w-full border-b border-gray300 bg-BG-black px-4 py-3 text-[0.8125rem] text-gray100 placeholder-gray300 safari-input-fix focus:outline-none ${
+            eventForm.entranceNotice ? 'border-main text-white' : ''
+          }`}
           value={eventForm.entranceNotice}
           onFocus={() => setNoteFocused(true)}
           onBlur={() => setNoteFocused(false)}

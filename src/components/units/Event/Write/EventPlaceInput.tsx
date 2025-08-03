@@ -69,12 +69,14 @@ export default function EventPlaceInput() {
   };
 
   return (
-    <div className="bg-BG-black px-5 pt-7">
+    <div className="bg-BG-black px-5">
       <label className="mb-[0.62rem] flex items-center text-[1rem] font-bold text-white">장소</label>
 
       <input
         type="text"
-        className="w-full border-b border-gray300 bg-BG-black px-4 py-3 text-sm text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"
+        className={`w-full border-b border-gray300 bg-BG-black px-4 py-3 text-[0.8125rem] text-gray100 placeholder-gray300 safari-input-fix focus:outline-none ${
+          eventForm.location ? 'border-main' : ''
+        }`}
         placeholder="ex) 서울특별시 마포구 와우산로 94"
         value={eventForm.location}
         onChange={(e) => {
@@ -86,34 +88,34 @@ export default function EventPlaceInput() {
 
       {/* 검색 결과 */}
       {suggestions.length > 0 && !isFinalSelected && (
-        <div className="mt-2 flex justify-between">
+        <div className="mt-[0.62rem] flex justify-between">
           <div className="flex flex-wrap gap-[0.5rem]">
             {suggestions.map((venue) => (
               <button
                 key={venue.venueId}
                 onClick={() => handleSelectVenue(venue)}
-                className="truncate rounded-[0.38rem] bg-gray700 px-[0.38rem] py-1 text-xs text-main">
+                className="truncate rounded-[0.5rem] bg-gray700 px-[0.38rem] py-1 text-[0.8125rem] text-main">
                 {venue.koreanName}
               </button>
             ))}
           </div>
           <button
             onClick={() => setSuggestions([])}
-            className="whitespace-nowrap rounded-[0.38rem] px-[0.38rem] py-1 text-xs text-gray400">
+            className="whitespace-nowrap text-[0.8125rem] text-gray400">
             이 장소가 아니에요
           </button>
         </div>
       )}
 
       {/* 추천 버튼 - 윗줄 */}
-      <div className="mt-4 grid grid-cols-3 gap-[0.62rem]">
+      <div className="mt-[0.88rem] grid grid-cols-3 gap-[0.62rem]">
         {TOP_ROW_PLACES.map((loc) => {
           const isSelected = selectedRecommendedPlace === loc;
           return (
             <button
               key={loc}
               onClick={() => handleRecommendedClick(loc)}
-              className={`rounded-[0.38rem] py-3 text-sm ${
+              className={`rounded-[0.38rem] py-3 text-[0.875rem] ${
                 isSelected ? 'border border-main bg-sub2 text-white' : 'bg-gray500 text-gray300'
               }`}>
               {loc}

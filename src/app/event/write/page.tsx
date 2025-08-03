@@ -87,7 +87,7 @@ export default function EventWritePage() {
       receiveSNSId,
       receiveMoney,
       depositAccount,
-      depositAmount: receiveMoney ? Number(depositAmount) : 0,
+      depositAmount: receiveMoney && depositAmount ? Number(depositAmount.replace(/,/g, '')) : 0,
       isAuthor,
       entranceFee: isFreeEntrance ? 0 : Number(entranceFee.replace(/,/g, '')),
       entranceNotice: entranceNotice || '',
@@ -129,23 +129,26 @@ export default function EventWritePage() {
   return (
     <div className="pb-10">
       <EventWriteHeader />
-      <h1 className="px-5 py-2 text-[1.25rem] font-bold text-white">다가오는 특별한 이벤트 소식을 전해주세요!</h1>
+      <h1 className="px-5 py-2 text-[1.25rem] font-bold tracking-[-0.025rem] text-white">
+        다가오는 특별한 이벤트 소식을 전해주세요!
+      </h1>
 
-      <ImageUploader onUpload={setUploadedImages} uploadedImages={uploadedImages} />
-      <EventTitleInput />
-      <EventDateInput />
-      <EventPlaceInput />
-      <EventEntranceFee />
-      <EventNoticeInput />
-      <EventIntroInput />
-      <EventRegisterStepForm />
-
+      <div className="flex flex-col gap-y-7">
+        <ImageUploader onUpload={setUploadedImages} uploadedImages={uploadedImages} />
+        <EventTitleInput />
+        <EventDateInput />
+        <EventPlaceInput />
+        <EventEntranceFee />
+        <EventNoticeInput />
+        <EventIntroInput />
+        <EventRegisterStepForm />
+      </div>
       <div className="flex px-5">
         <button
           disabled={!isFormValid}
           onClick={handleSubmit}
           className={`w-full rounded-[0.38rem] py-4 text-[0.875rem] font-bold ${
-            isFormValid ? 'bg-main hover:bg-main text-sub2' : 'bg-gray500 text-gray300'
+            isFormValid ? 'bg-main text-sub2 hover:bg-main' : 'bg-gray500 text-gray300'
           }`}>
           이벤트 등록하기
         </button>

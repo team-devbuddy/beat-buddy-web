@@ -90,13 +90,26 @@ export default function EventTimePicker({ selectedHour, selectedMinute, onChange
     currentValue: number,
     scrollHandler: () => void,
     ref: React.RefObject<HTMLDivElement>,
+    type: 'hour' | 'minute',
   ) => {
     const totalCount = range * MULTIPLIER;
+
+    const handleItemClick = (value: number) => {
+      if (type === 'hour') {
+        setInternalHour(value);
+        onChange(value, internalMinute);
+        scrollToItem(ref, value + HOUR_RANGE * Math.floor(MULTIPLIER / 2));
+      } else {
+        setInternalMinute(value);
+        onChange(internalHour, value);
+        scrollToItem(ref, value + MINUTE_RANGE * Math.floor(MULTIPLIER / 2));
+      }
+    };
 
     return (
       <div
         ref={ref}
-        className="scrollbar-hide h-[100px] w-[50px] snap-y snap-mandatory overflow-y-scroll"
+        className="h-[100px] w-[50px] snap-y snap-mandatory overflow-y-scroll scrollbar-hide"
         onScroll={scrollHandler}>
         {[...Array(totalCount)].map((_, i) => {
           const val = i % range;
@@ -105,8 +118,9 @@ export default function EventTimePicker({ selectedHour, selectedMinute, onChange
           return (
             <div
               key={i}
+              onClick={() => handleItemClick(val)}
               className={classNames(
-                'flex h-[40px] snap-center items-center justify-center text-[0.875rem] transition-all',
+                'flex h-[40px] cursor-pointer snap-center items-center justify-center text-[0.875rem] transition-all hover:bg-gray700',
                 isSelected ? 'text-main' : 'text-gray-400',
               )}>
               {String(val).padStart(2, '0')}
@@ -118,9 +132,9 @@ export default function EventTimePicker({ selectedHour, selectedMinute, onChange
   };
 
   return (
-    <div className="flex items-center justify-center border border-gray500 rounded-xl bg-BG_black p-4 text-white">
-      {renderList(HOUR_RANGE, internalHour, handleHourScroll, hourRef)}
-      {renderList(MINUTE_RANGE, internalMinute, handleMinuteScroll, minuteRef)}
+    <div className="bg-BG_black flex items-center justify-center rounded-xl border border-gray500 p-4 text-white">
+      {renderList(HOUR_RANGE, internalHour, handleHourScroll, hourRef, 'hour')}
+      {renderList(MINUTE_RANGE, internalMinute, handleMinuteScroll, minuteRef, 'minute')}
     </div>
   );
 }

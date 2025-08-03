@@ -40,15 +40,17 @@ export default function EventDateInput() {
   }, []);
 
   return (
-    <div ref={popupWrapperRef} className="bg-BG-black px-5 pt-7 text-white">
-      <label className="mb-2 flex items-center justify-between">
+    <div ref={popupWrapperRef} className="bg-BG-black px-5 text-white">
+      <label className="mb-[0.62rem] flex items-center justify-between">
         <span className="text-[1rem] font-bold">일자</span>
         <div
           onClick={() => {
             setIsAllDay(!isAllDay);
             setActivePopup(null);
           }}
-          className="flex cursor-pointer items-center justify-center gap-[0.12rem] text-[0.75rem] text-gray300">
+          className={`flex cursor-pointer items-center justify-center gap-[0.12rem] text-[0.75rem] text-gray300 ${
+            isAllDay ? 'text-main' : ''
+          }`}>
           <Image
             src={isAllDay ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
             alt="checkbox"
@@ -65,7 +67,9 @@ export default function EventDateInput() {
           <div className="flex items-center gap-4">
             <label className="whitespace-nowrap text-gray100">시작 일자</label>
             <div
-              className="w-full cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-gray100"
+              className={`w-full cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-[0.8125rem] text-gray300 ${
+                eventForm.startDate ? 'border-main text-white' : ''
+              }`}
               onClick={() => setActivePopup(activePopup === 'startCalendar' ? null : 'startCalendar')}>
               {eventForm.startDate || 'YYYY. MM. DD.'}
             </div>
@@ -75,7 +79,9 @@ export default function EventDateInput() {
             <div className="flex items-center justify-end gap-4">
               <label className="whitespace-nowrap text-gray100">시간</label>
               <div
-                className="cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-gray100"
+                className={`cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-[0.8125rem] text-gray300 ${
+                  eventForm.startTime ? 'border-main text-white' : ''
+                }`}
                 onClick={() => setActivePopup(activePopup === 'startTime' ? null : 'startTime')}>
                 {eventForm.startTime || '00:00'}
               </div>
@@ -134,12 +140,14 @@ export default function EventDateInput() {
         </AnimatePresence>
       </div>
       {/* 종료일자 섹션 */}
-      <div className="relative mb-4 flex flex-col gap-2 text-[0.875rem]">
+      <div className="relative flex flex-col gap-2 text-[0.875rem]">
         <div className="flex justify-between">
           <div className="flex items-center gap-4">
             <label className="whitespace-nowrap text-gray100">종료 일자</label>
             <div
-              className="w-full cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-gray100"
+              className={`w-full cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-[0.8125rem] text-gray300 ${
+                eventForm.endDate ? 'border-main text-white' : ''
+              }`}
               onClick={() => setActivePopup(activePopup === 'endCalendar' ? null : 'endCalendar')}>
               {eventForm.endDate || 'YYYY. MM. DD.'}
             </div>
@@ -148,7 +156,9 @@ export default function EventDateInput() {
             <div className="flex items-center justify-end gap-4">
               <label className="whitespace-nowrap text-gray100">시간</label>
               <div
-                className="cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-gray100"
+                className={`cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-[0.8125rem] text-gray300 ${
+                  eventForm.endTime ? 'border-main text-white' : ''
+                }`}
                 onClick={() => setActivePopup(activePopup === 'endTime' ? null : 'endTime')}>
                 {eventForm.endTime || '00:00'}
               </div>
