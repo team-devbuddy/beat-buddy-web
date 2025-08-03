@@ -19,12 +19,49 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
   const observerRef = useRef<HTMLDivElement | null>(null);
   const accessToken = useRecoilValue(accessTokenState) || '';
 
+  // 스와이프 관련 상태
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isSwiping, setIsSwiping] = useState(false);
+
   const tabs = [
     { key: 'info', label: '행사 소개' },
     { key: 'qna', label: '행사 문의' },
   ] as const;
 
   const activeIndex = tab === 'info' ? 0 : 1;
+
+  // 스와이프 감지 함수
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setIsSwiping(false);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+    setIsSwiping(true);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && tab === 'info') {
+      // 왼쪽으로 스와이프하고 info 탭에 있을 때 -> qna로 이동
+      setTab('qna');
+    } else if (isRightSwipe && tab === 'qna') {
+      // 오른쪽으로 스와이프하고 qna 탭에 있을 때 -> info로 이동
+      setTab('info');
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
+    setIsSwiping(false);
+  };
 
   const handleSubmit = async () => {
     if (!qnaContent.trim()) return;
@@ -82,7 +119,12 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
       </div>
 
       {/* 탭 콘텐츠 영역 애니메이션 */}
-      <div className="relative min-h-[150px]">
+      <div
+        className="relative min-h-[150px]"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        style={{ touchAction: isSwiping ? 'none' : 'auto' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}

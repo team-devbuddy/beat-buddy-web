@@ -113,7 +113,7 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
           </div>
 
           {clubs.length > 0 && (
-            <div className="mt-3">
+            <div className="">
               <div
                 className="h-[10rem] overflow-hidden rounded-[0.25rem] border-none focus:outline-none"
                 style={{ touchAction: 'none', pointerEvents: 'auto' }}
