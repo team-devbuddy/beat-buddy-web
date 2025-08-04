@@ -19,6 +19,7 @@ interface CommentType {
   createdAt: string;
   isAuthor: boolean;
   userId: string;
+  writerId: number; // writerId 필드 추가
   isDeleted?: boolean; // 삭제된 댓글인지 여부
 }
 
@@ -48,14 +49,44 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
     try {
       let newComment;
       if (replyingTo) {
-        newComment = await createReply(postId, replyingTo.parentId, content, isAnonymous, accessToken);
+        const replyResponse = await createReply(postId, replyingTo.parentId, content, isAnonymous, accessToken);
+        // API 응답을 CommentType으로 변환
+        newComment = {
+          id: replyResponse.id,
+          content: replyResponse.content,
+          isAnonymous: replyResponse.isAnonymous,
+          replyId: replyResponse.replyId,
+          memberName: replyResponse.memberName,
+          likes: replyResponse.likes,
+          createdAt: replyResponse.createdAt,
+          isAuthor: replyResponse.isAuthor,
+          writerId: replyResponse.writerId, // writerId 필드 사용
+          userId: replyResponse.member?.memberId?.toString() || '',
+          isDeleted: false,
+        };
         // ✅ 답글 작성 성공 시, 부모 댓글 ID로 스크롤 명령
         setScrollTo(replyingTo.parentId);
       } else {
-        newComment = await createComment(postId, content, isAnonymous, accessToken);
+        const commentResponse = await createComment(postId, content, isAnonymous, accessToken);
+        // API 응답을 CommentType으로 변환
+        newComment = {
+          id: commentResponse.id,
+          content: commentResponse.content,
+          isAnonymous: commentResponse.isAnonymous,
+          replyId: commentResponse.replyId,
+          memberName: commentResponse.memberName,
+          likes: commentResponse.likes,
+          createdAt: commentResponse.createdAt,
+          isAuthor: commentResponse.isAuthor,
+          writerId: commentResponse.writerId, // writerId 필드 사용
+          userId: commentResponse.member?.memberId?.toString() || '',
+          isDeleted: false,
+        };
         // ✅ 새 댓글 작성 성공 시, 맨 아래로 스크롤 명령
         setScrollTo('bottom');
       }
+
+      console.log('새 댓글 데이터:', newComment);
 
       setContent('');
       onCommentAdded(newComment);

@@ -133,15 +133,24 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   const handleDelete = useCallback(async () => {
     try {
       await deleteComment(postId, reply.id, accessToken);
-      // 삭제된 댓글은 isDeleted 플래그만 설정하고 실제로는 제거하지 않음
-      setComments((prevComments) =>
-        prevComments.map((comment) => (comment.id === reply.id ? { ...comment, isDeleted: true } : comment)),
-      );
+
+      // 자식댓글이 있는지 확인
+      const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked);
+
+      if (childReplies.length > 0) {
+        // 자식댓글이 있으면 삭제된 상태로 표시
+        setComments((prevComments) =>
+          prevComments.map((comment) => (comment.id === reply.id ? { ...comment, isDeleted: true } : comment)),
+        );
+      } else {
+        // 자식댓글이 없으면 완전 삭제
+        setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
+      }
     } catch (error) {
       console.error('댓글 삭제 실패', error);
       alert('댓글 삭제에 실패했습니다.');
     }
-  }, [postId, reply.id, accessToken, setComments]);
+  }, [postId, reply.id, accessToken, setComments, allComments]);
 
   const handleMenuClick = () => {
     // 삭제된 댓글에는 드롭다운 메뉴 불가
@@ -158,10 +167,23 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
   const handleProfileClick = () => {
     // 삭제된 댓글이나 익명 댓글인 경우 프로필로 이동하지 않음
-    if (reply.isDeleted || reply.isAnonymous) return;
+    if (reply.isDeleted || reply.isAnonymous) {
+      console.log('프로필 클릭 차단:', { isDeleted: reply.isDeleted, isAnonymous: reply.isAnonymous });
+      return;
+    }
 
-    if (reply.userId) {
-      router.push(`/board/profile?writerId=${reply.userId}`);
+    console.log('프로필 클릭 시도:', {
+      writerId: reply.writerId,
+      memberName: reply.memberName,
+      isAnonymous: reply.isAnonymous,
+      isDeleted: reply.isDeleted,
+    });
+
+    if (reply.writerId) {
+      console.log('프로필 페이지로 이동:', `/board/profile?writerId=${reply.writerId}`);
+      router.push(`/board/profile?writerId=${reply.writerId}`);
+    } else {
+      console.log('writerId가 없어서 프로필 이동 불가');
     }
   };
 
@@ -271,11 +293,20 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             commentId={reply.id}
             type="comment"
             commentAuthorName={reply.memberName}
-            onCommentDelete={() =>
-              setComments((prevComments) =>
-                prevComments.map((comment) => (comment.id === reply.id ? { ...comment, isDeleted: true } : comment)),
-              )
-            }
+            onCommentDelete={() => {
+              // 자식댓글이 있는지 확인
+              const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked);
+
+              if (childReplies.length > 0) {
+                // 자식댓글이 있으면 삭제된 상태로 표시
+                setComments((prevComments) =>
+                  prevComments.map((comment) => (comment.id === reply.id ? { ...comment, isDeleted: true } : comment)),
+                );
+              } else {
+                // 자식댓글이 없으면 완전 삭제
+                setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
+              }
+            }}
             writerId={reply.userId ? parseInt(reply.userId) : undefined}
           />
         )}
@@ -383,11 +414,20 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           commentId={reply.id}
           type="comment"
           commentAuthorName={reply.memberName}
-          onCommentDelete={() =>
-            setComments((prevComments) =>
-              prevComments.map((comment) => (comment.id === reply.id ? { ...comment, isDeleted: true } : comment)),
-            )
-          }
+          onCommentDelete={() => {
+            // 자식댓글이 있는지 확인
+            const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked);
+
+            if (childReplies.length > 0) {
+              // 자식댓글이 있으면 삭제된 상태로 표시
+              setComments((prevComments) =>
+                prevComments.map((comment) => (comment.id === reply.id ? { ...comment, isDeleted: true } : comment)),
+              );
+            } else {
+              // 자식댓글이 없으면 완전 삭제
+              setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
+            }
+          }}
           writerId={reply.userId ? parseInt(reply.userId) : undefined}
         />
       )}

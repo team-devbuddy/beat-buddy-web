@@ -12,6 +12,7 @@ export interface CommentType {
   content: string;
   isAnonymous: boolean;
   replyId: number | null;
+  writerId: number;
   memberName: string;
   profileImageUrl?: string; // 댓글 작성자의 프로필 이미지
   likes: number;
@@ -84,11 +85,36 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
         const res = await getAllComments(postId, page, size, accessToken);
 
         if (res.content) {
+          // API 응답을 CommentType으로 변환
+          const transformedComments = res.content.map((comment: any) => ({
+            id: comment.id,
+            content: comment.content,
+            isAnonymous: comment.isAnonymous,
+            replyId: comment.replyId,
+            memberName: comment.memberName,
+            profileImageUrl: comment.member?.profileImage,
+            likes: comment.likes,
+            liked: comment.liked,
+            createdAt: comment.createdAt,
+            isAuthor: comment.isAuthor,
+            writerId: comment.writerId, // writerId 필드 사용
+            userId: comment.member?.memberId?.toString() || '', // 기존 userId도 유지
+            isBlocked: comment.isBlocked,
+            isDeleted: comment.isDeleted,
+          }));
+
+          console.log('댓글 데이터 변환:', {
+            original: res.content[0],
+            transformed: transformedComments[0],
+            writerId: transformedComments[0]?.writerId,
+            userId: transformedComments[0]?.userId,
+          });
+
           // page 값에 따라 상태를 덮어쓰거나 추가하도록 분기합니다.
           if (page === 0) {
             // 초기 로드: 댓글 목록을 완전히 새로 설정합니다.
             setComments(
-              res.content.sort(
+              transformedComments.sort(
                 (a: CommentType, b: CommentType) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
               ),
             );
@@ -98,7 +124,7 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
             setComments((prev) => {
               // 중복을 방지하기 위해 Set을 사용하여 ID를 기준으로 유니크한 댓글만 합칩니다.
               const existingIds = new Set(prev.map((c) => c.id));
-              const newComments = res.content.filter((c: CommentType) => !existingIds.has(c.id));
+              const newComments = transformedComments.filter((c: CommentType) => !existingIds.has(c.id));
               return [...prev, ...newComments].sort(
                 (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
               );
