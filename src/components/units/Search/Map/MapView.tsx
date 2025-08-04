@@ -7,7 +7,7 @@ import GoogleMap from '@/components/common/GoogleMap';
 import 'react-spring-bottom-sheet/dist/style.css';
 import MapSearchButton from '@/components/units/Search/Map/MapSearchButton';
 import SearchHeader from '@/components/units/Search/SearchHeader';
-import { fetchVenues } from '@/lib/actions/search-controller/fetchVenues';
+import { fetchVenues } from '@/lib/actions/search-controller/filterDropdown';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, clickedClubState } from '@/context/recoil-context';
 import NaverMap from '@/components/common/NaverMap';
@@ -31,7 +31,8 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       if (isEmpty && allClubs.length === 0) {
         setLoading(true);
         try {
-          const clubs = await fetchVenues([], accessToken);
+          const response = await fetchVenues([], accessToken);
+          const clubs = response.clubs || response;
           setAllClubs(clubs);
           setCurrentFilteredClubs(clubs);
         } catch (error) {
@@ -80,8 +81,14 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
 
       const filteredClubs = await mapRef.current.filterAddressesInView();
 
-      // ✅ 여기서 중복 제거
-      const uniqueClubs = Array.from(new Map(filteredClubs.map((club) => [club.id, club])).values());
+      // ✅ 여기서 중복 제거 (venueId 사용)
+      const uniqueClubs = Array.from(new Map(filteredClubs.map((club) => [club.venueId, club])).values());
+
+      console.log('🗺️ 지도 검색 결과:', {
+        전체클럽수: filteredClubs.length,
+        중복제거후: uniqueClubs.length,
+        클럽목록: uniqueClubs.map((c) => c.englishName),
+      });
 
       setCurrentFilteredClubs(uniqueClubs);
 
@@ -104,13 +111,15 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
     }
   }, [filteredClubs, isEmpty, allClubs, setClickedClub]);
 
-  // 클릭된 클럽이 변경되면 바텀시트에 반영
+  // 클릭된 클럽이 변경되면 바텀시트에 반영 (지도 검색 상태는 유지)
   useEffect(() => {
     if (clickedClub && clickedClub.venue) {
-      setIsMapSearched(false);
-      setCurrentFilteredClubs(isEmpty ? allClubs : filteredClubs);
+      // 지도 검색 상태를 유지하면서 클럽 리스트만 복원
+      if (!isMapSearched) {
+        setCurrentFilteredClubs(isEmpty ? allClubs : filteredClubs);
+      }
     }
-  }, [clickedClub, isEmpty, allClubs, filteredClubs]);
+  }, [clickedClub, isEmpty, allClubs, filteredClubs, isMapSearched]);
 
   // 지도에 표시할 클럽 목록
   const clubsToDisplay = isEmpty ? allClubs : filteredClubs;
@@ -133,11 +142,12 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       {/* 지도 */}
       <NaverMap
         clubs={clubsToDisplay}
-        minHeight="calc(100dvh - 20rem)"
+        minHeight="100dvh"
         onAddressesInBounds={handleSearch}
         ref={mapRef}
         bottomSheetRef={sheetRef}
         zoom={isEmpty ? 10 : undefined}
+        showLocationButton={false}
       />
 
       <MapSearchButton onClick={handleMapSearchClick} />

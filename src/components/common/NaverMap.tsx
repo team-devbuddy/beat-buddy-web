@@ -92,10 +92,11 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
     // 현재위치 버튼 HTML 요소 생성
     if (showLocationButton) {
       const locationButton = document.createElement('div');
+      locationButton.className = 'map-location-button';
       locationButton.innerHTML = '<img src="/icons/mapMeNow.svg" style="width: 24px; height: 24px;" />';
       locationButton.style.cssText = `
         position: absolute;
-        bottom: 100px;
+        bottom: 150px;
         right: 20px;
         width: 40px;
         height: 40px;
@@ -202,9 +203,9 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
         <div class="custom-cluster" style="
           position: relative; display: flex; align-items: center; justify-content: center;
         ">
-          <img src="/icons/markerCluster.svg" style="width: 32px; height: 44px;" alt="cluster" />
+          <img src="/icons/Headers/markerCluster.svg" style="width: 32px; height: 44px;" alt="cluster" />
           <span class="cluster-count" style="
-            position: absolute; color: #480522; font-weight: bold; font-size: 0.9375rem; margin-top: -2px;
+            position: absolute; color: #480522; font-weight: 600; font-size: 0.8125rem; margin-top: -2px;
           "></span>
         </div>
       `,

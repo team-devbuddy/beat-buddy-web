@@ -23,7 +23,7 @@ import { AnimatePresence } from 'framer-motion';
 import ClickedClubDetails from './ClickedClub';
 import SearchListSkeleton from '@/components/common/skeleton/SearchListSkeleton';
 import NoResults from '../NoResult';
-import { filterMapDropdown } from '@/lib/actions/search-controller/filterMapDropdown';
+import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
 
 export interface BottomSheetProps extends SearchResultsProps {
   isMapSearched?: boolean;
@@ -55,7 +55,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
 
   const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'];
   const locations = ['홍대', '이태원', '강남/신사', '압구정', '기타'];
-  const sorts = ['가까운 순', '인기순'];
+  const sorts = ['거리순', '인기순'];
 
   // 매핑 객체들
   const genresMap: { [key: string]: string } = {
@@ -72,20 +72,20 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
   };
 
   const locationsMap: { [key: string]: string } = {
-    홍대: 'HONGDAE',
-    이태원: 'ITAEWON',
-    '강남/신사': 'GANGNAM/SINSA',
-    압구정: 'APGUJEONG',
-    기타: 'OTHERS',
+    홍대: '홍대',
+    이태원: '이태원',
+    '강남/신사': '강남/신사',
+    압구정: '압구정',
+    기타: '기타',
   };
 
   const criteriaMap: { [key: string]: string } = {
-    '가까운 순': '가까운 순',
+    거리순: '거리순',
     인기순: '인기순',
   };
 
   // 바텀시트 높이 설정
-  const snapPoints = clickedClub ? [height, 350, 80] : [height, 470, 80];
+  const snapPoints = clickedClub ? [height - 10, 260, 70] : [height - 10, 470, 70];
 
   useImperativeHandle(ref, () => ({
     close: () => setOpen(false),
@@ -128,12 +128,12 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
     });
 
     // 모든 드롭다운이 해제된 상태면 원본 리스트 표시
-    const isAllFiltersEmpty = !selectedGenre && !selectedLocation && (selectedSort === '가까운 순' || !selectedSort);
+    const isAllFiltersEmpty = !selectedGenre && !selectedLocation && (selectedSort === '거리순' || !selectedSort);
     console.log('🔍 필터 상태 체크:', {
       isAllFiltersEmpty,
       selectedGenre: !!selectedGenre,
       selectedLocation: !!selectedLocation,
-      selectedSort: selectedSort === '가까운 순' || !selectedSort,
+      selectedSort: selectedSort === '거리순' || !selectedSort,
     });
 
     if (isAllFiltersEmpty) {
@@ -155,16 +155,16 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
       setLoading(true);
       try {
         const filters = {
-          venueList: filteredClubs,
+          keyword: searchQuery || '',
           genreTag: genresMap[selectedGenre] || '',
           regionTag: locationsMap[selectedLocation] || '',
-          sortCriteria: criteriaMap[selectedSort] || '가까운 순',
+          sortCriteria: criteriaMap[selectedSort] || '인기순',
         };
 
         console.log('📤 필터 요청 데이터:', filters);
-        const data = await filterMapDropdown(filters, accessToken);
+        const data = await filterDropdown(filters, accessToken);
         console.log('📥 필터 응답 데이터:', data);
-        setCurrentFilteredClubs(data);
+        setCurrentFilteredClubs(data.clubs);
       } catch (error) {
         console.error('드롭다운 필터링 에러:', error);
         setCurrentFilteredClubs(filteredClubs);
@@ -200,25 +200,34 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
             <Sheet.Container className="relative h-full w-full !shadow-none">
               <Sheet.Header className="relative flex w-full cursor-pointer flex-col justify-center rounded-t-lg bg-BG-black pt-[6px]">
                 <div className="flex justify-center">
-                  <div className="mt-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
+                  <div className="my-2 h-[0.25rem] w-[5rem] rounded-[2px] border-none bg-gray500" />
                 </div>
-                <div className="w-full pb-[0.5rem] pt-[1.25rem]">
-                  <DropdownGroup
-                    genres={genres}
-                    locations={locations}
-                    criteria={sorts}
-                    selectedGenre={selectedGenre}
-                    setSelectedGenre={setSelectedGenre}
-                    selectedLocation={selectedLocation}
-                    setSelectedLocation={setSelectedLocation}
-                    selectedOrder={selectedSort}
-                    setSelectedOrder={setSelectedSort}
-                  />
-                </div>
+                {!clickedClub && (
+                  <div className="w-full pb-[0.5rem] pt-2">
+                    <DropdownGroup
+                      genres={genres}
+                      locations={locations}
+                      criteria={sorts}
+                      selectedGenre={selectedGenre}
+                      setSelectedGenre={setSelectedGenre}
+                      selectedLocation={selectedLocation}
+                      setSelectedLocation={setSelectedLocation}
+                      selectedOrder={selectedSort}
+                      setSelectedOrder={setSelectedSort}
+                    />
+                  </div>
+                )}
               </Sheet.Header>
               <Sheet.Content className="relative z-10 w-full bg-BG-black" disableDrag={true}>
                 <div className="club-list-container flex w-full flex-col bg-BG-black text-[0.93rem]">
-                  <div className={`w-full flex-wrap gap-4 ${currentSnapPoint === 1 ? 'pb-[350px]' : ''}`}>
+                  <div
+                    className={`w-full flex-wrap gap-4 ${
+                      !clickedClub && currentSnapPoint === 0
+                        ? 'pb-[60px]'
+                        : !clickedClub && currentSnapPoint === 1
+                          ? 'pb-[200px]'
+                          : ''
+                    }`}>
                     {loading ? (
                       <SearchListSkeleton />
                     ) : clickedClub ? (

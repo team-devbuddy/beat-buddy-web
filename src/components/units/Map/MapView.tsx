@@ -7,7 +7,8 @@ import GoogleMap from '@/components/common/GoogleMap';
 import 'react-spring-bottom-sheet/dist/style.css';
 import MapSearchButton from '@/components/units/Search/Map/MapSearchButton';
 import SearchHeader from '@/components/units/Search/SearchHeader';
-import { fetchVenues, fetchAllVenues } from '@/lib/actions/search-controller/fetchVenues';
+import { fetchVenues } from '@/lib/actions/search-controller/filterDropdown';
+import { fetchVenuesByLocation } from '@/lib/actions/search-controller/fetchVenuesByLocation';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, clickedClubState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import NaverMap from '@/components/common/NaverMap';
@@ -66,7 +67,8 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       if (isEmpty && allClubs.length === 0) {
         setLoading(true);
         try {
-          const clubs = await fetchAllVenues(accessToken);
+          const response = await fetchVenues([], accessToken);
+          const clubs = response.clubs || response;
           console.log('🔍 모든 클럽 데이터 가져오기:', {
             '총 클럽 수': clubs.length,
             '클럽 목록': clubs.map((club: Club) => ({

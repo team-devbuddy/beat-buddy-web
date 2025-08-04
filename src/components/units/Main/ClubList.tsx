@@ -11,6 +11,9 @@ interface ClubsListProps {
   likedClubs: { [key: number]: boolean };
   heartbeatNums: { [key: number]: number };
   handleHeartClickWrapper: (e: React.MouseEvent, venueId: number) => void;
+  lastClubRef?: (node: HTMLDivElement | null) => void;
+  hasMore?: boolean;
+  isLoading?: boolean;
 }
 
 const clubTypes = ['club', 'pub', 'rooftop'];
@@ -73,8 +76,23 @@ const getImageSrc = (club: Club) => {
   return '/images/DefaultImage.png';
 };
 
-export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
+export default function ClubList({
+  clubs,
+  likedClubs,
+  heartbeatNums,
+  handleHeartClickWrapper,
+  lastClubRef,
+  hasMore,
+  isLoading,
+}: ClubsListProps) {
   const [clickedHeart, setClickedHeart] = useState<{ [key: number]: boolean }>({});
+
+  console.log('🎯 ClubList 렌더링:', {
+    clubsLength: clubs.length,
+    hasMore,
+    isLoading,
+    lastClubRefExists: !!lastClubRef,
+  });
 
   const memoizedValues = useMemo(() => {
     return clubs.map((club) => ({
@@ -86,7 +104,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
   const handleHeartClick = (e: React.MouseEvent, venueId: number) => {
     setClickedHeart((prev) => ({ ...prev, [venueId]: true }));
     handleHeartClickWrapper(e, venueId);
-    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [venueId]: false })), 500); // 애니메이션이 끝난 후 상태를 리셋
+    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [venueId]: false })), 500);
   };
 
   return (
@@ -94,14 +112,15 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
       <div className="grid grid-cols-2 gap-x-[1rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue, index) => {
           const { firstImageUrl, filteredTags } = memoizedValues[index];
+          const isLastItem = index === clubs.length - 1;
+          const shouldSetRef = isLastItem && hasMore && !isLoading;
 
           return (
             <Link key={venue.venueId} href={`/detail/${venue.venueId}`} passHref>
               <motion.div
+                ref={shouldSetRef ? lastClubRef : undefined}
                 whileHover={{
                   y: -5,
-                  //boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
-                  //backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
                 className="relative flex h-full flex-col rounded-[0.5rem]">
                 <div className="relative w-full pb-[100%]">
@@ -162,14 +181,6 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                       )}
                     </div>
                   </div>
-                  {/*<div className="flex items-end">
-                    <div className="flex items-center space-x-[0.25rem] text-gray300">
-                      <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-                      <span className="text-body3-12-medium">
-                        {heartbeatNums[venue.id] !== undefined ? heartbeatNums[venue.id] : 0}
-                      </span>
-                    </div>
-                  </div>*/}
                 </div>
               </motion.div>
             </Link>
