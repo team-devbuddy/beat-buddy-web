@@ -2,27 +2,60 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { getCouponState } from '@/lib/actions/venue-controller/getCouponState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { accessTokenState, couponState } from '@/context/recoil-context';
 import { receiveCoupon } from '@/lib/actions/venue-controller/receiveCoupon';
+import { Sheet } from 'react-modal-sheet';
+import { useCoupon } from '@/lib/actions/venue-controller/useCoupon';
+import { useParams } from 'next/navigation';
+import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail';
 
 interface CouponInfo {
   couponId: number;
   couponName: string;
   couponDescription: string;
+  expireDate: string;
+  quota: number;
+  remaining: number;
+  policy: string;
+  howToUse: string;
+  notes: string;
+  maxQuota: number;
+  receivedCount: number;
+  received: boolean;
+  soldOut: boolean;
+  isUsed?: boolean; // 사용 여부 추가
   [key: string]: any;
 }
 
 export default function CouponCard({ venueId }: { venueId: number }) {
+  const params = useParams();
   const accessToken = useRecoilValue(accessTokenState) || '';
   const coupon = useRecoilValue(couponState);
-  const isExpired = !coupon?.isUsed && coupon?.isDownloaded && new Date() > new Date(coupon.expiredAt);
-  const setCouponState = useSetRecoilState(couponState);
+  const [showDownloadSheet, setShowDownloadSheet] = useState(false);
+  const [showStaffModal, setShowStaffModal] = useState(false);
+  const [showUsageModal, setShowUsageModal] = useState(false);
+  const [isUsing, setIsUsing] = useState(false);
 
+  // 쿠폰 상태 확인
+  const isExpired = coupon?.expireDate && new Date() > new Date(coupon.expireDate);
+  const isSoldOut = coupon?.soldOut;
+  const isReceived = coupon?.received;
   const isUsed = coupon?.isUsed;
+  const expireDate = coupon?.expireDate?.split('-').join('.');
+
+  const setCouponState = useSetRecoilState(couponState);
+  const [clubDetail, setClubDetail] = useState<any>(null);
+
+  const handleDownloadClick = () => {
+    if (!coupon || isReceived || isSoldOut || isExpired) return;
+    setShowDownloadSheet(true);
+  };
+
   const handleDownload = async () => {
-    if (!coupon) return;
+    if (!coupon || isReceived || isSoldOut || isExpired) return;
 
     try {
       console.log('쿠폰 다운로드 시도:', { venueId, couponId: coupon.couponId });
@@ -30,7 +63,8 @@ export default function CouponCard({ venueId }: { venueId: number }) {
 
       if (response === 201) {
         console.log('쿠폰 다운로드 성공');
-        setCouponState({ ...coupon, isDownloaded: true });
+        setCouponState({ ...coupon, received: true, receivedCount: (coupon.receivedCount || 0) + 1 });
+        setShowDownloadSheet(false);
       } else {
         console.error('쿠폰 다운로드 실패:', response);
       }
@@ -39,38 +73,102 @@ export default function CouponCard({ venueId }: { venueId: number }) {
     }
   };
 
-  // 쿠폰 상태에 따른 배경 이미지 결정
-  const getCouponBackground = () => {
-    // 항상 coupon_download.svg 사용
-    return '/coupon_download.svg';
+  const handleCouponClick = () => {
+    // 받은 쿠폰이고 만료되지 않았으며 사용하지 않은 경우에만 직원 확인 모달 표시
+    if (isReceived && !isExpired && !isUsed) {
+      setShowStaffModal(true);
+    }
   };
 
-  const rightSectionBg = isExpired ? 'bg-gray500' : isUsed ? 'bg-sub1' : 'bg-gray700';
+  const handleStaffConfirm = () => {
+    setShowStaffModal(false);
+    setShowUsageModal(true);
+  };
 
-  const rightContent = isExpired ? (
-    <span className="text-[0.75rem] font-medium text-white">쿠폰 만료</span>
-  ) : isUsed || coupon?.isDownloaded ? (
-    <span className="text-[0.75rem] font-medium text-white">쿠폰 사용</span>
-  ) : (
-    <button onClick={handleDownload} className="cursor-pointer" title="다운로드">
-      <Image src="/icons/download.svg" alt="download" width={19} height={19} />
-    </button>
-  );
+  const handleUseCoupon = async () => {
+    if (!coupon || isUsing) return;
+
+    setIsUsing(true);
+    try {
+      console.log('쿠폰 사용 시도:', coupon.couponId);
+      const response = await useCoupon(accessToken, coupon.receiveCouponId);
+
+      if (response) {
+        console.log('쿠폰 사용 성공');
+        setCouponState({ ...coupon, isUsed: true });
+        setShowUsageModal(false);
+      }
+    } catch (error) {
+      console.error('쿠폰 사용 실패:', error);
+      alert('쿠폰 사용에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsUsing(false);
+    }
+  };
+
+  // 쿠폰 상태에 따른 배경 이미지 결정
+  const getCouponBackground = () => {
+    if (isExpired || isUsed) {
+      return '/icons/coupon_expired.svg'; // 만료된 쿠폰 또는 사용된 쿠폰
+    } else if (isReceived) {
+      return '/coupon.svg'; // 받은 쿠폰 (사용 가능)
+    } else if (isSoldOut) {
+      return '/icons/coupon_expired.svg'; // 품절된 쿠폰
+    } else {
+      return '/coupon_download.svg'; // 다운로드 가능한 쿠폰
+    }
+  };
+
+  // 우측 버튼 영역 내용 결정
+  const getRightContent = () => {
+    if (isExpired) {
+      return <div className="flex items-center"></div>;
+    } else if (isUsed) {
+      return <div className="flex items-center"></div>;
+    } else if (isSoldOut) {
+      return <div className="flex items-center"></div>;
+    } else if (isReceived) {
+      return <div className="flex items-center"></div>;
+    } else {
+      return (
+        <button
+          onClick={handleDownloadClick}
+          className="cursor-pointer rounded-full bg-transparent p-2 transition-all hover:bg-opacity-80"
+          title="다운로드">
+          <Image src="/icons/download.svg" alt="download" width={16} height={16} />
+        </button>
+      );
+    }
+  };
+
+  useEffect(() => {
+    const fetchClubName = async () => {
+      try {
+        console.log('클럽 정보 조회 시도:', { id: params.id, accessToken: !!accessToken });
+        const response = await fetchClubDetail(params.id as string, accessToken);
+        console.log('클럽 정보 응답:', response);
+        setClubDetail(response.venue || response); // venue 또는 전체 응답 사용
+      } catch (error) {
+        console.error('클럽 정보 조회 실패:', error);
+      }
+    };
+
+    if (params.id && accessToken) {
+      fetchClubName();
+    }
+  }, [params.id, accessToken]);
 
   useEffect(() => {
     const fetchCoupon = async () => {
       try {
         if (!accessToken) return;
-        const data = await getCouponState(accessToken, venueId);
-        console.log('쿠폰 상태 데이터:', data);
+        const response: any = await getCouponState(accessToken, venueId);
+        console.log('쿠폰 상태 데이터:', response);
 
-        if (Array.isArray(data) && data.length > 0) {
-          // 서버에서 받아온 쿠폰 데이터로 상태 초기화
-          const couponData = data.find((item) => item.venueId === venueId) || data[0];
+        if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
+          // 첫 번째 쿠폰 데이터 사용
+          const couponData = response.data[0];
           setCouponState(couponData);
-        } else if (data && typeof data === 'object') {
-          // 단일 쿠폰 객체인 경우
-          setCouponState(data);
         } else {
           // 쿠폰이 없는 경우
           setCouponState(null);
@@ -88,41 +186,153 @@ export default function CouponCard({ venueId }: { venueId: number }) {
   if (!coupon) return null;
 
   return (
-    <div className="px-5 ">
-      <div className="relative">
-        <Image src={getCouponBackground()} alt="coupon" width={335} height={68} />
+    <>
+      <div className="px-5 pb-[0.88rem]">
+        <div className={`relative ${isReceived && !isExpired ? 'cursor-pointer' : ''}`} onClick={handleCouponClick}>
+          <Image src={getCouponBackground()} alt="coupon" width={335} height={68} />
 
-        {/* 쿠폰 내용 오버레이 */}
-        <div className="absolute inset-0 flex items-center justify-between px-4">
-          {/* 왼쪽 텍스트 영역 */}
-          <div className="flex flex-col">
-            <span className="text-[0.75rem] font-medium leading-tight text-main">{coupon.couponName}</span>
-            <span className="mt-[-0.12rem] text-[1rem] font-bold leading-tight text-gray100">
-              {coupon.couponDescription}
-            </span>
-          </div>
+          {/* 쿠폰 내용 오버레이 */}
+          <div className="absolute inset-0 flex items-center justify-between px-4">
+            {/* 왼쪽 텍스트 영역 */}
+            <div className="flex flex-col">
+              <span className="text-[0.75rem] font-medium leading-tight text-main">{coupon.couponName}</span>
+              <span className="mt-[-0.12rem] text-[1rem] font-bold leading-tight text-gray100">
+                {coupon.couponDescription}
+              </span>
+            </div>
 
-          {/* 우측 버튼 영역 */}
-          <div className="flex items-center">
-            {isExpired ? (
-              <div className="flex items-center">
-                <span className="ml-1 text-[0.75rem] font-medium text-gray400">사용만료</span>
-              </div>
-            ) : isUsed ? (
-              <div className="flex items-center">
-                <span className="ml-1 text-[0.75rem] font-medium text-sub1">쿠폰 사용</span>
-              </div>
-            ) : (
-              <button
-                onClick={handleDownload}
-                className="cursor-pointer rounded-full bg-transparent p-2 transition-all hover:bg-opacity-80"
-                title="다운로드">
-                <Image src="/icons/download.svg" alt="download" width={16} height={16} />
-              </button>
-            )}
+            {/* 우측 버튼 영역 */}
+            <div className="flex items-center">{getRightContent()}</div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* 쿠폰 다운로드 바텀시트 showDownloadSheet*/}
+      <Sheet isOpen={showDownloadSheet} onClose={() => setShowDownloadSheet(false)} snapPoints={[400]} initialSnap={0}>
+        <Sheet.Container className="!bg-BG-black">
+          <Sheet.Header className="!bg-BG-black">
+            <div className="flex justify-center py-3"></div>
+          </Sheet.Header>
+          <Sheet.Content className="!bg-BG-black px-5 pb-8">
+            <div className="flex flex-col items-center space-y-6">
+              {/* 쿠폰 정보 */}
+              <div className="w-full">
+                <div className="flex flex-col items-start">
+                  <div className="relative mb-3 flex w-full items-center justify-center">
+                    <p className="text-[0.75rem] text-gray200">
+                      {clubDetail?.englishName || clubDetail?.koreanName || '클럽'}
+                    </p>
+                    <Image
+                      
+                      className="absolute right-0 cursor-pointer"
+                      src="/icons/XmarkWhite.svg"
+                      alt="close"
+                      width={10}
+                      height={10}
+                      onClick={() => setShowDownloadSheet(false)}
+                    />
+                  </div>
+                  <div className="mb-3 flex w-full flex-col items-start rounded-[0.75rem] bg-gray700 px-6 py-5 text-start">
+                    <h3 className="text-[1rem] text-main">{coupon?.couponName}</h3>
+                    <p className="text-[1.25rem] font-bold text-white">
+                      {clubDetail?.englishName || clubDetail?.koreanName || '클럽'}
+                    </p>
+                    <p className="text-[1.25rem] font-bold text-white">{coupon?.couponDescription}</p>
+                  </div>
+                  <div className="flex flex-row items-center gap-x-1">
+                    <p className="text-[0.75rem] text-gray300">유효기간: </p>
+                    <p className="text-[0.75rem] text-main">{expireDate} 까지 사용가능</p>
+                  </div>
+                  <p className="text-[0.75rem] text-gray300">{coupon?.notes}</p>
+                  <p className="text-[0.75rem] text-gray300">{coupon?.howToUse}</p>
+                  <p className="text-[0.75rem] text-gray300">{coupon?.policy}</p>
+                </div>
+              </div>
+
+              {/* 버튼 영역 */}
+              <div className="flex w-full">
+                <button
+                  onClick={handleDownload}
+                  disabled={isUsing}
+                  className="flex-1 rounded-lg bg-main py-[0.99rem] text-[0.9935rem] font-bold text-sub2 disabled:bg-gray600 disabled:text-gray400">
+                  쿠폰 다운로드
+                </button>
+              </div>
+            </div>
+          </Sheet.Content>
+        </Sheet.Container>
+      </Sheet>
+      {/* 직원 확인 모달 */}
+      {showStaffModal &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] mx-5 flex flex-col items-center justify-center bg-black bg-opacity-50"
+            onClick={() => setShowStaffModal(false)}>
+            {/* 모달 본체 */}
+            <div
+              className="mx-5 w-full max-w-sm rounded-[0.75rem] bg-BG-black p-5"
+              onClick={(e) => e.stopPropagation()}>
+              <div className="flex flex-col items-center">
+                <h3 className="text-[1rem] text-main">{coupon?.couponName}</h3>
+                <p className="mb-3 text-[1.25rem] font-bold text-white">{coupon?.couponDescription}</p>
+                <p className="mb-3 text-[0.875rem] text-gray300">{coupon?.howToUse}</p>
+                <p className="mb-3 text-[0.75rem] text-gray200">{expireDate} 까지</p>
+                <div className="bg-gray800 w-full rounded-lg p-3"></div>
+
+                <button
+                  onClick={handleStaffConfirm}
+                  className="w-full rounded-lg bg-gray700 py-3 text-[0.9935rem] font-bold text-main">
+                  직원 확인
+                </button>
+              </div>
+            </div>
+
+            {/* ✅ 모달 바로 아래에 붙는 안내 텍스트 */}
+            <div className="mt-5 text-center" onClick={(e) => e.stopPropagation()}>
+              <p className="text-[0.875rem] text-main">직원확인 버튼 클릭 시 쿠폰이 즉시 사용 처리됩니다.</p>
+              <p className="text-[0.875rem] text-main">직원만 확인을 눌러주세요.</p>
+            </div>
+          </div>,
+          document.body,
+        )}
+
+      {/* 쿠폰 사용 확인 모달 */}
+      {showUsageModal &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+            onClick={() => setShowUsageModal(false)}>
+            <div
+              className="mx-4 max-h-[80vh] w-full max-w-sm overflow-y-auto rounded-[0.75rem] bg-BG-black px-5 pb-4 pt-5 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}>
+              <div className="flex flex-col items-center space-y-2">
+                <h3 className="text-[1.125rem] font-bold text-white">쿠폰 사용하기</h3>
+                <p className="text-center text-[0.875rem] text-gray300">
+                  직원확인 버튼 클릭시 쿠폰이 즉시 사용 처리되며,
+                  <br />
+                  되돌릴 수 없습니다.
+                </p>
+
+                {/* 버튼 영역 */}
+                <div className="flex w-full space-x-3">
+                  <button
+                    onClick={() => setShowUsageModal(false)}
+                    className="flex-1 rounded-[0.5rem] bg-gray700 py-[0.66rem] text-[0.9935rem] font-bold text-gray200">
+                    취소
+                  </button>
+                  <button
+                    onClick={handleUseCoupon}
+                    disabled={isUsing}
+                    className="flex-1 rounded-[0.5rem] bg-main py-[0.66rem] text-[0.9935rem] font-bold text-white disabled:bg-gray600 disabled:text-gray400">
+                    쿠폰 사용하기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
