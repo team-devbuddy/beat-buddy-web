@@ -16,13 +16,52 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-}
-
 html {
   scroll-behavior: smooth;
   scroll-padding-top: var(--scroll-padding, 5rem);
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#__next {
+  height: 100%;
+}
+
+/* 스크롤 여백 문제 해결 */
+* {
+  box-sizing: border-box;
+}
+
+/* 스크롤 컨테이너 최적화 */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* 모바일 스크롤 최적화 */
+@media (max-width: 768px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 @layer utilities {

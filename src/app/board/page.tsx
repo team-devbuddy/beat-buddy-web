@@ -294,7 +294,7 @@ export default function BoardPage() {
 
   return (
     <main
-      className="bg-BG-black text-white"
+      className="flex min-h-full flex-col bg-BG-black text-white"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}>
@@ -322,19 +322,22 @@ export default function BoardPage() {
         )}
       </AnimatePresence>
 
-      {posts.map((post, i) => {
-        if (i === posts.length - 1) {
-          return (
-            <div ref={lastPostRef} key={post.id}>
-              <BoardThread postId={post.id} post={post} />
-            </div>
-          );
-        } else {
-          return <BoardThread key={post.id} postId={post.id} post={post} />;
-        }
-      })}
+      <div className="flex-1">
+        {posts.map((post, i) => {
+          if (i === posts.length - 1) {
+            return (
+              <div ref={lastPostRef} key={post.id}>
+                <BoardThread postId={post.id} post={post} />
+              </div>
+            );
+          } else {
+            return <BoardThread key={post.id} postId={post.id} post={post} />;
+          }
+        })}
 
-      {!loading && posts.length === 0 && <NoResults text="아직 게시글이 없어요.\n첫 게시글을 작성해보세요." />}
+        {!loading && posts.length === 0 && <NoResults text="아직 게시글이 없어요.\n첫 게시글을 작성해보세요." />}
+      </div>
+
       <div className="pointer-events-none fixed inset-x-0 bottom-[60px] z-50 flex justify-center">
         <div className="w-full max-w-[600px] px-4">
           <Link

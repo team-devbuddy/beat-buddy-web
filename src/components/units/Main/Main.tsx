@@ -168,7 +168,7 @@ export default function Main() {
   };
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex min-h-full w-full flex-col">
       <div className="flex-grow bg-BG-black">
         <MainHeader />
         <SearchBar />

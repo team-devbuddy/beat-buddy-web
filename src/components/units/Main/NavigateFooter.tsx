@@ -93,7 +93,7 @@ const NavigateFooter = () => {
         paddingTop: '0.25rem',
         opacity: showFooter ? 1 : 0,
         visibility: showFooter ? 'visible' : 'hidden',
-        transform: showFooter ? 'translateY(0)' : 'translateY(100%)',
+        display: showFooter ? 'block' : 'none',
       }}>
       <div className="flex h-full items-center justify-around">
         {/* Link 아이템들 (기존과 동일) */}

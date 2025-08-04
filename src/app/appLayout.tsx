@@ -132,9 +132,10 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
       <div className="relative flex h-[100dvh] w-full max-w-[600px] flex-col bg-BG-black">
         <div
           ref={scrollContainerRef}
-          className={`flex h-full flex-col overflow-y-auto ${
+          className={`flex flex-col overflow-y-auto ${shouldHideFooter ? 'h-full' : 'flex-1'} ${
             shouldHideFooter ? '' : !pathname.includes('venue') && !pathname.includes('search') ? 'pb-[64px]' : ''
-          }`}>
+          }`}
+          style={{ minHeight: 0 }}>
           {children}
         </div>
         <Toaster position="top-center" reverseOrder={false} />
