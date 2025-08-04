@@ -127,7 +127,16 @@ export default function BoardWrite() {
   };
 
   const handleUpload = async () => {
+    // 중복 제출 방지
+    if (isLoading) {
+      console.log('이미 업로드 중입니다.');
+      return;
+    }
+
+    // 제출 시작 시 즉시 로딩 상태 설정
     setIsLoading(true);
+    console.log('게시글 업로드 시작');
+
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (!accessToken) {
@@ -166,9 +175,12 @@ export default function BoardWrite() {
         router.push('/board');
       }
     } catch (e) {
+      console.error('업로드 실패:', e);
       alert('업로드 실패');
     } finally {
+      // 업로드 완료 후 로딩 상태 해제
       setIsLoading(false);
+      console.log('업로드 상태 해제');
     }
   };
 
@@ -183,8 +195,13 @@ export default function BoardWrite() {
           width={35}
           height={35}
         />
-        <h1 onClick={handleUpload} className="text-[0.875rem] font-bold text-gray200">
-          글쓰기
+        <h1
+          onClick={handleUpload}
+          className={`text-[0.875rem] font-bold ${
+            isLoading ? 'cursor-not-allowed text-gray500' : 'cursor-pointer text-gray200 hover:text-white'
+          }`}
+          style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>
+          {isLoading ? '글쓰기' : '글쓰기'}
         </h1>
       </header>
 

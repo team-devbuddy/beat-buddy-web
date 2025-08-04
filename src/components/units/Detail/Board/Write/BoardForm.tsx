@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import WriteDropdown from './WriteDropdown'; // WriteDropdown 컴포넌트
 import WriteField from './WriteField'; // WriteField 컴포넌트
@@ -21,7 +21,7 @@ interface BoardFormProps {
   onFormChange: (field: string, value: any) => void;
   onTypeChange: (type: string) => void;
   uploadedImages: string[]; // 이미지 상태 추가
-  setUploadedImages: (images: string[]) => void;
+  setUploadedImages: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const locations = ['홍대', '이태원', '강남&신사', '압구정', '기타']; // 지역 옵션
@@ -43,6 +43,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
   const [boardType, setBoardType] = useState('자유 게시판');
   const boardOptions = ['자유 게시판', '조각 게시판'];
 
+  // URL 파라미터에서 타입 가져오기 (최적화)
   useEffect(() => {
     const type = searchParams.get('type');
     if (type === 'piece') {
@@ -51,56 +52,87 @@ const BoardForm: React.FC<BoardFormProps> = ({
     }
   }, [searchParams, onTypeChange]);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
+  // 이미지 업로드 최적화
+  const handleImageUpload = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (!files) return;
 
-    const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
-    setUploadedImages([...uploadedImages, ...newImages]); // 새로운 이미지 추가
-  };
+      // 파일 크기 제한 (10MB)
+      const maxSize = 10 * 1024 * 1024;
+      const validFiles = Array.from(files).filter((file) => file.size <= maxSize);
 
-  // 이미지 삭제 핸들러
-  const handleRemoveImage = (imageUrl: string) => {
-    setUploadedImages(uploadedImages.filter((img) => img !== imageUrl));
-  };
+      if (validFiles.length !== files.length) {
+        alert('10MB 이하의 이미지만 업로드 가능합니다.');
+      }
 
-  const handleBoardTypeChange = (value: string) => {
-    setBoardType(value);
-    onTypeChange(value === '조각 게시판' ? 'piece' : 'free');
-  };
+      // 이미지 개수 제한 (최대 5개)
+      if (uploadedImages.length + validFiles.length > 5) {
+        alert('이미지는 최대 5개까지 업로드 가능합니다.');
+        return;
+      }
 
-  // 1인당 비용 계산
-  const calculatePerPersonCost = () => {
-    const cost = parseInt(formData.cost.replace(/,/g, ''), 10) || 0; // 총 비용
-    const participants = parseInt(formData.maxParticipants, 10) || 0; // 최대 인원
+      const newImages = validFiles.map((file) => URL.createObjectURL(file));
+      setUploadedImages((prev: string[]) => [...prev, ...newImages]);
+    },
+    [uploadedImages, setUploadedImages],
+  );
+
+  // 이미지 삭제 핸들러 최적화
+  const handleRemoveImage = useCallback(
+    (imageUrl: string) => {
+      setUploadedImages((prev: string[]) => prev.filter((img: string) => img !== imageUrl));
+      // 메모리 누수 방지를 위해 URL 해제
+      URL.revokeObjectURL(imageUrl);
+    },
+    [setUploadedImages],
+  );
+
+  // 게시판 타입 변경 최적화
+  const handleBoardTypeChange = useCallback(
+    (value: string) => {
+      setBoardType(value);
+      onTypeChange(value === '조각 게시판' ? 'piece' : 'free');
+    },
+    [onTypeChange],
+  );
+
+  // 1인당 비용 계산 최적화
+  const calculatePerPersonCost = useMemo(() => {
+    const cost = parseInt(formData.cost.replace(/,/g, ''), 10) || 0;
+    const participants = parseInt(formData.maxParticipants, 10) || 0;
     return participants > 0 ? Math.round(cost / participants).toLocaleString() : '0';
-  };
+  }, [formData.cost, formData.maxParticipants]);
 
-  const handleInputChange = (field: string, value: string) => {
-    onFormChange(field, value);
-    setErrorMessage('');
-  };
+  // 입력 변경 핸들러 최적화
+  const handleInputChange = useCallback(
+    (field: string, value: string) => {
+      onFormChange(field, value);
+      setErrorMessage('');
+    },
+    [onFormChange],
+  );
 
-  const generateYearOptions = () => {
+  // 년도 옵션 생성 최적화
+  const generateYearOptions = useMemo(() => {
     const currentYear = new Date().getFullYear();
     return Array.from({ length: 10 }, (_, i) => currentYear + i);
-  };
+  }, []);
 
-  const generateMonthOptions = () => {
+  // 월 옵션 생성 최적화
+  const generateMonthOptions = useMemo(() => {
     const today = new Date();
     const currentMonth = today.getMonth() + 1;
     const currentYear = today.getFullYear();
     const selectedYear = parseInt(formData.date.year);
 
     if (selectedYear === currentYear) {
-      // 현재 년도인 경우, 현재 월까지 선택 가능
       return Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0')).filter(
         (month) => parseInt(month) >= currentMonth,
       );
     }
-    // 미래 년도인 경우, 모든 월 선택 가능
     return Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
-  };
+  }, [formData.date.year]);
 
   const generateDayOptions = () => {
     const today = new Date();
@@ -317,7 +349,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         className="absolute z-20 mt-2 max-h-40 w-24 overflow-y-auto rounded-xs border bg-gray500 text-gray300 shadow-lg">
-                        {generateYearOptions().map((year) => (
+                        {generateYearOptions.map((year) => (
                           <li
                             key={year}
                             onClick={() => {
@@ -364,7 +396,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         className="absolute z-20 mt-2 max-h-40 w-[4.7rem] overflow-y-auto rounded-xs border bg-gray500 text-gray300 shadow-lg">
-                        {generateMonthOptions().map((month) => (
+                        {generateMonthOptions.map((month) => (
                           <li
                             key={month}
                             onClick={() => {
@@ -480,7 +512,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
                 <>
                   <span className="text-body3-12-medium">{formData.maxParticipants}명일 경우 인당</span>
                   <span className="ml-[0.62rem] rounded-xs bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                    {calculatePerPersonCost()}원
+                    {calculatePerPersonCost}원
                   </span>
                 </>
               )}
