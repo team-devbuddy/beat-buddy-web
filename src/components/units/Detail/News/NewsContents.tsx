@@ -39,6 +39,52 @@ const truncateText = (text: string, maxLength: number) => {
   return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 };
 
+// 이미지 로딩을 위한 컴포넌트
+const SafeImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
+  const [imageSrc, setImageSrc] = useState(src || '/images/DefaultImage.png');
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setImageSrc(src || '/images/DefaultImage.png');
+    setHasError(false);
+    setIsLoading(true);
+  }, [src]);
+
+  const handleLoad = () => {
+    setIsLoading(false);
+    setHasError(false);
+  };
+
+  const handleError = () => {
+    console.log('Image load error, falling back to default image');
+    setImageSrc('/images/DefaultImage.png');
+    setHasError(true);
+    setIsLoading(false);
+  };
+
+  return (
+    <div className="relative h-full w-full">
+      {isLoading && (
+        <div className="bg-gray800 absolute inset-0 flex items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray600 border-t-main"></div>
+        </div>
+      )}
+      <Image
+        src={imageSrc}
+        alt={alt}
+        fill
+        className={`object-cover object-top ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300 ${className || ''}`}
+        sizes="(max-width: 768px) 50vw, 25vw"
+        onLoad={handleLoad}
+        onError={handleError}
+        priority={false}
+        unoptimized={hasError} // 에러 발생 시 최적화 비활성화
+      />
+    </div>
+  );
+};
+
 const calculateDday = (startDate: string, endDate: string) => {
   const today = dayjs();
   const endDateObj = dayjs(endDate);
@@ -251,12 +297,10 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
             <div className="flex cursor-pointer flex-col overflow-hidden rounded-[0.25rem]">
               {/* 이미지 */}
               <div className="relative h-[160px] w-full overflow-hidden rounded-[0.25rem]">
-                <Image
-                  src={news.thumbImage || '/images/defaultImage.png'}
+                <SafeImage
+                  src={news.thumbImage || '/images/DefaultImage.png'}
                   alt={news.title}
-                  className="h-full w-full object-cover object-top safari-icon-fix"
-                  width={100}
-                  height={100}
+                  className="object-cover object-top"
                 />
                 {/* 디데이 - 이미지 위에 좌측 상단 */}
                 <div className="absolute left-[0.62rem] top-[0.62rem]">
