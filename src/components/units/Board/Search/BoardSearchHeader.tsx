@@ -29,7 +29,8 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const pathname = usePathname();
   const isEventSearch = pathname.includes('/event/search');
-
+  const isBoardSearch = pathname === '/board/search' || searchQuery.length > 0;
+  const isBoardSearching = pathname.includes('/board/search?') ;
   useEffect(() => {
     const query = searchParams.get('q');
     if (query) {
@@ -76,6 +77,10 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
       router.push(`/event`);
     } else if (isEventSearch) {
       router.push(`/event/search?q=${encodeURIComponent(searchQuery)}`);
+    } else if (isBoardSearching) {
+      router.push(`/board/search`);
+    } else if (isBoardSearch) {
+      router.push(`/board`);
     }
   };
 

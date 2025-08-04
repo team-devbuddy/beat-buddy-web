@@ -4,8 +4,8 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { postSearch } from '@/lib/actions/post-interaction-controller/postSearch';
 import BoardHashtag from '@/components/units/Board/BoardHashtag';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { accessTokenState, followMapState } from '@/context/recoil-context';
 import { motion, AnimatePresence } from 'framer-motion';
 import BoardSearchHeader from '@/components/units/Board/Search/BoardSearchHeader';
 import BoardSearchResult from '@/components/units/Board/Search/BoardSearchResult';
@@ -49,11 +49,18 @@ export default function BoardSearchPage() {
   const [pullDistance, setPullDistance] = useState(0);
 
   const accessToken = useRecoilValue(accessTokenState) || '';
+  const resetFollowMap = useResetRecoilState(followMapState);
 
   const touchStartY = useRef<number | null>(null);
   const touchEndY = useRef<number | null>(null);
 
   const MAX_PULL_DISTANCE = 120;
+
+  // 검색 페이지 진입 시 followMap 초기화
+  useEffect(() => {
+    console.log('검색 페이지 진입 - followMap 초기화');
+    resetFollowMap();
+  }, [resetFollowMap]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (window.scrollY === 0) {

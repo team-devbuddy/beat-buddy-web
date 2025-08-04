@@ -39,7 +39,7 @@ interface PostProps {
     role?: string;
     isFollowing?: boolean;
     isAnonymous?: boolean;
-    thumbImage?: string;
+    thumbImage?: string[];
   };
 }
 
@@ -64,9 +64,33 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
-  const isFollowing = followMap[post.writerId] ?? post.isFollowing ?? false;
+  // 팔로우 상태를 올바르게 처리
+  const isFollowing = followMap[post.writerId] !== undefined ? followMap[post.writerId] : post.isFollowing ?? false;
+
+  // 디버깅용 로그
+  useEffect(() => {
+    console.log('팔로우 상태:', {
+      writerId: post.writerId,
+      postIsFollowing: post.isFollowing,
+      followMapValue: followMap[post.writerId],
+      finalIsFollowing: isFollowing,
+      isAuthor: post.isAuthor,
+    });
+  }, [post.writerId, post.isFollowing, followMap, isFollowing, post.isAuthor]);
 
   const category = 'free';
+
+  // 팔로우 상태 초기화 - followMap이 비어있을 때만 서버 데이터로 설정
+  useEffect(() => {
+    if (followMap[post.writerId] === undefined && post.isFollowing !== undefined) {
+      console.log('팔로우 상태 초기화:', {
+        writerId: post.writerId,
+        postIsFollowing: post.isFollowing,
+        willSet: true,
+      });
+      setFollowMap((prev) => ({ ...prev, [post.writerId]: !!post.isFollowing }));
+    }
+  }, [post.writerId, post.isFollowing, followMap, setFollowMap]);
 
   const goToUserProfile = () => {
     router.push(`/board/profile?writerId=${post.writerId}`);
@@ -195,12 +219,12 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         </div>
 
         {!post.isAuthor && (
-        <button
-          onClick={handleFollow}
+          <button
+            onClick={handleFollow}
             className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
-          disabled={loadingFollow}>
-          {isFollowing ? '팔로잉' : '팔로우'}
-        </button>
+            disabled={loadingFollow}>
+            {loadingFollow ? '처리중...' : isFollowing ? '팔로잉' : '팔로우'}
+          </button>
         )}
       </div>
       <div onClick={goToPost}>
@@ -224,9 +248,9 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         </p>
       </div>
 
-      {post.imageUrls && post.imageUrls.length > 0 && (
+      {post.thumbImage && post.thumbImage.length > 0 && (
         <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
-          {post.imageUrls.map((url, index) => (
+          {post.thumbImage.map((url: string, index: number) => (
             <div
               key={index}
               onClick={() => handleImageClick(index)}
@@ -244,9 +268,9 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         </div>
       )}
 
-      {isModalOpen && post.imageUrls && (
+      {isModalOpen && post.thumbImage && (
         <BoardImageModal
-          images={post.imageUrls}
+          images={post.thumbImage}
           initialIndex={currentImageIndex}
           onClose={() => setIsModalOpen(false)}
         />
