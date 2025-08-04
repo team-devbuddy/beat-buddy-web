@@ -97,7 +97,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
           const { firstImageUrl, filteredTags } = memoizedValues[index];
 
           return (
-            <Link key={venue.id} href={`/detail/${venue.id}`} passHref>
+            <Link key={venue.venueId} href={`/detail/${venue.venueId}`} passHref>
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -122,13 +122,13 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleHeartClick(e, venue.id);
+                      handleHeartClick(e, venue.venueId);
                     }}
                     variants={heartAnimation}
                     initial="initial"
-                    animate={clickedHeart[venue.id] ? 'clicked' : 'initial'}>
+                    animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
                     <Image
-                      src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                       alt="heart icon"
                       width={32}
                       height={32}
@@ -143,7 +143,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                         <div className="flex items-center space-x-[0.25rem] text-gray300">
                           <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
                           <span className="text-body3-12-medium">
-                            {heartbeatNums[venue.id] !== undefined ? heartbeatNums[venue.id] : 0}
+                            {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
                           </span>
                         </div>
                       </div>

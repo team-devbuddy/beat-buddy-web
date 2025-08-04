@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
+import { createPortal } from 'react-dom';
 import History from './History/History';
 import { useEffect, useState } from 'react';
 import { GetHistory, GetMyHeartbeat, GetNickname, PutArchive } from '@/lib/action';
@@ -35,6 +36,7 @@ export default function MyPageComponent() {
   const [memberGenre, setMemberGenre] = useState<any[]>([]);
   const [profileInfo, setProfileInfo] = useState<any>(null);
   const [boardProfile, setBoardProfile] = useState<any>(null);
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
   const router = useRouter();
 
   // 사용자 타입 확인
@@ -44,6 +46,27 @@ export default function MyPageComponent() {
   if (isBusiness) {
     return <BusinessMyPage />;
   }
+
+  // 문의사항 모달 핸들러
+  const handleInquiryClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowInquiryModal(true);
+  };
+
+  const handleContactMethod = (method: string) => {
+    switch (method) {
+      case 'kakao':
+        window.open('http://pf.kakao.com.', '_blank');
+        break;
+      case 'instagram':
+        window.open('https://www.instagram.com/beatbuddy.kr', '_blank');
+        break;
+      case 'email':
+        window.location.href = 'mailto:beatbuddykr@gmail.com';
+        break;
+    }
+    setShowInquiryModal(false);
+  };
 
   // 사용자 닉네임 조회 & 나의 하트비트 조회
   useEffect(() => {
@@ -264,16 +287,84 @@ export default function MyPageComponent() {
 
         {/* 하단 링크들 */}
         <div className="">
-          <Link href="/inquiry" className="flex items-center justify-between px-5 py-4 font-bold">
+          <div
+            onClick={handleInquiryClick}
+            className="flex cursor-pointer items-center justify-between px-5 py-4 font-bold">
             <span className="text-white">문의 사항</span>
             <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={20} height={20} />
-          </Link>
+          </div>
           <Link href="/terms" className="flex items-center justify-between px-5 py-4 font-bold">
             <span className="text-white">이용 약관 및 개인 정보 활용</span>
             <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={20} height={20} />
           </Link>
         </div>
       </div>
+
+      {/* 문의사항 모달 */}
+      {showInquiryModal &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
+            onClick={() => setShowInquiryModal(false)}>
+            <div
+              className="mx-4 w-full max-w-sm rounded-[0.75rem] bg-BG-black p-6"
+              onClick={(e) => e.stopPropagation()}>
+              <div className="flex flex-col items-center space-y-2">
+                <h3 className="text-[1.25rem] font-bold text-white">문의 방법을 선택해주세요</h3>
+
+                {/* 카카오톡 */}
+                <div
+                  onClick={() => handleContactMethod('kakao')}
+                  className="flex w-full cursor-pointer items-center gap-4 rounded-[0.5rem] bg-gray700 p-4 transition-colors hover:bg-gray600">
+                  <div className="flex items-center justify-center ">
+                    <Image src="/icons/kakaoLogo.svg" alt="카카오톡" width={42} height={42} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[0.8125rem] font-bold text-gray100">카카오톡</p>
+                    <p className="text-[0.8125rem] text-gray300">@BeatBuddy</p>
+                  </div>
+                  <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={16} height={16} />
+                </div>
+
+                {/* 인스타그램 */}
+                <div
+                  onClick={() => handleContactMethod('instagram')}
+                  className="flex w-full cursor-pointer items-center gap-4 rounded-[0.5rem] bg-gray700 p-4 transition-colors hover:bg-gray600">
+                  <div className="flex items-center justify-center">
+                    <Image src="/icons/instaLogo.svg" alt="인스타그램" width={42} height={42} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[0.8125rem] font-bold text-gray100">인스타그램</p>
+                    <p className="text-[0.8125rem] text-gray300">@beatbuddy.kr</p>
+                  </div>
+                  <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={16} height={16} />
+                </div>
+
+                {/* 이메일 */}
+                <div
+                  onClick={() => handleContactMethod('email')}
+                  className="flex w-full cursor-pointer items-center gap-4 rounded-[0.5rem] bg-gray700 p-4 transition-colors hover:bg-gray600">
+                  <div className="flex items-center justify-center p-[0.56rem] rounded-full bg-white">
+                    <Image src="/icons/icons8-구글-로고.svg" alt="이메일" width={24} height={24} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[0.8125rem] font-bold text-gray100">이메일</p>
+                    <p className="text-[0.8125rem] text-gray300">beatbuddykr@gmail.com</p>
+                  </div>
+                  <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={16} height={16} />
+                </div>
+
+                {/* 확인 버튼 */}
+                <button
+                  onClick={() => setShowInquiryModal(false)}
+                  className="mt-4 w-full rounded-[0.5rem] bg-gray600 py-3 text-[0.9375rem] font-bold text-gray200">
+                  확인
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

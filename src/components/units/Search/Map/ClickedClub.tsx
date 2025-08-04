@@ -138,8 +138,8 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
                   <Image
                     src="/icons/image.png"
                     alt="네이버지도"
-                    width={16}
-                    height={16}
+                    width={13}
+                    height={13}
                     className="aspect-square object-cover"
                   />
                 </button>
@@ -161,8 +161,8 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
                   <Image
                     src="/icons/kakaomap_basic.png"
                     alt="카카오지도"
-                    width={16}
-                    height={16}
+                    width={13}
+                    height={13}
                     className="aspect-square object-cover"
                   />
                 </button>
@@ -183,8 +183,8 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
                   <Image
                     src="/icons/google_maps_icon_130921.svg"
                     alt="구글맵"
-                    width={12}
-                    height={12}
+                    width={13}
+                    height={13}
                     className="aspect-square object-cover"
                   />
                 </button>

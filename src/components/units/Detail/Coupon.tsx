@@ -288,7 +288,7 @@ export default function CouponCard({ venueId }: { venueId: number }) {
             </div>
 
             {/* ✅ 모달 바로 아래에 붙는 안내 텍스트 */}
-            <div className="mt-5 text-center" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center" onClick={(e) => e.stopPropagation()}>
               <p className="text-[0.875rem] text-main">직원확인 버튼 클릭 시 쿠폰이 즉시 사용 처리됩니다.</p>
               <p className="text-[0.875rem] text-main">직원만 확인을 눌러주세요.</p>
             </div>

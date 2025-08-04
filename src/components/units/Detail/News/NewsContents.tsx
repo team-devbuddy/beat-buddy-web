@@ -247,14 +247,14 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
       {/* 뉴스 목록 */}
       <div className="grid grid-cols-2 gap-4">
         {visibleEvents.map((news) => (
-          <Link key={news.eventId} href={`/news/${news.eventId}`} passHref>
+          <Link key={news.eventId} href={`/event/${news.eventId}`} passHref>
             <div className="flex cursor-pointer flex-col overflow-hidden rounded-[0.25rem]">
               {/* 이미지 */}
               <div className="relative h-[160px] w-full overflow-hidden rounded-[0.25rem]">
                 <Image
                   src={news.thumbImage || '/images/defaultImage.png'}
                   alt={news.title}
-                  className="h-full w-full object-cover object-top"
+                  className="h-full w-full object-cover object-top safari-icon-fix"
                   width={100}
                   height={100}
                 />
