@@ -20,6 +20,7 @@ export interface CommentType {
   isAuthor: boolean;
   userId: string;
   isBlocked?: boolean; // 차단된 사용자인지 여부
+  isDeleted?: boolean; // 삭제된 댓글인지 여부
 }
 
 interface Props {

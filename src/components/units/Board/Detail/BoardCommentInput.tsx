@@ -19,6 +19,7 @@ interface CommentType {
   createdAt: string;
   isAuthor: boolean;
   userId: string;
+  isDeleted?: boolean; // 삭제된 댓글인지 여부
 }
 
 interface Props {
@@ -36,7 +37,8 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
   const focusTrigger = useRecoilValue(commentInputFocusState);
   const setScrollTo = useSetRecoilState(scrollToCommentState); // ✅ 스크롤 명령을 내릴 setter
   useEffect(() => {
-    if (focusTrigger > 0) { // 초기값 0일 때는 실행 안 함
+    if (focusTrigger > 0) {
+      // 초기값 0일 때는 실행 안 함
       inputRef.current?.focus();
     }
   }, [focusTrigger]);
@@ -54,7 +56,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
         // ✅ 새 댓글 작성 성공 시, 맨 아래로 스크롤 명령
         setScrollTo('bottom');
       }
-      
+
       setContent('');
       onCommentAdded(newComment);
       setReplyingTo(null);
@@ -64,7 +66,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
     }
   };
   return (
-    <div className="space-y-2 whitespace-nowrap  px-[0.63rem]">
+    <div className="space-y-2 whitespace-nowrap px-[0.63rem]">
       <div className="flex items-center justify-between rounded-[0.75rem] bg-gray500 px-[0.75rem] py-[0.5rem]">
         <label
           className={`flex items-center gap-[0.12rem] text-[0.75rem] ${isAnonymous ? 'text-main' : 'text-gray300'}`}>
