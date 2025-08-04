@@ -307,16 +307,16 @@ export default function MyPageComponent() {
             className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
             onClick={() => setShowInquiryModal(false)}>
             <div
-              className="mx-4 w-full max-w-sm rounded-[0.75rem] bg-BG-black p-6"
+              className="mx-4 w-full max-w-sm rounded-[0.75rem] bg-BG-black px-4 pb-5 pt-7"
               onClick={(e) => e.stopPropagation()}>
               <div className="flex flex-col items-center space-y-2">
-                <h3 className="text-[1.25rem] font-bold text-white">문의 방법을 선택해주세요</h3>
+                <h3 className="text-[1.25rem] font-bold mb-[1rem] text-white">문의 방법을 선택해주세요</h3>
 
                 {/* 카카오톡 */}
                 <div
                   onClick={() => handleContactMethod('kakao')}
                   className="flex w-full cursor-pointer items-center gap-4 rounded-[0.5rem] bg-gray700 p-4 transition-colors hover:bg-gray600">
-                  <div className="flex items-center justify-center ">
+                  <div className="flex items-center justify-center">
                     <Image src="/icons/kakaoLogo.svg" alt="카카오톡" width={42} height={42} />
                   </div>
                   <div className="flex-1">
@@ -344,7 +344,7 @@ export default function MyPageComponent() {
                 <div
                   onClick={() => handleContactMethod('email')}
                   className="flex w-full cursor-pointer items-center gap-4 rounded-[0.5rem] bg-gray700 p-4 transition-colors hover:bg-gray600">
-                  <div className="flex items-center justify-center p-[0.56rem] rounded-full bg-white">
+                  <div className="flex items-center justify-center rounded-full bg-white p-[0.56rem]">
                     <Image src="/icons/icons8-구글-로고.svg" alt="이메일" width={24} height={24} />
                   </div>
                   <div className="flex-1">
@@ -357,7 +357,7 @@ export default function MyPageComponent() {
                 {/* 확인 버튼 */}
                 <button
                   onClick={() => setShowInquiryModal(false)}
-                  className="mt-4 w-full rounded-[0.5rem] bg-gray600 py-3 text-[0.9375rem] font-bold text-gray200">
+                  className="text-4 w-full rounded-[0.5rem] pt-2 font-bold text-gray200">
                   확인
                 </button>
               </div>
