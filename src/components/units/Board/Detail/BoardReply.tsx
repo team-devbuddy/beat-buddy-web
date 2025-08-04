@@ -60,7 +60,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
     if (isReplying) {
       setReplyingTo(null);
     } else {
-      setReplyingTo({ parentId: reply.id, parentName: reply.isAnonymous ? '익명' : reply.memberName });
+      setReplyingTo({ parentId: reply.id, parentName: reply.memberName });
       setFocusTrigger((c) => c + 1);
     }
   };
@@ -147,6 +147,9 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   };
 
   const handleProfileClick = () => {
+    // 익명 댓글인 경우 프로필로 이동하지 않음
+    if (reply.isAnonymous) return;
+
     if (reply.userId) {
       router.push(`/board/profile?writerId=${reply.userId}`);
     }
@@ -173,14 +176,18 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-[0.37rem] text-[0.8125rem] font-bold text-white">
               <Image
-                src={userProfile?.profileImageUrl || '/icons/default-profile.svg'}
+                src={
+                  reply.isAnonymous
+                    ? '/icons/default-profile.svg'
+                    : reply.profileImageUrl || '/icons/default-profile.svg'
+                }
                 alt="profile"
                 width={22}
                 height={22}
                 className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover"
                 onClick={handleProfileClick}
               />
-              {reply.isAnonymous ? '익명' : reply.memberName}
+              {reply.memberName}
               <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
             </div>
             <div className="relative">
@@ -221,7 +228,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             postId={postId}
             commentId={reply.id}
             type="comment"
-            commentAuthorName={reply.isAnonymous ? '익명' : reply.memberName}
+            commentAuthorName={reply.memberName}
             onCommentDelete={() =>
               setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id))
             }
@@ -242,14 +249,16 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-white">
             <Image
-              src={userProfile?.profileImageUrl || '/icons/default-profile.svg'}
+              src={
+                reply.isAnonymous ? '/icons/default-profile.svg' : reply.profileImageUrl || '/icons/default-profile.svg'
+              }
               alt="profile"
               width={22}
               height={22}
               className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover safari-icon-fix"
               onClick={handleProfileClick}
             />
-            {reply.isAnonymous ? '익명' : reply.memberName}
+            {reply.memberName}
             <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
           </div>
           <div className="relative">
@@ -321,7 +330,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           postId={postId}
           commentId={reply.id}
           type="comment"
-          commentAuthorName={reply.isAnonymous ? '익명' : reply.memberName}
+          commentAuthorName={reply.memberName}
           onCommentDelete={() =>
             setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id))
           }

@@ -191,7 +191,7 @@ export default function BoardProfileHeader({
 
   // 기본 헤더 (뒤로가기 + 더보기)
   return (
-    <header className="flex items-center justify-between bg-BG-black pb-[0.88rem] px-5 pt-[0.62rem] text-white">
+    <header className="flex items-center justify-between bg-BG-black px-5 pb-[0.88rem] pt-[0.62rem] text-white">
       <Image
         src="/icons/arrow_back_ios.svg"
         alt="뒤로가기"

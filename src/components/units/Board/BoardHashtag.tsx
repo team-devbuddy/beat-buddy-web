@@ -25,23 +25,20 @@ interface BoardHashtagProps {
 
 const BoardHashtag = ({ selectedTags, setSelectedTags, onUpdatePosts }: BoardHashtagProps) => {
   const [open, setOpen] = useState(false);
-  const [wasOpen, setWasOpen] = useState(false); // 닫힘 감지를 위한 상태
 
   const toggleOpen = () => {
-    setWasOpen(open); // 현재 상태 저장 (이게 닫힘 전 상태)
-    setOpen((prev) => !prev); // 열고 닫기 토글
+    setOpen((prev) => !prev);
   };
 
-  useEffect(() => {
-    if (wasOpen && !open && selectedTags.length > 0) {
-      onUpdatePosts([...selectedTags]);
-    }
-  }, [open]);
-
   const handleTagClick = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : prev.length < 3 ? [...prev, tag] : prev,
-    );
+    const newTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : selectedTags.length < 3
+        ? [...selectedTags, tag]
+        : selectedTags;
+
+    setSelectedTags(newTags);
+    onUpdatePosts(newTags);
   };
 
   return (

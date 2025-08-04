@@ -29,7 +29,7 @@ interface PostProps {
     scraps: number;
     comments: number;
     hashtags: string[];
-    imageUrls?: string[];
+    thumbImage?: string[];
     writerId: number;
     liked: boolean;
     hasCommented: boolean;
@@ -38,7 +38,7 @@ interface PostProps {
     role: string;
     isFollowing: boolean;
     isAnonymous: boolean;
-    thumbImage: string;
+    imageUrls?: string[];
   };
 }
 
@@ -86,6 +86,8 @@ export default function BoardThread({ postId, post }: PostProps) {
   const category = 'free';
 
   const goToUserProfile = () => {
+    // 익명 게시글인 경우 프로필로 이동하지 않음
+    if (post.isAnonymous) return;
     router.push(`/board/profile?writerId=${post.writerId}`);
   };
 
@@ -185,7 +187,9 @@ export default function BoardThread({ postId, post }: PostProps) {
           <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500">
               <Image
-                src={post.profileImageUrl || '/icons/default-profile.svg'}
+                src={
+                  post.isAnonymous ? '/icons/default-profile.svg' : post.profileImageUrl || '/icons/default-profile.svg'
+                }
                 alt="profile"
                 width={37}
                 height={37}
@@ -194,7 +198,7 @@ export default function BoardThread({ postId, post }: PostProps) {
                 style={{ aspectRatio: '1/1' }}
               />
             </div>
-            {post.role === 'BUSINESS' && (
+            {post.role === 'BUSINESS' && !post.isAnonymous && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"
@@ -206,11 +210,11 @@ export default function BoardThread({ postId, post }: PostProps) {
           </div>
 
           <div>
-            <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
+            <p className="text-[0.875rem] font-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
           </div>
         </div>
 
-        {!post.isAuthor && (
+        {!post.isAuthor && !post.isAnonymous && (
           <button
             onClick={handleFollow}
             className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
@@ -241,9 +245,9 @@ export default function BoardThread({ postId, post }: PostProps) {
         </p>
       </div>
 
-      {post.imageUrls && post.imageUrls.length > 0 && (
+      {post.thumbImage && post.thumbImage.length > 0 && (
         <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
-          {post.imageUrls.map((url, index) => (
+          {post.thumbImage.map((url, index) => (
             <div
               key={index}
               onClick={() => handleImageClick(index)}
@@ -261,9 +265,9 @@ export default function BoardThread({ postId, post }: PostProps) {
         </div>
       )}
 
-      {isModalOpen && post.imageUrls && (
+      {isModalOpen && post.thumbImage && (
         <BoardImageModal
-          images={post.imageUrls}
+          images={post.thumbImage}
           initialIndex={currentImageIndex}
           onClose={() => setIsModalOpen(false)}
         />

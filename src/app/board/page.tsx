@@ -8,7 +8,7 @@ import BoardThread from '@/components/units/Board/BoardThread';
 import BoardHeader from '@/components/units/Board/BoardHeader';
 import BoardHashtag from '@/components/units/Board/BoardHashtag';
 import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { accessTokenState, userProfileState } from '@/context/recoil-context';
 import { motion, AnimatePresence } from 'framer-motion';
 import NoResults from '@/components/units/Search/NoResult';
 import Link from 'next/link';
@@ -32,7 +32,7 @@ interface PostType {
   isAuthor: boolean;
   isFollowing: boolean;
   isAnonymous: boolean;
-  thumbImage: string;
+  thumbImage: string[];
 }
 
 const PAGE_SIZE = 10;
@@ -51,6 +51,7 @@ export default function BoardPage() {
   const [showButton, setShowButton] = useState(true);
   const lastScrollYRef = useRef(0);
   const accessToken = useRecoilValue(accessTokenState) || '';
+  const userProfile = useRecoilValue(userProfileState);
   const pathname = usePathname();
 
   const touchStartY = useRef<number | null>(null);
@@ -176,20 +177,23 @@ export default function BoardPage() {
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
+          console.log('무한스크롤 트리거: 다음 페이지 로드', page + 1);
           setPage((prev) => prev + 1);
         }
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore],
+    [loading, hasMore, page],
   );
 
   const fetchPosts = useCallback(
-    async (targetPage: number = page) => {
+    async (targetPage: number) => {
+      console.log('fetchPosts 호출:', { targetPage, selectedTags, hasMore });
       setLoading(true);
       try {
         if (selectedTags.length === 0) {
           const newPosts = await getAllPosts(accessToken, targetPage, PAGE_SIZE);
+          console.log('API 응답:', newPosts.length, '개 게시글');
           if (newPosts.length < PAGE_SIZE) setHasMore(false);
           setPosts((prev) => [...(targetPage === 1 ? [] : prev), ...newPosts]);
         } else {
@@ -197,26 +201,68 @@ export default function BoardPage() {
             selectedTags.map((tag) => postHashtagSearch(tag, accessToken, targetPage, PAGE_SIZE)),
           );
           const merged = postLists.flat();
-          const unique = [
-            ...new Map([...(targetPage === 1 ? [] : posts), ...merged].map((post) => [post.id, post])).values(),
-          ];
+          setPosts((prevPosts) => {
+            const existing = targetPage === 1 ? [] : prevPosts;
+            const combined = [...existing, ...merged];
+            const unique = [...new Map(combined.map((post) => [post.id, post])).values()];
+            return unique;
+          });
           if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
-          setPosts(unique);
         }
       } catch (err) {
         console.error('게시글 로드 실패:', err);
       }
       setLoading(false);
     },
-    [accessToken, selectedTags, posts, page, isFollowing],
+    [accessToken, selectedTags],
   );
 
+  // selectedTags 변경 시 초기화 후 첫 페이지 로드
   useEffect(() => {
     if (!isInitialized || !pathname) return;
     localStorage.setItem('selectedTags', JSON.stringify(selectedTags));
     localStorage.setItem('selectedTags_path', pathname);
-    fetchPosts(page);
-  }, [selectedTags, pathname, isInitialized, page]);
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    fetchPosts(1);
+  }, [selectedTags, pathname, isInitialized, fetchPosts]);
+
+  // page 변경 시 해당 페이지 로드 (무한스크롤)
+  useEffect(() => {
+    if (!isInitialized || page === 1) return;
+
+    console.log('페이지 변경으로 인한 로드:', { page, selectedTags });
+
+    // 직접 API 호출로 무한루프 방지
+    const loadPage = async () => {
+      setLoading(true);
+      try {
+        if (selectedTags.length === 0) {
+          const newPosts = await getAllPosts(accessToken, page, PAGE_SIZE);
+          console.log(`${page}페이지 API 응답:`, newPosts.length, '개 게시글');
+          if (newPosts.length < PAGE_SIZE) setHasMore(false);
+          setPosts((prev) => [...prev, ...newPosts]);
+        } else {
+          const postLists = await Promise.all(
+            selectedTags.map((tag) => postHashtagSearch(tag, accessToken, page, PAGE_SIZE)),
+          );
+          const merged = postLists.flat();
+          setPosts((prevPosts) => {
+            const combined = [...prevPosts, ...merged];
+            const unique = [...new Map(combined.map((post) => [post.id, post])).values()];
+            return unique;
+          });
+          if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
+        }
+      } catch (err) {
+        console.error(`${page}페이지 로드 실패:`, err);
+      }
+      setLoading(false);
+    };
+
+    loadPage();
+  }, [page, isInitialized, selectedTags, accessToken]);
 
   useEffect(() => {
     if (!pathname) return;
@@ -244,9 +290,6 @@ export default function BoardPage() {
 
   const handleUpdatePosts = (tags: string[]) => {
     setSelectedTags(tags);
-    setPosts([]);
-    setPage(1);
-    setHasMore(true);
   };
 
   return (
@@ -255,7 +298,7 @@ export default function BoardPage() {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}>
-      <BoardHeader />
+      <BoardHeader profileImageUrl={userProfile?.profileImageUrl} />
 
       <BoardHashtag selectedTags={selectedTags} setSelectedTags={setSelectedTags} onUpdatePosts={handleUpdatePosts} />
 

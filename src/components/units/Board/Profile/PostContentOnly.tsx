@@ -35,6 +35,7 @@ interface PostProps {
     writerId: number;
     isFollowing: boolean;
     isAnonymous: boolean;
+    thumbImage?: string[];
   };
 }
 
@@ -199,9 +200,9 @@ export default function PostContentOnly({ postId, post }: PostProps) {
         </div>
       )}
 
-      {isModalOpen && post.imageUrls && (
+      {isModalOpen && post.thumbImage && (
         <BoardImageModal
-          images={post.imageUrls}
+          images={post.thumbImage}
           initialIndex={currentImageIndex}
           onClose={() => setIsModalOpen(false)}
         />

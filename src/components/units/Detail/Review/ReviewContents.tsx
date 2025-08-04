@@ -146,9 +146,10 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
                 <Image
                   src={review.profileImageUrl || '/icons/default-avatar.svg'}
                   alt={`${review.nickname}의 프로필 사진`}
-                  className="h-10 w-10 rounded-full bg-gray-200"
+                  className="h-10 w-10 rounded-full bg-gray-200 object-cover"
                   width={40}
                   height={40}
+                  style={{ aspectRatio: '1/1' }}
                 />
                 <div>
                   <p className="text-[0.875rem] font-bold text-white">{review.nickname}</p>

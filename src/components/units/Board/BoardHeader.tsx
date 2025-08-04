@@ -3,12 +3,16 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRecoilValue } from 'recoil';
+import { userProfileState } from '@/context/recoil-context';
+
 interface BoardHeaderProps {
   profileImageUrl?: string;
 }
 
 const BoardHeader = ({ profileImageUrl }: BoardHeaderProps) => {
   const router = useRouter();
+  const userProfile = useRecoilValue(userProfileState);
   const defaultProfileImage = '/icons/default-profile.svg';
 
   return (
@@ -31,9 +35,10 @@ const BoardHeader = ({ profileImageUrl }: BoardHeaderProps) => {
               width={26}
               height={26}
               className="rounded-full object-cover"
+              style={{ aspectRatio: '1/1' }}
             />
             {/* 비즈니스 유저인 경우 마크 표시 */}
-            {profileImageUrl && (
+            {userProfile?.role === 'BUSINESS' && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"

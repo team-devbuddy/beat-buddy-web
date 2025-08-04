@@ -2,8 +2,9 @@ export async function patchProfileImage(accessToken: string, profileImage: FormD
   const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/profile-image`, {
     method: 'PATCH',
     headers: {
-      // FormData 사용 시 Content-Type을 명시하지 않아야 브라우저가 자동으로 boundary 설정
+      accept: 'application/json',
       access: `Bearer ${accessToken}`,
+      // Content-Type은 FormData를 사용할 때 자동으로 설정되므로 제거
     },
     body: profileImage,
   });

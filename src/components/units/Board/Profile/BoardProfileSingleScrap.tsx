@@ -13,6 +13,7 @@ import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap
 import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
 import BoardDropdown from '../BoardDropDown';
 import { useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface PostProps {
   postId: number;
@@ -68,7 +69,7 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
   const [likes, setLikes] = useState(post.likes);
   const [scraps, setScraps] = useState(post.scraps);
   const dropdownTriggerRef = useRef<HTMLImageElement | null>(null);
-
+  const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [likeMap, setLikeMap] = useRecoilState(postLikeState);
   const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
@@ -180,15 +181,21 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
           <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500">
               <Image
-                src={post.profileImageUrl || '/icons/default-profile.svg'}
+                src={
+                  post.isAnonymous ? '/icons/default-profile.svg' : post.profileImageUrl || '/icons/default-profile.svg'
+                }
                 alt="profile"
                 width={37}
                 height={37}
                 className="h-full w-full rounded-full object-cover safari-icon-fix"
                 style={{ aspectRatio: '1/1' }}
+                onClick={() => {
+                  if (post.isAnonymous) return;
+                  router.push(`/board/profile?userId=${post.writerId}`);
+                }}
               />
             </div>
-            {post.role === 'BUSINESS' && (
+            {post.role === 'BUSINESS' && !post.isAnonymous && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"
@@ -200,11 +207,11 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
           </div>
 
           <div>
-            <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
+            <p className="text-[0.875rem] font-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
           </div>
         </div>
 
-        {!post.isAuthor && (
+        {!post.isAuthor && !post.isAnonymous && (
           <button
             onClick={handleFollow}
             className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
@@ -214,7 +221,7 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
         )}
       </div>
 
-      <div>
+      <div onClick={() => router.push(`/board/free/${post.id}`)}>
         <p className="mb-[0.62rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>
         <p
           className="whitespace-pre-wrap text-[0.8125rem] text-gray100"
@@ -276,7 +283,14 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
       <div className="flex justify-between">
         <div className="mt-[0.62rem] flex gap-[0.5rem] text-[0.75rem] text-gray300">
           <span className={`flex items-center gap-[0.12rem] ${liked ? 'text-main' : ''}`}>
-            <button onClick={handleLike} disabled={isLoadingLike} title="좋아요" className="flex items-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLike();
+              }}
+              disabled={isLoadingLike}
+              title="좋아요"
+              className="flex items-center">
               <Image
                 src={liked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
                 alt="heart"
@@ -296,7 +310,14 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
             {post.comments}
           </span>
           <span className={`flex items-center gap-[0.12rem] ${scrapped ? 'text-main' : ''}`}>
-            <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleScrap();
+              }}
+              disabled={isLoadingScrap}
+              title="스크랩"
+              className="flex items-center">
               <Image
                 src={
                   scrapped ? '/icons/material-symbols_bookmark-pink.svg' : '/icons/material-symbols_bookmark-gray.svg'
@@ -313,7 +334,10 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
           <p className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</p>
           <Image
             ref={dropdownTriggerRef}
-            onClick={openDropdown}
+            onClick={(e) => {
+              e.stopPropagation();
+              openDropdown();
+            }}
             src="/icons/dot-vertical.svg"
             alt="bookmark"
             width={20}

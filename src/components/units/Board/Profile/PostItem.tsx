@@ -28,6 +28,7 @@ interface PostItemProps {
     hasCommented: boolean;
     scrapped: boolean;
     isAuthor: boolean;
+    thumbImage?: string[];
   };
 }
 
@@ -118,9 +119,9 @@ export default function PostItem({ post }: PostItemProps) {
       <p className="line-clamp-2 text-[0.75rem] text-gray300">{post.content}</p>
 
       {/* 이미지 표시 */}
-      {post.imageUrls && post.imageUrls.length > 0 && (
+      {post.thumbImage && post.thumbImage.length > 0 && (
         <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
-          {post.imageUrls.map((url, index) => (
+          {post.thumbImage.map((url, index) => (
             <div key={index} className="max-h-[200px] flex-shrink-0 overflow-hidden rounded-[0.5rem] bg-gray600">
               <Image
                 src={url}

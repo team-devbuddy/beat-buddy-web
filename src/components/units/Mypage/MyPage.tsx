@@ -132,7 +132,8 @@ export default function MyPageComponent() {
                           alt="프로필"
                           width={64}
                           height={64}
-                          className="rounded-full"
+                          className="rounded-full object-cover"
+                          style={{ aspectRatio: '1/1' }}
                         />
                       </div>
                       <div className="flex flex-col items-start justify-center">
@@ -201,7 +202,8 @@ export default function MyPageComponent() {
                           alt="프로필"
                           width={64}
                           height={64}
-                          className="rounded-full"
+                          className="rounded-full object-cover"
+                          style={{ aspectRatio: '1/1' }}
                         />
                       </div>
                       <div className="flex flex-col items-start justify-center">

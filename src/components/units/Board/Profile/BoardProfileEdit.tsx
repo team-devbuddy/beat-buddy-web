@@ -54,7 +54,7 @@ export default function BoardProfileEdit() {
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('image', file);
       await patchProfileImage(accessToken, formData);
     } catch (error: any) {
       setErrorMessage(error.message);

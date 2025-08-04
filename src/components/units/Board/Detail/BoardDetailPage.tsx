@@ -32,6 +32,8 @@ interface PostType {
   views: number;
   imageUrls?: string[];
   isFollowing: boolean;
+  thumbImage?: string[];
+  isAnonymous: boolean;
 }
 
 export default function BoardDetailPage({ postId, category }: { postId: number; category: string }) {

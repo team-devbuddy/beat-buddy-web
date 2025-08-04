@@ -37,6 +37,7 @@ interface PostProps {
     role: string;
     views: number;
     isFollowing: boolean;
+    isAnonymous: boolean;
   };
 }
 
@@ -68,6 +69,8 @@ export default function BoardDetail({ postId, post }: PostProps) {
   };
 
   const goToUserProfile = () => {
+    // 익명 게시글인 경우 프로필로 이동하지 않음
+    if (post.isAnonymous) return;
     router.push(`/board/profile?writerId=${post.writerId}`);
   };
 
@@ -153,7 +156,9 @@ export default function BoardDetail({ postId, post }: PostProps) {
           <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500" onClick={goToUserProfile}>
               <Image
-                src={post.profileImageUrl || '/icons/default-profile.svg'}
+                src={
+                  post.isAnonymous ? '/icons/default-profile.svg' : post.profileImageUrl || '/icons/default-profile.svg'
+                }
                 alt="profile"
                 width={37}
                 height={37}
@@ -162,7 +167,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
                 style={{ aspectRatio: '1/1' }}
               />
             </div>
-            {post.role === 'BUSINESS' && (
+            {post.role === 'BUSINESS' && !post.isAnonymous && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"
@@ -173,16 +178,18 @@ export default function BoardDetail({ postId, post }: PostProps) {
             )}
           </div>
           <div>
-            <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
+            <p className="text-[0.875rem] font-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
             <p className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</p>
           </div>
         </div>
-        <button
-          onClick={handleFollow}
-          className={`text-body2-15-bold ${isFollowing || post.isAuthor ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
-          disabled={loadingFollow}>
-          {post.isAuthor ? '' : isFollowing ? '팔로잉' : '팔로우'}
-        </button>
+        {!post.isAuthor && !post.isAnonymous && (
+          <button
+            onClick={handleFollow}
+            className={`text-body2-15-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
+            disabled={loadingFollow}>
+            {isFollowing ? '팔로잉' : '팔로우'}
+          </button>
+        )}
       </div>
       <p className="py-[0.75rem] text-[1rem] text-white">{post.title}</p>
       <p className="whitespace-pre-wrap text-[0.8125rem] text-gray100">{post.content}</p>

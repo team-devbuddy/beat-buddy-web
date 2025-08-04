@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BoardProfileSingleScrap from './BoardProfileSingleScrap';
 
 interface ScrapPostsProps {
@@ -11,6 +11,11 @@ interface ScrapPostsProps {
 
 export default function BoardProfileScrapPosts({ posts, lastPostRef }: ScrapPostsProps) {
   const [localPosts, setLocalPosts] = useState(posts);
+
+  // posts가 변경될 때 localPosts 업데이트
+  useEffect(() => {
+    setLocalPosts(posts);
+  }, [posts]);
 
   const handleRemove = (id: number) => {
     setLocalPosts((prev) => prev.filter((post) => post.id !== id));

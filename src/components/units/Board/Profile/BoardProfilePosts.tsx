@@ -10,6 +10,7 @@ export interface Post {
   like: number;
   comment: number;
   scrap: number;
+  thumbImage?: string[];
 }
 
 interface BoardProfilePostsProps {
