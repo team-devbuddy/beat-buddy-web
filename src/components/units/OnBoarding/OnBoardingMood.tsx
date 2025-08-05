@@ -86,6 +86,9 @@ export default function OnBoardingMood() {
 
   return (
     <>
+      {/* 모달이 열렸을 때 배경 오버레이 */}
+      {isModalOpen && <div className="fixed inset-0 z-40 bg-black bg-opacity-50" onClick={toggleModal}></div>}
+
       <div className="relative flex w-full flex-col bg-BG-black px-5 pb-20">
         <Image
           src="/icons/landing_step_2.svg"
@@ -134,7 +137,7 @@ export default function OnBoardingMood() {
           ))}
         </div>
 
-        {error && <div className="mt-4 text-main">{error}</div>}
+        {error && <div className="mt-[0.63rem] text-[0.75rem] text-main">{error}</div>}
       </div>
       <div className="z-5 fixed bottom-5 left-0 right-0 flex w-full justify-center px-5">
         <button

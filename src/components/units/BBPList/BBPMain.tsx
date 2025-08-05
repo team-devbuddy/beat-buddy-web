@@ -100,7 +100,7 @@ export default function BBPMain() {
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
       <BBPickHeader username={userName} />
       <Filter setFilteredClubs={setFilteredClubs} BBPClubs={BBPClubs} />
-      <main className="pt-[1.5rem]">
+      <main className="">
         {filteredClubs.length === 0 && filteredClubs !== BBPClubs ? (
           <NoResults text="조건에 맞는 추천 결과가 없어요.\n취향을 다시 설정해볼까요?" />
         ) : (

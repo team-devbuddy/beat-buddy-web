@@ -108,18 +108,20 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
                   backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
-                className="relative flex h-full flex-col rounded-[0.5rem] p-2">
+                className="relative flex h-full flex-col rounded-[1.25rem] p-2">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}
                     alt={`${venue.koreanName} image`}
                     fill
                     objectFit="cover"
-                    className="rounded-[0.5rem]"
+                    className="rounded-[1.25rem]"
                   />
                   <div className="club-gradient absolute inset-0"></div>
+
+                  {/* 하트 버튼 */}
                   <motion.div
-                    className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
+                    className="absolute right-5 top-5 cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
                       handleHeartClick(e, venue.venueId);
@@ -128,37 +130,37 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     initial="initial"
                     animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
                     <Image
-                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
                       alt="heart icon"
-                      width={32}
-                      height={32}
+                      width={27}
+                      height={27}
                     />
                   </motion.div>
+
+                  {/* 하트 개수 - 왼쪽 하단 고정 */}
+                  <div className="absolute bottom-5 left-7 flex items-center space-x-[0.25rem] text-gray100">
+                    <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15} height={13} />
+                    <span className="text-[0.875rem]">
+                      {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
+                    </span>
+                  </div>
                 </div>
                 <div className="mt-[1rem] flex flex-grow flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">
-                      <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
-                      <div className="mt-auto flex items-end">
-                        <div className="flex items-center space-x-[0.25rem] text-gray300">
-                          <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-                          <span className="text-body3-12-medium">
-                            {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
-                          </span>
-                        </div>
-                      </div>
+                      <h3 className="text-ellipsis text-[1.25rem] font-bold text-white">{venue.englishName}</h3>
                     </div>
-                    <div className="mt-[0.25rem] flex w-1/2 flex-wrap gap-[0.5rem]">
+                    <div className="mt-[0.25rem] flex w-2/3 flex-wrap gap-[0.5rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span
                             key={index}
-                            className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                            className="rounded-[0.5rem]  bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.8125rem] text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
-                        <span className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                        <span className="rounded-[0.5rem]  bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.8125rem] text-gray300">
                           No tagList
                         </span>
                       )}

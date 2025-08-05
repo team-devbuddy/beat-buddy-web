@@ -128,7 +128,7 @@ export default function OnBoardingGenre() {
           </div>
         </div>
 
-        {error && <div className="mt-4 text-main">{error}</div>}
+        {error && <div className="mt-[0.63rem] text-[0.75rem] text-main">{error}</div>}
       </div>
       <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
         <button

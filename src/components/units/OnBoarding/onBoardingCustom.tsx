@@ -25,7 +25,7 @@ export default function OnBoardingCustom() {
     <>
       <div className="flex w-full flex-col px-5">
         <div className="flex pb-5 pt-10">
-          <Image src="/icons/pinkMainLogo.svg" alt="onboarding_custom" width={43.6} height={40} />
+          <Image className='safari-icon-fix' src="/icons/pinkMainLogo.svg" alt="onboarding_custom" width={43} height={40} />
         </div>
         <div className="flex flex-col items-start">
           <p className="text-start text-[1.5rem] font-bold text-white">
