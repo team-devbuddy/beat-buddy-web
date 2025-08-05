@@ -24,7 +24,7 @@ export default function MyHeartbeatMain() {
       try {
         if (accessToken) {
           const data: HeartbeatProps[] = await getMyHearts(accessToken);
-          
+
           const clubs: Club[] = data.map((club) => ({
             venueId: club.venueId,
             entranceFee: 0,
@@ -90,18 +90,18 @@ export default function MyHeartbeatMain() {
   }
 
   return (
-    <div className="flex pb-[64px] w-full flex-col">
+    <div className="flex w-full flex-col pb-[64px]">
       <div className="flex-grow bg-BG-black">
         <MyHeartbeatHeader />
         {myHeartbeatClubs.length > 0 ? (
-        <MyHeartbeat
-          clubs={myHeartbeatClubs}
-          likedClubs={likedClubs}
-          heartbeatNums={heartbeatNums}
-          handleHeartClickWrapper={handleHeartClickWrapper}
-        />
+          <MyHeartbeat
+            clubs={myHeartbeatClubs}
+            likedClubs={likedClubs}
+            heartbeatNums={heartbeatNums}
+            handleHeartClickWrapper={handleHeartClickWrapper}
+          />
         ) : (
-            <NoResults text="아직 하트비트가 없어요!\n좋아하는 베뉴를 찾아보세요." />
+          <NoResults text="아직 하트비트가 없어요!\n좋아하는 베뉴를 찾아보세요." fullHeight />
         )}
       </div>
     </div>

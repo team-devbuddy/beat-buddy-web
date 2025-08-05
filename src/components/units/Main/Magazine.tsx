@@ -50,8 +50,9 @@ export default function Magazine({
               e.preventDefault(); // 부모 링크 막기
               router.push('/magazine');
             }}
-            className="flex items-center justify-center rounded-[0.5rem] bg-black/70 px-[0.38rem] py-[0.19rem] text-[0.6875rem] font-medium text-gray200">
+            className="mr-[0.12rem] flex items-center justify-center rounded-[0.5rem] bg-black/70 px-[0.38rem] py-[0.19rem] text-[0.6875rem] font-medium text-gray200">
             전체보기
+            <Image src="/icons/rightArrowMagazine.svg" alt="Arrow head right icon" width={8.75} height={14} />
           </button>
         </div>
 

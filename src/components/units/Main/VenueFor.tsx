@@ -35,7 +35,7 @@ export default function VenueFor({ userName }: VenueForProps) {
             <div className="flex items-center gap-x-[0.25rem]">
               <Image src="/icons/bbpLogo.svg" alt="Arrow head right icon" width={16} height={15} />
               <span className="text-[1rem] text-[#FFCAE1]">
-                {isBusiness ? (
+                {!isBusiness ? (
                   <>
                     Venue for <span className="font-bold">{userName}버디</span>
                   </>
@@ -47,7 +47,7 @@ export default function VenueFor({ userName }: VenueForProps) {
             <span
               className="line-height-[150%] text-[0.75rem] font-medium tracking-[-0.015rem]"
               style={{ color: 'rgba(255, 202, 225, 0.70)' }}>
-              {isBusiness ? '나에게 딱 맞는 베뉴들의 정보를 확인하세요!' : 'BeatBuddy에 나의 이벤트를 등록해보세요!'}
+              {!isBusiness ? '나에게 딱 맞는 베뉴들의 정보를 확인하세요!' : 'BeatBuddy에 나의 이벤트를 등록해보세요!'}
             </span>
           </div>
         </div>

@@ -13,10 +13,10 @@ const HotVenues = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }
   return (
     <div className="flex flex-col">
       <div className="flex cursor-pointer flex-col items-start ">
-        <span className="text-[1.125rem] text-main font-paperlogy font-semibold line-height-[150%] tracking-[-0.0225rem]">
-          Hot
+        <span className="text-[1.125rem] text-main font-paperlogy font-bold line-height-[150%] tracking-[-0.05rem]">
+          Hot Venue
         </span>
-        <span className="text-[0.875rem] text-gray300">실시간으로 인기있는 베뉴 정보입니다.</span>
+        <span className="text-[0.8125rem] text-gray300">실시간으로 인기있는 베뉴 정보입니다.</span>
       </div>
       <div className="py-[0.88rem]">
         <ClubList

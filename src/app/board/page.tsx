@@ -335,7 +335,9 @@ export default function BoardPage() {
           }
         })}
 
-        {!loading && posts.length === 0 && <NoResults text="아직 게시글이 없어요.\n첫 게시글을 작성해보세요." />}
+        {!loading && posts.length === 0 && (
+          <NoResults text="아직 게시글이 없어요.\n첫 게시글을 작성해보세요." fullHeight />
+        )}
       </div>
 
       <div className="pointer-events-none fixed inset-x-0 bottom-[60px] z-50 flex justify-center">

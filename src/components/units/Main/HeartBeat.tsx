@@ -47,14 +47,14 @@ function Heartbeat() {
   return (
     <div className="flex flex-col">
       <Link href="/myheartbeat">
-        <div className="flex items-center justify-between rounded-md">
+        <div className="flex items-center justify-between rounded-[0.5rem]">
           <div className="flex flex-col">
-            <span className="font-paperlogy line-height-[150%] text-[1.125rem] font-semibold tracking-[-0.0225rem] text-main">
+            <span className="line-height-[150%] font-paperlogy text-[1.125rem] font-bold tracking-[-0.05rem] text-main">
               My Heart Beat
             </span>
-            <div className="cursor-pointer text-[0.875rem] text-gray300">관심있는 베뉴들의 정보를 확인하세요</div>
+            <div className="cursor-pointer text-[0.8125rem] text-gray300">관심있는 베뉴들의 정보를 확인하세요</div>
           </div>
-          <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
+          <Image src="/icons/arrow_back_ios_new.svg" alt="Arrow head right icon" width={20} height={20} />
         </div>
       </Link>
       <div className="mt-[0.88rem] flex space-x-[0.75rem] overflow-x-auto hide-scrollbar">
@@ -102,30 +102,27 @@ function Heartbeat() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-[18.9rem] bg-BG-black">
-              <div className="px-[1.25rem] pb-[1.5rem] pt-4">
-                <div className="flex justify-end">
-                  <div className="mb-[1.25rem] text-gray-600 hover:text-gray-800"></div>
-                </div>
+              className="w-[20.9375rem] rounded-[0.75rem] bg-BG-black">
+              <div className="px-[1.25rem] pb-[1.5rem] pt-10">
                 <div className="text-center">
-                  <h2 className="mb-[0.75rem] text-subtitle-20-bold text-white">아직 하트비트가 없어요</h2>
-                  <p className="mb-[1.25rem] text-body2-15-medium text-gray300">
+                  <h2 className="mb-[0.75rem] text-[1.25rem] font-bold text-white">아직 하트비트가 없어요</h2>
+                  <p className="mb-[0.75rem] text-[0.875rem] text-gray300">
                     하트비트를 눌러서
                     <br />
-                    관심있는 베뉴를 저장해보세요
+                    관심있는 베뉴를 저장해보세요!
                   </p>
-                  <div className="flex flex-row justify-center gap-[3rem]">
-                    <Image src="/icons/PinkHeart.svg" alt="pink heart" width={48} height={48} />
+                  <div className="mb-[1.56rem] flex flex-row justify-center gap-3">
+                    <Image src="/icons/PinkHeart.svg" alt="pink heart" width={41} height={36} />
                     <Image src="/icons/fullArrow.svg" alt="full arrow" width={24} height={24} />
-                    <Image src="/icons/FilledHeart.svg" alt="filled heart" width={48} height={48} />
+                    <Image src="/icons/FilledHeart.svg" alt="filled heart" width={37} height={36} />
                   </div>
+                  <button
+                    onClick={closeModal}
+                    className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.66rem] text-[0.9935rem] font-bold text-main">
+                    확인
+                  </button>
                 </div>
               </div>
-              <button
-                onClick={closeModal}
-                className="w-full bg-main px-[0.5rem] py-[0.99rem] text-body1-16-bold text-BG-black">
-                확인
-              </button>
             </motion.div>
           </motion.div>
         )}

@@ -36,17 +36,17 @@ export default function MagazineListPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-BG-black text-white">
-      <div className="flex items-center px-[0.63rem] py-[0.53rem]">
+      <div className="flex items-center pl-[0.62rem] py-[0.53rem]">
         <Link href="/">
           <Image src="/icons/line-md_chevron-left.svg" alt="back" width={35} height={35} />
         </Link>
         <p className="ml-[0.12rem] text-[1.125rem] font-bold text-white">전체보기</p>
       </div>
-      <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.44rem]">
+      <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.88rem]">
         {loading ? (
           <BBPListSkeleton />
         ) : magazines.length === 0 ? (
-          <NoResults text="아직 매거진이 없어요.\n첫 매거진을 작성해보세요." />
+          <NoResults text="아직 매거진이 없어요.\n첫 매거진을 작성해보세요." fullHeight />
         ) : (
           <div className="grid grid-cols-1 gap-[0.88rem] md:grid-cols-2">
             {magazines.map((magazine, index) => (

@@ -112,12 +112,33 @@ export default function MagazineDetail() {
           </div>
         </div>
       )}
-      <div className="p-[1.25rem]">
+
+      {/* 매거진 이미지들 표시 */}
+      <div className="">
+        {magazine.imageUrls && magazine.imageUrls.length > 0 && (
+          <div className="space-y-4">
+            {magazine.imageUrls.map((imageUrl, index) => (
+              <div key={index} className="w-full">
+                <Image
+                  src={imageUrl}
+                  alt={`매거진 이미지 ${index + 1}`}
+                  width={800}
+                  height={600}
+                  className="h-auto w-full rounded-md object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 텍스트 콘텐츠 주석처리 */}
+        {/* 
         <p
           className="line-height-[150%] text-[0.875rem] tracking-[-0.0175rem] text-[#C3C5C9] drop-shadow-md"
           style={{ color: 'rgba(255, 255, 255, 0.60)' }}>
           {magazine.content}
         </p>
+        */}
       </div>
     </div>
   );

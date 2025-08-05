@@ -80,7 +80,7 @@ export default function HotClubsList() {
   return (
     <div className="bg-BG-black px-[1.25rem] pb-[5rem] pt-[0.88rem] text-gray100">
       <div className="flex items-center justify-start gap-[0.5rem]">
-        <h2 className="font-paperlogy text-[1.125rem] font-semibold text-main">Now Hot</h2>
+        <h2 className="font-paperlogy text-[1.125rem] font-bold tracking-[-0.05rem] text-main">Now Hot</h2>
         <span className="text-[0.8125rem] text-gray300">{getCurrentDate()} 기준</span>
       </div>
       <div className="flex justify-between pt-[0.88rem]">

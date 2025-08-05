@@ -25,6 +25,7 @@ import VenueFor from './VenueFor';
 import { getHotPost, RawHotPost } from '@/lib/actions/post-controller/getHotPost';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import MainFooter from './MainFooter';
 
 const MainHeader = dynamic(() => import('./MainHeader'), { ssr: false });
 
@@ -228,6 +229,7 @@ export default function Main() {
           />
         </div>
       </div>
+      <MainFooter />
     </div>
   );
 }

@@ -12,7 +12,7 @@ const config: Config = {
       poppins: ['poppins', 'sans-serif'],
       queensides: ['Queensides'],
       suit: ['SUIT', 'sans-serif'],
-      paperlogy: ['Paperlogy-4Regular', 'sans-serif'],
+      paperlogy: ['Paperlogy-7Bold', 'sans-serif'],
     },
     extend: {
       scrollbarHide: {

@@ -87,6 +87,10 @@ body {
       transform: translateZ(0);
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
+      /* 추가 사파리 SVG 호환성 */
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+      mask-image: radial-gradient(white, black);
+      will-change: transform;
     }
 
     .safari-padding-fix {

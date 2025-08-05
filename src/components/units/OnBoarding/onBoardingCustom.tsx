@@ -3,7 +3,7 @@ import { accessTokenState } from '@/context/recoil-context';
 import { GetNickname } from '@/lib/action';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import Image from 'next/image';
+import PinkMainLogo from '@/components/icons/PinkMainLogo';
 import { useRouter } from 'next/navigation';
 
 export default function OnBoardingCustom() {
@@ -25,7 +25,7 @@ export default function OnBoardingCustom() {
     <>
       <div className="flex w-full flex-col px-5">
         <div className="flex pb-5 pt-10">
-          <Image className='safari-icon-fix' src="/icons/pinkMainLogo.svg" alt="onboarding_custom" width={43} height={40} />
+          <PinkMainLogo width={43} height={40} className="safari-icon-fix" />
         </div>
         <div className="flex flex-col items-start">
           <p className="text-start text-[1.5rem] font-bold text-white">

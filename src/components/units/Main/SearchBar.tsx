@@ -58,7 +58,7 @@ export default function SearchBar() {
             <Link href="/search" className="block w-full">
               <div className="relative w-full">
                 <input
-                  className="safari-input-fix w-full cursor-pointer bg-transparent px-[0.88rem] py-[0.94rem] text-[0.8125rem] text-gray300 placeholder:text-gray300 focus:outline-none"
+                  className="safari-input-fix w-full cursor-pointer bg-transparent px-[0.88rem] py-3 text-[0.8125rem] text-gray300 placeholder:text-gray300 focus:outline-none"
                   placeholder="지금 인기 있는 베뉴를 검색해보세요."
                   readOnly
                   style={{ WebkitAppearance: 'none', borderRadius: 0 }}
@@ -66,9 +66,9 @@ export default function SearchBar() {
                 <Image
                   src="/icons/search-01.svg"
                   alt="search icon"
-                  width={24}
-                  height={24}
-                  className="absolute bottom-[0.94rem] right-[1rem]"
+                  width={22}
+                  height={22}
+                  className="absolute bottom-3 right-[1rem]"
                 />
               </div>
             </Link>
@@ -77,7 +77,7 @@ export default function SearchBar() {
           <div className="relative w-full">
             <input
               ref={inputRef}
-              className="safari-input-fix w-full cursor-pointer bg-transparent px-[0.88rem] py-[0.94rem] text-[0.8125rem] text-white placeholder:text-gray300 focus:outline-none"
+              className="safari-input-fix w-full cursor-pointer bg-transparent px-[0.88rem] py-3 text-[0.8125rem] text-white placeholder:text-gray300 focus:outline-none"
               placeholder="지금 인기 있는 베뉴를 검색해보세요."
               value={searchQuery}
               onChange={handleInputChange}
@@ -85,11 +85,11 @@ export default function SearchBar() {
               autoFocus // 모바일에서 자동으로 키패드 올라오게 autoFocus 추가
               style={{ WebkitAppearance: 'none', borderRadius: 0 }}
             />
-            <div onClick={handleSearch} className="absolute bottom-[0.94rem] right-[1rem] cursor-pointer">
+            <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
               {searchQuery ? (
-                <Image src="/icons/search-01-pink.svg" alt="search icon" width={24} height={24} />
+                <Image src="/icons/search-01-pink.svg" alt="search icon" width={22} height={22} />
               ) : (
-                <Image src="/icons/search-01.svg" alt="search icon" width={24} height={24} />
+                <Image src="/icons/search-01.svg" alt="search icon" width={22} height={22} />
               )}
             </div>
           </div>

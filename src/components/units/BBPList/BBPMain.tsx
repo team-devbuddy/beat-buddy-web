@@ -84,7 +84,7 @@ export default function BBPMain() {
 
     if (accessToken) {
       fetchBBPClubs().then(() => fetchLikedStatuses(accessToken));
-      fetchUserName(accessToken); 
+      fetchUserName(accessToken);
     }
   }, [accessToken, setLikedClubs, setHeartbeatNums]);
 
@@ -102,13 +102,14 @@ export default function BBPMain() {
       <Filter setFilteredClubs={setFilteredClubs} BBPClubs={BBPClubs} />
       <main className="">
         {filteredClubs.length === 0 && filteredClubs !== BBPClubs ? (
-          <NoResults text="조건에 맞는 추천 결과가 없어요.\n취향을 다시 설정해볼까요?" />
+          <NoResults text="조건에 맞는 추천 결과가 없어요.\n취향을 다시 설정해볼까요?" fullHeight />
         ) : (
           <VenueCard
-              clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}
-              likedClubs={likedClubs}
-              heartbeatNums={heartbeatNums}
-              handleHeartClickWrapper={handleHeartClickWrapper}           />
+            clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}
+            likedClubs={likedClubs}
+            heartbeatNums={heartbeatNums}
+            handleHeartClickWrapper={handleHeartClickWrapper}
+          />
         )}
       </main>
     </div>
