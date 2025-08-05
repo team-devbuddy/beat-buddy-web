@@ -71,7 +71,7 @@ export default function LoginMain() {
                 priority // LCP 이미지에 priority 속성 추가
               />
             </div>
-            <div className="mt-[0.5rem] text-center font-poppins text-[1rem] font-normal leading-[130%] tracking-[-0.0125rem]">
+            <div className="mt-[0.5rem] text-center font-poppins text-[1rem] font-normal leading-[130%] tracking-[-0.0125rem] text-white/70">
               <p>Feel the Beat</p>
               <p>Live the Night</p>
             </div>
@@ -81,8 +81,8 @@ export default function LoginMain() {
 
           {/* SNS 로그인 */}
           <div className="flex flex-col items-center pb-8">
-            <p className="mb-[1.25rem] text-body2-15-medium">SNS 계정으로 간편 가입하기</p>
-            <div className="flex items-center justify-center space-x-4">
+            <p className="mb-[1.25rem] text-[0.875rem] text-gray100">SNS 계정으로 시작하기</p>
+            <div className="flex items-center justify-center space-x-5">
               <button title="Kakao" onClick={() => handleJoinModalOpen('kakao')} className="transition-transform hover:scale-105">
                 <Image src="/icons/로그인/KakaoLogo.svg" alt="Kakao Icon" width={58} height={58} draggable={false} />
               </button>
@@ -90,7 +90,7 @@ export default function LoginMain() {
                 <Image src="/icons/로그인/GoogleLogo.svg" alt="Google Icon" width={58} height={58} draggable={false} />
               </button>
               <button title="Apple" onClick={() => handleJoinModalOpen('apple')} className="transition-transform hover:scale-105">
-                <Image src="/icons/로그인/AppleLogo.svg" alt="Apple Icon" width={68} height={68} draggable={false} />
+                <Image src="/icons/로그인/Group 26086773.svg" alt="Apple Icon" width={58} height={58} draggable={false} />
               </button>
             </div>
           </div>

@@ -106,7 +106,13 @@ export default function JoinModal({ onBusinessClick, onClose, loginType }: Props
             />
             {/* 내용 */}
             <div className="pointer-events-none z-10">
-              <Image src="/icons/로그인/Headers/Symbol.svg" alt="sound" width={32} height={32} className="mb-[0.75rem]" />
+              <Image
+                src="/icons/로그인/Headers/Symbol.svg"
+                alt="sound"
+                width={32}
+                height={32}
+                className="mb-[0.75rem]"
+              />
               <p className="text-1rem font-bold leading-[1.35rem] tracking-[-0.02rem] text-main2">비즈 버디로</p>
               <p className="text-1rem font-bold leading-[1.35rem] tracking-[-0.02rem] text-main2">시작하기</p>
               <p className="mt-[0.5rem] text-[0.75rem] leading-[1.125rem] tracking-[-0.015rem] text-white/50">

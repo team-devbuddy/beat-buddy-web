@@ -3,6 +3,7 @@ import './globals.css';
 import ClientOnlyLayout from './appLayout';
 import Script from 'next/script';
 import type { Metadata, Viewport } from 'next'; // Viewport 타입을 import 합니다.
+import Head from 'next/head';
 
 const pretendard = localFont({
   src: '../assets/fonts/PretendardVariable.woff2',
@@ -43,6 +44,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={`${pretendard.variable} bg-[#f5f5f5]`}>
+      <Head>
+        <meta name="appleid-signin-client-id" content={process.env.NEXT_PUBLIC_APPLE_CLIENT_ID} />
+        <meta name="appleid-signin-scope" content="name email" />
+        <meta name="appleid-signin-redirect-uri" content={process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI} />
+        <meta name="appleid-signin-state" content="origin:web" />
+      </Head>
+
       <body className={`${pretendard.className}`}>
         <ClientOnlyLayout>{children}</ClientOnlyLayout>
         {/* Script 태그들은 body 내에 있어도 괜찮습니다. */}
