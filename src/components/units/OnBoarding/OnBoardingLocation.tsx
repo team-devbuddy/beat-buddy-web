@@ -1,9 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PostLocation } from '@/lib/action'; // 경로를 적절히 수정하세요.
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { accessTokenState, authState } from '@/context/recoil-context';
+import { accessTokenState, authState, onboardingLocationState } from '@/context/recoil-context';
 import Image from 'next/image';
 
 const locationMap: { [key: string]: string } = {
@@ -25,11 +25,16 @@ const locationImages: { [key: string]: string } = {
 const locations = Object.keys(locationMap);
 
 export default function OnBoardingLocation() {
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedLocations, setSelectedLocations] = useRecoilState(onboardingLocationState);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
   const [isAuth, setIsAuth] = useRecoilState(authState);
+
+  // 컴포넌트 마운트 시 저장된 선택 값 확인
+  useEffect(() => {
+    console.log('OnBoardingLocation - 저장된 선택 지역:', selectedLocations);
+  }, []);
 
   const toggleLocation = (location: string) => {
     setSelectedLocations((prevSelected) => {
@@ -77,18 +82,18 @@ export default function OnBoardingLocation() {
           height={24}
           className="absolute right-5 top-[-36px]"
         />
-        <h1 className="pb-[1.25rem] pt-[0.62rem] text-title-24-bold text-white">
+        <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold text-white">
           관심 지역을
           <br />
           모두 선택해주세요
         </h1>
 
-        <div className="mt-[0.53rem] grid w-full grid-cols-2 gap-2">
+        <div className="grid w-full grid-cols-2 gap-2">
           {locations.map((location, index) => (
             <div
               key={index}
               onClick={() => toggleLocation(location)}
-              className={`text-subtitle-20-medium relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[2.81rem] ${
+              className={`relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[2.81rem] text-subtitle-20-medium transition-all duration-300 ease-in-out ${
                 selectedLocations.includes(location) ? 'text-main' : 'text-white'
               }`}
               style={{
@@ -97,7 +102,7 @@ export default function OnBoardingLocation() {
                 backgroundPosition: 'center',
               }}>
               {selectedLocations.includes(location) && (
-                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"></div>
+                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70 transition-all duration-300 ease-in-out"></div>
               )}
               <span className="relative z-10">{location}</span>
             </div>
@@ -109,8 +114,8 @@ export default function OnBoardingLocation() {
         <button
           onClick={onClickSubmit}
           disabled={!isButtonEnabled}
-          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
-            isButtonEnabled ? 'bg-main text-sub2 hover:brightness-105' : 'cursor-not-allowed bg-gray500 text-gray300'
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold transition-colors ${
+            isButtonEnabled ? 'bg-main text-sub2' : 'cursor-not-allowed bg-gray500 text-gray300'
           }`}>
           다음
         </button>

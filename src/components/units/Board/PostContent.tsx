@@ -99,7 +99,7 @@ const PostContent = ({ post, onStatusClick }: PostContentProps) => {
       {post.boardType === '조각 게시판' && post.venueId && (
         <Link 
           href={`/detail/${post.venueId}`}
-          className="mb-3 inline-block text-subtitle-20-bold text-white hover:brightness-75 cursor-pointer"
+          className="mb-3 inline-block text-subtitle-20-bold text-white cursor-pointer"
         >
           <div className="flex items-center">
           {post.englishName} 

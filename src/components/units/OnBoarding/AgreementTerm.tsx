@@ -197,7 +197,7 @@ export default function AgreementTerm() {
         <button
           onClick={onClickSubmit}
           disabled={!buttonEnabled}
-          className={`w-full max-w-[560px] rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold transition-colors ${
             buttonEnabled ? 'bg-main text-sub2' : 'bg-gray500 text-gray300'
           }`}>
           동의하고 가입하기

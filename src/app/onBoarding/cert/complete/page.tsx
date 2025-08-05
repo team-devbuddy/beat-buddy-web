@@ -16,7 +16,7 @@ export default function CertComplete() {
       </div>
 
       <Link href="/onBoarding">
-        <div className="absolute bottom-0 flex w-full cursor-pointer justify-center bg-main py-4 text-lg font-bold">
+        <div className="absolute bottom-0 flex w-full cursor-pointer justify-center bg-main py-[0.81rem] text-[1rem] font-bold">
           완료
         </div>
       </Link>

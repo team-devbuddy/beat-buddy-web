@@ -45,7 +45,7 @@ export default function MainHeader() {
                   alt="alert"
                   width={24}
                   height={24}
-                  className="safari-icon-fix cursor-pointer hover:brightness-125"
+                  className="safari-icon-fix cursor-pointer"
                 />
               </Link>
             )}

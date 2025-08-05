@@ -72,7 +72,7 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
             disabled={ssnFront.length !== 6 || ssnBack.length !== 1}
             className={`w-full rounded-md py-4 font-bold ${
               ssnFront.length === 6 && ssnBack.length === 1
-                ? 'bg-main text-BG-black hover:brightness-105'
+                ? 'bg-main text-BG-black'
                 : 'bg-gray400 text-gray300'
             }`}>
             다음

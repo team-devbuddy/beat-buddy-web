@@ -102,7 +102,7 @@ export default function VerificationForm() {
             disabled={!verified}
             className={`w-full py-4 rounded-md font-bold ${
               verified
-                ? 'bg-main text-BG-black hover:brightness-105'
+                ? 'bg-main text-BG-black'
                 : 'bg-gray400 text-gray300'
             }`}
           >

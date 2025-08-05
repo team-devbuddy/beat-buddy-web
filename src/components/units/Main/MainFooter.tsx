@@ -27,7 +27,7 @@ export default function MainFooter() {
               alt="Instagram icon"
               width={24}
               height={24}
-              className="cursor-pointer hover:brightness-75"
+              className="cursor-pointer"
             />
           </Link>
         </div>

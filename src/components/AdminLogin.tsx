@@ -71,7 +71,7 @@ export default function AdminLogin() {
           />
           <button
             onClick={onClickSubmit}
-            className="mt-3 w-[80%] bg-main py-3 text-xs font-semibold hover:brightness-105">
+            className="mt-3 w-[80%] bg-main py-3 text-xs font-semibold">
             로그인
           </button>
         </div>

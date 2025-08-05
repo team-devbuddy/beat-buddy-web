@@ -400,7 +400,7 @@ const CommentDropdown = ({
               <button
                 onClick={() => (isOwnComment ? onDelete(comment.id) : onReport(comment.id))}
                 className={`w-full px-5 py-2 text-center text-body3-12-medium ${
-                  isOwnComment ? 'text-red500 hover:brightness-110' : 'text-gray200 hover:text-main'
+                  isOwnComment ? 'text-main' : 'text-gray200 hover:text-main'
                 }`}>
                 {isOwnComment ? '삭제하기' : '신고하기'}
               </button>

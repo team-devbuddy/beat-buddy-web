@@ -98,7 +98,7 @@ export default function OnBoardingLoading() {
         height={24}
         className="absolute right-5 top-[-36px]"
       />
-      <h1 className="pb-[1.25rem] pt-[0.62rem] text-title-24-bold text-white">
+      <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold text-white">
         {nickname}버디님을 위한
         <br />
         맞춤 베뉴를 찾고 있어요

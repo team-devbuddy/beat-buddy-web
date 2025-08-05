@@ -47,7 +47,7 @@ function Heartbeat() {
   return (
     <div className="flex flex-col">
       <Link href="/myheartbeat">
-        <div className="flex items-center justify-between rounded-md hover:brightness-75">
+        <div className="flex items-center justify-between rounded-md">
           <div className="flex flex-col">
             <span className="font-paperlogy line-height-[150%] text-[1.125rem] font-semibold tracking-[-0.0225rem] text-main">
               My Heart Beat
@@ -60,7 +60,7 @@ function Heartbeat() {
       <div className="mt-[0.88rem] flex space-x-[0.75rem] overflow-x-auto hide-scrollbar">
         {heartbeats.length === 0 ? (
           <motion.div
-            className="relative h-16 w-16 cursor-pointer hover:brightness-75"
+            className="relative h-16 w-16 cursor-pointer"
             variants={buttonVariants}
             initial="initial"
             whileHover="hover"

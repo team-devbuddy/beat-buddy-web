@@ -1,9 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PostMood } from '@/lib/action';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { accessTokenState, memberMoodIdState } from '@/context/recoil-context';
+import { accessTokenState, memberMoodIdState, onboardingMoodState } from '@/context/recoil-context';
 import Image from 'next/image';
 import { AnimatePresence } from 'framer-motion';
 import InfoModal from './MoodInfoModal';
@@ -35,12 +35,17 @@ const moodImages: { [key: string]: string } = {
 const moods = Object.keys(moodMap);
 
 export default function OnBoardingMood() {
-  const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
+  const [selectedMoods, setSelectedMoods] = useRecoilState(onboardingMoodState);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
   const [memberMoodId, setMemberMoodId] = useRecoilState(memberMoodIdState);
+
+  // 컴포넌트 마운트 시 저장된 선택 값 확인
+  useEffect(() => {
+    console.log('OnBoardingMood - 저장된 선택 분위기:', selectedMoods);
+  }, []);
 
   const toggleMood = (mood: string) => {
     setSelectedMoods((prevSelected) => {
@@ -89,8 +94,8 @@ export default function OnBoardingMood() {
           height={24}
           className="absolute right-5 top-[-36px]"
         />
-        <div className="flex items-start justify-between pb-[1.25rem] pt-[0.62rem]">
-          <h1 className="text-title-24-bold text-white">
+        <div className="flex items-start justify-between pb-[1.88rem] pt-[0.62rem]">
+          <h1 className="text-[1.5rem] font-bold text-white">
             어떤 분위기를
             <br />
             좋아하세요?
@@ -102,18 +107,18 @@ export default function OnBoardingMood() {
               width={24}
               height={24}
               onClick={toggleModal}
-              className="cursor-pointer hover:brightness-75"
+              className="cursor-pointer transition-all duration-200 ease-in-out hover:scale-110"
             />
             <AnimatePresence>{isModalOpen && <InfoModal onClose={toggleModal} />}</AnimatePresence>
           </div>
         </div>
 
-        <div className="mt-[0.53rem] grid w-full grid-cols-3 gap-2">
+        <div className="grid w-full grid-cols-3 gap-2">
           {moods.map((mood, index) => (
             <div
               key={index}
               onClick={() => toggleMood(mood)}
-              className={`text-body-16-medium relative aspect-square w-full cursor-pointer items-center justify-center rounded-[0.25rem] hover:brightness-75 ${
+              className={`relative aspect-square w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-[1rem] transition-all duration-300 ease-in-out ${
                 selectedMoods.includes(mood) ? 'text-main' : 'text-white'
               } flex`} // ← flex로 텍스트 정렬 추가
               style={{
@@ -122,7 +127,7 @@ export default function OnBoardingMood() {
                 backgroundPosition: 'center',
               }}>
               {selectedMoods.includes(mood) && (
-                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"></div>
+                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70 transition-all duration-300 ease-in-out"></div>
               )}
               <span className="relative z-10">{mood}</span>
             </div>
@@ -131,12 +136,12 @@ export default function OnBoardingMood() {
 
         {error && <div className="mt-4 text-main">{error}</div>}
       </div>
-      <div className="fixed bottom-5 left-0 right-0 z-5 flex w-full justify-center px-5">
+      <div className="z-5 fixed bottom-5 left-0 right-0 flex w-full justify-center px-5">
         <button
           onClick={onClickSubmit}
           disabled={!isButtonEnabled}
-          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
-            isButtonEnabled ? 'bg-main text-sub2 hover:brightness-105' : 'cursor-not-allowed bg-gray500 text-gray300'
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold transition-colors ${
+            isButtonEnabled ? 'bg-main text-sub2' : 'cursor-not-allowed bg-gray500 text-gray300'
           }`}>
           다음{' '}
         </button>

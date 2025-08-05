@@ -52,7 +52,7 @@ export default function LocationTerms() {
         <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
           <button
             onClick={() => router.back()}
-            className={`w-full max-w-md rounded-[0.5rem] bg-gray500 py-4 text-[1rem] font-bold text-white transition-colors`}>
+            className={`w-full max-w-[560px] rounded-[0.5rem] bg-gray500 py-[0.81rem] text-[1rem] font-bold text-white transition-colors`}>
             닫기
           </button>
         </div>

@@ -192,7 +192,7 @@ export default function SignUpBusinessNickname() {
               onClick={handleSubmit}
               disabled={!isAvailable}
               className={`w-full rounded-md py-4 font-bold ${
-                isAvailable ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
+                isAvailable ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
               }`}>
               관리자 심사 요청하기
             </button>

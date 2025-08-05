@@ -71,7 +71,7 @@ export default function JoinModal({ onBusinessClick, onClose, loginType }: Props
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-md">
       <div
         ref={modalRef}
-        className={`flex w-full max-w-md flex-col rounded-t-3xl bg-BG-black px-[1.25rem] pb-[2.25rem] pt-[1.5rem] transition-all duration-300 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        className={`flex w-full max-w-[560px] flex-col rounded-t-3xl bg-BG-black px-[1.25rem] pb-[2.25rem] pt-[1.5rem] transition-all duration-300 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
         <p className="mb-[1.25rem] text-center text-[1.125rem] font-bold text-white">
           시작하기 전, 회원 구분을 선택해주세요.
         </p>

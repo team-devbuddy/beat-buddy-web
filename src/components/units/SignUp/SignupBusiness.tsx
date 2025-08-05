@@ -287,7 +287,7 @@ export default function SignUpBusiness() {
                 disabled={!phoneNumber || phoneNumber.length < 10}
                 className={`w-full rounded-md py-4 font-bold ${
                   phoneNumber && phoneNumber.length >= 10
-                    ? 'bg-main text-BG-black hover:brightness-105'
+                    ? 'bg-main text-BG-black'
                     : 'bg-gray400 text-gray300'
                 }`}>
                 다음

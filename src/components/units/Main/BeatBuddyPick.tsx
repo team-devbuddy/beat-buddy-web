@@ -95,7 +95,7 @@ export default function BeatBuddyPick({
           const filteredTags = getFilteredTags(club.tagList || []);
           return (
             <Link key={club.id} href={`/detail/${club.id}`} passHref>
-              <div className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card hover:brightness-75">
+              <div className="relative mt-[0.5rem] min-w-[15rem] cursor-pointer snap-center overflow-hidden rounded-md custom-club-card">
                 <Image src={imageUrl} alt={`${club.englishName} image`} layout="fill" className="object-cover" />
                 <motion.div
                   className="absolute right-[1.5rem] top-[1.5rem] cursor-pointer"
@@ -138,7 +138,7 @@ export default function BeatBuddyPick({
         })}
       </div>
       <Link href="/bbp-list" passHref>
-        <div className="mx-4 my-[1.5rem] flex cursor-pointer items-center justify-between rounded-sm bg-main px-4 py-[0.5rem] hover:brightness-75">
+        <div className="mx-4 my-[1.5rem] flex cursor-pointer items-center justify-between rounded-sm bg-main px-4 py-[0.5rem]">
           <div className="flex flex-col justify-center gap-y-2">
             <span className="font-queensides text-[1.5rem] text-white">
               {userName ? `Venue for ${userName}버디` : 'BeatBuddy Pick'}

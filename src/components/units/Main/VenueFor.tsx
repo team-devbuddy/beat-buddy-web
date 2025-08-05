@@ -16,7 +16,7 @@ export default function VenueFor({ userName }: VenueForProps) {
     <Link href="/bbp-list" passHref>
       {/* 그라디언트 테두리 */}
       <div
-        className="cursor-pointer rounded-[0.5rem] p-[0.8px] transition-all duration-200 hover:brightness-75"
+        className="cursor-pointer rounded-[0.5rem] p-[0.8px] transition-all duration-200"
         style={{
           background:
             'linear-gradient(90deg, #FF91C1 1%, #EE1171 25%, #FF91C1 50%, #92003F 75%, rgba(238, 23, 113, 0.05) 100%)',

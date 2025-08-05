@@ -94,7 +94,7 @@ export default function SignUpBusiness3({ onNext, onBack }: Props) {
             onClick={handleNext}
             disabled={!telecom}
             className={`w-full rounded-md py-4 font-bold ${
-              telecom ? 'bg-main text-BG-black hover:brightness-105' : 'bg-gray400 text-gray300'
+              telecom ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
             }`}>
             가입 완료하기
           </button>

@@ -1,9 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PostGenre } from '@/lib/action'; // 경로를 적절히 수정하세요.
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { accessTokenState, memberGenreIdState } from '@/context/recoil-context';
+import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
+import { accessTokenState, memberGenreIdState, onboardingGenreState } from '@/context/recoil-context';
 import Image from 'next/image';
 
 export default function OnBoardingGenre() {
@@ -34,11 +34,16 @@ export default function OnBoardingGenre() {
   };
 
   const genres = Object.keys(genreMap);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useRecoilState(onboardingGenreState);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const access = useRecoilValue(accessTokenState) || '';
   const setMemberGenreId = useSetRecoilState(memberGenreIdState);
+
+  // 컴포넌트 마운트 시 저장된 선택 값 확인
+  useEffect(() => {
+    console.log('OnBoardingGenre - 저장된 선택 장르:', selectedGenres);
+  }, []);
 
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prevSelected) => {
@@ -94,19 +99,19 @@ export default function OnBoardingGenre() {
           height={24}
           className="absolute right-5 top-[-36px]"
         />
-        <h1 className="pb-[1.25rem] pt-[0.62rem] text-title-24-bold text-white">
+        <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold text-white">
           선호하는 장르를
           <br />
           모두 선택해주세요
         </h1>
 
-        <div className="mt-[0.53rem] flex w-full justify-center gap-2">
+        <div className="flex w-full justify-center gap-2">
           <div className="grid w-full grid-cols-2 gap-2">
             {genres.map((genre, index) => (
               <div
                 key={index}
                 onClick={() => toggleGenre(genre)}
-                className={`text-body-16-medium relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[1.37rem]  ${
+                className={`relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[1.37rem] text-[1rem] transition-all duration-300 ease-in-out ${
                   selectedGenres.includes(genre) ? 'text-main' : 'text-white'
                 }`}
                 style={{
@@ -115,7 +120,7 @@ export default function OnBoardingGenre() {
                   backgroundPosition: 'center',
                 }}>
                 {selectedGenres.includes(genre) && (
-                  <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"></div>
+                  <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70 transition-all duration-300 ease-in-out"></div>
                 )}
                 <span className="relative z-10">{genre}</span>
               </div>
@@ -129,8 +134,8 @@ export default function OnBoardingGenre() {
         <button
           onClick={onClickSubmit}
           disabled={!isButtonEnabled}
-          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
-            isButtonEnabled ? 'bg-main text-sub2 ' : 'cursor-not-allowed bg-gray500 text-gray300'
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold transition-colors ${
+            isButtonEnabled ? 'bg-main text-sub2' : 'cursor-not-allowed bg-gray500 text-gray300'
           }`}>
           다음{' '}
         </button>

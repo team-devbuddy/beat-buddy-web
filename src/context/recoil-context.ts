@@ -344,3 +344,22 @@ export const agreementTermsState = atom<Term[]>({
   default: [],
   effects_UNSTABLE: [persistAtom],
 });
+
+// 온보딩 선택 값들 관리
+export const onboardingGenreState = atom<string[]>({
+  key: 'onboardingGenreState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const onboardingMoodState = atom<string[]>({
+  key: 'onboardingMoodState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const onboardingLocationState = atom<string[]>({
+  key: 'onboardingLocationState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});

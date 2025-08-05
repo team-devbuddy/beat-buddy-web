@@ -24,11 +24,11 @@ export default function OnBoardingCustom() {
   return (
     <>
       <div className="flex w-full flex-col px-5">
-        <div className="flex py-10">
+        <div className="flex pb-5 pt-10">
           <Image src="/icons/pinkMainLogo.svg" alt="onboarding_custom" width={43.6} height={40} />
         </div>
         <div className="flex flex-col items-start">
-          <p className="text-start text-title-24-bold text-white">
+          <p className="text-start text-[1.5rem] font-bold text-white">
             지금 바로 {nickname}버디님의
             <br />
             취향 저격 베뉴들을 둘러보세요
@@ -38,7 +38,7 @@ export default function OnBoardingCustom() {
       <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
         <button
           onClick={() => router.push('/onBoarding/myTaste/genre')}
-          className="w-full max-w-md rounded-[0.5rem] bg-main py-4 text-[1rem] font-bold text-sub2 hover:brightness-105">
+          className="w-full max-w-[560px] rounded-[0.5rem] bg-main py-[0.81rem] text-[1rem] font-bold text-sub2">
           베뉴 추천받기
         </button>
       </div>

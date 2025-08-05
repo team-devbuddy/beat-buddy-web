@@ -1,8 +1,15 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { accessTokenState, memberGenreIdState, memberMoodIdState } from '@/context/recoil-context';
+import {
+  accessTokenState,
+  memberGenreIdState,
+  memberMoodIdState,
+  onboardingGenreState,
+  onboardingMoodState,
+  onboardingLocationState,
+} from '@/context/recoil-context';
 import { GetNickname, PostArchive } from '@/lib/action';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { use, useEffect, useState } from 'react';
 import Image from 'next/image';
 
@@ -12,6 +19,11 @@ export default function OnBoardingComplete() {
   const access = useRecoilValue(accessTokenState) || '';
   const router = useRouter();
   const [nickname, setNickname] = useState<string>('');
+
+  // 온보딩 상태 초기화를 위한 setters
+  const setOnboardingGenre = useSetRecoilState(onboardingGenreState);
+  const setOnboardingMood = useSetRecoilState(onboardingMoodState);
+  const setOnboardingLocation = useSetRecoilState(onboardingLocationState);
 
   useEffect(() => {
     const getNickname = async () => {
@@ -30,7 +42,12 @@ export default function OnBoardingComplete() {
       try {
         const response = await PostArchive(access, { memberGenreId, memberMoodId });
         if (response.ok) {
-          router.push('/');
+          // 온보딩 완료 후 선택 값들 초기화
+          setOnboardingGenre([]);
+          setOnboardingMood([]);
+          setOnboardingLocation([]);
+
+          router.push('/bbp-list');
         } else {
           alert('Error creating archive');
         }
@@ -43,7 +60,7 @@ export default function OnBoardingComplete() {
   };
 
   return (
-    <div className="relative flex w-full flex-col bg-BG-black px-5 ">
+    <div className="relative flex w-full flex-col bg-BG-black px-5">
       <div className="flex w-full flex-col">
         <Image
           src="/icons/landing_step_3.svg"
@@ -52,8 +69,8 @@ export default function OnBoardingComplete() {
           height={24}
           className="absolute right-5 top-[-36px] z-10"
         />
-        <div className="flex w-full flex-col ">
-          <h1 className="pb-[1.25rem] pt-[0.62rem] text-title-24-bold text-white">
+        <div className="flex w-full flex-col">
+          <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold text-white">
             {nickname}버디님을 위한
             <br />
             맞춤 베뉴를 찾았어요!
@@ -63,7 +80,7 @@ export default function OnBoardingComplete() {
         <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
           <button
             onClick={onClickSubmit}
-            className={`w-full max-w-md rounded-[0.5rem] bg-main py-4 text-[1rem] font-bold text-sub2 hover:brightness-105`}>
+            className={`w-full max-w-[560px] rounded-[0.5rem] bg-main py-[0.81rem] text-[1rem] font-bold text-sub2`}>
             확인하러 가기
           </button>
         </div>

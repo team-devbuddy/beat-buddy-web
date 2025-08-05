@@ -81,8 +81,8 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
   return (
     <>
       <div className="flex w-full flex-col px-5">
-        <div className="mt-3">
-          <div className="flex flex-col py-3">
+        <div className="">
+          <div className="flex flex-col ">
             <div className="relative flex">
               <input
                 className="safari-input-fix text-[0.875rem] w-full border-b border-white bg-transparent py-3 pl-1 text-white outline-none placeholder:text-gray200"
@@ -114,9 +114,9 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
         <button
           onClick={onClickSubmit}
           disabled={!isDuplicateChecked || !isDuplicateValid}
-          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold ${
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold ${
             isDuplicateChecked && isDuplicateValid
-              ? 'bg-[#EE1171] text-sub2 hover:brightness-105'
+              ? 'bg-[#EE1171] text-sub2'
               : 'bg-gray400 text-gray300'
           }`}>
           {buttonText}
