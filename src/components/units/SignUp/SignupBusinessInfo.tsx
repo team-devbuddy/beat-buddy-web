@@ -103,21 +103,21 @@ export default function SignUpBusinessNickname() {
         <div ref={containerRef}>
           {step === 1 && (
             <>
-              <h1 className="pb-8 text-title-24-bold">비즈니스명을 입력해주세요.</h1>
-              <label className="mb-2 block text-body1-16-bold">비즈니스명</label>
+              <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">비즈니스명을 입력해주세요.</h1>
+              <label className="mb-[0.62rem] block text-[1rem] font-bold">비즈니스명</label>
               <input
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="ex. 클럽 사운드, UPA"
-                className="w-full border-b border-white bg-transparent px-3 py-3 text-white placeholder-gray400 safari-input-fix outline-none"
+                className="w-full border-b border-white bg-transparent px-1 py-3 text-[0.875rem] text-white placeholder-gray200 safari-input-fix outline-none"
               />
             </>
           )}
 
           {step === 2 && (
             <>
-              <h1 className="pb-8 text-title-24-bold">닉네임을 입력해주세요.</h1>
-              <label className="mb-2 block text-body1-16-bold">닉네임</label>
+              <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">닉네임을 입력해주세요.</h1>
+              <label className="mb-[0.62rem] block text-[1rem] font-bold">닉네임</label>
               <div className="relative">
                 <input
                   maxLength={12}
@@ -128,7 +128,7 @@ export default function SignUpBusinessNickname() {
                     setNicknameChecked(false);
                   }}
                   placeholder="닉네임을 입력해 주세요."
-                  className="w-full border-b border-white bg-transparent px-3 py-3 pr-10 text-white placeholder-gray400 safari-input-fix outline-none"
+                  className="w-full border-b border-white bg-transparent px-1 py-3 pr-10 text-[0.875rem] text-white placeholder-gray200 safari-input-fix outline-none"
                 />
                 {nicknameChecked && isAvailable ? (
                   <Image
@@ -142,7 +142,7 @@ export default function SignUpBusinessNickname() {
                   <button
                     onClick={handleCheckNickname}
                     disabled={checking || !nickname}
-                    className="absolute right-0 top-1/2 mr-[0.5rem] -translate-y-1/2 transform rounded-full bg-gray700 px-[0.75rem] py-[0.38rem] text-xs font-bold text-main">
+                    className="absolute right-0 top-1/2 mr-[0.5rem] -translate-y-1/2 transform rounded-[0.5rem] bg-gray700 px-[0.75rem] py-[0.38rem] text-[0.75rem] font-bold text-main">
                     중복 확인
                   </button>
                 )}
@@ -150,14 +150,14 @@ export default function SignUpBusinessNickname() {
 
               <div className="mt-2">
                 {!nicknameChecked && (
-                  <p className="text-body3-12-medium text-gray300">
+                  <p className="text-[0.75rem] text-gray300">
                     공백없이 12자 이하로 입력해주세요. 특수 기호는 불가능해요.
                   </p>
                 )}
                 {nicknameChecked && (
-                  <p className="mt-2 text-sm">
+                  <p className="mt-2 text-[0.875rem]">
                     {isAvailable ? (
-                      <span className="text-body3-12-medium text-green-400">사용 가능한 닉네임이에요.</span>
+                      <span className="text-[0.75rem] text-main">사용 가능한 닉네임이에요.</span>
                     ) : (
                       <span className="text-main">중복된 닉네임이에요.</span>
                     )}
@@ -166,8 +166,10 @@ export default function SignUpBusinessNickname() {
               </div>
 
               <div className="pt-6">
-                <label className="mb-2 block text-body1-16-bold text-gray300">비즈니스명</label>
-                <p className="cursor-pointer border-b border-gray300 px-2 py-2 text-gray300">{businessName}</p>
+                <label className="mb-[0.62rem] block text-[1rem] font-bold text-gray300">비즈니스명</label>
+                <p className="cursor-pointer border-b border-gray300 px-2 py-2 text-[0.875rem] text-gray300">
+                  {businessName}
+                </p>
               </div>
             </>
           )}
@@ -176,8 +178,8 @@ export default function SignUpBusinessNickname() {
             <div className="flex h-screen items-center justify-center text-center">
               <div className="flex flex-col items-center">
                 <Image src="/icons/MainLogo.svg" alt="check" width={100} height={100} className="mb-6" />
-                <h1 className="mb-1 text-title-20-bold text-main">관리자 심사 요청이 완료되었어요!</h1>
-                <p className="text-body2-15-medium text-gray300">
+                <h1 className="mb-1 text-[1.25rem] font-bold text-main">관리자 심사 요청이 완료되었어요!</h1>
+                <p className="text-[0.875rem] text-gray300">
                   심사 완료까지 비트버디를 둘러보실까요?
                   <br />
                 </p>
@@ -191,7 +193,7 @@ export default function SignUpBusinessNickname() {
             <button
               onClick={handleSubmit}
               disabled={!isAvailable}
-              className={`w-full rounded-md py-4 font-bold ${
+              className={`w-full rounded-[0.5rem] py-[0.81rem] font-bold ${
                 isAvailable ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
               }`}>
               관리자 심사 요청하기
