@@ -92,7 +92,7 @@ const SearchHeader = () => {
   };
 
   return (
-    <header className="bg-BG-black px-5 py-[0.63rem]">
+    <header className="bg-BG-black px-5 py-[0.69rem]">
       <div className="relative w-full">
         {/* 위치 권한 안내 */}
         {showLocationPermission && (
@@ -128,7 +128,8 @@ const SearchHeader = () => {
         <div className="relative w-full rounded-[0.5rem] bg-gray700">
           <input
             ref={inputRef}
-            className="w-full cursor-pointer bg-transparent py-[0.94rem] pl-[2.37rem] pr-[3rem] text-[0.8125rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none"
+            className={`w-full cursor-pointer bg-transparent py-[0.94rem] pl-[2.37rem] pr-[3rem] text-[0.8125rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none
+            ${searchQuery ? 'text-[0.9375rem] font-bold' : 'text-[0.8125rem]'}`}
             placeholder="지금 인기 있는 베뉴를 검색해보세요."
             value={searchQuery}
             onChange={handleInputChange}

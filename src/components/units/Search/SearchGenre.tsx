@@ -65,7 +65,7 @@ function SearchGenre() {
       <motion.div
         key={index}
         onClick={() => handleItemClick(item)}
-        className={`flex ${index < 3 || (index >= 5 && index < 8) ? 'aspect-square w-full' : 'h-[3.75rem] sm:h-[6.25rem]'} items-center justify-center rounded-sm bg-cover bg-center text-[0.9375rem] font-light text-white`}
+        className={`flex ${index < 3 || (index >= 5 && index < 8) ? 'aspect-square w-full' : 'h-[3.75rem] sm:h-[6.25rem]'} items-center justify-center rounded-[0.25rem] bg-cover bg-center text-[0.9375rem] font-normal text-white`}
         style={{
           backgroundImage: `url('/images/onBoarding/background/onboarding-${index + 1}.webp')`,
         }}

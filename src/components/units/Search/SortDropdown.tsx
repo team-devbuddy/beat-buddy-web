@@ -75,11 +75,11 @@ function Dropdown({
         <button
           ref={buttonRef}
           type="button"
-          className={`inline-flex w-full cursor-pointer justify-between rounded-[0.5rem] py-[0.25rem] pl-[0.5rem] pr-[0.25rem] text-[0.8125rem] focus:outline-none ${
+          className={`inline-flex w-full cursor-pointer justify-between rounded-[0.5rem] py-[0.25rem] pl-[0.5rem] pr-[0.25rem]  text-[0.8125rem] focus:outline-none ${
             isThirdDropdown
               ? 'border-transparent bg-transparent text-gray300'
               : selectedOption
-                ? 'border-sub2 bg-sub2 text-main2'
+                ? 'border-sub2 bg-sub2 text-main'
                 : 'border-gray700 bg-gray700 text-gray300'
           }`}
           onClick={toggleDropdown}>
@@ -118,7 +118,7 @@ function Dropdown({
                 {options.map((option, index) => (
                   <button
                     key={index}
-                    className={`block text-center text-[0.8125rem] text-gray300 ${
+                    className={`block text-center text-[0.8125rem] text-gray100 ${
                       option === selectedOption ? 'font-bold text-main' : ''
                     }`}
                     onClick={() => handleOptionClick(option)}>

@@ -45,7 +45,7 @@ const locationsMap: { [key: string]: string } = {
 };
 
 const criteriaMap: { [key: string]: string } = {
-  거리순: '거리순',
+  '가까운 순': '거리순',
   인기순: '인기순',
 };
 
@@ -73,7 +73,7 @@ export default function SearchResults({
     searchQuery: '',
     selectedGenre: '',
     selectedLocation: '',
-    selectedOrder: '거리순',
+    selectedOrder: '가까운 순',
   });
 
   const genres = useMemo(
@@ -81,7 +81,7 @@ export default function SearchResults({
     [],
   );
   const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정', '기타'], []);
-  const criteria = useMemo(() => ['거리순', '인기순'], []);
+  const criteria = useMemo(() => ['가까운 순', '인기순'], []);
 
   const performSearch = useCallback(
     async (targetPage: number, append: boolean = false) => {
@@ -93,7 +93,7 @@ export default function SearchResults({
           keyword: searchQuery || '',
           genreTag: genresMap[selectedGenre] || '',
           regionTag: locationsMap[selectedLocation] || '',
-          sortCriteria: criteriaMap[selectedOrder] || '거리순',
+          sortCriteria: criteriaMap[selectedOrder] || '가까운 순',
           page: targetPage,
           size: 10,
         };
@@ -149,7 +149,7 @@ export default function SearchResults({
 
   // 초기 로딩 시 한 번만 실행
   useEffect(() => {
-    setSelectedOrder('거리순');
+    setSelectedOrder('가까운 순');
     performSearch(1);
   }, []);
 
@@ -214,7 +214,7 @@ export default function SearchResults({
           keyword: searchQuery || '',
       genreTag: genresMap[selectedGenre] || '',
       regionTag: locationsMap[selectedLocation] || '',
-          sortCriteria: criteriaMap[selectedOrder] || '거리순',
+          sortCriteria: criteriaMap[selectedOrder] || '가까운 순',
           page: page,
           size: 10,
     };

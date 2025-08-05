@@ -33,7 +33,7 @@ export const searchVenues = async (filters: any, accessToken: string | null) => 
     let url = `${process.env.NEXT_PUBLIC_SERVER_URL}/search/home/drop-down`;
     const params = new URLSearchParams();
 
-    if (filters.sortCriteria === '거리순') {
+    if (filters.sortCriteria === '가까운 순') {
       try {
         const location = await getCurrentLocation();
         params.append('latitude', location.latitude.toString());
@@ -63,7 +63,7 @@ export const searchVenues = async (filters: any, accessToken: string | null) => 
     });
 
     const requestBody: any = {
-      sortCriteria: filters.sortCriteria || '거리순', // 거리순을 기본값으로
+      sortCriteria: filters.sortCriteria || '가까운 순', // 거리순을 기본값으로
     };
 
     // 빈 값이 아닌 경우에만 추가
@@ -156,12 +156,12 @@ export const fetchVenues = (query: string[], accessToken: string | null) => {
     keyword = '',
     genreTag = '',
     regionTag = '',
-    sortCriteria = '거리순',
+    sortCriteria = '가까운 순',
     page = 1,
     size = 10,
   } = {
     keyword: query.join(' '),
-    sortCriteria: '거리순', // 거리순을 기본값으로
+    sortCriteria: '가까운 순', // 거리순을 기본값으로
   };
   return searchVenues(
     {

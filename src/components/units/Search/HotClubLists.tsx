@@ -78,24 +78,24 @@ export default function HotClubsList() {
   }
 
   return (
-    <div className="bg-BG-black px-[1.25rem] pb-[5rem] pt-[0.88rem] text-gray100">
+    <div className="bg-BG-black px-[1.25rem] pb-[5rem] pt-[0.62rem] text-gray100">
       <div className="flex items-center justify-start gap-[0.5rem]">
         <h2 className="font-paperlogy text-[1.125rem] font-bold tracking-[-0.05rem] text-main">Now Hot</h2>
         <span className="text-[0.8125rem] text-gray300">{getCurrentDate()} 기준</span>
       </div>
       <div className="flex justify-between pt-[0.88rem]">
-        <ul className="flex w-[10rem] list-none flex-col gap-y-[0.5rem]">
+        <ul className="flex w-[10rem] list-none flex-col">
           {hotData.slice(0, 5).map((club, index) => (
             <motion.li
               key={index}
-              className="flex cursor-pointer items-center py-[0.25rem] text-[0.875rem]"
+              className="flex cursor-pointer items-center py-[0.44rem] text-[0.875rem]"
               onClick={() => handleKeywordClick(club.rankKeyword)}
               whileTap={{ scale: 0.95 }}>
-              <span className="mr-[0.25rem] w-[1.125rem] text-main">{index + 1}</span>
+              <span className="mr-[0.62rem] w-[1.25rem] text-center text-[0.875rem] font-bold text-main">
+                {index + 1}
+              </span>
               <span
-                className={`mt-[0.12rem] transition-all duration-300 ease-in-out ${
-                  index === highlightedIndex ? 'text-white' : ''
-                }`}
+                className={`transition-all duration-300 ease-in-out ${index === highlightedIndex ? 'text-white' : ''}`}
                 style={{
                   fontSize: index === highlightedIndex ? '1rem' : '0.8125rem',
                   fontWeight: index === highlightedIndex ? 700 : 400,
@@ -105,16 +105,18 @@ export default function HotClubsList() {
             </motion.li>
           ))}
         </ul>
-        <ul className="flex w-[10rem] list-none flex-col gap-y-[0.5rem]">
+        <ul className="flex w-[10rem] list-none flex-col">
           {hotData.slice(5, 10).map((club, index) => (
             <motion.li
               key={index + 5}
-              className="flex cursor-pointer items-center py-[0.25rem] text-[0.875rem]"
+              className="flex cursor-pointer items-center py-[0.44rem] text-[0.875rem]"
               onClick={() => handleKeywordClick(club.rankKeyword)}
               whileTap={{ scale: 0.95 }}>
-              <span className="mr-[0.25rem] w-[1.125rem] text-main">{index + 6}</span>
+              <span className="mr-[0.62rem] w-[1.25rem] text-center text-[0.875rem] font-bold text-main">
+                {index + 6}
+              </span>
               <span
-                className={`mt-[0.12rem] transition-all duration-300 ease-in-out ${
+                className={`transition-all duration-300 ease-in-out ${
                   index + 5 === highlightedIndex ? 'text-white' : ''
                 }`}
                 style={{

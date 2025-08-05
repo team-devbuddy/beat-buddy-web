@@ -55,7 +55,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
 
   const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'];
   const locations = ['홍대', '이태원', '강남/신사', '압구정', '기타'];
-  const sorts = ['거리순', '인기순'];
+  const sorts = ['가까운 순', '인기순'];
 
   // 매핑 객체들
   const genresMap: { [key: string]: string } = {
@@ -80,7 +80,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
   };
 
   const criteriaMap: { [key: string]: string } = {
-    거리순: '거리순',
+    '가까운 순': '거리순',
     인기순: '인기순',
   };
 
@@ -128,12 +128,12 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
     });
 
     // 모든 드롭다운이 해제된 상태면 원본 리스트 표시
-    const isAllFiltersEmpty = !selectedGenre && !selectedLocation && (selectedSort === '거리순' || !selectedSort);
+    const isAllFiltersEmpty = !selectedGenre && !selectedLocation && (selectedSort === '가까운 순' || !selectedSort);
     console.log('🔍 필터 상태 체크:', {
       isAllFiltersEmpty,
       selectedGenre: !!selectedGenre,
       selectedLocation: !!selectedLocation,
-      selectedSort: selectedSort === '거리순' || !selectedSort,
+      selectedSort: selectedSort === '가까운 순' || !selectedSort,
     });
 
     if (isAllFiltersEmpty) {
