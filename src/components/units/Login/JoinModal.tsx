@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { signupUserTypeState, isBusinessState } from '@/context/recoil-context';
-import Image from 'next/image';
+import HeartIcon from '@/components/icons/HeartIcon';
+import SoundIcon from '@/components/icons/SoundIcon';
 
 interface Props {
   onBusinessClick: () => void;
@@ -86,7 +87,7 @@ export default function JoinModal({ onBusinessClick, onClose, loginType }: Props
       linear-gradient(270deg, #7C7C7C -17.22%, #4B4B4B 16.24%, #4B4B4B 57.57%, #7C7C7C 108.33%)
     `,
             }}>
-            <Image src="/icons/로그인/Vector.svg" alt="heart" width={32} height={32} className="mb-[0.75rem]" />
+            <HeartIcon width={32} height={32} className="mb-[0.75rem] safari-icon-fix" />
             <p className="text-1rem font-bold leading-[1.35rem] tracking-[-0.02rem]">일반 버디로</p>
             <p className="mb-[3rem] text-body1-16-bold">시작하기</p>
           </div>
@@ -106,13 +107,7 @@ export default function JoinModal({ onBusinessClick, onClose, loginType }: Props
             />
             {/* 내용 */}
             <div className="pointer-events-none z-10">
-              <Image
-                src="/icons/로그인/Headers/Symbol.svg"
-                alt="sound"
-                width={32}
-                height={32}
-                className="mb-[0.75rem]"
-              />
+              <SoundIcon width={32} height={32} className="mb-[0.75rem] safari-icon-fix" />
               <p className="text-1rem font-bold leading-[1.35rem] tracking-[-0.02rem] text-main2">비즈 버디로</p>
               <p className="text-1rem font-bold leading-[1.35rem] tracking-[-0.02rem] text-main2">시작하기</p>
               <p className="mt-[0.5rem] text-[0.75rem] leading-[1.125rem] tracking-[-0.015rem] text-white/50">
