@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { useSearchParams } from 'next/navigation';
 import { accessTokenState } from '@/context/recoil-context';
 import { getMagazineList } from '@/lib/actions/magazine-controller/getMagazine';
 import { MagazineProps } from '@/lib/types';
@@ -15,8 +16,13 @@ import Image from 'next/image';
 
 export default function MagazineListPage() {
   const accessToken = useRecoilValue(accessTokenState);
+  const searchParams = useSearchParams();
   const [magazines, setMagazines] = useState<MagazineProps[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // URL 파라미터에서 current와 total 가져오기
+  const currentIndex = searchParams.get('current');
+  const totalCount = searchParams.get('total');
 
   useEffect(() => {
     const fetchMagazines = async () => {
@@ -36,11 +42,17 @@ export default function MagazineListPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-BG-black text-white">
-      <div className="flex items-center pl-[0.62rem] py-[0.53rem]">
+      <div className="flex items-center py-[0.53rem] pl-[0.62rem]">
         <Link href="/">
           <Image src="/icons/line-md_chevron-left.svg" alt="back" width={35} height={35} />
         </Link>
-        <p className="ml-[0.12rem] text-[1.125rem] font-bold text-white">전체보기</p>
+        <p className="ml-[0.12rem] text-[1.125rem] font-bold text-white">
+          {currentIndex && totalCount
+            ? `${currentIndex} | ${totalCount}`
+            : !loading && magazines.length > 0
+              ? `1 | ${magazines.length}`
+              : '매거진'}
+        </p>
       </div>
       <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.88rem]">
         {loading ? (

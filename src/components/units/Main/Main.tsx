@@ -24,6 +24,7 @@ import { getMagazineList } from '@/lib/actions/magazine-controller/getMagazine';
 import VenueFor from './VenueFor';
 import { getHotPost, RawHotPost } from '@/lib/actions/post-controller/getHotPost';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import MainFooter from './MainFooter';
 
@@ -39,6 +40,7 @@ export default function Main() {
   const [loading, setLoading] = useState(true);
   const [magazine, setMagazine] = useState<MagazineProps[]>([]);
   const [hotPosts, setHotPosts] = useState<RawHotPost[]>([]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   useEffect(() => {
     const fetchHotPost = async () => {
@@ -175,43 +177,56 @@ export default function Main() {
         <SearchBar />
 
         {/* 👇 Swiper를 위한 Full-width 컨테이너 (좌우 패딩 없음) */}
-        <div className="flex w-full items-center justify-center py-[0.88rem]">
+        <div className="flex w-full flex-col items-center justify-center py-[0.88rem]">
           {magazine.length > 0 && (
-            <Swiper
-              loop={true}
-              centeredSlides={true}
-              slidesPerView={1.2}
-              breakpoints={{
-                320: { slidesPerView: 1.01 },
-                360: { slidesPerView: 1.11 },
-                375: { slidesPerView: 1.11 },
-                440: { slidesPerView: 1.15 },
-                480: { slidesPerView: 1.2 },
-                600: { slidesPerView: 1.68 },
-              }}
-              spaceBetween={10}
-              watchOverflow={true}
-              observer={true}
-              observeParents={true}
-              allowTouchMove={true}
-              speed={300}
-              touchRatio={1}
-              threshold={10}
-              className="magazine-swiper w-full max-w-[100vw]">
-              {magazine.map((item) => (
-                <SwiperSlide key={item.magazineId}>
-                  <Magazine
-                    magazineId={item.magazineId}
-                    thumbImageUrl={item.thumbImageUrl}
-                    title={item.title}
-                    content={item.content}
-                    totalCount={magazine.length}
-                    orderInHome={item.orderInHome}
-                    picked={item.picked}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            <>
+              <Swiper
+                modules={[Autoplay]}
+                autoplay={{
+                  delay: 5000,
+                  disableOnInteraction: false,
+                }}
+                loop={true}
+                centeredSlides={true}
+                slidesPerView={1.2}
+                breakpoints={{
+                  320: { slidesPerView: 1.01 },
+                  360: { slidesPerView: 1.11 },
+                  375: { slidesPerView: 1.11 },
+                  440: { slidesPerView: 1.15 },
+                  480: { slidesPerView: 1.2 },
+                  600: { slidesPerView: 1.68 },
+                }}
+                spaceBetween={10}
+                watchOverflow={true}
+                observer={true}
+                observeParents={true}
+                allowTouchMove={true}
+                speed={300}
+                touchRatio={1}
+                threshold={10}
+                onSlideChange={(swiper) => {
+                  // loop가 활성화된 경우 realIndex 사용
+                  setCurrentSlideIndex(swiper.realIndex);
+                }}
+                className="magazine-swiper w-full max-w-[100vw]">
+                {magazine.map((item) => (
+                  <SwiperSlide key={item.magazineId}>
+                    <Magazine
+                      magazineId={item.magazineId}
+                      thumbImageUrl={item.thumbImageUrl}
+                      title={item.title}
+                      content={item.content}
+                      totalCount={magazine.length}
+                      orderInHome={item.orderInHome}
+                      picked={item.picked}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+
+              
+            </>
           )}
         </div>
 
