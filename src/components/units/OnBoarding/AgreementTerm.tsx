@@ -6,13 +6,13 @@ import { Term } from '@/lib/types';
 import { termsData } from '@/lib/data';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { accessTokenState, isBusinessState } from '@/context/recoil-context';
+import { accessTokenState, isBusinessState, agreementTermsState } from '@/context/recoil-context';
 import { PostAgree } from '@/lib/action';
 import Loading from '@/app/loading';
 import Prev from '@/components/common/Prev';
 
 export default function AgreementTerm() {
-  const [terms, setTerms] = useState<Term[]>(termsData);
+  const [terms, setTerms] = useRecoilState(agreementTermsState);
   const [allChecked, setAllChecked] = useState(false);
   const [buttonEnabled, setButtonEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,6 +23,13 @@ export default function AgreementTerm() {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const isBusiness = useRecoilValue(isBusinessState); // recoil state에서 비즈니스 여부 확인
   const setIsBusiness = useSetRecoilState(isBusinessState);
+
+  // 초기 로드 시 terms가 비어있으면 기본값으로 초기화
+  useEffect(() => {
+    if (terms.length === 0) {
+      setTerms(termsData);
+    }
+  }, [terms, setTerms]);
 
   useEffect(() => {
     const access = searchParams.get('access');
@@ -111,6 +118,9 @@ export default function AgreementTerm() {
         setLoading(true);
         const response = await PostAgree(accessToken, requestData);
         if (response.ok) {
+          // 성공 시 약관 상태 초기화
+          setTerms(termsData.map((term) => ({ ...term, checked: false })));
+
           // ✅ recoil state에 따라 라우팅
           if (isBusiness) {
             router.push('/signup/business');
@@ -131,23 +141,23 @@ export default function AgreementTerm() {
       <Prev url={'/login'} />
       {loading && <Loading />}
       <div className="flex w-full flex-col px-5">
-        <h1 className="pt-[0.62rem] text-title-24-bold text-white">
+        <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold text-white">
           서비스 이용 동의서에
           <br />
           동의해주세요
         </h1>
 
-        <div className="flex w-full gap-2 border-b border-gray700 pb-6 pt-[2.75rem]">
+        <div className="flex w-full gap-2 border-b border-gray700 pb-6 pt-3">
           <Image
             src={allChecked ? '/icons/CheckActive.svg' : '/icons/CheckDisabled.svg'}
             alt="checked"
             width={24}
             height={24}
-            className="cursor-pointer"
+            className="cursor-pointer transition-all duration-300 ease-in-out"
             onClick={handleAllCheckboxClick}
           />
           <p
-            className={`cursor-pointer ${allChecked ? 'text-white' : 'text-gray400'}`}
+            className={`cursor-pointer text-[1rem] transition-colors duration-300 ease-in-out ${allChecked ? 'text-white' : 'text-gray400'}`}
             onClick={handleAllCheckboxClick}>
             모두 동의 (선택 동의 포함)
           </p>
@@ -162,18 +172,18 @@ export default function AgreementTerm() {
                   alt="check"
                   width={16}
                   height={16}
-                  className="cursor-pointer"
+                  className="cursor-pointer transition-all duration-300 ease-in-out"
                   onClick={() => handleCheckboxClick(term.id)}
                 />
                 <p
-                  className={`cursor-pointer text-[0.9375rem] ${term.checked ? 'text-white' : 'text-gray400'}`}
+                  className={`cursor-pointer text-[0.875rem] transition-colors duration-300 ease-in-out ${term.checked ? 'text-white' : 'text-gray400'}`}
                   onClick={() => handleCheckboxClick(term.id)}>
                   {term.label}
                 </p>
               </div>
               {term.url && (
                 <div
-                  className="cursor-pointer pr-2 text-xs text-gray400 hover:text-main"
+                  className="cursor-pointer pr-2 text-[0.75rem] text-gray400 transition-colors duration-200 ease-in-out hover:text-gray300"
                   onClick={() => handleTermsView(term.id)}>
                   보기
                 </div>
@@ -187,7 +197,7 @@ export default function AgreementTerm() {
         <button
           onClick={onClickSubmit}
           disabled={!buttonEnabled}
-          className={`w-full max-w-md rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-4 text-[1rem] font-bold transition-colors ${
             buttonEnabled ? 'bg-main text-sub2' : 'bg-gray500 text-gray300'
           }`}>
           동의하고 가입하기

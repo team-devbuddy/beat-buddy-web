@@ -13,7 +13,7 @@ export default function Prev({ url, onBack, title }: PrevProps) {
   const router = useRouter();
 
   return (
-    <nav className="w-full px-5 py-4">
+    <nav className="w-full pl-[0.62rem] py-[0.53rem]">
       <button
         type="button"
         title="뒤로가기"
@@ -27,8 +27,8 @@ export default function Prev({ url, onBack, title }: PrevProps) {
           }
         }}
         className="cursor-pointer ">
-        <div className="flex ml-[-0.5rem] items-center gap-[0.12rem]">
-          <Image src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={24} height={24} />
+        <div className="flex items-center gap-[0.12rem]">
+          <Image src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={35} height={35} />
           <span className="text-[1.125rem] font-bold text-white">{title}</span>
         </div>
       </button>

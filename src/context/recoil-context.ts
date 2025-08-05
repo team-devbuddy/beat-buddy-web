@@ -1,7 +1,7 @@
 import { atom, selector, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
-import { HeartbeatProps, ClubProps, Club, UserProfile, EventDetail } from '@/lib/types';
+import { HeartbeatProps, ClubProps, Club, UserProfile, EventDetail, Term } from '@/lib/types';
 
 const { persistAtom } = recoilPersist();
 
@@ -336,4 +336,11 @@ export const replyLikeCountState = atom<{ [replyId: number]: number }>({
 export const mainScrollYState = atom({
   key: 'mainScrollYState',
   default: 0,
+});
+
+// 약관 체크박스 상태 관리
+export const agreementTermsState = atom<Term[]>({
+  key: 'agreementTermsState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
 });
