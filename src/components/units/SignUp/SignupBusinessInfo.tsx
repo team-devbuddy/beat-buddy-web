@@ -96,7 +96,7 @@ export default function SignUpBusinessNickname() {
     <>
       {step < 3 && <Prev url="/signup/business/info" onBack={goToStep1} />}
       <div
-        className="min-h-screen bg-BG-black px-4 text-white"
+        className="min-h-screen bg-BG-black px-5 text-white"
         onKeyDown={handleKeyDown}
         tabIndex={0}
         onClick={step === 3 ? handleGoToHome : undefined}>

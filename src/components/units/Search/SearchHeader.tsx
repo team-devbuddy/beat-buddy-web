@@ -110,16 +110,16 @@ const SearchHeader = () => {
 
         {/* 
         {hasQuery && (🔙 Back icon */}
-        <div className="absolute left-[0.88rem] top-1/2 z-10 -translate-y-1/2">
-          <Image
-            src="/icons/arrow_back_ios.svg"
-            alt="뒤로가기"
-            width={24}
-            height={24}
-            onClick={handleBackClick}
-            className="cursor-pointer"
-          />
-        </div>
+          <div className="absolute left-[0.88rem] top-1/2 z-10 -translate-y-1/2">
+            <Image
+              src="/icons/arrow_back_ios.svg"
+              alt="뒤로가기"
+              width={24}
+              height={24}
+              onClick={handleBackClick}
+              className="cursor-pointer"
+            />
+          </div>
         {/* )} */}
 
         {/* 🔍 Search icon */}

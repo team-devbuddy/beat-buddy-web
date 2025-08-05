@@ -144,7 +144,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
         );
       } else {
         // 자식댓글이 없으면 완전 삭제
-        setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
+      setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
       }
     } catch (error) {
       console.error('댓글 삭제 실패', error);
@@ -235,52 +235,52 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             renderDeletedComment(true)
           ) : (
             <>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-[0.37rem] text-[0.8125rem] font-bold text-white">
-                  <Image
-                    src={
-                      reply.isAnonymous
-                        ? '/icons/default-profile.svg'
-                        : reply.profileImageUrl || '/icons/default-profile.svg'
-                    }
-                    alt="profile"
-                    width={22}
-                    height={22}
-                    className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover"
-                    onClick={handleProfileClick}
-                  />
-                  {reply.memberName}
-                  <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
-                </div>
-                <div className="relative">
-                  <Image
-                    ref={iconRef}
-                    src="/icons/dot-vertical.svg"
-                    alt="menu"
-                    width={20}
-                    height={20}
-                    onClick={handleMenuClick}
-                    className="cursor-pointer"
-                  />
-                </div>
-              </div>
-              <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
-              <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
-                <button
-                  onClick={handleLike}
-                  disabled={isLoadingLike}
-                  className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${
-                    isLiked ? 'text-main' : 'text-gray300'
-                  }`}>
-                  <Image
-                    src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
-                    alt="heart"
-                    width={16}
-                    height={16}
-                  />
-                  {likeCount}
-                </button>
-              </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-[0.37rem] text-[0.8125rem] font-bold text-white">
+              <Image
+                src={
+                  reply.isAnonymous
+                    ? '/icons/default-profile.svg'
+                    : reply.profileImageUrl || '/icons/default-profile.svg'
+                }
+                alt="profile"
+                width={22}
+                height={22}
+                className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover"
+                onClick={handleProfileClick}
+              />
+              {reply.memberName}
+              <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
+            </div>
+            <div className="relative">
+              <Image
+                ref={iconRef}
+                src="/icons/dot-vertical.svg"
+                alt="menu"
+                width={20}
+                height={20}
+                onClick={handleMenuClick}
+                className="cursor-pointer"
+              />
+            </div>
+          </div>
+          <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
+          <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
+            <button
+              onClick={handleLike}
+              disabled={isLoadingLike}
+              className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${
+                isLiked ? 'text-main' : 'text-gray300'
+              }`}>
+              <Image
+                src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
+                alt="heart"
+                width={16}
+                height={16}
+              />
+              {likeCount}
+            </button>
+          </div>
             </>
           )}
         </div>
@@ -305,7 +305,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
               } else {
                 // 자식댓글이 없으면 완전 삭제
                 setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
-              }
+            }
             }}
             writerId={reply.userId ? parseInt(reply.userId) : undefined}
           />
@@ -325,53 +325,53 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           renderDeletedComment()
         ) : (
           <>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-white">
-                <Image
-                  src={
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-white">
+            <Image
+              src={
                     reply.isAnonymous
                       ? '/icons/default-profile.svg'
                       : reply.profileImageUrl || '/icons/default-profile.svg'
-                  }
-                  alt="profile"
-                  width={22}
-                  height={22}
-                  className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover safari-icon-fix"
-                  onClick={handleProfileClick}
-                />
-                {reply.memberName}
-                <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
-              </div>
-              <div className="relative">
-                <Image
-                  ref={iconRef}
-                  src="/icons/dot-vertical.svg"
-                  alt="menu"
-                  width={20}
-                  height={20}
-                  onClick={handleMenuClick}
-                  className="cursor-pointer"
-                />
-              </div>
-            </div>
-            <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
-            <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
-              <button
-                onClick={handleLike}
-                disabled={isLoadingLike}
-                className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${isLiked ? 'text-main' : 'text-gray300'}`}>
-                <Image
-                  src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
-                  alt="heart"
-                  width={16}
-                  height={16}
-                />
-                {likeCount}
-              </button>
-              <button onClick={handleReplyClick} className="text-gray300">
-                {isReplying ? '답글 취소' : '답글 달기'}
-              </button>
-            </div>
+              }
+              alt="profile"
+              width={22}
+              height={22}
+              className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover safari-icon-fix"
+              onClick={handleProfileClick}
+            />
+            {reply.memberName}
+            <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
+          </div>
+          <div className="relative">
+            <Image
+              ref={iconRef}
+              src="/icons/dot-vertical.svg"
+              alt="menu"
+              width={20}
+              height={20}
+              onClick={handleMenuClick}
+              className="cursor-pointer"
+            />
+          </div>
+        </div>
+        <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
+        <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
+          <button
+            onClick={handleLike}
+            disabled={isLoadingLike}
+            className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${isLiked ? 'text-main' : 'text-gray300'}`}>
+            <Image
+              src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
+              alt="heart"
+              width={16}
+              height={16}
+            />
+            {likeCount}
+          </button>
+          <button onClick={handleReplyClick} className="text-gray300">
+            {isReplying ? '답글 취소' : '답글 달기'}
+          </button>
+        </div>
           </>
         )}
       </div>
@@ -426,7 +426,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             } else {
               // 자식댓글이 없으면 완전 삭제
               setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
-            }
+          }
           }}
           writerId={reply.userId ? parseInt(reply.userId) : undefined}
         />

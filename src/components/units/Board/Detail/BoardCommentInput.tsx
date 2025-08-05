@@ -87,7 +87,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
       }
 
       console.log('새 댓글 데이터:', newComment);
-
+      
       setContent('');
       onCommentAdded(newComment);
       setReplyingTo(null);

@@ -126,7 +126,7 @@ export default function SearchResults({
           });
         } else {
           console.log('🆕 새 검색 결과 설정:', clubs.length);
-          setFilteredClubs(clubs);
+      setFilteredClubs(clubs);
           setPage(1);
         }
         setHasMore(hasMoreData);
@@ -210,14 +210,14 @@ export default function SearchResults({
       setIsLoading(true);
 
       try {
-        const filters = {
+    const filters = {
           keyword: searchQuery || '',
-          genreTag: genresMap[selectedGenre] || '',
-          regionTag: locationsMap[selectedLocation] || '',
+      genreTag: genresMap[selectedGenre] || '',
+      regionTag: locationsMap[selectedLocation] || '',
           sortCriteria: criteriaMap[selectedOrder] || '거리순',
           page: page,
           size: 10,
-        };
+    };
 
         console.log('페이지 로드 실행:', { page, filters });
         const response = await filterDropdown(filters, accessToken);
@@ -324,22 +324,22 @@ export default function SearchResults({
   }, [setIsMapView]);
 
   if (isLoading && page === 1) {
-    return (
-      <div key="list" className="flex flex-grow flex-col bg-BG-black">
-        <SearchHeader />
-        <DropdownGroup
-          genres={genres}
-          locations={locations}
-          criteria={criteria}
-          selectedGenre={selectedGenre}
-          setSelectedGenre={setSelectedGenre}
-          selectedLocation={selectedLocation}
-          setSelectedLocation={setSelectedLocation}
-          selectedOrder={selectedOrder}
-          setSelectedOrder={setSelectedOrder}
-        />
-        <SearchListSkeleton />
-      </div>
+  return (
+        <div key="list" className="flex flex-grow flex-col bg-BG-black">
+          <SearchHeader />
+          <DropdownGroup
+            genres={genres}
+            locations={locations}
+            criteria={criteria}
+            selectedGenre={selectedGenre}
+            setSelectedGenre={setSelectedGenre}
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+            selectedOrder={selectedOrder}
+            setSelectedOrder={setSelectedOrder}
+          />
+          <SearchListSkeleton />
+        </div>
     );
   }
 
