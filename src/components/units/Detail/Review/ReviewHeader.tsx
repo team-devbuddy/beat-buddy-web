@@ -24,10 +24,10 @@ const ReviewHeader = ({
 
   // 정렬 옵션을 한국어로 변환
   const getSortOptionText = (sort: 'latest' | 'popular') => {
-    return sort === 'latest' ? '최신순' : '추천순';
+    return sort === 'latest' ? '최신순' : '인기순';
   };
 
-  const sortOptions = ['최신순', '추천순'];
+  const sortOptions = ['최신순', '인기순'];
 
   const handlePhotoToggle = () => {
     const newPhotoOnly = !isPhotoOnly;
@@ -60,14 +60,14 @@ const ReviewHeader = ({
           <img
             src={isPhotoOnly ? '/icons/check-square-contained.svg' : '/icons/check-square-blanked.svg'}
             alt="포토 리뷰 보기 체크박스"
-            className="h-4 w-4 "
+            className="h-4 w-4"
           />
           <span>포토 리뷰만 보기</span>
         </div>
 
         {/* 드롭다운 */}
         <div className="relative">
-          <button onClick={handleDropdownToggle} className="flex items-center  text-[0.8125rem]">
+          <button onClick={handleDropdownToggle} className="flex items-center text-[0.8125rem]">
             <span className={`${sortOption ? 'text-main' : 'text-gray200'}`}>{getSortOptionText(sortOption)}</span>
             <img
               src="/icons/chevron-down.svg"
@@ -93,13 +93,13 @@ const ReviewHeader = ({
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 z-20 mt-2 w-[6rem] rounded-[0.5rem] bg-gray700 shadow-lg">
+                  className="absolute right-0 z-20 mt-2  rounded-[0.5rem] bg-gray700 px-[1.12rem] shadow-lg">
                   {sortOptions.map((option, index) => (
                     <button
                       key={option}
                       onClick={() => handleSortOptionClick(option)}
-                      className={`w-full px-4 py-2 text-center text-[0.8125rem] hover:bg-gray500 ${
-                        option === getSortOptionText(sortOption) ? 'text-main font-bold' : 'text-gray100'
+                      className={`w-full py-[0.56rem] text-center whitespace-nowrap text-[0.8125rem] ${
+                        option === getSortOptionText(sortOption) ? 'font-bold text-main' : 'text-gray100'
                       } ${
                         index === 0
                           ? 'rounded-t-md' // 첫 번째 옵션에만 top border-radius

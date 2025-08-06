@@ -52,10 +52,37 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
 
   const handleShareClick = () => {
     const url = window.location.href;
+    const title = venue.englishName || 'BeatBuddy';
+    const text = `${venue.englishName} - BeatBuddy에서 확인해보세요!`;
+
+    // 네이티브 공유 API 지원 확인
+    if (navigator.share) {
+      navigator
+        .share({
+          title: title,
+          text: text,
+          url: url,
+        })
+        .then(() => {
+          console.log('공유 성공');
+        })
+        .catch((error) => {
+          console.log('공유 취소 또는 오류:', error);
+          // 공유가 취소되거나 실패하면 클립보드 복사로 폴백
+          fallbackShare();
+        });
+    } else {
+      // 네이티브 공유 API를 지원하지 않는 경우 클립보드 복사
+      fallbackShare();
+    }
+  };
+
+  const fallbackShare = () => {
+    const url = window.location.href;
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        toast(<CustomToast>링크가 복사되었어요!</CustomToast>);
+        console.log('링크가 복사되었습니다.');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -71,6 +98,10 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
     autoplay: false,
     arrows: false,
     draggable: true,
+    swipe: true,
+    touchMove: true,
+    touchThreshold: 5,
+    swipeToSlide: true,
     beforeChange: (current: number, next: number) => {
       const videos = document.querySelectorAll<HTMLVideoElement>('.slick-slide video');
       videos.forEach((video) => {
@@ -128,22 +159,22 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   return (
     <div className="relative flex h-[21.875rem] w-full flex-col justify-between">
       <CustomToastContainer />
-      <div className="absolute z-20 flex w-full items-start justify-between px-[1rem] py-[1rem]">
-        <button onClick={() => router.back()} aria-label="뒤로가기" className="text-white">
-          <Image src="/icons/line-md_chevron-left.svg" alt="back icon" width={24} height={24} />
+      <div className="pointer-events-none absolute z-20 flex w-full items-start justify-between py-[0.53rem] pl-[0.62rem] pr-4">
+        <button onClick={() => router.back()} aria-label="뒤로가기" className="pointer-events-auto text-white">
+          <Image src="/icons/line-md_chevron-left.svg" alt="back icon" width={35} height={35} />
         </button>
-        <div className="flex items-center space-x-[1.25rem]">
-          <div onClick={handleShareClick} className="cursor-pointer">
+        <div className="flex items-center space-x-3">
+          <div onClick={handleShareClick} className="pointer-events-auto cursor-pointer">
             <Image src="/icons/share.svg" alt="share icon" width={32} height={32} />
           </div>
           <motion.div
             onClick={handleHeartClickWrapper}
-            className="cursor-pointer"
+            className="pointer-events-auto cursor-pointer"
             variants={heartAnimation}
             initial="initial"
             animate={clickedHeart ? 'clicked' : 'initial'}>
             <Image
-              src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+              src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
               alt="heart icon"
               width={32}
               height={32}
@@ -151,7 +182,7 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
           </motion.div>
         </div>
       </div>
-      <Slider ref={sliderRef} {...settings} className="absolute inset-0 z-10 h-full w-full">
+      <Slider ref={sliderRef} {...settings} className="absolute inset-0 z-10 h-full w-full touch-pan-x">
         {media.map((url, index) => (
           <div key={index} className="relative h-[21.875rem] w-full">
             {url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i) ? (
@@ -174,10 +205,8 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
           </div>
         ))}
       </Slider>
-      <div className="absolute bottom-0 z-20 flex w-full flex-col items-start gap-[0.38rem] px-[1rem] py-[1.25rem] text-white">
-        <h1 className="w-4/5 text-title-24-bold">
-          {venue.englishName} 
-        </h1>
+      <div className="pointer-events-none absolute bottom-0 z-20 flex w-full flex-col items-start gap-[0.38rem] px-[1rem] py-[1.25rem] text-white">
+        <h1 className="w-4/5 text-[1.5rem] font-bold">{venue.englishName}</h1>
         <div className="flex w-full items-end justify-between">
           <div className="flex w-4/5 flex-wrap gap-2">
             {tagList && tagList.length > 0 ? (
@@ -196,8 +225,8 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
             )}
           </div>
 
-          <div className="rounded-[0.5rem] bg-[#17181CB2]/70 px-[0.5rem] py-[0.19rem] text-[0.8125rem] text-gray300">
-            {currentSlide + 1}&nbsp; /&nbsp; {media.length}
+          <div className="rounded-[0.5rem] bg-[#17181CB2]/70 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+            {currentSlide + 1}/{media.length}
           </div>
         </div>
       </div>

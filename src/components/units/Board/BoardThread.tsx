@@ -56,7 +56,7 @@ export function formatRelativeTime(isoString: string): string {
     const hours = Math.floor(diff / 3600);
     return `${hours}시간 전`;
   } else {
-    return time.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    return time.toISOString().slice(0, 16).split('T').join(' '); // "YYYY-MM-DD HH:MM"
   }
 }
 

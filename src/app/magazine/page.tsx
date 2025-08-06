@@ -47,11 +47,7 @@ export default function MagazineListPage() {
           <Image src="/icons/line-md_chevron-left.svg" alt="back" width={35} height={35} />
         </Link>
         <p className="ml-[0.12rem] text-[1.125rem] font-bold text-white">
-          {currentIndex && totalCount
-            ? `${currentIndex} | ${totalCount}`
-            : !loading && magazines.length > 0
-              ? `1 | ${magazines.length}`
-              : '매거진'}
+          전체보기
         </p>
       </div>
       <main className="bg-BG-black px-[1.25rem] pb-[1rem] pt-[0.88rem]">

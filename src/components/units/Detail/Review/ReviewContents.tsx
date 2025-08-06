@@ -8,7 +8,9 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, likedReviewsState, reviewLikeCountState } from '@/context/recoil-context';
 import Image from 'next/image';
 import { deleteReviewLike } from '@/lib/actions/venue-controller/deleteReviewLike';
-import ReviewWriteButton from './ReviewWriteButton';
+import { deleteReview } from '@/lib/actions/venue-controller/deleteReview';
+import { submitReport } from '@/lib/actions/report-controller/submitReport';
+import { createPortal } from 'react-dom';
 
 interface Review {
   venueReviewId: string;
@@ -28,6 +30,7 @@ interface Review {
 interface ReviewContentsProps {
   reviews?: Review[]; // 리뷰 리스트
   isPhotoOnly: boolean; // 포토 리뷰만 보기 여부
+  onReviewDeleted?: (reviewId: string) => void; // 리뷰 삭제 콜백
 }
 
 const EmptyReview = () => {
@@ -39,11 +42,17 @@ const EmptyReview = () => {
   );
 };
 
-const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
+const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewContentsProps) => {
   const [likedReviews, setLikedReviews] = useRecoilState(likedReviewsState); // 좋아요 상태 저장
   const [reviewLikeCount, setReviewLikeCount] = useRecoilState(reviewLikeCountState); // 좋아요 개수 저장
   const [visibleReviews, setVisibleReviews] = useState(10); // 초기 표시되는 리뷰 개수
   const [openDropdown, setOpenDropdown] = useState<string | null>(null); // 열린 드롭다운 상태
+  const [showReportModal, setShowReportModal] = useState(false); // 신고 모달 상태
+  const [showReportCompleteModal, setShowReportCompleteModal] = useState(false); // 신고 완료 모달 상태
+  const [reportReason, setReportReason] = useState(''); // 신고 사유
+  const [reportingReviewId, setReportingReviewId] = useState<string | null>(null); // 신고 중인 리뷰 ID
+  const [isSubmitting, setIsSubmitting] = useState(false); // 제출 중 상태
+  const [deletedReviews, setDeletedReviews] = useState<Set<string>>(new Set()); // 삭제된 리뷰 ID들
   const accessToken = useRecoilValue(accessTokenState) || '';
 
   // 드롭다운 토글 핸들러
@@ -64,17 +73,80 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
   }, [openDropdown]);
 
   // 삭제 핸들러
-  const handleDelete = (reviewId: string) => {
-    // TODO: 리뷰 삭제 API 호출
-    console.log('리뷰 삭제:', reviewId);
+  const handleDelete = async (reviewId: string) => {
+    try {
+      // 즉시 UI에서 제거 (낙관적 업데이트)
+      setDeletedReviews((prev) => new Set([...prev, reviewId]));
+
+      const success = await deleteReview(reviewId, accessToken);
+      if (success) {
+        console.log('리뷰 삭제 성공:', reviewId);
+        onReviewDeleted?.(reviewId); // 부모 컴포넌트에 삭제 알림
+        setOpenDropdown(null);
+      } else {
+        // 실패 시 UI 복원
+        setDeletedReviews((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(reviewId);
+          return newSet;
+        });
+        alert('리뷰 삭제에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('리뷰 삭제 중 오류:', error);
+      // 에러 시 UI 복원
+      setDeletedReviews((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(reviewId);
+        return newSet;
+      });
+      alert('리뷰 삭제 중 오류가 발생했습니다.');
+    }
+  };
+
+  // 신고 모달 열기
+  const handleReport = (reviewId: string) => {
+    setReportingReviewId(reviewId);
+    setReportReason('');
+    setShowReportModal(true);
     setOpenDropdown(null);
   };
 
-  // 신고 핸들러
-  const handleReport = (reviewId: string) => {
-    // TODO: 리뷰 신고 API 호출
-    console.log('리뷰 신고:', reviewId);
-    setOpenDropdown(null);
+  // 신고 제출
+  const handleSubmitReport = async () => {
+    if (!reportingReviewId || !reportReason.trim()) {
+      alert('신고 사유를 입력해주세요.');
+      return;
+    }
+
+    if (reportReason.length > 100) {
+      alert('신고 사유는 100자 이하로 입력해주세요.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const reportData = {
+        targetType: 'VENUE_COMMENT' as const,
+        targetId: parseInt(reportingReviewId),
+        reason: reportReason.trim(),
+      };
+
+      const success = await submitReport(reportData, accessToken);
+      if (success) {
+        setShowReportModal(false);
+        setReportReason('');
+        setReportingReviewId(null);
+        setShowReportCompleteModal(true); // 신고 완료 모달 표시
+      } else {
+        alert('신고 접수에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('신고 접수 중 오류:', error);
+      alert('신고 접수 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -98,19 +170,34 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
       const currentLiked = likedReviews[reviewId] || false;
       const currentCount = reviewLikeCount[reviewId] || 0;
 
+      // 즉시 UI 업데이트 (낙관적 업데이트)
       if (currentLiked) {
-        // 좋아요 취소
-        await deleteReviewLike(reviewId, accessToken);
+        // 좋아요 취소 - 즉시 UI 반영
         setLikedReviews((prev) => ({ ...prev, [reviewId]: false }));
-        setReviewLikeCount((prev) => ({ ...prev, [reviewId]: currentCount - 1 }));
+        setReviewLikeCount((prev) => ({ ...prev, [reviewId]: Math.max(0, currentCount - 1) }));
       } else {
-        // 좋아요 추가
-        await postReviewLike(reviewId, accessToken);
+        // 좋아요 추가 - 즉시 UI 반영
         setLikedReviews((prev) => ({ ...prev, [reviewId]: true }));
         setReviewLikeCount((prev) => ({ ...prev, [reviewId]: currentCount + 1 }));
       }
+
+      // API 호출
+      if (currentLiked) {
+        // 좋아요 취소
+        await deleteReviewLike(reviewId, accessToken);
+      } else {
+        // 좋아요 추가
+        await postReviewLike(reviewId, accessToken);
+      }
     } catch (error) {
       console.error('좋아요 처리 중 오류가 발생했습니다:', error);
+
+      // 에러 발생 시 원래 상태로 되돌리기
+      const originalLiked = likedReviews[reviewId] || false;
+      const originalCount = reviewLikeCount[reviewId] || 0;
+
+      setLikedReviews((prev) => ({ ...prev, [reviewId]: originalLiked }));
+      setReviewLikeCount((prev) => ({ ...prev, [reviewId]: originalCount }));
     }
   };
 
@@ -119,138 +206,210 @@ const ReviewContents = ({ reviews = [], isPhotoOnly }: ReviewContentsProps) => {
     ? reviews.filter((review) => review.imageUrls && review.imageUrls.length > 0)
     : reviews;
 
+  // 삭제된 리뷰 제외
+  const activeReviews = filteredReviews.filter((review) => !deletedReviews.has(review.venueReviewId));
+
   // 더보기 버튼 클릭 핸들러
   const handleLoadMore = () => {
     setVisibleReviews((prev) => prev + 10); // 추가로 10개 리뷰 표시
   };
 
   // 표시할 리뷰 목록
-  const reviewsToDisplay = filteredReviews.slice(0, visibleReviews);
+  const reviewsToDisplay = activeReviews.slice(0, visibleReviews);
 
   if (reviews.length === 0) {
     return <EmptyReview />;
   }
 
   return (
-    <div className="pb-[5rem]">
-      {reviewsToDisplay.map((review) => {
-        const isLiked = likedReviews[review.venueReviewId] || false; // 현재 리뷰의 좋아요 상태
-        const likeCount = reviewLikeCount[review.venueReviewId] || review.likes; // 현재 리뷰의 좋아요 개수
-        return (
-          <div
-            key={review.venueReviewId}
-            className="flex flex-col border-b border-gray700 px-4 pb-6 pt-4 last:border-none">
-            {/* 유저 정보 */}
-            <div className="flex items-start justify-between">
-              <div className="mb-[0.88rem] flex items-center space-x-[0.62rem]">
-                <Image
-                  src={review.profileImageUrl || '/icons/default-avatar.svg'}
-                  alt={`${review.nickname}의 프로필 사진`}
-                  className="h-10 w-10 rounded-full bg-gray-200 object-cover"
-                  width={40}
-                  height={40}
-                  style={{ aspectRatio: '1/1' }}
-                />
-                <div>
-                  <p className="text-[0.875rem] font-bold text-white">{review.nickname}</p>
-                  <div className="flex items-center space-x-2 text-gray200">
-                    <p className="text-[0.75rem]">{formatRelativeTime(review.createdAt)}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 더보기 드롭다운 */}
-              <div className="dropdown-container relative">
-                <button
-                  onClick={() => handleDropdownToggle(review.venueReviewId)}
-                  className="rounded p-1"
-                  title="더보기">
-                  <Image src="/icons/dot-vertical.svg" alt="더보기 아이콘" width={24} height={24} />
-                </button>
-
-                <AnimatePresence>
-                  {openDropdown === review.venueReviewId && (
-                    <>
-                      {/* 배경 어둡게 처리 */}
-                      <motion.div
-                        className="fixed inset-0 z-10 bg-black bg-opacity-50"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setOpenDropdown(null)}></motion.div>
-
-                      {/* 드롭다운 */}
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute right-0 z-20 mt-2 w-[6rem] rounded-md bg-gray700 shadow-lg">
-                        {review.isAuthor ? (
-                          // 작성자인 경우 삭제 옵션
-                          <button
-                            onClick={() => handleDelete(review.venueReviewId)}
-                            className="w-full rounded-b-md rounded-t-md px-4 py-2 text-center text-body2-15-medium text-gray200 hover:bg-gray500">
-                            삭제
-                          </button>
-                        ) : (
-                          // 다른 사용자인 경우 신고 옵션
-                          <button
-                            onClick={() => handleReport(review.venueReviewId)}
-                            className="w-full rounded-b-md rounded-t-md px-4 py-2 text-center text-body2-15-medium text-gray200 hover:bg-gray500">
-                            신고
-                          </button>
-                        )}
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* 리뷰 이미지 */}
-            {review.imageUrls && review.imageUrls.length > 0 && (
+    <>
+      <div className="pb-[5rem]">
+        <AnimatePresence>
+          {reviewsToDisplay.map((review) => {
+            const isLiked = likedReviews[review.venueReviewId] || false; // 현재 리뷰의 좋아요 상태
+            const likeCount = reviewLikeCount[review.venueReviewId] || review.likes; // 현재 리뷰의 좋아요 개수
+            return (
               <motion.div
-                className="flex gap-2 overflow-x-auto"
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.4 }}>
-                {review.imageUrls.map((image, index) => (
-                  <div key={index} className="mb-[0.88rem] flex-shrink-0">
+                key={review.venueReviewId}
+                initial={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="flex flex-col overflow-hidden border-b border-gray700 px-5 py-[0.88rem] last:border-none">
+                {/* 유저 정보 */}
+                <div className="flex items-center justify-between">
+                  <div className="mb-[0.88rem] flex items-center space-x-[0.62rem]">
                     <Image
-                      src={image}
-                      alt={`리뷰 이미지 ${index + 1}`}
-                      className="h-[150px] w-auto rounded-xs object-cover"
-                      width={120}
-                      height={120}
+                      src={review.profileImageUrl || '/icons/default-avatar.svg'}
+                      alt={`${review.nickname}의 프로필 사진`}
+                      className="h-10 w-10 rounded-full bg-gray-200 object-cover"
+                      width={32}
+                      height={32}
+                      style={{ aspectRatio: '1/1' }}
                     />
+                    <div>
+                      <p className="text-[0.875rem] font-bold text-white">{review.nickname}</p>
+                      <div className="flex items-center space-x-2 text-gray200">
+                        <p className="text-[0.75rem]">{formatRelativeTime(review.createdAt)}</p>
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </motion.div>
-            )}
 
-            {/* 리뷰 내용 */}
-            <p className="text-[0.8125rem] text-gray100">{review.content}</p>
+                  {/* 더보기 드롭다운 */}
+                  <div className="dropdown-container relative">
+                    <button onClick={() => handleDropdownToggle(review.venueReviewId)} title="더보기">
+                      <Image src="/icons/dot-vertical.svg" alt="더보기 아이콘" width={20} height={20} />
+                    </button>
 
-            {/* 좋아요 버튼 */}
-            <div className="flex justify-end">
-              <button
-                onClick={() => handleLikeToggle(review.venueReviewId)}
-                className={`flex items-end space-x-[0.12rem] rounded-xs px-[0.38rem] text-[0.6875rem] font-medium text-gray300`}>
-                <div className="flex items-center space-x-1 text-body3-12-medium text-gray300">
-                  {isLiked ? (
-                    <Image src="/icons/thumb-up-clicked.svg" alt="좋아요 아이콘" width={17} height={17} />
-                  ) : (
-                    <Image src="/icons/thumb-up.svg" alt="좋아요 아이콘" width={17} height={17} />
-                  )}
-                  <span className={`${isLiked ? 'text-main' : 'text-gray300'}`}>{likeCount}</span>
+                    <AnimatePresence>
+                      {openDropdown === review.venueReviewId && (
+                        <>
+                          {/* 배경 어둡게 처리 */}
+                          <motion.div
+                            className="fixed inset-0 z-10 bg-black bg-opacity-50"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setOpenDropdown(null)}></motion.div>
+
+                          {/* 드롭다운 */}
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute right-0 z-20 mt-2 whitespace-nowrap rounded-[0.5rem] bg-gray700 px-[1.12rem] shadow-lg">
+                            {review.isAuthor ? (
+                              // 작성자인 경우 삭제 옵션
+                              <button
+                                onClick={() => handleDelete(review.venueReviewId)}
+                                className="w-full rounded-b-[0.5rem] rounded-t-[0.5rem] py-2 text-center text-[0.8125rem] text-gray200 hover:bg-gray500">
+                                삭제하기
+                              </button>
+                            ) : (
+                              // 다른 사용자인 경우 신고 옵션
+                              <button
+                                onClick={() => handleReport(review.venueReviewId)}
+                                className="w-full rounded-b-[0.5rem] rounded-t-[0.5rem] py-2 text-center text-[0.8125rem] text-gray200 hover:bg-gray500">
+                                신고하기
+                              </button>
+                            )}
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
+
+                {/* 리뷰 이미지 */}
+                {review.imageUrls && review.imageUrls.length > 0 && (
+                  <motion.div
+                    className="flex gap-2 overflow-x-auto"
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.4 }}>
+                    {review.imageUrls.map((image, index) => (
+                      <div key={index} className="mb-[0.88rem] flex-shrink-0">
+                        <Image
+                          src={image}
+                          alt={`리뷰 이미지 ${index + 1}`}
+                          className="h-[150px] w-auto rounded-xs object-cover"
+                          width={120}
+                          height={120}
+                        />
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+
+                {/* 리뷰 내용 */}
+                <p className="text-[0.8125rem] text-gray100">{review.content}</p>
+
+                {/* 좋아요 버튼 */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => handleLikeToggle(review.venueReviewId)}
+                    className={`flex items-end space-x-[0.12rem] rounded-xs px-[0.38rem] text-[0.6875rem] font-medium text-gray300`}>
+                    <div className="flex items-center space-x-1 text-body3-12-medium text-gray300">
+                      {isLiked ? (
+                        <Image src="/icons/thumb-up-clicked.svg" alt="좋아요 아이콘" width={17} height={17} />
+                      ) : (
+                        <Image src="/icons/thumb-up.svg" alt="좋아요 아이콘" width={17} height={17} />
+                      )}
+                      <span className={`${isLiked ? 'text-main' : 'text-gray300'}`}>{likeCount}</span>
+                    </div>
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
+      {/* 신고 모달 - BoardDropdown 스타일 활용 */}
+      {showReportModal &&
+        createPortal(
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-[0.75rem] bg-BG-black p-5 text-center"
+              onClick={(e) => e.stopPropagation()}>
+              <textarea
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="신고 사유를 작성해 주세요 (예: 부적절한 콘텐츠, 스팸, 욕설 등)"
+                className="mb-3 min-h-[7.5rem] w-full min-w-[18rem] resize-none rounded-[0.75rem] bg-gray700 px-4 py-3 text-[0.875rem] text-gray200 placeholder:text-gray300 focus:outline-none"
+              />
+              <div className="flex justify-between gap-2">
+                <button
+                  onClick={() => {
+                    setShowReportModal(false);
+                    setReportReason('');
+                    setReportingReviewId(null);
+                  }}
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                  취소
+                </button>
+                <button
+                  onClick={handleSubmitReport}
+                  disabled={isSubmitting || !reportReason.trim()}
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-main">
+                  신고하기
+                </button>
+              </div>
+            </motion.div>
+          </div>,
+          document.body,
+        )}
+
+      {/* 신고 완료 모달 */}
+      {showReportCompleteModal &&
+        createPortal(
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-[0.75rem] bg-BG-black p-5 text-center"
+              onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-[0.38rem] text-[1.25rem] font-bold text-white">신고가 완료되었어요</h3>
+              <p className="text-[0.875rem] text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요.</p>
+              <p className="mb-5 text-[0.875rem] text-gray300">허위 신고 시 제재가 있을 수 있습니다.</p>
+              <button
+                onClick={() => {
+                  setShowReportCompleteModal(false);
+                }}
+                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                닫기
               </button>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+            </motion.div>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 };
 

@@ -75,12 +75,15 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
           <Image src="/icons/alarm.svg" alt="clock" width={20} height={20} className="" />
 
           <div className="flex flex-col" onClick={() => setShowFullHours((prev) => !prev)}>
+            <div className="flex items-center gap-1">
             <p className="cursor-pointer text-[0.875rem] text-gray100">
               <span className={` ${getOpenStatus(operationHours) === 'OPEN' ? 'text-main' : 'text-white'}`}>
                 {getOpenStatus(operationHours) === 'OPEN' ? 'OPEN' : 'CLOSED'}
               </span>{' '}
               • {openTime}
             </p>
+            <Image src="/icons/arrow_back_ios_down.svg" alt="arrow-down" width={16} height={16} className={`${showFullHours ? 'rotate-180' : ''}`} />
+            </div>
 
             {/* 펼쳐지는 운영 시간 상세 */}
             <AnimatePresence>

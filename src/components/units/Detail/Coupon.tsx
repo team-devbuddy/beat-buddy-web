@@ -91,7 +91,7 @@ export default function CouponCard({ venueId }: { venueId: number }) {
     setIsUsing(true);
     try {
       console.log('쿠폰 사용 시도:', coupon.couponId);
-      const response = await useCoupon(accessToken, coupon.receiveCouponId);
+      const response = await useCoupon(accessToken, coupon.couponId);
 
       if (response) {
         console.log('쿠폰 사용 성공');
@@ -108,8 +108,10 @@ export default function CouponCard({ venueId }: { venueId: number }) {
 
   // 쿠폰 상태에 따른 배경 이미지 결정
   const getCouponBackground = () => {
-    if (isExpired || isUsed) {
-      return '/icons/coupon_expired.svg'; // 만료된 쿠폰 또는 사용된 쿠폰
+    if (isExpired) {
+      return '/icons/coupon_expired.svg'; // 만료된 쿠폰
+    } else if (isUsed) {
+      return '/coupon_used.svg'; // 사용된 쿠폰 (고정 크기)
     } else if (isReceived) {
       return '/coupon.svg'; // 받은 쿠폰 (사용 가능)
     } else if (isSoldOut) {
@@ -186,17 +188,17 @@ export default function CouponCard({ venueId }: { venueId: number }) {
   if (!coupon) return null;
 
   return (
-    <>
+    <div className="w-full flex justify-center">
       <div className="px-5 pb-[0.88rem]">
         <div className={`relative ${isReceived && !isExpired ? 'cursor-pointer' : ''}`} onClick={handleCouponClick}>
-          <Image src={getCouponBackground()} alt="coupon" width={335} height={68} />
+          <Image src={getCouponBackground()} alt="coupon" width={335} height={68} className="h-[68px] w-full max-w-[400px]" />
 
           {/* 쿠폰 내용 오버레이 */}
           <div className="absolute inset-0 flex items-center justify-between px-4">
             {/* 왼쪽 텍스트 영역 */}
             <div className="flex flex-col">
               <span className="text-[0.75rem] font-medium leading-tight text-main">{coupon.couponName}</span>
-              <span className="mt-[-0.12rem] text-[1rem] font-bold leading-tight text-gray100">
+              <span className="mt-[-0.12rem] text-[1rem] font-bold leading-[160%] text-gray100">
                 {coupon.couponDescription}
               </span>
             </div>
@@ -223,7 +225,6 @@ export default function CouponCard({ venueId }: { venueId: number }) {
                       {clubDetail?.englishName || clubDetail?.koreanName || '클럽'}
                     </p>
                     <Image
-                      
                       className="absolute right-0 cursor-pointer"
                       src="/icons/XmarkWhite.svg"
                       alt="close"
@@ -266,12 +267,10 @@ export default function CouponCard({ venueId }: { venueId: number }) {
       {showStaffModal &&
         createPortal(
           <div
-            className="fixed inset-0 z-[9999] mx-5 flex flex-col items-center justify-center bg-black bg-opacity-50"
+            className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black bg-opacity-70 p-5"
             onClick={() => setShowStaffModal(false)}>
             {/* 모달 본체 */}
-            <div
-              className="mx-5 w-full max-w-sm rounded-[0.75rem] bg-BG-black p-5"
-              onClick={(e) => e.stopPropagation()}>
+            <div className="w-full max-w-sm rounded-[0.75rem] bg-BG-black p-5" onClick={(e) => e.stopPropagation()}>
               <div className="flex flex-col items-center">
                 <h3 className="text-[1rem] text-main">{coupon?.couponName}</h3>
                 <p className="mb-3 text-[1.25rem] font-bold text-white">{coupon?.couponDescription}</p>
@@ -304,11 +303,11 @@ export default function CouponCard({ venueId }: { venueId: number }) {
             style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
             onClick={() => setShowUsageModal(false)}>
             <div
-              className="mx-4 max-h-[80vh] w-full max-w-sm overflow-y-auto rounded-[0.75rem] bg-BG-black px-5 pb-4 pt-5 shadow-2xl"
+              className="mx-5 max-h-[80vh] w-full max-w-sm overflow-y-auto rounded-[0.75rem] bg-BG-black px-5 pb-4 pt-5 shadow-2xl"
               onClick={(e) => e.stopPropagation()}>
-              <div className="flex flex-col items-center space-y-2">
-                <h3 className="text-[1.125rem] font-bold text-white">쿠폰 사용하기</h3>
-                <p className="text-center text-[0.875rem] text-gray300">
+              <div className="flex flex-col items-center ">
+                <h3 className="text-[1.125rem] mb-2 font-bold text-white">쿠폰을 사용하시겠습니까?</h3>
+                <p className="text-center mb-5 text-[0.875rem] text-gray300">
                   직원확인 버튼 클릭시 쿠폰이 즉시 사용 처리되며,
                   <br />
                   되돌릴 수 없습니다.
@@ -324,8 +323,8 @@ export default function CouponCard({ venueId }: { venueId: number }) {
                   <button
                     onClick={handleUseCoupon}
                     disabled={isUsing}
-                    className="flex-1 rounded-[0.5rem] bg-main py-[0.66rem] text-[0.9935rem] font-bold text-white disabled:bg-gray600 disabled:text-gray400">
-                    쿠폰 사용하기
+                    className="flex-1 rounded-[0.5rem] bg-gray700 py-[0.66rem] text-[0.9935rem] font-bold text-main disabled:bg-gray600 disabled:text-gray400">
+                    확인
                   </button>
                 </div>
               </div>
@@ -333,6 +332,6 @@ export default function CouponCard({ venueId }: { venueId: number }) {
           </div>,
           document.body,
         )}
-    </>
+    </div>
   );
 }
