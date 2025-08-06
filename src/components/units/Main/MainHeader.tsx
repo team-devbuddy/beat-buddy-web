@@ -5,12 +5,13 @@ import LoginModal from '../Login/LoginModal';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRecoilValue } from 'recoil';
-import { authState } from '@/context/recoil-context';
+import { authState, unreadAlarmState } from '@/context/recoil-context';
 import { usePathname } from 'next/navigation';
 
 export default function MainHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isAuth = useRecoilValue(authState);
+  const hasUnreadAlarm = useRecoilValue(unreadAlarmState);
   const pathname = usePathname(); // ✅ 현재 경로 가져오기
 
   const handleLoginClick = () => {
@@ -23,14 +24,14 @@ export default function MainHeader() {
 
   return (
     <div className="scrollbar-none">
-      <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] pt-[0.62rem] pb-[0.88rem]">
+      <div className="flex w-full items-center justify-between bg-BG-black px-[1.25rem] pb-[0.88rem] pt-[0.62rem]">
         <Link href="/">
           <Image
             src="/icons/logotype.svg"
             alt="logo"
             width={126}
             height={26}
-            className="safari-icon-fix mt-[0.13rem] cursor-pointer"
+            className="mt-[0.13rem] cursor-pointer safari-icon-fix"
             priority
           />
         </Link>
@@ -41,11 +42,11 @@ export default function MainHeader() {
             {!pathname.includes('search') && (
               <Link href="/alert">
                 <Image
-                  src="/icons/Headers/bell-02.svg"
+                  src={hasUnreadAlarm ? '/icons/alarm-bell-02.svg' : '/icons/Headers/bell-02.svg'}
                   alt="alert"
                   width={24}
                   height={24}
-                  className="safari-icon-fix cursor-pointer"
+                  className="cursor-pointer safari-icon-fix"
                 />
               </Link>
             )}

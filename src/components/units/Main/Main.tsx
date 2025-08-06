@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
+import { accessTokenState, likedClubsState, heartbeatNumsState, unreadAlarmState } from '@/context/recoil-context';
 import SearchBar from './SearchBar';
 import TrendBar from './TrendBar';
 import Magazine from './Magazine';
@@ -23,6 +23,7 @@ import NavigateFooter from './NavigateFooter';
 import { getMagazineList } from '@/lib/actions/magazine-controller/getMagazine';
 import VenueFor from './VenueFor';
 import { getHotPost, RawHotPost } from '@/lib/actions/post-controller/getHotPost';
+import { getNotifications } from '@/lib/actions/notification-controller/getNotifications';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -34,6 +35,7 @@ export default function Main() {
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
+  const [unreadAlarm, setUnreadAlarm] = useRecoilState(unreadAlarmState);
   const [hotClubs, setHotClubs] = useState<Club[]>([]);
   const [bbpClubs, setBbpClubs] = useState<Club[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
@@ -146,6 +148,18 @@ export default function Main() {
       }
     };
 
+    const fetchNotifications = async (token: string) => {
+      try {
+        const notifications = await getNotifications(token, 1, 10);
+        // 읽지 않은 알람이 있는지 확인
+        const hasUnread = notifications.data.content.some((notification) => !notification.isRead);
+        setUnreadAlarm(hasUnread);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+        setUnreadAlarm(false);
+      }
+    };
+
     const fetchData = async () => {
       if (accessToken) {
         await Promise.all([
@@ -154,13 +168,14 @@ export default function Main() {
           fetchUserName(accessToken),
           fetchMagazine(),
           fetchHotPost(),
+          fetchNotifications(accessToken),
         ]);
         setLoading(false); // 모든 데이터 로드 완료
       }
     };
 
     fetchData();
-  }, [accessToken, setLikedClubs, setHeartbeatNums]);
+  }, [accessToken, setLikedClubs, setHeartbeatNums, setUnreadAlarm]);
 
   if (loading) {
     return <HomeSkeleton />;
@@ -224,8 +239,6 @@ export default function Main() {
                   </SwiperSlide>
                 ))}
               </Swiper>
-
-              
             </>
           )}
         </div>

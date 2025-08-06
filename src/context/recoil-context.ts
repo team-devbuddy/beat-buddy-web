@@ -377,3 +377,10 @@ export const reviewCompleteModalState = atom<boolean>({
   default: false,
   effects_UNSTABLE: [persistAtom],
 });
+
+// 읽지 않은 알람 상태 관리
+export const unreadAlarmState = atom<boolean>({
+  key: 'unreadAlarmState',
+  default: false,
+  effects_UNSTABLE: [persistAtom],
+});

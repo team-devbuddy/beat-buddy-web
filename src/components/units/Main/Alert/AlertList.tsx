@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
 import Prev from '@/components/common/Prev';
@@ -85,6 +85,23 @@ export default function AlertList() {
   const [hasMore, setHasMore] = useState(true);
   const [clickedNotificationId, setClickedNotificationId] = useState<number | null>(null);
 
+  // 무한 스크롤을 위한 Intersection Observer
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useRef<HTMLDivElement>(null);
+
+  // 무한 스크롤 콜백
+  const handleIntersection = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && !loading && hasMore) {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchNotifications(nextPage, true);
+      }
+    },
+    [loading, hasMore, page],
+  );
+
   const fetchNotifications = async (pageNum: number = 1, append: boolean = false) => {
     if (!accessToken) {
       setError('로그인이 필요합니다.');
@@ -155,13 +172,22 @@ export default function AlertList() {
     fetchNotifications();
   }, [accessToken]);
 
-  const loadMore = () => {
-    if (!loading && hasMore) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      fetchNotifications(nextPage, true);
+  useEffect(() => {
+    if (loadingRef.current) {
+      observerRef.current = new IntersectionObserver(handleIntersection, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1,
+      });
+      observerRef.current.observe(loadingRef.current);
     }
-  };
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [handleIntersection]);
 
   if (loading && notifications.length === 0) {
     return (
@@ -245,14 +271,10 @@ export default function AlertList() {
               </div>
             ))}
 
+            {/* 무한 스크롤 로딩 인디케이터 */}
             {hasMore && (
-              <div className="flex items-center justify-center py-4">
-                <button
-                  onClick={loadMore}
-                  disabled={loading}
-                  className="rounded-md bg-gray600 px-4 py-2 text-[0.875rem] text-white hover:bg-gray500 disabled:opacity-50">
-                  {loading ? '로딩 중...' : '더보기'}
-                </button>
+              <div ref={loadingRef} className="flex items-center justify-center py-4">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray300 border-t-main"></div>
               </div>
             )}
           </>
