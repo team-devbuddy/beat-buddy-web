@@ -116,7 +116,7 @@ const MyEventVenues = ({
                   onClick={(e) => handleHeartClickWrapper(e, club.id)}
                   className="absolute bottom-3 right-3 z-10 cursor-pointer">
                   <Image
-                    src={likedClubs[club.id] ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
+                    src={likedClubs[club.id] ? '/icons/FilledHeart.svg' : '/icons/grayHeart.svg'}
                     alt="heart"
                     width={27}
                     height={24}

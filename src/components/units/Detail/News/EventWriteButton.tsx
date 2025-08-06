@@ -23,7 +23,7 @@ const EventWriteButton = ({ venueEngName, venueId, onClick, isDisabled }: EventW
         <button
           onClick={handleClick}
           disabled={isDisabled}
-          className="w-full rounded-md border-none bg-main py-4 text-[1rem] font-bold text-sub2">
+          className="w-full rounded-md border-none bg-main py-[0.81rem] text-[1rem] font-bold text-sub2">
           {venueEngName} 이벤트 작성하기
         </button>
       </div>

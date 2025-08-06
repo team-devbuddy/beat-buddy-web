@@ -42,9 +42,7 @@ const NewsHeader = ({ venueName, onSortChange, currentSort }: NewsHeaderProps) =
         {/* 드롭다운 */}
         <div className="relative">
           <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-[0.8125rem]">
-            <span className={`${currentSort === 'latest' ? 'text-main' : 'text-gray200'}`}>
-              {getSortOptionText(currentSort)}
-            </span>
+            <span className="text-main">{getSortOptionText(currentSort)}</span>
             <img
               src="/icons/chevron-down.svg"
               alt="드롭다운 화살표"

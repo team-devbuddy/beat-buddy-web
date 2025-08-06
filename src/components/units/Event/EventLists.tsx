@@ -141,7 +141,7 @@ export default function EventLists({
                   onClick={(e) => handleLike(e, event.eventId)}
                   className="absolute bottom-3 right-3 z-10 cursor-pointer">
                   <Image
-                    src={event.liked ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
+                    src={event.liked ? '/icons/FilledHeart.svg' : '/icons/grayHeart.svg'}
                     alt="heart"
                     width={27}
                     height={24}

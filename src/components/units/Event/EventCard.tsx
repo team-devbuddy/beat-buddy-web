@@ -71,7 +71,7 @@ export default function EventCard({
 
         <div className="absolute right-[1.5rem] top-[1.5rem] z-10">
           <Image
-            src={liked ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
+            src={liked ? '/icons/FilledHeart.svg' : '/icons/grayHeart.svg'}
             alt="좋아요"
             width={24}
             height={24}

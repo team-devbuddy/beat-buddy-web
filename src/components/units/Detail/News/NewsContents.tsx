@@ -94,7 +94,14 @@ const calculateDday = (startDate: string, endDate: string) => {
   }
 
   const diff = endDateObj.diff(today, 'day');
-  return diff < 0 ? 'END' : `D-${diff}`;
+
+  if (diff < 0) {
+    return 'END';
+  } else if (diff === 0) {
+    return 'D-DAY';
+  } else {
+    return `D-${diff}`;
+  }
 };
 
 const formatDateRange = (startDate: string, endDate: string) => {
@@ -108,6 +115,9 @@ const sortNewsByDday = (newsList: NewsItem[]) => {
     const getDdayValue = (dDay: string) => {
       if (dDay === 'END') {
         return Number.MAX_SAFE_INTEGER; // END는 항상 마지막
+      }
+      if (dDay === 'TODAY') {
+        return 0; // TODAY는 최우선
       }
       if (dDay.startsWith('D-')) {
         return parseInt(dDay.split('-')[1], 10); // D-숫자에서 숫자만 추출
@@ -281,6 +291,9 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
     if (dDay === 'END') {
       return 'bg-gray500 text-gray200';
     }
+    if (dDay === 'TODAY') {
+      return 'bg-main text-white';
+    }
     if (dDay.startsWith('D-')) {
       const dayNumber = parseInt(dDay.split('-')[1], 10);
       return dayNumber <= 7 ? 'bg-main text-white' : 'bg-gray500 text-gray200';
@@ -294,18 +307,32 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
       <div className="grid grid-cols-2 gap-4">
         {visibleEvents.map((news) => (
           <Link key={news.eventId} href={`/event/${news.eventId}`} passHref>
-            <div className="flex cursor-pointer flex-col overflow-hidden rounded-[0.25rem]">
+            <div className="flex cursor-pointer flex-col overflow-hidden rounded-[0.5rem]">
               {/* 이미지 */}
-              <div className="relative h-[160px] w-full overflow-hidden rounded-[0.25rem]">
+              <div className="relative h-[160px] w-full overflow-hidden rounded-[0.5rem]">
                 <SafeImage
                   src={news.thumbImage || '/images/DefaultImage.png'}
                   alt={news.title}
                   className="object-cover object-top"
                 />
+                {/* 지난 이벤트 오버레이 */}
+                {calculateDday(news.startDate, news.endDate) === 'END' && (
+                  <div
+                    className="absolute inset-0 bg-black/30"
+                    style={{
+                      background:
+                        'linear-gradient(0deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%), linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.56) 59.6%)',
+                    }}
+                  />
+                )}
                 {/* 디데이 - 이미지 위에 좌측 상단 */}
                 <div className="absolute left-[0.62rem] top-[0.62rem]">
                   <span
-                    className={`rounded-[0.5rem] bg-main px-[0.38rem] py-[0.25rem] text-center text-[0.75rem] leading-[160%] text-white ${getDdayStyle(
+                    className={`rounded-[0.5rem] ${
+                      calculateDday(news.startDate, news.endDate) === 'END'
+                        ? 'bg-gray500/70 text-gray300'
+                        : 'bg-main text-white'
+                    } px-[0.38rem] py-[0.25rem] text-center text-[0.75rem] leading-[160%] ${getDdayStyle(
                       calculateDday(news.startDate, news.endDate),
                     )}`}
                     style={{
@@ -325,16 +352,16 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
 
                 {/* 좋아요 버튼 - 이미지 위에 우측 하단 */}
                 <motion.div
-                  className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
+                  className={`absolute ${likedEvents[news.eventId] ? 'bottom-[0.62rem] right-[0.62rem]' : 'bottom-[0.75rem] right-[0.75rem]'} cursor-pointer`}
                   onClick={(e) => handleHeartClick(e, news.eventId)}
                   variants={heartAnimation}
                   initial="initial"
                   animate={clickedHeart[news.eventId] ? 'clicked' : 'initial'}>
                   <Image
-                    src={likedEvents[news.eventId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                    src={likedEvents[news.eventId] ? '/icons/FilledHeart.svg' : '/icons/grayHeart.svg'}
                     alt="heart icon"
-                    width={27}
-                    height={24}
+                    width={likedEvents[news.eventId] ? 27 : 24}
+                    height={likedEvents[news.eventId] ? 24 : 24}
                   />
                 </motion.div>
               </div>
