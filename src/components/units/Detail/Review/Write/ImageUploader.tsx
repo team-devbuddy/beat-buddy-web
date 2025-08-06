@@ -2,7 +2,6 @@
 
 import React, { ChangeEvent } from 'react';
 import Image from 'next/image'; // Next.js Image import
-import heic2any from 'heic2any';
 
 interface ImageUploaderProps {
   onUpload: (files: File[]) => void;
@@ -13,6 +12,9 @@ const ImageUploader = ({ onUpload, uploadedFiles }: ImageUploaderProps) => {
   // HEIC 파일을 JPEG로 변환하는 함수
   const convertHeicToJpeg = async (file: File): Promise<File> => {
     try {
+      // heic2any를 동적 import로 사용
+      const heic2any = (await import('heic2any')).default;
+
       // heic2any를 사용하여 HEIC를 JPEG로 변환
       const convertedBlob = await heic2any({
         blob: file,
@@ -38,8 +40,6 @@ const ImageUploader = ({ onUpload, uploadedFiles }: ImageUploaderProps) => {
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selected = Array.from(e.target.files);
-
-      
 
       // HEIC 파일을 JPEG로 변환
       const processedFiles = await Promise.all(
@@ -126,7 +126,6 @@ const ImageUploader = ({ onUpload, uploadedFiles }: ImageUploaderProps) => {
               <div className="absolute left-[0.62rem] top-[0.62rem] rounded-[0.5rem] bg-BG-black/70 px-[0.5rem] py-[0.12rem] text-[0.625rem] text-white">
                 {index + 1}/{uploadedFiles.length}
               </div>
-              
             </div>
           ))}
           {/* 업로더 박스 */}
