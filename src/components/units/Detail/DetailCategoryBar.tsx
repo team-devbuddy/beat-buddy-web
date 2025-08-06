@@ -6,10 +6,10 @@ const DetailCategoryBar = ({
   activeTab,
   setActiveTab,
 }: {
-  activeTab: string;
-  setActiveTab: (tabId: string) => void;
+  activeTab: 'info' | 'review' | 'event';
+  setActiveTab: (tabId: 'info' | 'review' | 'event') => void;
 }) => {
-  const tabs = [
+  const tabs: { id: 'info' | 'review' | 'event'; label: string }[] = [
     { id: 'info', label: '정보' },
     { id: 'review', label: '리뷰' },
     { id: 'event', label: '이벤트' },

@@ -8,8 +8,8 @@ import Info from '@/components/units/Detail/Info';
 import VenueHours from '@/components/units/Detail/VenueHours';
 import CustomerService from '@/components/units/Detail/CustomerService';
 import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '@/context/recoil-context';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { accessTokenState, detailTabState, reviewCompleteModalState, isBusinessState } from '@/context/recoil-context';
 import { Club } from '@/lib/types';
 import Loading from '@/components/common/skeleton/LoadingLottie';
 import Coupon from '@/components/units/Detail/Coupon';
@@ -27,9 +27,9 @@ import { mockBoardData } from '@/lib/dummyData';
 import VenueDescription from '@/components/units/Detail/VenueDescription';
 import ReviewWriteButton from '@/components/units/Detail/Review/ReviewWriteButton';
 import EventWriteButton from '@/components/units/Detail/News/EventWriteButton';
+import ReviewCompleteModal from '@/components/units/Detail/Review/Write/ReviewCompleteModal';
 import { getReview } from '@/lib/actions/venue-controller/getReview';
 import { motion, PanInfo } from 'framer-motion';
-import { isBusinessState } from '@/context/recoil-context';
 
 interface Review {
   venueReviewId: string;
@@ -52,7 +52,6 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [isHeartbeat, setIsHeartbeat] = useState<boolean>(false);
   const [tagList, setTagList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<string>('info');
   const [isCoupon, setIsCoupon] = useState<boolean>(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [sortOption, setSortOption] = useState<'latest' | 'popular'>('latest');
@@ -60,6 +59,10 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [eventSortType, setEventSortType] = useState<'latest' | 'popular'>('latest');
   const isBusiness = useRecoilValue(isBusinessState);
   const accessToken = useRecoilValue(accessTokenState);
+  const activeTab = useRecoilValue(detailTabState);
+  const setActiveTab = useSetRecoilState(detailTabState);
+  const isModalOpen = useRecoilValue(reviewCompleteModalState);
+  const setReviewCompleteModal = useSetRecoilState(reviewCompleteModalState);
 
   // 디버깅을 위한 로그
   console.log('DetailPage params:', params);
@@ -69,7 +72,11 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [dragDirection, setDragDirection] = useState<'left' | 'right' | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const tabs = ['info', 'review', 'event'];
+  const tabs: ('info' | 'review' | 'event')[] = ['info', 'review', 'event'];
+
+  const handleModalClose = () => {
+    setReviewCompleteModal(false);
+  };
 
   // 슬라이드 핸들러
   const handleDragEnd = (event: any, info: PanInfo) => {
@@ -274,6 +281,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           />
         )}
       </div>
+      <ReviewCompleteModal isOpen={isModalOpen} onClose={handleModalClose} venueName={venue?.englishName || ''} />
     </div>
   );
 };

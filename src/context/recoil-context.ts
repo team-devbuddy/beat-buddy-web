@@ -363,3 +363,17 @@ export const onboardingLocationState = atom<string[]>({
   default: [],
   effects_UNSTABLE: [persistAtom],
 });
+
+// Detail 페이지 tab 상태 관리
+export const detailTabState = atom<'info' | 'review' | 'event'>({
+  key: 'detailTabState',
+  default: 'info',
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 리뷰 완료 모달 상태 관리
+export const reviewCompleteModalState = atom<boolean>({
+  key: 'reviewCompleteModalState',
+  default: false,
+  effects_UNSTABLE: [persistAtom],
+});

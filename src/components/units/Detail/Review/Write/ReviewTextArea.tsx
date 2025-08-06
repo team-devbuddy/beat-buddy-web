@@ -11,9 +11,15 @@ interface ReviewTextAreaProps {
 const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const MAX_LENGTH = 400; // 최대 글자 수 제한
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(e.target.value);
+    const newValue = e.target.value;
+
+    // 글자 수 제한
+    if (newValue.length <= MAX_LENGTH) {
+      onChange(newValue);
+    }
 
     // 높이 조정
     if (textareaRef.current) {
@@ -27,31 +33,36 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
   };
 
   return (
-    <div className="my-4 px-5">
+    <div className="my-[0.88rem] px-5">
       {/* 텍스트 영역 */}
-      <div className="rounded-[0.5rem] bg-gray600">
+      <div className="relative rounded-[0.5rem] bg-gray600">
         <textarea
           ref={textareaRef}
           value={value}
-          onChange={(e) => {
-            onChange(e.target.value);
-            if (textareaRef.current) {
-              textareaRef.current.style.height = 'auto';
-              textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-            }
-          }}
-          className="w-full placeholder:font-bold overflow-hidden whitespace-pre-wrap border-none bg-transparent px-4 pb-4 pt-5 text-[0.75rem] text-gray200 placeholder:text-gray200 focus:outline-none"
+          onChange={handleChange}
+          className="w-full overflow-hidden whitespace-pre-wrap border-none bg-transparent px-4 pb-4 pt-[0.88rem] text-[0.8125rem] text-gray200 placeholder:font-bold placeholder:text-gray200 focus:outline-none"
           style={{ minHeight: '2rem', resize: 'none' }}
           placeholder="즐거웠던 경험을 공유해 주세요!"
+          maxLength={MAX_LENGTH}
         />
 
+        {/* 글자 수 표시 */}
+        <div className="absolute bottom-[0.88rem] right-4 flex text-[0.75rem] text-gray400">
+          <p className={`${value.length > 0 ? 'text-gray100' : 'text-gray300'}`}>{value.length}</p>
+          <p className="text-gray300">/{MAX_LENGTH}</p>
+        </div>
+
         {!value && (
-          <div className="mt-[-2.3rem] rounded-[0.5rem] text-[0.75rem] pl-4 pr-5 pb-4 text-gray300">
-            광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.
-            자세한 내용은{' '}
-            <a href="/rules" target="_blank" rel="noopener noreferrer" className="text-gray300 underline">
+          <div className="mt-[-2.55rem] rounded-[0.5rem] pb-8 pl-4 pr-5 text-[0.8125rem] text-gray300">
+            광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요. 자세한 내용은{' '}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                toggleBottomSheet();
+              }}
+              className="text-gray300 underline">
               리뷰 작성 규칙
-            </a>
+            </button>
             을 참고해주세요.
           </div>
         )}
@@ -66,12 +77,12 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
           <div className="flex justify-center pt-[0.88rem]">
             <div className="h-1 w-16 rounded bg-gray600"></div>
           </div>
-          <h3 className="px-4 pt-7 text-body1-16-bold">리뷰 작성 시 유의 사항</h3>
-          <p className="mt-3 px-4 text-body2-15-medium text-gray300">
+          <h3 className="px-5 pt-7 text-body1-16-bold">리뷰 작성 시 유의 사항</h3>
+          <p className="mt-3 px-5 text-body2-15-medium text-gray300">
             ※ 본 공연은 9월 20일(금) 오후 5시까지 예매 가능합니다. 취소마감시간은 아래와 같이 예매 시 유의해주시기
             바랍니다.
           </p>
-          <ul className="space-y-2 px-4 text-sm text-gray200">
+          <ul className="space-y-2 px-5 pb-5 text-sm text-gray200">
             <li>[취소마감시간]</li>
             <li>- 공연관람일이 화요일~토요일인 경우 전날 오후 5시</li>
             <li>- 공연관람일이 일요일~월요일인 경우 토요일 오전 11시</li>
@@ -79,10 +90,10 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
             <li> * 공휴일 전날이 평일인 경우 오후 5시</li>
             <li> * 공휴일 전날이 토요일, 일요일인 경우 토요일 오전 11시</li>
           </ul>
-          {/* 닫기 버튼 */}
+          {/* 닫기 
           <button className="mt-6 w-full bg-main py-4 text-sm font-bold text-white" onClick={toggleBottomSheet}>
             닫기
-          </button>
+          </button>버튼 */}
         </div>
       </CSSTransition>
 
