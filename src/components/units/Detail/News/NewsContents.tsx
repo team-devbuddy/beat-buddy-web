@@ -116,8 +116,8 @@ const sortNewsByDday = (newsList: NewsItem[]) => {
       if (dDay === 'END') {
         return Number.MAX_SAFE_INTEGER; // END는 항상 마지막
       }
-      if (dDay === 'TODAY') {
-        return 0; // TODAY는 최우선
+      if (dDay === 'D-DAY') {
+        return 0; // D-DAY는 최우선
       }
       if (dDay.startsWith('D-')) {
         return parseInt(dDay.split('-')[1], 10); // D-숫자에서 숫자만 추출
@@ -291,7 +291,7 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
     if (dDay === 'END') {
       return 'bg-gray500 text-gray200';
     }
-    if (dDay === 'TODAY') {
+    if (dDay === 'D-DAY') {
       return 'bg-main text-white';
     }
     if (dDay.startsWith('D-')) {
@@ -358,7 +358,8 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
                   initial="initial"
                   animate={clickedHeart[news.eventId] ? 'clicked' : 'initial'}>
                   <Image
-                    src={likedEvents[news.eventId] ? '/icons/FilledHeart.svg' : '/icons/grayHeart.svg'}
+                    className="cursor-pointer safari-icon-fix"
+                    src={likedEvents[news.eventId] ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
                     alt="heart icon"
                     width={likedEvents[news.eventId] ? 27 : 24}
                     height={likedEvents[news.eventId] ? 24 : 24}

@@ -8,8 +8,15 @@ import Info from '@/components/units/Detail/Info';
 import VenueHours from '@/components/units/Detail/VenueHours';
 import CustomerService from '@/components/units/Detail/CustomerService';
 import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { accessTokenState, detailTabState, reviewCompleteModalState, isBusinessState } from '@/context/recoil-context';
+import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
+import {
+  accessTokenState,
+  detailTabState,
+  reviewCompleteModalState,
+  isBusinessState,
+  likedClubsState,
+  heartbeatNumsState,
+} from '@/context/recoil-context';
 import { Club } from '@/lib/types';
 import Loading from '@/components/common/skeleton/LoadingLottie';
 import Coupon from '@/components/units/Detail/Coupon';
@@ -30,6 +37,11 @@ import EventWriteButton from '@/components/units/Detail/News/EventWriteButton';
 import ReviewCompleteModal from '@/components/units/Detail/Review/Write/ReviewCompleteModal';
 import { getReview } from '@/lib/actions/venue-controller/getReview';
 import { motion, PanInfo } from 'framer-motion';
+import { heartAnimation } from '@/lib/animation';
+import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { AnimatePresence } from 'framer-motion';
 
 interface Review {
   venueReviewId: string;
@@ -57,12 +69,17 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [sortOption, setSortOption] = useState<'latest' | 'popular'>('latest');
   const [reviewLoading, setReviewLoading] = useState<boolean>(false);
   const [eventSortType, setEventSortType] = useState<'latest' | 'popular'>('latest');
+  const [showSummaryHeader, setShowSummaryHeader] = useState(false);
+  const [clickedHeart, setClickedHeart] = useState(false);
   const isBusiness = useRecoilValue(isBusinessState);
   const accessToken = useRecoilValue(accessTokenState);
   const activeTab = useRecoilValue(detailTabState);
   const setActiveTab = useSetRecoilState(detailTabState);
   const isModalOpen = useRecoilValue(reviewCompleteModalState);
   const setReviewCompleteModal = useSetRecoilState(reviewCompleteModalState);
+  const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
+  const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
+  const router = useRouter();
 
   // 디버깅을 위한 로그
   console.log('DetailPage params:', params);
@@ -76,6 +93,52 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
 
   const handleModalClose = () => {
     setReviewCompleteModal(false);
+  };
+
+  // 공유 기능
+  const handleShareClick = () => {
+    const url = window.location.href;
+    const title = venue?.englishName || 'BeatBuddy';
+    const text = `${venue?.englishName} - BeatBuddy에서 확인해보세요!`;
+
+    // 네이티브 공유 API 지원 확인
+    if (navigator.share) {
+      navigator
+        .share({
+          title: title,
+          text: text,
+          url: url,
+        })
+        .then(() => {
+          console.log('공유 성공');
+        })
+        .catch((error) => {
+          console.log('공유 취소 또는 오류:', error);
+          // 공유가 취소되거나 실패하면 클립보드 복사로 폴백
+          fallbackShare();
+        });
+    } else {
+      // 네이티브 공유 API를 지원하지 않는 경우 클립보드 복사
+      fallbackShare();
+    }
+  };
+
+  const fallbackShare = () => {
+    const url = window.location.href;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        console.log('링크가 복사되었습니다.');
+      })
+      .catch((err) => {
+        console.error('Failed to copy: ', err);
+      });
+  };
+
+  // 스크롤 핸들러 추가
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollTop = e.currentTarget.scrollTop;
+    setShowSummaryHeader(scrollTop > 200); // 200px 이상 스크롤 시 요약 헤더 표시
   };
 
   // 슬라이드 핸들러
@@ -194,7 +257,54 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="relative min-h-screen w-full bg-BG-black text-white">
-      <div className="h-screen overflow-y-auto">
+      {/* 요약된 헤더 */}
+      <AnimatePresence>
+        {showSummaryHeader && venue && (
+          <motion.div
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -100 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="fixed top-0 z-50 w-full  bg-BG-black/95 backdrop-blur-sm">
+            <div className="flex items-center justify-between px-5 pb-[0.88rem] pt-[0.62rem]">
+              <div className="flex items-center">
+                <button onClick={() => router.back()} className="text-white" aria-label="뒤로가기">
+                  <Image src="/icons/arrow_back_ios.svg" alt="back icon" width={24} height={24} />
+                </button>
+                <h1 className="truncate text-[1.25rem] font-bold text-white">{venue.englishName}</h1>
+              </div>
+              <div className="flex items-center gap-3">
+                <button className="text-white" aria-label="공유하기" onClick={handleShareClick}>
+                  <Image src="/icons/share.svg" alt="share icon" width={32} height={32} />
+                </button>
+                <motion.div
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (accessToken) {
+                      setClickedHeart(true);
+                      await handleHeartClick(e, venue.id, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
+                      setTimeout(() => setClickedHeart(false), 500);
+                    }
+                  }}
+                  className="cursor-pointer"
+                  variants={heartAnimation}
+                  initial="initial"
+                  animate={clickedHeart ? 'clicked' : 'initial'}>
+                  <Image
+                    src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
+                    alt="heart icon"
+                    width={28}
+                    height={28}
+                  />
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="h-screen overflow-y-auto" onScroll={handleScroll}>
         <Preview venue={venue} isHeartbeat={isHeartbeat} tagList={tagList} />
         <DetailCategoryBar activeTab={activeTab} setActiveTab={setActiveTab} />
 

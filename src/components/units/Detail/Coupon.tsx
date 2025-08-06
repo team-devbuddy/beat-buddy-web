@@ -109,13 +109,13 @@ export default function CouponCard({ venueId }: { venueId: number }) {
   // 쿠폰 상태에 따른 배경 이미지 결정
   const getCouponBackground = () => {
     if (isExpired) {
-      return '/icons/coupon_expired.svg'; // 만료된 쿠폰
+      return '/coupon_expired.svg'; // 만료된 쿠폰 (고정 크기)
     } else if (isUsed) {
       return '/coupon_used.svg'; // 사용된 쿠폰 (고정 크기)
     } else if (isReceived) {
       return '/coupon.svg'; // 받은 쿠폰 (사용 가능)
     } else if (isSoldOut) {
-      return '/icons/coupon_expired.svg'; // 품절된 쿠폰
+      return '/coupon_expired.svg'; // 품절된 쿠폰 (고정 크기)
     } else {
       return '/coupon_download.svg'; // 다운로드 가능한 쿠폰
     }
@@ -188,10 +188,16 @@ export default function CouponCard({ venueId }: { venueId: number }) {
   if (!coupon) return null;
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="flex w-full justify-center">
       <div className="px-5 pb-[0.88rem]">
         <div className={`relative ${isReceived && !isExpired ? 'cursor-pointer' : ''}`} onClick={handleCouponClick}>
-          <Image src={getCouponBackground()} alt="coupon" width={335} height={68} className="h-[68px] w-full max-w-[400px]" />
+          <Image
+            src={getCouponBackground()}
+            alt="coupon"
+            width={335}
+            height={68}
+            className="h-[68px] w-full object-cover"
+          />
 
           {/* 쿠폰 내용 오버레이 */}
           <div className="absolute inset-0 flex items-center justify-between px-4">
@@ -305,9 +311,9 @@ export default function CouponCard({ venueId }: { venueId: number }) {
             <div
               className="mx-5 max-h-[80vh] w-full max-w-sm overflow-y-auto rounded-[0.75rem] bg-BG-black px-5 pb-4 pt-5 shadow-2xl"
               onClick={(e) => e.stopPropagation()}>
-              <div className="flex flex-col items-center ">
-                <h3 className="text-[1.125rem] mb-2 font-bold text-white">쿠폰을 사용하시겠습니까?</h3>
-                <p className="text-center mb-5 text-[0.875rem] text-gray300">
+              <div className="flex flex-col items-center">
+                <h3 className="mb-2 text-[1.125rem] font-bold text-white">쿠폰을 사용하시겠습니까?</h3>
+                <p className="mb-5 text-center text-[0.875rem] text-gray300">
                   직원확인 버튼 클릭시 쿠폰이 즉시 사용 처리되며,
                   <br />
                   되돌릴 수 없습니다.
