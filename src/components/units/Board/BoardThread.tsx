@@ -61,6 +61,13 @@ export function formatRelativeTime(isoString: string): string {
   }
 }
 
+// 파일 확장자로 이미지/영상 구분
+const isVideo = (url: string): boolean => {
+  const videoExtensions = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv'];
+  const lowerUrl = url.toLowerCase();
+  return videoExtensions.some((ext) => lowerUrl.includes(ext));
+};
+
 export default function BoardThread({ postId, post }: PostProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -285,14 +292,18 @@ export default function BoardThread({ postId, post }: PostProps) {
               key={index}
               onClick={() => handleImageClick(index)}
               className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
-              <Image
-                src={url}
-                alt={`post-img-${index}`}
-                width={0}
-                height={0}
-                sizes="100vw"
-                style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
-              />
+              {isVideo(url) ? (
+                <video src={url} className="h-[200px] w-auto object-cover" preload="metadata" muted />
+              ) : (
+                <Image
+                  src={url}
+                  alt={`post-img-${index}`}
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
+                />
+              )}
             </div>
           ))}
         </div>
@@ -338,7 +349,7 @@ export default function BoardThread({ postId, post }: PostProps) {
             <span className="min-w-[0.45rem] text-left">{post.comments}</span>
           </span>
           <span className={`flex items-center gap-[0.12rem] ${scrapped ? 'text-main' : ''}`}>
-            <div className="flex max-w-[20px] max-h-[20px] items-center">
+            <div className="flex max-h-[20px] max-w-[20px] items-center">
               <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
                 <Image
                   src={

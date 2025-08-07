@@ -142,7 +142,7 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
     fetchComments();
   }, [page, postId, accessToken, setComments]);
 
-  const parentComments = comments.filter((c) => c.replyId === null && !c.isBlocked);
+  const parentComments = comments.filter((c) => c.replyId === null);
 
   return (
     <div className="bg-transparent pb-[4rem] pt-5">

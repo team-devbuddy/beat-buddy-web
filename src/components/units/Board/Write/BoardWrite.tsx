@@ -133,6 +133,12 @@ export default function BoardWrite() {
       return;
     }
 
+    // 글 내용 필수 검증
+    if (!content.trim()) {
+      alert('글 내용을 입력해주세요.');
+      return;
+    }
+
     // 제출 시작 시 즉시 로딩 상태 설정
     setIsLoading(true);
     console.log('게시글 업로드 시작');
@@ -187,7 +193,7 @@ export default function BoardWrite() {
   return (
     <div className="flex flex-col bg-BG-black pb-[140px] text-white">
       {/* 헤더 */}
-      <header className="flex items-center justify-between py-4 pl-[0.62rem] pr-5">
+      <header className="flex items-center justify-between py-[0.53rem] pl-[0.62rem] pr-5">
         <Image
           onClick={() => router.back()}
           src="/icons/line-md_chevron-left.svg"
@@ -198,10 +204,10 @@ export default function BoardWrite() {
         <h1
           onClick={handleUpload}
           className={`text-[0.875rem] font-bold ${
-            isLoading ? 'cursor-not-allowed text-gray500' : 'cursor-pointer text-gray200 hover:text-white'
+            isLoading || !content.trim() ? 'cursor-not-allowed text-gray500' : 'cursor-pointer text-gray200'
           }`}
-          style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>
-          {isLoading ? '글쓰기' : '글쓰기'}
+          style={{ pointerEvents: isLoading || !content.trim() ? 'none' : 'auto' }}>
+          {postId && !isNaN(postId) ? '수정' : '글쓰기'}
         </h1>
       </header>
 

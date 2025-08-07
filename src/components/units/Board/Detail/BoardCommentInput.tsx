@@ -44,6 +44,36 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
     }
   }, [focusTrigger]);
 
+  // 익명 상태 변경 시 포커스 유지
+  useEffect(() => {
+    if (inputRef.current) {
+      // 모바일에서 키보드가 열려있는 상태에서 포커스 유지
+      const handleFocus = () => {
+        if (document.activeElement !== inputRef.current) {
+          inputRef.current?.focus();
+        }
+      };
+
+      // 여러 이벤트로 포커스 유지 시도
+      const events = ['touchstart', 'touchend', 'click', 'focus'];
+      events.forEach((event) => {
+        document.addEventListener(event, handleFocus, { passive: true });
+      });
+
+      // 즉시 포커스 시도
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+
+      return () => {
+        events.forEach((event) => {
+          document.removeEventListener(event, handleFocus);
+        });
+        clearTimeout(timer);
+      };
+    }
+  }, [isAnonymous]);
+
   const handleSubmit = async () => {
     if (!content.trim() || !accessToken) return;
     try {
@@ -108,11 +138,13 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
             height={18}
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               setIsAnonymous(!isAnonymous);
-              // 포커스 유지
-              setTimeout(() => {
-                inputRef.current?.focus();
-              }, 0);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsAnonymous(!isAnonymous);
             }}
           />
           익명

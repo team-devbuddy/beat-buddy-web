@@ -41,6 +41,13 @@ interface PostProps {
   };
 }
 
+// 파일 확장자로 이미지/영상 구분
+const isVideo = (url: string): boolean => {
+  const videoExtensions = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv'];
+  const lowerUrl = url.toLowerCase();
+  return videoExtensions.some((ext) => lowerUrl.includes(ext));
+};
+
 export default function BoardDetail({ postId, post }: PostProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -150,9 +157,9 @@ export default function BoardDetail({ postId, post }: PostProps) {
   // 🔥 불필요한 재렌더링을 유발하던 useEffect 훅들을 모두 삭제했습니다.
 
   return (
-    <div className="border-b-[0.375rem] border-gray700 bg-BG-black px-[1.25rem] pb-[1.25rem]">
+    <div className="border-b-[0.375rem] border-gray700 bg-BG-black px-[1.25rem] pb-[1.25rem] pt-[0.5rem]">
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-[0.5rem]">
+        <div className="flex items-center gap-[0.62rem]">
           <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500" onClick={goToUserProfile}>
               <Image
@@ -185,30 +192,34 @@ export default function BoardDetail({ postId, post }: PostProps) {
         {!post.isAuthor && !post.isAnonymous && (
           <button
             onClick={handleFollow}
-            className={`text-body2-15-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
+            className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
             disabled={loadingFollow}>
             {isFollowing ? '팔로잉' : '팔로우'}
           </button>
         )}
       </div>
-      <p className="py-[0.75rem] text-[1rem] text-white">{post.title}</p>
+      <p className="py-[0.75rem] text-[1rem] font-bold text-white">{post.title}</p>
       <p className="whitespace-pre-wrap text-[0.8125rem] text-gray100">{post.content}</p>
 
       {post.imageUrls && post.imageUrls.length > 0 && (
-        <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
+        <div className="mt-[0.75rem] flex gap-[0.5rem] overflow-x-auto">
           {post.imageUrls.map((url, index) => (
             <div
               key={index}
               onClick={() => handleImageClick(index)}
               className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
-              <Image
-                src={url}
-                alt={`post-img-${index}`}
-                width={0}
-                height={0}
-                sizes="100vw"
-                style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
-              />
+              {isVideo(url) ? (
+                <video src={url} className="h-[200px] w-auto object-cover" preload="metadata" muted />
+              ) : (
+                <Image
+                  src={url}
+                  alt={`post-img-${index}`}
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
+                />
+              )}
             </div>
           ))}
         </div>
@@ -222,7 +233,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
         />
       )}
 
-      <div className="mt-[0.88rem] flex flex-wrap gap-[0.38rem]">
+      <div className="mt-[0.75rem] flex flex-wrap gap-[0.38rem]">
         {post.hashtags &&
           post.hashtags.map((tag) => (
             <span
@@ -233,7 +244,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
           ))}
       </div>
       <div className="flex justify-between">
-        <div className="mt-[1rem] flex gap-[0.5rem] text-body3-12-medium text-gray300">
+        <div className="mt-[0.75rem] flex gap-[0.5rem] text-[0.75rem] text-gray300">
           <span className={`flex items-center gap-[0.12rem] ${liked ? 'text-main' : ''}`}>
             <button onClick={handleLike} disabled={isLoadingLike} title="좋아요" className="flex items-center">
               <Image
@@ -269,7 +280,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
           </span>
         </div>
         <div className="flex items-end gap-[0.5rem]">
-          <p className="text-body3-12-medium text-gray300">조회 {post.views}회</p>
+          <p className="text-[0.75rem] text-gray300">조회 {post.views}회</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}

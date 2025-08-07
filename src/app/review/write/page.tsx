@@ -58,14 +58,14 @@ const ReviewWritePage = () => {
     }
   };
 
-  return (
+      return (
     <div className="relative bg-BG-black text-white">
       <ReviewWriteHeader title={venueName} currentStep={1} totalSteps={1} />
-      <ImageUploader onUpload={handleImageUpload} uploadedFiles={uploadedImages} />
-      <ReviewTextArea value={reviewText} onChange={handleTextChange} />
-      <ReviewSubmitButton venueId={venueId} onClick={handleSubmit} isDisabled={!reviewText} />
-    </div>
-  );
+          <ImageUploader onUpload={handleImageUpload} uploadedFiles={uploadedImages} />
+          <ReviewTextArea value={reviewText} onChange={handleTextChange} />
+          <ReviewSubmitButton venueId={venueId} onClick={handleSubmit} isDisabled={!reviewText} />
+        </div>
+      );
 };
 
 export default ReviewWritePage;

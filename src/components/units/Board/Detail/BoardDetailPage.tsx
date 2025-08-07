@@ -125,8 +125,8 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
   }, [replyingTo, setReplyingTo]);
 
   return (
-    <main className="relative min-h-screen bg-BG-black pb-[5.5rem] text-white">
-      <div className="flex items-center justify-between py-4 pl-[0.62rem] pr-4">
+    <main className="relative  bg-BG-black  text-white">
+      <div className="flex items-center justify-between py-[0.53rem] pl-[0.62rem] pr-4">
         <Image
           onClick={() => router.back()}
           src="/icons/line-md_chevron-left.svg"

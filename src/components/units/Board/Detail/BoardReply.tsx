@@ -68,26 +68,14 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
     }
   };
   const renderBlockedComment = (isNestedComment: boolean = false) => {
-    const containerClass = isNestedComment
-      ? 'flex w-full flex-col gap-[0.5rem] rounded-lg'
-      : '-m-3 flex flex-col gap-[0.5rem] rounded-lg p-3';
+    const containerClass = isNestedComment ? 'flex w-full flex-col gap-2 rounded-lg' : 'flex flex-col gap-2 rounded-lg';
 
     return (
       <div className={containerClass}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-gray400">
-            <Image
-              src="/icons/default-profile.svg"
-              alt="profile"
-              width={22}
-              height={22}
-              className="h-[22px] w-[22px] rounded-full object-cover"
-            />
-            <span className="text-gray400">(차단)</span>
-            <span className="text-body3-12-medium text-gray400">· {formattedTime}</span>
-          </div>
+        <div className="flex items-center gap-[0.37rem] pb-[0.88rem] text-[0.8125rem] text-gray300">
+          <Image src="/icons/block.svg" alt="profile" width={20} height={20} className="rounded-full object-cover" />
+          <p className="whitespace-pre-wrap text-[0.8125rem] text-gray300">차단한 사용자의 댓글입니다.</p>
         </div>
-        <p className="whitespace-pre-wrap text-[0.75rem] text-gray400">차단된 사용자의 댓글입니다.</p>
       </div>
     );
   };
@@ -212,34 +200,40 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   };
 
   const formattedTime = formatRelativeTime(reply.createdAt);
-  const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked); // 차단된 사용자 제외
+  const childReplies = allComments.filter((c) => c.replyId === reply.id); // 차단된 사용자도 포함
 
-  // 차단된 사용자의 댓글은 렌더링하지 않음
-  if (reply.isBlocked) {
-    return isNested ? renderBlockedComment(true) : renderBlockedComment();
+  // 디버깅용 로그
+  console.log('BoardReply 렌더링:', {
+    replyId: reply.id,
+    isBlocked: reply.isBlocked,
+    isDeleted: reply.isDeleted,
+    memberName: reply.memberName,
+    childRepliesCount: childReplies.length,
+  });
+
+  // 삭제된 댓글에 자식댓글이 없으면 렌더링하지 않음
+  if (reply.isDeleted && childReplies.length === 0) {
+    return null;
   }
+
   // 삭제된 댓글 렌더링 함수
   const renderDeletedComment = (isNestedComment: boolean = false) => {
     const containerClass = isNestedComment
       ? 'flex w-full flex-col gap-[0.5rem] rounded-lg'
-      : '-m-3 flex flex-col gap-[0.5rem] rounded-lg p-3';
+      : 'flex flex-col gap-[0.5rem] rounded-lg';
 
     return (
       <div className={containerClass}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-gray400">
-            <Image
-              src="/icons/default-profile.svg"
-              alt="profile"
-              width={22}
-              height={22}
-              className="h-[22px] w-[22px] rounded-full object-cover"
-            />
-            <span className="text-gray400">(삭제)</span>
-            <span className="text-body3-12-medium text-gray400">· {formattedTime}</span>
-          </div>
+        <div className="flex items-center pt-[0.62rem] pb-[0.88rem] gap-[0.37rem] text-[0.8125rem] text-gray300">
+          <Image
+            src="/icons/cancel.svg"
+            alt="profile"
+            width={20}
+            height={20}
+            className="h-[20px] w-[20px] rounded-full object-cover"
+          />
+          <p className="whitespace-pre-wrap text-[0.8125rem] text-gray300">삭제된 댓글입니다.</p>
         </div>
-        <p className="whitespace-pre-wrap text-[0.75rem] text-gray400">삭제된 댓글입니다.</p>
       </div>
     );
   };
@@ -252,9 +246,12 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
         {/* ✅ 스크린샷 디자인에 맞춰 회색 배경과 패딩을 적용합니다. */}
         <div
           className={classNames('flex w-full flex-col gap-[0.5rem] rounded-lg transition-colors', {
+            'mt-1': reply.isBlocked,
             'bg-gray800': isReplying,
           })}>
-          {reply.isDeleted ? (
+          {reply.isBlocked ? (
+            renderBlockedComment(true)
+          ) : reply.isDeleted ? (
             renderDeletedComment(true)
           ) : (
             <>
@@ -293,9 +290,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                 <button
                   onClick={handleLike}
                   disabled={isLoadingLike}
-                  className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${
-                    isLiked ? 'text-main' : 'text-gray300'
-                  }`}>
+                  className={`flex items-center gap-[0.19rem] ${isLiked ? 'text-main' : 'text-gray300'}`}>
                   <Image
                     src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
                     alt="heart"
@@ -341,12 +336,14 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
   // 부모 댓글(최상위 댓글) UI
   return (
-    <div id={`comment-${reply.id}`} className="flex flex-col gap-3 px-5 pb-5">
+    <div id={`comment-${reply.id}`} className="flex flex-col gap-2 px-5 pb-3">
       <div
-        className={classNames('-m-3 flex flex-col gap-[0.5rem] rounded-lg p-3 transition-colors', {
+        className={classNames('flex flex-col gap-2 rounded-lg transition-colors', {
           '': isReplying,
         })}>
-        {reply.isDeleted ? (
+        {reply.isBlocked ? (
+          renderBlockedComment()
+        ) : reply.isDeleted ? (
           renderDeletedComment()
         ) : (
           <>
@@ -385,7 +382,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
               <button
                 onClick={handleLike}
                 disabled={isLoadingLike}
-                className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${isLiked ? 'text-main' : 'text-gray300'}`}>
+                className={`flex items-center gap-[0.19rem] ${isLiked ? 'text-main' : 'text-gray300'}`}>
                 <Image
                   src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
                   alt="heart"
@@ -404,7 +401,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
       {/* ✅ 자식 댓글 목록 렌더링 부분 수정 */}
       {childReplies.length > 0 && (
-        <div className="mt-4 flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           {/* ✅ 자식 목록을 AnimatePresence로 감싸줍니다. */}
           <AnimatePresence>
             {childReplies.map((child) => (
@@ -416,8 +413,8 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                 animate={{ opacity: 1, y: 0, height: 'auto' }}
                 exit={{ opacity: 0, y: -10, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="flex items-start gap-2">
-                <Image src="/icons/replyArrow.svg" alt="reply arrow" width={16} height={16} className="mt-1" />
+                className={`flex items-start gap-2 ${child.isBlocked || child.isDeleted ? 'mt-[0.62rem]' : 'mt-1'}`}>
+                <Image src="/icons/replyArrow.svg" alt="reply arrow" width={16} height={16} className="" />
                 <BoardReply
                   reply={child}
                   allComments={allComments}

@@ -185,8 +185,8 @@ export default function AlertList() {
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
-      }
-    };
+    }
+  };
   }, [handleIntersection]);
 
   if (loading && notifications.length === 0) {
