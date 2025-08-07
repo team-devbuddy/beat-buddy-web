@@ -67,6 +67,30 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
       setFocusTrigger((c) => c + 1);
     }
   };
+  const renderBlockedComment = (isNestedComment: boolean = false) => {
+    const containerClass = isNestedComment
+      ? 'flex w-full flex-col gap-[0.5rem] rounded-lg'
+      : '-m-3 flex flex-col gap-[0.5rem] rounded-lg p-3';
+
+    return (
+      <div className={containerClass}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-gray400">
+            <Image
+              src="/icons/default-profile.svg"
+              alt="profile"
+              width={22}
+              height={22}
+              className="h-[22px] w-[22px] rounded-full object-cover"
+            />
+            <span className="text-gray400">(차단)</span>
+            <span className="text-body3-12-medium text-gray400">· {formattedTime}</span>
+          </div>
+        </div>
+        <p className="whitespace-pre-wrap text-[0.75rem] text-gray400">차단된 사용자의 댓글입니다.</p>
+      </div>
+    );
+  };
 
   const handleLike = async () => {
     // 삭제된 댓글에는 좋아요 불가
@@ -144,7 +168,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
         );
       } else {
         // 자식댓글이 없으면 완전 삭제
-      setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
+        setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
       }
     } catch (error) {
       console.error('댓글 삭제 실패', error);
@@ -192,9 +216,8 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
   // 차단된 사용자의 댓글은 렌더링하지 않음
   if (reply.isBlocked) {
-    return null;
+    return isNested ? renderBlockedComment(true) : renderBlockedComment();
   }
-
   // 삭제된 댓글 렌더링 함수
   const renderDeletedComment = (isNestedComment: boolean = false) => {
     const containerClass = isNestedComment
@@ -235,52 +258,53 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             renderDeletedComment(true)
           ) : (
             <>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-[0.37rem] text-[0.8125rem] font-bold text-white">
-              <Image
-                src={
-                  reply.isAnonymous
-                    ? '/icons/default-profile.svg'
-                    : reply.profileImageUrl || '/icons/default-profile.svg'
-                }
-                alt="profile"
-                width={22}
-                height={22}
-                className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover"
-                onClick={handleProfileClick}
-              />
-              {reply.memberName}
-              <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
-            </div>
-            <div className="relative">
-              <Image
-                ref={iconRef}
-                src="/icons/dot-vertical.svg"
-                alt="menu"
-                width={20}
-                height={20}
-                onClick={handleMenuClick}
-                className="cursor-pointer"
-              />
-            </div>
-          </div>
-          <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
-          <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
-            <button
-              onClick={handleLike}
-              disabled={isLoadingLike}
-              className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${
-                isLiked ? 'text-main' : 'text-gray300'
-              }`}>
-              <Image
-                src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
-                alt="heart"
-                width={16}
-                height={16}
-              />
-              {likeCount}
-            </button>
-          </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center justify-center gap-[0.37rem] text-[0.8125rem] text-white">
+                  <Image
+                    src={
+                      reply.isAnonymous
+                        ? '/icons/default-profile.svg'
+                        : reply.profileImageUrl || '/icons/default-profile.svg'
+                    }
+                    alt="profile"
+                    width={22}
+                    height={22}
+                    className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover"
+                    onClick={handleProfileClick}
+                  />
+                  {reply.isAuthor && <span className="font-bold text-main">{reply.memberName} (작성자)</span>}
+                  {!reply.isAuthor && <span className="text-[0.8125rem] font-bold text-white">{reply.memberName}</span>}
+                  <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
+                </div>
+                <div className="relative">
+                  <Image
+                    ref={iconRef}
+                    src="/icons/dot-vertical.svg"
+                    alt="menu"
+                    width={20}
+                    height={20}
+                    onClick={handleMenuClick}
+                    className="cursor-pointer"
+                  />
+                </div>
+              </div>
+              <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
+              <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
+                <button
+                  onClick={handleLike}
+                  disabled={isLoadingLike}
+                  className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${
+                    isLiked ? 'text-main' : 'text-gray300'
+                  }`}>
+                  <Image
+                    src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
+                    alt="heart"
+                    width={16}
+                    height={16}
+                  />
+                  {likeCount}
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -293,6 +317,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             commentId={reply.id}
             type="comment"
             commentAuthorName={reply.memberName}
+            isAnonymous={reply.isAnonymous}
             onCommentDelete={() => {
               // 자식댓글이 있는지 확인
               const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked);
@@ -305,9 +330,9 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
               } else {
                 // 자식댓글이 없으면 완전 삭제
                 setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
-            }
+              }
             }}
-            writerId={reply.userId ? parseInt(reply.userId) : undefined}
+            writerId={reply.writerId ? reply.writerId : undefined}
           />
         )}
       </div>
@@ -325,53 +350,54 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           renderDeletedComment()
         ) : (
           <>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-[0.37rem] text-[0.75rem] font-bold text-white">
-            <Image
-              src={
+            <div className="flex items-center justify-between">
+              <div className="flex items-center justify-center gap-[0.37rem] text-[0.8125rem] text-white">
+                <Image
+                  src={
                     reply.isAnonymous
                       ? '/icons/default-profile.svg'
                       : reply.profileImageUrl || '/icons/default-profile.svg'
-              }
-              alt="profile"
-              width={22}
-              height={22}
-              className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover safari-icon-fix"
-              onClick={handleProfileClick}
-            />
-            {reply.memberName}
-            <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
-          </div>
-          <div className="relative">
-            <Image
-              ref={iconRef}
-              src="/icons/dot-vertical.svg"
-              alt="menu"
-              width={20}
-              height={20}
-              onClick={handleMenuClick}
-              className="cursor-pointer"
-            />
-          </div>
-        </div>
-        <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
-        <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
-          <button
-            onClick={handleLike}
-            disabled={isLoadingLike}
-            className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${isLiked ? 'text-main' : 'text-gray300'}`}>
-            <Image
-              src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
-              alt="heart"
-              width={16}
-              height={16}
-            />
-            {likeCount}
-          </button>
-          <button onClick={handleReplyClick} className="text-gray300">
-            {isReplying ? '답글 취소' : '답글 달기'}
-          </button>
-        </div>
+                  }
+                  alt="profile"
+                  width={22}
+                  height={22}
+                  className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover safari-icon-fix"
+                  onClick={handleProfileClick}
+                />
+                {reply.isAuthor && <span className="font-bold text-main">{reply.memberName} (작성자)</span>}
+                {!reply.isAuthor && <span className="text-[0.8125rem] font-bold text-white">{reply.memberName}</span>}
+                <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
+              </div>
+              <div className="relative">
+                <Image
+                  ref={iconRef}
+                  src="/icons/dot-vertical.svg"
+                  alt="menu"
+                  width={20}
+                  height={20}
+                  onClick={handleMenuClick}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
+            <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
+            <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
+              <button
+                onClick={handleLike}
+                disabled={isLoadingLike}
+                className={`flex items-center gap-[0.19rem] disabled:opacity-50 ${isLiked ? 'text-main' : 'text-gray300'}`}>
+                <Image
+                  src={isLiked ? '/icons/favorite-pink.svg' : '/icons/favorite.svg'}
+                  alt="heart"
+                  width={16}
+                  height={16}
+                />
+                <span className="min-w-[0.5rem]">{likeCount}</span>
+              </button>
+              <button onClick={handleReplyClick} className="text-gray300">
+                {isReplying ? '답글 취소' : '답글 달기'}
+              </button>
+            </div>
           </>
         )}
       </div>
@@ -426,9 +452,9 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             } else {
               // 자식댓글이 없으면 완전 삭제
               setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
-          }
+            }
           }}
-          writerId={reply.userId ? parseInt(reply.userId) : undefined}
+          writerId={reply.writerId ? reply.writerId : undefined}
         />
       )}
     </div>

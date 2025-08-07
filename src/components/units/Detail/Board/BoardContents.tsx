@@ -134,22 +134,31 @@ const BoardContents = ({ boardData, filterKorName, filterEngName }: BoardContent
 
                         {/* 드롭다운 메뉴 */}
                         <motion.div
-                          initial={{ opacity: 0, translateY: -10 }}
-                          animate={{ opacity: 1, translateY: 0 }}
-                          exit={{ opacity: 0, translateY: -10 }}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
                           transition={{ duration: 0.2 }}
-                          className="absolute right-0 top-6 mt-4 w-[5.5rem] rounded-xs bg-gray700 shadow-lg">
+                          className="absolute right-0 z-20 mt-2 whitespace-nowrap rounded-[0.5rem] bg-gray700 px-[1.12rem] shadow-lg">
                           {item.isAuthor ? (
-                            <>
-                              <button className="w-full px-5 py-2 text-center text-body3-12-medium text-gray200 hover:text-main focus:text-main">
-                                수정하기
-                              </button>
-                              <button className="text-red500 hover:bg-red700 w-full px-5 py-2 text-center text-body3-12-medium text-gray200 hover:text-main focus:text-main">
-                                삭제하기
-                              </button>
-                            </>
+                            // 작성자인 경우 삭제 옵션
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // 삭제 로직 추가
+                                setActiveDropdown(null);
+                              }}
+                              className="w-full rounded-b-[0.5rem] rounded-t-[0.5rem] py-2 text-center text-[0.8125rem] text-gray200 hover:bg-gray500">
+                              삭제하기
+                            </button>
                           ) : (
-                            <button className="w-full px-5 py-2 text-center text-body3-12-medium text-gray200 hover:text-main focus:text-main">
+                            // 다른 사용자인 경우 신고 옵션
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // 신고 로직 추가
+                                setActiveDropdown(null);
+                              }}
+                              className="w-full rounded-b-[0.5rem] rounded-t-[0.5rem] py-2 text-center text-[0.8125rem] text-gray200 hover:bg-gray500">
                               신고하기
                             </button>
                           )}

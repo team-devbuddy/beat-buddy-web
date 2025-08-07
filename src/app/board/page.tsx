@@ -44,8 +44,6 @@ export default function BoardPage() {
   const [loading, setLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isScrapped, setIsScrapped] = useState(false);
   const [showButton, setShowButton] = useState(true);
@@ -53,9 +51,6 @@ export default function BoardPage() {
   const accessToken = useRecoilValue(accessTokenState) || '';
   const userProfile = useRecoilValue(userProfileState);
   const pathname = usePathname();
-
-  const touchStartY = useRef<number | null>(null);
-  const touchEndY = useRef<number | null>(null);
 
   // 직접 스크롤 감지
   useEffect(() => {
@@ -133,41 +128,6 @@ export default function BoardPage() {
     } else {
       return minOpacity;
     }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (window.scrollY === 0) {
-      touchStartY.current = e.touches[0].clientY;
-    }
-  };
-
-  const MAX_PULL_DISTANCE = 120; // 원하는 최대 당김 거리
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartY.current === null) return;
-    const currentY = e.touches[0].clientY;
-    const distance = currentY - touchStartY.current;
-    if (distance > 0) {
-      touchEndY.current = currentY;
-      setPullDistance(Math.min(distance, MAX_PULL_DISTANCE)); // 🔥 최대 제한 적용
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStartY.current !== null && touchEndY.current !== null && touchEndY.current - touchStartY.current > 50) {
-      setIsRefreshing(true);
-      setPosts([]);
-      setPage(1);
-      setHasMore(true);
-      fetchPosts(1).finally(() => {
-        setTimeout(() => {
-          setIsRefreshing(false);
-        }, 500);
-      });
-    }
-    setPullDistance(0);
-    touchStartY.current = null;
-    touchEndY.current = null;
   };
 
   const observer = useRef<IntersectionObserver | null>(null);
@@ -292,12 +252,29 @@ export default function BoardPage() {
     setSelectedTags(tags);
   };
 
+  // 게시글 삭제 이벤트 리스너
+  useEffect(() => {
+    const handlePostDeleted = (event: CustomEvent) => {
+      const { postId, type } = event.detail;
+      // 게시글 삭제인 경우에만 처리
+      if (type === 'post') {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+      }
+    };
+
+    window.addEventListener('postDeleted', handlePostDeleted as EventListener);
+
+    return () => {
+      window.removeEventListener('postDeleted', handlePostDeleted as EventListener);
+    };
+  }, []);
+
   return (
     <main
       className="flex min-h-full flex-col bg-BG-black text-white"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}>
+      onTouchStart={() => {}}
+      onTouchMove={() => {}}
+      onTouchEnd={() => {}}>
       <BoardHeader profileImageUrl={userProfile?.profileImageUrl} />
 
       <BoardHashtag selectedTags={selectedTags} setSelectedTags={setSelectedTags} onUpdatePosts={handleUpdatePosts} />
@@ -305,13 +282,13 @@ export default function BoardPage() {
       {/* 🔽 여기서 해시태그 아래 여백 */}
       <div
         style={{
-          height: `${pullDistance}px`,
-          transition: isRefreshing ? 'height 0.3s ease' : 'none',
+          height: '0px',
+          transition: 'none',
         }}
       />
 
       <AnimatePresence>
-        {isRefreshing && (
+        {false && (
           <motion.div
             key="refresh-indicator"
             initial={{ opacity: 0, y: -20 }}

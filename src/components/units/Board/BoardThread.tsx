@@ -15,6 +15,7 @@ import BoardDropdown from './BoardDropDown';
 import { useRouter } from 'next/navigation';
 import { followMapState } from '@/context/recoil-context';
 import { useRef } from 'react';
+import { motion } from 'framer-motion';
 
 interface PostProps {
   postId: number;
@@ -70,6 +71,7 @@ export default function BoardThread({ postId, post }: PostProps) {
   const [likes, setLikes] = useState(post.likes);
   const [scraps, setScraps] = useState(post.scraps);
   const [isAnonymous, setIsAnonymous] = useState(post.isAnonymous);
+  const [isDeleting, setIsDeleting] = useState(false);
   const dropdownTriggerRef = useRef<HTMLImageElement | null>(null);
 
   const accessToken = useRecoilValue(accessTokenState) || '';
@@ -80,6 +82,7 @@ export default function BoardThread({ postId, post }: PostProps) {
   const scrapped = scrapMap[post.id] ?? false;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
+  const [clickedFollow, setClickedFollow] = useState(false);
 
   const isFollowing = followMap[post.writerId] ?? post.isFollowing;
 
@@ -94,7 +97,19 @@ export default function BoardThread({ postId, post }: PostProps) {
   const openDropdown = () => {
     if (dropdownTriggerRef.current) {
       const rect = dropdownTriggerRef.current.getBoundingClientRect();
-      setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 }); // 160은 dropdown width
+      const dropdownWidth = 89; // w-[5.5625rem] = 89px
+      const dropdownHeight = 64; // 2개 항목 * 32px
+
+      // 화면 오른쪽 끝에 가까우면 왼쪽으로 표시
+      const shouldShowLeft = rect.right + dropdownWidth > window.innerWidth;
+
+      // 화면 아래쪽 끝에 가까우면 위쪽으로 표시
+      const shouldShowTop = rect.bottom + dropdownHeight > window.innerHeight;
+
+      const left = shouldShowLeft ? rect.left - dropdownWidth : rect.right - 10;
+      const top = shouldShowTop ? rect.top - dropdownHeight : rect.bottom - 80;
+
+      setDropdownPosition({ top, left });
       setIsDropdownOpen(true);
     }
   };
@@ -105,6 +120,9 @@ export default function BoardThread({ postId, post }: PostProps) {
 
   const handleFollow = async () => {
     if (loadingFollow || !accessToken) return alert('로그인이 필요합니다.');
+
+    // 애니메이션 시작
+    setClickedFollow(true);
 
     try {
       setLoadingFollow(true);
@@ -181,18 +199,31 @@ export default function BoardThread({ postId, post }: PostProps) {
   };
 
   return (
-    <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[0.88rem]">
+    <motion.div
+      className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[0.88rem]"
+      initial={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      animate={isDeleting ? { opacity: 0, height: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 } : {}}
+      onAnimationComplete={() => {
+        if (isDeleting) {
+          // 애니메이션 완료 후 부모 컴포넌트에서 제거
+          // 부모 컴포넌트에서 처리하도록 이벤트 발생
+          const event = new CustomEvent('postDeleted', { detail: { postId: post.id, type: 'post' } });
+          window.dispatchEvent(event);
+        }
+      }}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-[0.5rem]">
-          <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
+        <div className="flex items-center gap-[0.62rem]">
+          <div className="relative flex h-[32px] w-[32px] cursor-pointer items-center justify-center">
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500">
               <Image
                 src={
                   post.isAnonymous ? '/icons/default-profile.svg' : post.profileImageUrl || '/icons/default-profile.svg'
                 }
                 alt="profile"
-                width={37}
-                height={37}
+                width={32}
+                height={32}
                 className="h-full w-full rounded-full object-cover safari-icon-fix"
                 onClick={goToUserProfile}
                 style={{ aspectRatio: '1/1' }}
@@ -204,7 +235,7 @@ export default function BoardThread({ postId, post }: PostProps) {
                 alt="business-mark"
                 width={9}
                 height={9}
-                className="absolute -right-[-0.5px] -top-[-1px] z-10 safari-icon-fix"
+                className="absolute -right-0 -top-[-1px] z-10 safari-icon-fix"
               />
             )}
           </div>
@@ -215,16 +246,18 @@ export default function BoardThread({ postId, post }: PostProps) {
         </div>
 
         {!post.isAuthor && !post.isAnonymous && (
-          <button
+          <motion.button
             onClick={handleFollow}
             className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
-            disabled={loadingFollow}>
+            disabled={loadingFollow}
+            animate={clickedFollow ? { scale: 0.95 } : {}}
+            onAnimationComplete={() => setClickedFollow(false)}>
             {isFollowing ? '팔로잉' : '팔로우'}
-          </button>
+          </motion.button>
         )}
       </div>
       <div onClick={goToPost}>
-        <p className="mb-[0.62rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>
+        <p className="mb-[0.5rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>
         <p
           className="whitespace-pre-wrap text-[0.8125rem] text-gray100"
           style={{
@@ -277,7 +310,7 @@ export default function BoardThread({ postId, post }: PostProps) {
         {post.hashtags.map((tag) => (
           <span
             key={tag}
-            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.25rem] text-[0.6875rem] text-gray300">
+            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
             {tag}
           </span>
         ))}
@@ -293,7 +326,7 @@ export default function BoardThread({ postId, post }: PostProps) {
                 height={20}
               />
             </button>
-            {likes}
+            <span className="min-w-[0.45rem] text-left">{likes}</span>
           </span>
           <span className={`flex items-center gap-[0.12rem] ${post.hasCommented ? 'text-main' : ''}`}>
             <Image
@@ -302,20 +335,22 @@ export default function BoardThread({ postId, post }: PostProps) {
               width={20}
               height={20}
             />
-            {post.comments}
+            <span className="min-w-[0.45rem] text-left">{post.comments}</span>
           </span>
           <span className={`flex items-center gap-[0.12rem] ${scrapped ? 'text-main' : ''}`}>
-            <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
-              <Image
-                src={
-                  scrapped ? '/icons/material-symbols_bookmark-pink.svg' : '/icons/material-symbols_bookmark-gray.svg'
-                }
-                alt="bookmark"
-                width={20}
-                height={20}
-              />
-            </button>
-            {scraps}
+            <div className="flex max-w-[20px] max-h-[20px] items-center">
+              <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
+                <Image
+                  src={
+                    scrapped ? '/icons/material-symbols_bookmark-pink.svg' : '/icons/material-symbols_bookmark-gray.svg'
+                  }
+                  alt="bookmark"
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
+            <span className="min-w-[0.45rem] text-left">{scraps}</span>
           </span>
         </div>
         <div className="flex items-end gap-[0.62rem]">
@@ -325,7 +360,7 @@ export default function BoardThread({ postId, post }: PostProps) {
             onClick={openDropdown}
             src="/icons/dot-vertical.svg"
             alt="bookmark"
-            width={20}
+            width={19}
             height={20}
             className="z-100 rotate-90 cursor-pointer"
           />{' '}
@@ -337,8 +372,10 @@ export default function BoardThread({ postId, post }: PostProps) {
           onClose={() => setIsDropdownOpen(false)}
           position={dropdownPosition}
           postId={post.id}
+          onPostDelete={() => setIsDeleting(true)}
+          type="board"
         />
       )}
-    </div>
+    </motion.div>
   );
 }

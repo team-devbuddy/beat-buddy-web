@@ -223,7 +223,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
             onClick={handleFollow}
             className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
             disabled={loadingFollow}>
-            {loadingFollow ? '처리중...' : isFollowing ? '팔로잉' : '팔로우'}
+            {isFollowing ? '팔로잉' : '팔로우'}
           </button>
         )}
       </div>

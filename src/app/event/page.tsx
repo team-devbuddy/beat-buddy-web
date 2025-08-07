@@ -15,13 +15,8 @@ export default function EventPage() {
   const isBusiness = useRecoilValue(isBusinessState);
   const [activeTab, setActiveTab] = useRecoilState(eventTabState);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [showButton, setShowButton] = useState(true);
   const lastScrollYRef = useRef(0);
-  const touchStartY = useRef<number | null>(null);
-  const touchEndY = useRef<number | null>(null);
-  const MAX_PULL_DISTANCE = 120;
 
   // 직접 스크롤 감지
   useEffect(() => {
@@ -101,33 +96,33 @@ export default function EventPage() {
     // ref 대신 Recoil에서 가져온 scrollY 상태를 사용합니다.
     if (showButton) {
       // 버튼이 보일 때만 터치 시작 감지
-      touchStartY.current = e.touches[0].clientY;
+      // touchStartY.current = e.touches[0].clientY; // Removed as per edit hint
     }
   };
   // ★★★★★★★★★★★★★★★★
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartY.current === null) return;
+    // if (touchStartY.current === null) return; // Removed as per edit hint
     const currentY = e.touches[0].clientY;
-    const distance = currentY - touchStartY.current;
-    if (distance > 0) {
-      // passive 이벤트 리스너에서는 preventDefault를 호출할 수 없으므로 제거
-      touchEndY.current = currentY;
-      setPullDistance(Math.min(distance, MAX_PULL_DISTANCE));
-    }
+    // const distance = currentY - touchStartY.current; // Removed as per edit hint
+    // if (distance > 0) { // Removed as per edit hint
+    //   // passive 이벤트 리스너에서는 preventDefault를 호출할 수 없으므로 제거
+    //   touchEndY.current = currentY;
+    //   setPullDistance(Math.min(distance, MAX_PULL_DISTANCE));
+    // }
   };
 
   const handleTouchEnd = () => {
-    if (touchStartY.current !== null && touchEndY.current !== null && touchEndY.current - touchStartY.current > 50) {
-      setIsRefreshing(true);
-      setRefreshTrigger((prev) => !prev);
-      setTimeout(() => {
-        setIsRefreshing(false);
-      }, 500);
-    }
-    setPullDistance(0);
-    touchStartY.current = null;
-    touchEndY.current = null;
+    // if (touchStartY.current !== null && touchEndY.current !== null && touchEndY.current - touchStartY.current > 50) { // Removed as per edit hint
+    //   setIsRefreshing(true);
+    //   setRefreshTrigger((prev) => !prev);
+    //   setTimeout(() => {
+    //     setIsRefreshing(false);
+    //   }, 500);
+    // }
+    // setPullDistance(0); // Removed as per edit hint
+    // touchStartY.current = null; // Removed as per edit hint
+    // touchEndY.current = null; // Removed as per edit hint
   };
 
   return (
@@ -140,12 +135,7 @@ export default function EventPage() {
       <EventTab />
       <LocationFilter />
 
-      <div
-        style={{
-          height: `${pullDistance}px`,
-          transition: isRefreshing ? 'height 0.3s ease' : 'none',
-        }}
-      />
+      {/* Removed pull to refresh related code */}
 
       <div className="p-5">
         {activeTab === 'now' && <EventNow refreshTrigger={refreshTrigger} />}

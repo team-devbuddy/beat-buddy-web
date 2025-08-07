@@ -439,14 +439,13 @@ const CommentItem = ({
         />
         <div>
           <div className="flex items-center space-x-2">
-            <span className={`text-body3-12-bold ${isPostAuthor ? 'text-main' : isCommentAuthor ? 'text-sub' : ''}`}>
+            <span className={`text-[0.8125rem] font-bold ${isPostAuthor ? 'text-main' : ''}`}>
               {comment.author}
-              {isPostAuthor && <span className="ml-1 text-body3-12-bold text-main">(작성자)</span>}
-              {isCommentAuthor && !isPostAuthor && <span className="text-sub ml-1 text-body3-12-bold">(내 댓글)</span>}
+              {isPostAuthor && <span className="ml-1 text-[0.75rem] font-bold text-main">(작성자)</span>}
             </span>
-            <span className="text-body3-12-medium text-gray300">{comment.timestamp}</span>
+            <span className="text-[0.75rem] text-gray300">{comment.timestamp}</span>
           </div>
-          <p className="mt-1 text-body2-15-medium text-gray100">{comment.content}</p>
+          <p className="mt-1 text-[0.8125rem] text-gray100">{comment.content}</p>
         </div>
       </div>
 

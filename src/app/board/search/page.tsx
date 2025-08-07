@@ -45,53 +45,9 @@ export default function BoardSearchPage() {
   const [loading, setLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
 
   const accessToken = useRecoilValue(accessTokenState) || '';
   const resetFollowMap = useResetRecoilState(followMapState);
-
-  const touchStartY = useRef<number | null>(null);
-  const touchEndY = useRef<number | null>(null);
-
-  const MAX_PULL_DISTANCE = 120;
-
-  // 검색 페이지 진입 시 followMap 초기화
-  useEffect(() => {
-    console.log('검색 페이지 진입 - followMap 초기화');
-    resetFollowMap();
-  }, [resetFollowMap]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (window.scrollY === 0) {
-      touchStartY.current = e.touches[0].clientY;
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartY.current === null) return;
-    const currentY = e.touches[0].clientY;
-    const distance = currentY - touchStartY.current;
-    if (distance > 0) {
-      touchEndY.current = currentY;
-      setPullDistance(Math.min(distance, MAX_PULL_DISTANCE));
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStartY.current !== null && touchEndY.current !== null && touchEndY.current - touchStartY.current > 50) {
-      setIsRefreshing(true);
-      setPosts([]);
-      setPage(1);
-      setHasMore(true);
-      fetchSearchPosts(1).finally(() => {
-        setTimeout(() => setIsRefreshing(false), 500);
-      });
-    }
-    setPullDistance(0);
-    touchStartY.current = null;
-    touchEndY.current = null;
-  };
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastPostRef = useCallback(
@@ -287,11 +243,7 @@ export default function BoardSearchPage() {
   };
 
   return (
-    <main
-      className="bg-BG-black text-white"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}>
+    <main className="bg-BG-black text-white">
       <BoardSearchHeader placeholder="궁금한 소식을 검색해주세요." onSearchSubmit={handleSearchSubmit} />
       {keyword === '' && <BoardRecentTerm />}
 

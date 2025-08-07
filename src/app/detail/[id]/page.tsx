@@ -265,7 +265,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -100 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="fixed top-0 z-50 w-full  bg-BG-black/95 backdrop-blur-sm">
+            className="fixed top-0 z-50 w-full max-w-[600px] bg-BG-black/95 backdrop-blur-sm">
             <div className="flex items-center justify-between px-5 pb-[0.88rem] pt-[0.62rem]">
               <div className="flex items-center">
                 <button onClick={() => router.back()} className="text-white" aria-label="뒤로가기">

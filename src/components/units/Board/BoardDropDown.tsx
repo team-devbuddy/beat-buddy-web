@@ -10,10 +10,13 @@ import { accessTokenState, eventFormState, isEventEditModeState, eventState } fr
 import { deletePost } from '@/lib/actions/post-controller/deletePost';
 import { getPostDetail } from '@/lib/actions/detail-controller/board/boardWriteUtils';
 import { deleteComment } from '@/lib/actions/comment-controller/deleteComment';
+import { submitReport } from '@/lib/actions/report-controller/submitReport';
 
 interface PostProps {
   nickname: string;
+  isAnonymous: boolean;
   memberId?: number; // 게시글 작성자 ID 추가
+  writerId?: number; // 게시글 작성자 ID 추가
 }
 
 interface DropdownItem {
@@ -34,6 +37,8 @@ interface DropdownProps {
   commentAuthorName?: string; // 댓글 작성자명 추가
   onCommentDelete?: () => void; // 댓글 삭제 후 콜백 추가
   writerId?: number; // 댓글 작성자의 writerId 추가
+  onPostDelete?: () => void; // 게시글 삭제 후 콜백 추가
+  isAnonymous?: boolean; // 익명 여부 추가
 }
 
 const BoardDropdown = ({
@@ -47,158 +52,17 @@ const BoardDropdown = ({
   commentAuthorName,
   onCommentDelete,
   writerId,
+  onPostDelete,
+  isAnonymous,
 }: DropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [modalType, setModalType] = useState<'block' | 'report' | null>(null);
   const [reportReason, setReportReason] = useState('');
-  const [post, setPost] = useState<PostProps>({ nickname: '' });
-
-  // 이벤트 수정 관련 상태
-  const setEventForm = useSetRecoilState(eventFormState);
-  const setIsEventEditMode = useSetRecoilState(isEventEditModeState);
-  const event = useRecoilValue(eventState);
-
-  const handleEventEdit = useCallback(() => {
-    if (!event) return;
-
-    // 이벤트 폼을 현재 이벤트 데이터로 채움
-    setEventForm({
-      venueId: 0, // EventDetail에 venueId가 없으므로 0으로 설정
-      title: event.title || '',
-      content: event.content || '',
-      startDate: event.startDate ? new Date(event.startDate).toLocaleDateString('ko-KR') : '',
-      endDate: event.endDate ? new Date(event.endDate).toLocaleDateString('ko-KR') : '',
-      startTime: event.startDate
-        ? new Date(event.startDate).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
-        : '',
-      endTime: event.endDate
-        ? new Date(event.endDate).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
-        : '',
-      location: event.location || '',
-      region: event.region || '',
-      isFreeEntrance: event.isFreeEntrance || false,
-      entranceFee: event.entranceFee ? event.entranceFee.toString() : '',
-      entranceNotice: event.entranceNotice || '',
-      notice: event.notice || '',
-      receiveInfo: event.receiveInfo || false,
-      receiveName: event.receiveName || false,
-      receiveGender: event.receiveGender || false,
-      receivePhoneNumber: event.receivePhoneNumber || false,
-      receiveTotalCount: false, // EventDetail에 없으므로 false
-      receiveSNSId: event.receiveSNSId || false,
-      receiveMoney: event.receiveMoney || false,
-      depositAccount: event.depositAccount || '',
-      depositAmount: event.depositAmount ? event.depositAmount.toString() : '',
-      isAuthor: event.isAuthor || false,
-      isAttending: event.isAttending || false,
-    });
-
-    // 수정 모드로 설정
-    setIsEventEditMode(true);
-
-    // 이벤트 작성 페이지로 이동 (올바른 경로)
-    router.push(`/event/write?eventId=${event.eventId}`);
-  }, [event, setEventForm, setIsEventEditMode, router]);
-
-  const handleDeleteComment = useCallback(async () => {
-    if (!commentId) return alert('댓글 ID가 없습니다.');
-    try {
-      await deleteComment(postId, commentId, accessToken);
-      onClose();
-      // 댓글 삭제 후 UI에서 제거
-      onCommentDelete?.();
-    } catch (e) {
-      console.error('댓글 삭제 실패', e);
-      alert('댓글 삭제에 실패했습니다.');
-    }
-  }, [commentId, postId, accessToken, onClose, onCommentDelete]);
-
-  const items: DropdownItem[] = useMemo(() => {
-    if (isAuthor) {
-      if (type === 'comment') {
-        return [
-          {
-            label: '공유',
-            icon: '/icons/material-symbols_share-outline.svg',
-            onClick: () => navigator.share({ title: '게시글', url: window.location.href }),
-          },
-          {
-            label: '삭제',
-            icon: '/icons/trashcan.svg',
-            onClick: handleDeleteComment,
-          },
-        ];
-      } else if (type === 'event') {
-        // 이벤트 수정 로직
-        return [
-          {
-            label: '공유',
-            icon: '/icons/material-symbols_share-outline.svg',
-            onClick: () => navigator.share({ title: '이벤트', url: window.location.href }),
-          },
-          {
-            label: '수정',
-            icon: '/icons/edit.svg',
-            onClick: handleEventEdit,
-          },
-          {
-            label: '신고',
-            icon: '/icons/material-symbols_siren-outline.svg',
-            modalType: 'report',
-          },
-        ];
-      } else {
-        // 게시글 수정 로직
-        return [
-          {
-            label: '공유',
-            icon: '/icons/material-symbols_share-outline.svg',
-            onClick: () => navigator.share({ title: '게시글', url: window.location.href }),
-          },
-          {
-            label: '수정',
-            icon: '/icons/edit.svg',
-            onClick: () => router.push(`/board/write?postId=${postId}`),
-          },
-          {
-            label: '삭제',
-            icon: '/icons/trashcan.svg',
-            onClick: async () => {
-              await deletePost(accessToken, postId);
-              router.push('/board');
-            },
-          },
-        ];
-      }
-    }
-
-    if (type === 'event') {
-      return [
-        {
-          label: '공유',
-          icon: '/icons/material-symbols_share-outline.svg',
-          onClick: () => navigator.share({ title: '이벤트', url: window.location.href }),
-        },
-        {
-          label: '신고',
-          icon: '/icons/material-symbols_siren-outline.svg',
-          modalType: 'report',
-        },
-      ];
-    }
-
-    return [
-      {
-        label: '공유',
-        icon: '/icons/material-symbols_share-outline.svg',
-        onClick: () => navigator.share({ title: '게시글', url: window.location.href }),
-      },
-      { label: '차단', icon: '/icons/block.svg', modalType: 'block' },
-      { label: '신고', icon: '/icons/material-symbols_siren-outline.svg', modalType: 'report' },
-    ];
-  }, [isAuthor, type, postId, accessToken, handleDeleteComment, handleEventEdit]);
+  const [post, setPost] = useState<PostProps>({ nickname: '', isAnonymous: false });
+  const [showReportCompleteModal, setShowReportCompleteModal] = useState(false);
+  const [showBlockCompleteModal, setShowBlockCompleteModal] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -221,27 +85,89 @@ const BoardDropdown = ({
   useEffect(() => {
     // 모달을 열 때만 닉네임 정보를 가져오도록 최적화
     if (modalType === 'block') {
-      if (type === 'comment' && commentAuthorName) {
-        // 댓글인 경우 전달받은 댓글 작성자명 사용
-        setPost({ nickname: commentAuthorName });
+      const fetchPost = async () => {
+        try {
+          const postDetail = await getPostDetail('free', postId, accessToken);
+          setPost(postDetail);
+        } catch (error) {
+          console.error('게시물 정보 가져오기 실패:', error);
+        }
+      };
+      fetchPost();
+    }
+  }, [modalType, postId, accessToken]);
+
+  const items: DropdownItem[] = useMemo(() => {
+    if (isAuthor) {
+      // 내가 쓴 글
+      if (type === 'comment') {
+        // 댓글인 경우 삭제하기만
+        return [
+          {
+            label: '삭제하기',
+            icon: '/icons/trashcan.svg',
+            onClick: async () => {
+              // 댓글 삭제
+              await deleteComment(postId, commentId!, accessToken);
+              onCommentDelete?.();
+            },
+          },
+        ];
       } else {
-        // 게시글인 경우 기존 로직 사용
-        const fetchPost = async () => {
-          try {
-            const postDetail = await getPostDetail('free', postId, accessToken);
-            setPost(postDetail);
-          } catch (error) {
-            console.error('게시물 정보 가져오기 실패:', error);
-          }
-        };
-        fetchPost();
+        // 게시글인 경우 수정하기, 삭제하기
+        return [
+          {
+            label: '수정하기',
+            icon: '/icons/edit.svg',
+            onClick: () => router.push(`/board/write?postId=${postId}`),
+          },
+          {
+            label: '삭제하기',
+            icon: '/icons/trashcan.svg',
+            onClick: async () => {
+              // 게시글 삭제
+              await deletePost(accessToken, postId);
+              onPostDelete?.();
+              router.push('/board');
+            },
+          },
+        ];
       }
     }
-  }, [modalType, postId, accessToken, type, commentAuthorName]);
+
+    // 남이 쓴 글~~~
+    if (type === 'comment') {
+      // 댓글인 경우 신고하기, 차단하기만
+      return [
+        {
+          label: '차단하기',
+          icon: '/icons/block.svg',
+          modalType: 'block',
+        },
+        {
+          label: '신고하기',
+          icon: '/icons/material-symbols_siren-outline.svg',
+          modalType: 'report',
+        },
+      ];
+    } else {
+      // 게시글인 경우 신고하기, 차단하기
+      return [
+        {
+          label: '신고하기',
+          icon: '/icons/material-symbols_siren-outline.svg',
+          modalType: 'report',
+        },
+        {
+          label: '차단하기',
+          icon: '/icons/block.svg',
+          modalType: 'block',
+        },
+      ];
+    }
+  }, [isAuthor, postId, accessToken, router, onPostDelete, type, commentId, onCommentDelete]);
 
   const handleBlock = async () => {
-    console.log('writerId', writerId);
-    console.log('postId', postId);
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/block`, {
         method: 'POST',
@@ -250,7 +176,7 @@ const BoardDropdown = ({
           Access: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          blockedMemberId: type === 'comment' ? writerId : post.memberId || postId, // 게시글 작성자 ID 사용
+          blockedMemberId: type === 'comment' ? writerId : post.memberId || writerId || post.writerId,
         }),
       });
 
@@ -260,10 +186,49 @@ const BoardDropdown = ({
 
       console.log(`${post.nickname}님 차단 완료`);
       setModalType(null);
-      onClose();
+      setShowBlockCompleteModal(true);
     } catch (error) {
       console.error('차단 처리 실패:', error);
       alert('차단 처리에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  const handleReport = async () => {
+    if (!reportReason.trim()) {
+      alert('신고 사유를 입력해주세요.');
+      return;
+    }
+
+    try {
+      let targetType: 'FREE_POST' | 'FREE_POST_COMMENT';
+      let targetId: number;
+
+      if (type === 'comment') {
+        targetType = 'FREE_POST_COMMENT';
+        targetId = commentId!;
+      } else {
+        targetType = 'FREE_POST';
+        targetId = postId;
+      }
+
+      const reportData = {
+        targetType,
+        targetId,
+        reason: reportReason.trim(),
+      };
+
+      const success = await submitReport(reportData, accessToken);
+
+      if (success) {
+        setModalType(null);
+        setReportReason('');
+        setShowReportCompleteModal(true);
+      } else {
+        alert('신고 접수에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('신고 처리 실패:', error);
+      alert('신고 처리에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -284,17 +249,21 @@ const BoardDropdown = ({
         {!modalType && (
           <motion.div
             ref={dropdownRef}
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="pointer-events-auto fixed z-50 min-w-[100px] space-y-2 rounded-[0.75rem] bg-gray700 px-4 py-3 shadow-lg"
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+            className="pointer-events-auto fixed z-50 flex w-[5.5625rem] flex-col whitespace-nowrap rounded-[0.5rem] bg-gray700 px-[1.12rem] shadow-lg"
             style={{ top: position.top, left: position.left }}
             onClick={(e) => e.stopPropagation()}>
-            {items.map((item) => (
+            {items.map((item, index) => (
               <button
                 key={item.label}
-                className="flex w-full items-center justify-between rounded-md text-body3-12-medium text-white"
+                className={`w-full text-center text-[0.8125rem] text-gray200 ${
+                  index === 0 ? 'rounded-t-[0.5rem]' : ''
+                } ${index === items.length - 1 ? 'rounded-b-[0.5rem]' : ''} ${
+                  index !== items.length - 1 ? '' : ''
+                } py-[0.56rem]`}
                 // 🔥 수정된 클릭 핸들러
                 onClick={async () => {
                   if (item.modalType) {
@@ -310,8 +279,7 @@ const BoardDropdown = ({
                     onClose();
                   }
                 }}>
-                <span>{item.label}</span>
-                <Image src={item.icon} alt={item.label} width={16} height={16} />
+                {item.label}
               </button>
             ))}
           </motion.div>
@@ -328,7 +296,10 @@ const BoardDropdown = ({
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <p className="mb-2 w-[18rem] text-[1.25rem] font-bold text-white">{post.nickname}님을 차단하시겠어요?</p>
+              <p className="mb-2 w-[18rem] text-[1.25rem] font-bold text-white">
+                {type === 'comment' && `${commentAuthorName}님을 차단하시겠어요?`}
+                {type === 'board' && `${post.isAnonymous ? '익명' : post.nickname}님을 차단하시겠어요?`}
+              </p>
               <p className="mb-4 text-center text-[0.875rem] text-gray300">
                 해당 작성자의 게시글과 댓글이
                 <br />
@@ -340,7 +311,10 @@ const BoardDropdown = ({
               </p>
               <div className="flex justify-between gap-3">
                 <button
-                  onClick={() => setModalType(null)}
+                  onClick={() => {
+                    setModalType(null);
+                    onClose();
+                  }}
                   className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] text-gray200">
                   취소
                 </button>
@@ -365,7 +339,9 @@ const BoardDropdown = ({
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-4 text-[1.25rem] font-bold text-white">게시물 신고</h3>
+              <h3 className="mb-4 text-[1.25rem] font-bold text-white">
+                {type === 'comment' ? '댓글 신고' : '게시물 신고'}
+              </h3>
               <textarea
                 value={reportReason}
                 onChange={(e) => setReportReason(e.target.value)}
@@ -374,20 +350,71 @@ const BoardDropdown = ({
               />
               <div className="flex justify-between gap-2">
                 <button
-                  onClick={() => setModalType(null)}
+                  onClick={() => {
+                    setModalType(null);
+                    onClose();
+                  }}
                   className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
                   취소
                 </button>
                 <button
-                  onClick={() => {
-                    // 신고 처리 로직
-                    console.log('신고 내용:', reportReason);
-                    setModalType(null);
-                  }}
+                  onClick={handleReport}
                   className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-main">
                   신고하기
                 </button>
               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ✅ 신고 완료 모달 */}
+      <AnimatePresence>
+        {showReportCompleteModal && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-[0.38rem] text-[1.25rem] font-bold text-white">신고가 완료되었어요</h3>
+              <p className="text-[0.875rem] text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요.</p>
+              <p className="mb-5 text-[0.875rem] text-gray300">허위 신고 시 제재가 있을 수 있습니다.</p>
+              <button
+                onClick={() => {
+                  setShowReportCompleteModal(false);
+                  onClose();
+                }}
+                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                닫기
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ✅ 차단 완료 모달 */}
+      <AnimatePresence>
+        {showBlockCompleteModal && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-[0.38rem] text-[1.25rem] font-bold text-white">차단이 완료되었어요</h3>
+              <p className="text-[0.875rem] text-gray300">해당 사용자의 게시글과 댓글이 더 이상 표시되지 않습니다.</p>
+              <p className="mb-5 text-[0.875rem] text-gray300">차단은 해제할 수 없으며, 되돌릴 수 없습니다.</p>
+              <button
+                onClick={() => {
+                  setShowBlockCompleteModal(false);
+                  onClose();
+                }}
+                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                닫기
+              </button>
             </div>
           </motion.div>
         )}

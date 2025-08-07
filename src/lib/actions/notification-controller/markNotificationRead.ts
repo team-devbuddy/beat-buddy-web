@@ -1,5 +1,5 @@
 export async function markNotificationRead(accessToken: string, notificationId: number): Promise<void> {
-  const response = await fetch(`https://api.beatbuddy.world/firebase/notifications/${notificationId}/read`, {
+  const response = await fetch(`https://api.beatbuddy.world/firebase/${notificationId}/read`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',

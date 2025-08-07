@@ -49,7 +49,7 @@ function Heartbeat() {
       <Link href="/myheartbeat">
         <div className="flex items-center justify-between rounded-[0.5rem]">
           <div className="flex flex-col">
-            <span className="line-height-[150%] font-paperlogy text-[1.125rem] font-bold tracking-[-0.05rem] text-main">
+            <span className="line-height-[150%] font-paperlogy text-[1.125rem] font-semibold tracking-[-0.05rem] text-main">
               My Heart Beat
             </span>
             <div className="cursor-pointer text-[0.8125rem] text-gray300">관심있는 베뉴들의 정보를 확인하세요</div>

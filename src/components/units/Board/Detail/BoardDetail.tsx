@@ -243,7 +243,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
                 height={20}
               />
             </button>
-            {likes}
+            <span className="min-w-[0.45rem] text-left">{likes}</span>
           </span>
           <span className={`flex items-center gap-[0.12rem] ${post.hasCommented ? 'text-main' : ''}`}>
             <Image
@@ -252,7 +252,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
               width={20}
               height={20}
             />
-            {post.comments}
+            <span className="min-w-[0.45rem] text-left">{post.comments}</span>
           </span>
           <span className={`flex items-center gap-[0.12rem] ${scrapped ? 'text-main' : ''}`}>
             <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
@@ -265,7 +265,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
                 height={20}
               />
             </button>
-            {scraps}
+            <span className="min-w-[0.45rem] text-left">{scraps}</span>
           </span>
         </div>
         <div className="flex items-end gap-[0.5rem]">

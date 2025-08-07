@@ -79,7 +79,8 @@ const SafeImage = ({ src, alt, className }: { src: string; alt: string; classNam
         onLoad={handleLoad}
         onError={handleError}
         priority={false}
-        unoptimized={hasError} // 에러 발생 시 최적화 비활성화
+        unoptimized={hasError}
+        style={{ willChange: 'auto' }}
       />
     </div>
   );
@@ -112,23 +113,19 @@ const formatDateRange = (startDate: string, endDate: string) => {
 
 const sortNewsByDday = (newsList: NewsItem[]) => {
   return [...newsList].sort((a, b) => {
-    const getDdayValue = (dDay: string) => {
-      if (dDay === 'END') {
-        return Number.MAX_SAFE_INTEGER; // END는 항상 마지막
-      }
-      if (dDay === 'D-DAY') {
-        return 0; // D-DAY는 최우선
-      }
-      if (dDay.startsWith('D-')) {
-        return parseInt(dDay.split('-')[1], 10); // D-숫자에서 숫자만 추출
-      }
-      return 0; // 기타 값은 최소값으로 설정
-    };
-
     const aDday = calculateDday(a.startDate, a.endDate);
     const bDday = calculateDday(b.startDate, b.endDate);
 
-    return getDdayValue(aDday) - getDdayValue(bDday);
+    // END(끝난 이벤트)와 진행중인 이벤트 구분
+    const aIsEnded = aDday === 'END';
+    const bIsEnded = bDday === 'END';
+
+    // 끝난 이벤트는 항상 뒤로
+    if (aIsEnded && !bIsEnded) return 1;
+    if (!aIsEnded && bIsEnded) return -1;
+
+    // 둘 다 끝났거나 둘 다 진행중인 경우 좋아요 수로 정렬
+    return (b.likes || 0) - (a.likes || 0);
   });
 };
 
@@ -173,6 +170,7 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
 
     if (!accessToken) return;
 
+    // 애니메이션 시작
     setClickedHeart((prev) => ({ ...prev, [eventId]: true }));
 
     try {
@@ -193,7 +191,10 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
     } catch (error) {
       console.error('좋아요 처리 중 오류가 발생했습니다:', error);
     } finally {
-      setTimeout(() => setClickedHeart((prev) => ({ ...prev, [eventId]: false })), 500);
+      // 애니메이션 종료 (좋아요 추가와 취소 모두에 적용)
+      setTimeout(() => {
+        setClickedHeart((prev) => ({ ...prev, [eventId]: false }));
+      }, 500);
     }
   };
 
@@ -352,17 +353,20 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
 
                 {/* 좋아요 버튼 - 이미지 위에 우측 하단 */}
                 <motion.div
-                  className={`absolute ${likedEvents[news.eventId] ? 'bottom-[0.62rem] right-[0.62rem]' : 'bottom-[0.75rem] right-[0.75rem]'} cursor-pointer`}
+                  className={`absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer`}
                   onClick={(e) => handleHeartClick(e, news.eventId)}
                   variants={heartAnimation}
                   initial="initial"
-                  animate={clickedHeart[news.eventId] ? 'clicked' : 'initial'}>
+                  animate={clickedHeart[news.eventId] ? 'clicked' : 'initial'}
+                  style={{ transformOrigin: 'center' }}>
                   <Image
                     className="cursor-pointer safari-icon-fix"
                     src={likedEvents[news.eventId] ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
                     alt="heart icon"
-                    width={likedEvents[news.eventId] ? 27 : 24}
-                    height={likedEvents[news.eventId] ? 24 : 24}
+                    width={27}
+                    height={24}
+                    priority={false}
+                    unoptimized={true}
                   />
                 </motion.div>
               </div>

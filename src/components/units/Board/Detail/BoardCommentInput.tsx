@@ -87,7 +87,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
       }
 
       console.log('새 댓글 데이터:', newComment);
-      
+
       setContent('');
       onCommentAdded(newComment);
       setReplyingTo(null);
@@ -106,7 +106,14 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
             alt="check"
             width={18}
             height={18}
-            onClick={() => setIsAnonymous(!isAnonymous)}
+            onClick={(e) => {
+              e.preventDefault();
+              setIsAnonymous(!isAnonymous);
+              // 포커스 유지
+              setTimeout(() => {
+                inputRef.current?.focus();
+              }, 0);
+            }}
           />
           익명
         </label>
