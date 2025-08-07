@@ -247,19 +247,6 @@ export default function BoardSearchPage() {
       <BoardSearchHeader placeholder="궁금한 소식을 검색해주세요." onSearchSubmit={handleSearchSubmit} />
       {keyword === '' && <BoardRecentTerm />}
 
-      <div style={{ height: `${pullDistance}px`, transition: isRefreshing ? 'height 0.3s ease' : 'none' }} />
-      <AnimatePresence>
-        {isRefreshing && (
-          <motion.div
-            key="refresh-indicator"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="text-center text-sm text-gray300"></motion.div>
-        )}
-      </AnimatePresence>
-
       {posts.map((post, i) => {
         if (i === posts.length - 1) {
           return (
