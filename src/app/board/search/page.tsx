@@ -244,7 +244,7 @@ export default function BoardSearchPage() {
 
   return (
     <main className="bg-BG-black text-white">
-      <BoardSearchHeader placeholder="궁금한 소식을 검색해주세요." onSearchSubmit={handleSearchSubmit} />
+      <BoardSearchHeader placeholder="글 제목, 내용, 해시태그" onSearchSubmit={handleSearchSubmit} />
       {keyword === '' && <BoardRecentTerm />}
 
       {posts.map((post, i) => {
@@ -259,7 +259,9 @@ export default function BoardSearchPage() {
         }
       })}
 
-      {!loading && posts.length === 0 && keyword !== '' && <NoResults text="조건에 맞는 검색 결과가 없어요." />}
+      {!loading && posts.length === 0 && keyword !== '' && (
+        <NoResults text="조건에 맞는 검색 결과가 없어요" fullHeight={true} />
+      )}
       <div className="fixed inset-x-0 bottom-[80px] z-50 flex justify-center">
         <div className="w-full max-w-[600px] px-4"></div>
       </div>

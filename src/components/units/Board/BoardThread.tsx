@@ -57,7 +57,11 @@ export function formatRelativeTime(isoString: string): string {
     const hours = Math.floor(diff / 3600);
     return `${hours}시간 전`;
   } else {
-    return time.toISOString().slice(0, 16).split('T').join(' '); // "YYYY-MM-DD HH:MM"
+    // yyyy-mm-dd HH:MM 형식을 yyyy.mm.dd HH:MM로 변경
+    const dateStr = time.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    const timeStr = time.toISOString().slice(11, 16); // "HH:MM"
+    const formattedDate = dateStr.replace(/-/g, '.'); // "YYYY.MM.DD"
+    return `${formattedDate} ${timeStr}`; // "YYYY.MM.DD HH:MM"
   }
 }
 

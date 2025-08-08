@@ -93,6 +93,8 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
   }, [post.writerId, post.isFollowing, followMap, setFollowMap]);
 
   const goToUserProfile = () => {
+    // 익명 게시글인 경우 프로필로 이동하지 않음
+    if (post.isAnonymous) return;
     router.push(`/board/profile?writerId=${post.writerId}`);
   };
 
@@ -189,20 +191,22 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
   return (
     <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[0.88rem]">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-[0.5rem]">
-          <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
+        <div className="flex items-center gap-[0.62rem]">
+          <div className="relative flex h-[32px] w-[32px] cursor-pointer items-center justify-center">
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500">
               <Image
-                src={post.profileImageUrl || '/icons/default-profile.svg'}
+                src={
+                  post.isAnonymous ? '/icons/default-profile.svg' : post.profileImageUrl || '/icons/default-profile.svg'
+                }
                 alt="profile"
-                width={37}
-                height={37}
+                width={32}
+                height={32}
                 className="h-full w-full rounded-full object-cover safari-icon-fix"
                 onClick={goToUserProfile}
                 style={{ aspectRatio: '1/1' }}
               />
             </div>
-            {post.role === 'BUSINESS' && (
+            {post.role === 'BUSINESS' && !post.isAnonymous && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"
@@ -214,7 +218,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
           </div>
 
           <div>
-            <p className="text-[0.875rem] font-bold text-white">{post.nickname}</p>
+            <p className="text-[0.875rem] font-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
           </div>
         </div>
 
@@ -228,7 +232,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         )}
       </div>
       <div onClick={goToPost}>
-        {post.title && <p className="mb-[0.62rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>}
+        {post.title && <p className="mb-[0.5rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>}
         <p
           className="whitespace-pre-wrap text-[0.8125rem] text-gray100"
           style={{
@@ -249,7 +253,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
       </div>
 
       {post.thumbImage && post.thumbImage.length > 0 && (
-        <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
+        <div className="mt-[0.75rem] flex gap-[0.5rem] overflow-x-auto">
           {post.thumbImage.map((url: string, index: number) => (
             <div
               key={index}

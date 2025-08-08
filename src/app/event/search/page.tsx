@@ -163,7 +163,7 @@ export default function EventSearchPage() {
         }
       })}
 
-      {!loading && posts.length === 0 && keyword !== '' && <NoResults text="조건에 맞는 검색 결과가 없어요." />}
+      {!loading && posts.length === 0 && keyword !== '' && <NoResults text="조건에 맞는 검색 결과가 없어요." fullHeight={true} />}
     </main>
   );
 }

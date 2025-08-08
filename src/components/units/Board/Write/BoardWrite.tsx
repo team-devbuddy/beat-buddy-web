@@ -177,7 +177,6 @@ export default function BoardWrite() {
       } else {
         // 새 글쓰기 모드
         await createNewPost(accessToken, dto, newImageFiles);
-        alert('업로드 성공');
         router.push('/board');
       }
     } catch (e) {

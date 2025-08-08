@@ -29,8 +29,9 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const pathname = usePathname();
   const isEventSearch = pathname.includes('/event/search');
-  const isBoardSearch = pathname === '/board/search' || searchQuery.length > 0;
-  const isBoardSearching = pathname.includes('/board/search?') ;
+  const isBoardSearch = pathname === '/board/search';
+  const isBoardSearching = pathname === '/board/search' && searchParams.has('q');
+  console.log('Debug:', { pathname, searchParams: searchParams.toString(), isBoardSearching });
   useEffect(() => {
     const query = searchParams.get('q');
     if (query) {
@@ -94,7 +95,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
 
   return (
     <>
-      <header className="bg-BG-black px-5 py-[0.63rem]">
+      <header className="bg-BG-black px-5 py-[0.62rem]">
         <div className="relative w-full">
           {/* 🔙 Back icon - 검색창 내부 왼쪽 */}
           <div className="absolute left-[0.88rem] top-1/2 z-10 -translate-y-1/2">
@@ -112,7 +113,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
           <div className="relative w-full rounded-[0.5rem] bg-gray700">
             <input
               ref={inputRef}
-              className={`w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-[0.9375rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none ${
+              className={`w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-[0.9375rem] font-bold text-white safari-input-fix placeholder:font-medium placeholder:text-gray300 focus:outline-none ${
                 isEvent ? 'pr-[5rem]' : ''
               }`}
               placeholder={isLoading ? '' : placeholder}
@@ -124,7 +125,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
             />
 
             {/* 🔍 Search icon - 검색창 내부 오른쪽 */}
-            <div className="absolute bottom-[0.72rem] right-[1rem] cursor-pointer">
+            <div className="absolute bottom-[0.72rem] right-[0.88rem] cursor-pointer">
               {isEvent ? (
                 <div className="flex items-center gap-1">
                   <Image

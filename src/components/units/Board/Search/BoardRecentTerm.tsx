@@ -46,12 +46,12 @@ const BoardRecentTerm = ({ isEvent }: { isEvent?: boolean }) => {
               whileTap="pressed"
               variants={variants}
               transition={{ duration: 0.3 }}
-              className="flex flex-shrink-0 flex-row items-center gap-x-[0.13rem] rounded-[0.5rem] bg-gray700 px-[0.62rem] py-[0.25rem] text-main">
+              className="flex flex-shrink-0 flex-row items-center  rounded-[0.5rem] bg-gray700 py-[0.25rem] pl-[0.62rem] pr-[0.25rem] text-main">
               <span className="cursor-pointer text-[0.8125rem]" onClick={() => handleTermClick(search)}>
                 {search}
               </span>
-              <div className="cursor-pointer mb-[0.1rem]" onClick={() => handleRemoveSearchTerm(search)}>
-                <Image src="/icons/Close.svg" alt="remove" width={16} height={16} />
+              <div className="cursor-pointer" onClick={() => handleRemoveSearchTerm(search)}>
+                <Image src="/icons/close.svg" alt="remove" width={20} height={20} />
               </div>
             </motion.div>
           ))}
