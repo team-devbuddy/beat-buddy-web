@@ -74,16 +74,16 @@ export default function BoardProfileCreatePage() {
   return (
     <>
       <BoardProfileHeader />
-      <div className="bg-BG-black px-5 pt-10 text-white">
+      <div className=" bg-BG-black px-5 pt-10 text-white">
         {/* 프로필 이미지 */}
         <div className="relative mb-6 flex justify-center">
-          <div className="relative h-[90px] w-[90px] overflow-hidden rounded-full">
-            <Image className="h-full w-full rounded-full object-cover" src={previewUrl} alt="profile" fill />
+          <div className="relative overflow-hidden rounded-full">
+            <Image className="h-full w-full rounded-full object-cover" width={90} height={90} src={previewUrl} alt="profile" fill />
           </div>
           <div
             className="absolute bottom-[5px] right-[calc(50%-35px)] translate-x-[50%]"
             onClick={() => document.getElementById('profile-image-input')?.click()}>
-            <div className="flex cursor-pointer items-center justify-center rounded-full p-[0.19rem]">
+            <div className="flex cursor-pointer items-center justify-center rounded-full bg-gray400 p-[0.19rem]">
               <Image src="/icons/bxs_pencil.svg" alt="edit" width={14} height={14} />
             </div>
           </div>
