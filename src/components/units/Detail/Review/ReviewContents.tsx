@@ -26,6 +26,7 @@ interface Review {
   liked: boolean;
   role: string;
   writerId: string;
+  thumbImages?: string[]; // 썸네일 이미지 배열 추가
 }
 
 interface ReviewContentsProps {
@@ -391,7 +392,20 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                             <div
                               className="relative h-[150px] w-auto cursor-pointer overflow-hidden rounded-xs"
                               onClick={() => handleMediaClick(review.imageUrls!, index, review)}>
-                              <video src={media} className="h-full w-full object-cover" preload="metadata" muted />
+                              {/* 영상 썸네일 - 서버에서 제공하는 thumbnail 사용 */}
+                              <Image
+                                  src={review.thumbImages?.[index] || '/images/defaultImage.png'}
+                                  alt="video thumbnail"
+                                className="h-full w-full object-cover"
+                                width={120}
+                                height={150}
+                                onError={(e) => {
+                                  // 썸네일 로드 실패 시 기본 이미지로 대체
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = '/icons/video-thumbnail.svg';
+                                }}
+                              />
+                              {/* 재생 버튼 오버레이 */}
                               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
                                 <Image src="/icons/play.svg" alt="play" width={40} height={40} className="opacity-80" />
                               </div>

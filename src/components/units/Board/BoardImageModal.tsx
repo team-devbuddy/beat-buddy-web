@@ -262,19 +262,34 @@ export default function BoardImageModal({
               <video
                 ref={videoRef}
                 src={currentUrl}
-                className="h-auto w-full object-cover"
+                className="h-auto w-full object-cover [&::-webkit-media-controls-current-time-display]:!hidden [&::-webkit-media-controls-fullscreen-button]:!hidden [&::-webkit-media-controls-mute-button]:!hidden [&::-webkit-media-controls-panel]:!hidden [&::-webkit-media-controls-play-button]:!hidden [&::-webkit-media-controls-return-to-realtime-button]:!hidden [&::-webkit-media-controls-rewind-button]:!hidden [&::-webkit-media-controls-seek-back-button]:!hidden [&::-webkit-media-controls-seek-forward-button]:!hidden [&::-webkit-media-controls-start-playback-button]:!hidden [&::-webkit-media-controls-time-remaining-display]:!hidden [&::-webkit-media-controls-timeline]:!hidden [&::-webkit-media-controls-volume-slider]:!hidden [&::-webkit-media-controls]:!hidden"
                 preload="metadata"
-                muted={true}
+                muted={isMuted}
+                playsInline
+                webkit-playsinline="true"
+                x5-playsinline="true"
+                x5-video-player-type="h5"
+                x5-video-player-fullscreen="false"
+                controls={false}
+                disablePictureInPicture
+                disableRemotePlayback
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={handleLoadedMetadata}
                 onPlay={handlePlay}
                 onPause={() => setIsPlaying(false)}
                 onEnded={() => setIsPlaying(false)}
                 onVolumeChange={handleVolumeChange}
+                style={{
+                  pointerEvents: 'none',
+                  WebkitUserSelect: 'none',
+                  userSelect: 'none',
+                  WebkitTouchCallout: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                }}
               />
 
-              {/* 리뷰일 때 중앙 재생 버튼 */}
-              {isReview && !isPlaying && (
+              {/* 커스텀 재생/일시정지 버튼 */}
+              {!isPlaying && (
                 <button
                   onClick={handlePlayPause}
                   className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
@@ -283,54 +298,64 @@ export default function BoardImageModal({
                 </button>
               )}
 
-              {/* 커스텀 컨트롤 - 리뷰 정보가 없을 때만 표시 */}
-              {!isReview || !reviewInfo || isPlaying ? (
-                <div className="absolute bottom-0 left-0 right-0 p-4" onClick={(e) => e.stopPropagation()}>
+              {/* 커스텀 컨트롤 */}
+              {(!isReview || !reviewInfo || isPlaying) && (
+                <div
+                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4"
+                  onClick={(e) => e.stopPropagation()}>
                   {/* 재생/일시정지 버튼과 진행바 */}
                   <div className="flex items-center gap-3">
                     {/* 재생/일시정지 버튼 */}
                     <button
                       onClick={handlePlayPause}
-                      className="flex items-center justify-center"
+                      className="flex items-center justify-center rounded-full"
                       title={isPlaying ? '일시정지' : '재생'}>
                       <Image
                         src={isPlaying ? '/icons/pause.svg' : '/icons/play.svg'}
                         alt={isPlaying ? '일시정지' : '재생'}
-                        width={30}
-                        height={30}
+                        width={24}
+                        height={24}
+                        className="text-white"
                       />
                     </button>
 
                     {/* 진행바 */}
                     <div className="flex flex-1 items-center gap-2">
+                      <span className="text-xs text-white">
+                        {Math.floor(currentTime / 60)}:{(currentTime % 60).toFixed(0).padStart(2, '0')}
+                      </span>
                       <input
                         type="range"
                         min="0"
                         max={duration || 0}
                         value={currentTime}
                         onChange={handleSeek}
-                        className="h-2 flex-1 cursor-pointer appearance-none bg-white/25"
+                        className="h-1 flex-1 cursor-pointer appearance-none rounded-full bg-white/25"
                         style={{
                           background: `linear-gradient(to right, #EE1171 0%, #EE1171 ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) 100%)`,
                         }}
                       />
+                      <span className="text-xs text-white">
+                        {Math.floor(duration / 60)}:{(duration % 60).toFixed(0).padStart(2, '0')}
+                      </span>
                     </div>
 
                     {/* 음소거/음소거해제 버튼 */}
                     <button
                       onClick={handleMuteToggle}
-                      className="flex items-center justify-center transition-all hover:bg-opacity-30"
+                      className="flex items-center justify-center p-2 transition-all hover:bg-opacity-30"
                       title={isMuted ? '음소거 해제' : '음소거'}>
                       <Image
                         src={isMuted ? '/icons/speaker-muted.svg' : '/icons/speaker.svg'}
                         alt={isMuted ? '음소거 해제' : '음소거'}
-                        width={30}
-                        height={30}
+                        width={24}
+                        height={24}
+                        className="text-white"
                       />
                     </button>
                   </div>
                 </div>
-              ) : null}
+              )}
             </div>
           ) : (
             <Image
@@ -366,7 +391,7 @@ export default function BoardImageModal({
 
         {/* 리뷰 정보 (하단) - 동영상이 멈춰있을 때만 표시 */}
         {isReview && reviewInfo && (!isCurrentVideo || !isPlaying) && (
-          <div className="absolute bottom-0 left-0 right-0 z-10 bg-black/50 px-5 py-[0.88rem]">
+          <div className="absolute bottom-0 left-0 right-0 z-10  px-5 py-[0.88rem]">
             <div className="flex flex-col">
               <div className="flex items-start">
                 <Image
