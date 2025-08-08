@@ -11,6 +11,7 @@ import { deleteReviewLike } from '@/lib/actions/venue-controller/deleteReviewLik
 import { deleteReview } from '@/lib/actions/venue-controller/deleteReview';
 import { submitReport } from '@/lib/actions/report-controller/submitReport';
 import { createPortal } from 'react-dom';
+import BoardImageModal from '../../Board/BoardImageModal';
 
 interface Review {
   venueReviewId: string;
@@ -31,6 +32,7 @@ interface ReviewContentsProps {
   reviews?: Review[]; // 리뷰 리스트
   isPhotoOnly: boolean; // 포토 리뷰만 보기 여부
   onReviewDeleted?: (reviewId: string) => void; // 리뷰 삭제 콜백
+  clubName: string;
 }
 
 const EmptyReview = () => {
@@ -42,7 +44,7 @@ const EmptyReview = () => {
   );
 };
 
-const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewContentsProps) => {
+const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }: ReviewContentsProps) => {
   const [likedReviews, setLikedReviews] = useRecoilState(likedReviewsState); // 좋아요 상태 저장
   const [reviewLikeCount, setReviewLikeCount] = useRecoilState(reviewLikeCountState); // 좋아요 개수 저장
   const [visibleReviews, setVisibleReviews] = useState(10); // 초기 표시되는 리뷰 개수
@@ -54,6 +56,12 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewCo
   const [isSubmitting, setIsSubmitting] = useState(false); // 제출 중 상태
   const [deletedReviews, setDeletedReviews] = useState<Set<string>>(new Set()); // 삭제된 리뷰 ID들
   const accessToken = useRecoilValue(accessTokenState) || '';
+
+  // 이미지/동영상 모달 상태 (게시판과 동일한 로직)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImages, setCurrentImages] = useState<string[]>([]);
+  const [currentReview, setCurrentReview] = useState<Review | null>(null);
 
   // 드롭다운 토글 핸들러
   const handleDropdownToggle = (reviewId: string) => {
@@ -71,6 +79,14 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewCo
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openDropdown]);
+
+  // 미디어 클릭 핸들러
+  const handleMediaClick = (images: string[], index: number, review: Review) => {
+    setCurrentImages(images);
+    setCurrentImageIndex(index);
+    setIsModalOpen(true);
+    setCurrentReview(review);
+  };
 
   // 삭제 핸들러
   const handleDelete = async (reviewId: string) => {
@@ -155,8 +171,18 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewCo
       const initialLikeCount: { [key: string]: number } = {};
 
       reviews.forEach((review) => {
-        initialLikedState[review.venueReviewId] = review.liked;
-        initialLikeCount[review.venueReviewId] = review.likes;
+        // 기존 상태가 있으면 유지, 없으면 서버 데이터 사용
+        const currentLiked = likedReviews[review.venueReviewId];
+        const currentCount = reviewLikeCount[review.venueReviewId];
+
+        initialLikedState[review.venueReviewId] = currentLiked !== undefined ? currentLiked : review.liked;
+        initialLikeCount[review.venueReviewId] = currentCount !== undefined ? currentCount : review.likes;
+      });
+
+      console.log('Recoil 상태 초기화:', {
+        reviewsCount: reviews.length,
+        initialLikedState,
+        initialLikeCount,
       });
 
       setLikedReviews((prev) => ({ ...prev, ...initialLikedState }));
@@ -166,35 +192,46 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewCo
 
   // 좋아요 토글 핸들러
   const handleLikeToggle = async (reviewId: string) => {
+    console.log('좋아요 토글 시작:', {
+      reviewId,
+      currentLiked: likedReviews[reviewId],
+      currentCount: reviewLikeCount[reviewId],
+    });
+
     try {
-      const currentLiked = likedReviews[reviewId] || false;
-      const currentCount = reviewLikeCount[reviewId] || 0;
+      // 현재 상태를 안전하게 가져오기
+      const currentLiked = likedReviews[reviewId] ?? false;
+      const currentCount = reviewLikeCount[reviewId] ?? 0;
+
+      console.log('현재 상태:', { currentLiked, currentCount });
 
       // 즉시 UI 업데이트 (낙관적 업데이트)
-      if (currentLiked) {
-        // 좋아요 취소 - 즉시 UI 반영
-        setLikedReviews((prev) => ({ ...prev, [reviewId]: false }));
-        setReviewLikeCount((prev) => ({ ...prev, [reviewId]: Math.max(0, currentCount - 1) }));
-      } else {
-        // 좋아요 추가 - 즉시 UI 반영
-        setLikedReviews((prev) => ({ ...prev, [reviewId]: true }));
-        setReviewLikeCount((prev) => ({ ...prev, [reviewId]: currentCount + 1 }));
-      }
+      const newLiked = !currentLiked;
+      const newCount = newLiked ? currentCount + 1 : Math.max(0, currentCount - 1);
+
+      console.log('새로운 상태:', { newLiked, newCount });
+
+      setLikedReviews((prev) => ({ ...prev, [reviewId]: newLiked }));
+      setReviewLikeCount((prev) => ({ ...prev, [reviewId]: newCount }));
 
       // API 호출
       if (currentLiked) {
         // 좋아요 취소
+        console.log('좋아요 취소 API 호출');
         await deleteReviewLike(reviewId, accessToken);
       } else {
         // 좋아요 추가
+        console.log('좋아요 추가 API 호출');
         await postReviewLike(reviewId, accessToken);
       }
+
+      console.log('좋아요 토글 완료');
     } catch (error) {
       console.error('좋아요 처리 중 오류가 발생했습니다:', error);
 
       // 에러 발생 시 원래 상태로 되돌리기
-      const originalLiked = likedReviews[reviewId] || false;
-      const originalCount = reviewLikeCount[reviewId] || 0;
+      const originalLiked = likedReviews[reviewId] ?? false;
+      const originalCount = reviewLikeCount[reviewId] ?? 0;
 
       setLikedReviews((prev) => ({ ...prev, [reviewId]: originalLiked }));
       setReviewLikeCount((prev) => ({ ...prev, [reviewId]: originalCount }));
@@ -226,8 +263,17 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewCo
       <div className="pb-[5rem]">
         <AnimatePresence>
           {reviewsToDisplay.map((review) => {
-            const isLiked = likedReviews[review.venueReviewId] || false; // 현재 리뷰의 좋아요 상태
-            const likeCount = reviewLikeCount[review.venueReviewId] || review.likes; // 현재 리뷰의 좋아요 개수
+            // 현재 리뷰의 좋아요 상태와 개수를 안전하게 가져오기
+            const isLiked = likedReviews[review.venueReviewId] ?? review.liked ?? false;
+            const likeCount = reviewLikeCount[review.venueReviewId] ?? review.likes ?? 0;
+
+            console.log(`리뷰 ${review.venueReviewId} 상태:`, {
+              isLiked,
+              likeCount,
+              reviewLiked: review.liked,
+              reviewLikes: review.likes,
+            });
+
             return (
               <motion.div
                 key={review.venueReviewId}
@@ -300,24 +346,43 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewCo
                   </div>
                 </div>
 
-                {/* 리뷰 이미지 */}
+                {/* 리뷰 이미지/동영상 */}
                 {review.imageUrls && review.imageUrls.length > 0 && (
                   <motion.div
                     className="flex gap-2 overflow-x-auto"
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.4 }}>
-                    {review.imageUrls.map((image, index) => (
-                      <div key={index} className="mb-[0.88rem] flex-shrink-0">
-                        <Image
-                          src={image}
-                          alt={`리뷰 이미지 ${index + 1}`}
-                          className="h-[150px] w-auto rounded-xs object-cover"
-                          width={120}
-                          height={120}
-                        />
-                      </div>
-                    ))}
+                    {review.imageUrls.map((media, index) => {
+                      const isVideo =
+                        media.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i) ||
+                        media.includes('video') ||
+                        media.includes('blob:');
+
+                      return (
+                        <div key={index} className="mb-[0.88rem] flex-shrink-0">
+                          {isVideo ? (
+                            <div
+                              className="relative h-[150px] w-auto cursor-pointer overflow-hidden rounded-xs"
+                              onClick={() => handleMediaClick(review.imageUrls!, index, review)}>
+                              <video src={media} className="h-full w-full object-cover" preload="metadata" muted />
+                              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                <Image src="/icons/play.svg" alt="play" width={40} height={40} className="opacity-80" />
+                              </div>
+                            </div>
+                          ) : (
+                            <Image
+                              src={media}
+                              alt={`리뷰 미디어 ${index + 1}`}
+                              className="h-[150px] w-auto cursor-pointer rounded-xs object-cover"
+                              width={120}
+                              height={120}
+                              onClick={() => handleMediaClick(review.imageUrls!, index, review)}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
                   </motion.div>
                 )}
 
@@ -409,6 +474,27 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted }: ReviewCo
           </div>,
           document.body,
         )}
+
+      {/* 이미지/동영상 모달 */}
+      {isModalOpen && currentReview && (
+        <BoardImageModal
+          images={currentImages}
+          initialIndex={currentImageIndex}
+          onClose={() => setIsModalOpen(false)}
+          isReview={true}
+          clubName={clubName}
+          reviewInfo={{
+            nickname: currentReview.nickname,
+            profileImageUrl: currentReview.profileImageUrl,
+            content: currentReview.content,
+            createdAt: currentReview.createdAt,
+            likes: reviewLikeCount[currentReview.venueReviewId] || currentReview.likes,
+            liked: likedReviews[currentReview.venueReviewId] || currentReview.liked,
+            venueReviewId: currentReview.venueReviewId,
+          }}
+          onLikeToggle={(reviewId) => handleLikeToggle(reviewId)}
+        />
+      )}
     </>
   );
 };

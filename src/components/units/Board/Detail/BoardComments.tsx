@@ -14,7 +14,7 @@ export interface CommentType {
   replyId: number | null;
   writerId: number;
   memberName: string;
-  profileImageUrl?: string; // 댓글 작성자의 프로필 이미지
+  imageUrl?: string; // 댓글 작성자의 프로필 이미지
   likes: number;
   liked?: boolean; // 현재 사용자가 좋아요를 눌렀는지 여부 (optional)
   createdAt: string;
@@ -22,6 +22,7 @@ export interface CommentType {
   userId: string;
   isBlocked?: boolean; // 차단된 사용자인지 여부
   isDeleted?: boolean; // 삭제된 댓글인지 여부
+  isPostWriter?: boolean; // 게시글 작성자인지 여부
 }
 
 interface Props {
@@ -101,6 +102,7 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
             userId: comment.member?.memberId?.toString() || '', // 기존 userId도 유지
             isBlocked: comment.isBlocked,
             isDeleted: comment.isDeleted,
+            isPostWriter: comment.isPostWriter,
           }));
 
           console.log('댓글 데이터 변환:', {

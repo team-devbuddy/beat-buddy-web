@@ -350,7 +350,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
                     onPhotoFilterChange={handlePhotoFilterChange}
                   />
                   <div className="flex-grow overflow-y-auto" style={{ touchAction: 'pan-y' }}>
-                    <ReviewContents reviews={reviews} isPhotoOnly={isPhotoOnly} />
+                    <ReviewContents reviews={reviews} isPhotoOnly={isPhotoOnly} clubName={venue.englishName || ''} />
                   </div>
                 </div>
               )}

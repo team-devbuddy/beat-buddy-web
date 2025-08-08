@@ -3,11 +3,24 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { createPortal } from 'react-dom';
+import { formatRelativeTime } from './BoardThread';
 
 interface BoardImageModalProps {
   images: string[];
   initialIndex: number;
   onClose: () => void;
+  isReview?: boolean;
+  clubName?: string;
+  reviewInfo?: {
+    nickname: string;
+    profileImageUrl?: string;
+    content: string;
+    createdAt: string;
+    likes: number;
+    liked: boolean;
+    venueReviewId: string;
+  };
+  onLikeToggle?: (reviewId: string) => void;
 }
 
 // 파일 확장자로 이미지/영상 구분
@@ -17,7 +30,15 @@ const isVideo = (url: string): boolean => {
   return videoExtensions.some((ext) => lowerUrl.includes(ext));
 };
 
-export default function BoardImageModal({ images, initialIndex, onClose }: BoardImageModalProps) {
+export default function BoardImageModal({
+  images,
+  initialIndex,
+  onClose,
+  isReview = false,
+  clubName,
+  reviewInfo,
+  onLikeToggle,
+}: BoardImageModalProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const modalRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -27,6 +48,10 @@ export default function BoardImageModal({ images, initialIndex, onClose }: Board
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
+
+  // 모달 내부 좋아요 상태 (낙관적 업데이트용)
+  const [localLiked, setLocalLiked] = useState(reviewInfo?.liked || false);
+  const [localLikes, setLocalLikes] = useState(reviewInfo?.likes || 0);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -67,10 +92,13 @@ export default function BoardImageModal({ images, initialIndex, onClose }: Board
     touchEndX.current = e.changedTouches[0].clientX;
     if (touchStartX.current !== null && touchEndX.current !== null) {
       const deltaX = touchStartX.current - touchEndX.current;
-      if (deltaX > 50) {
-        setCurrentIndex((prev) => (prev + 1) % images.length);
-      } else if (deltaX < -50) {
-        setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+      if (Math.abs(deltaX) > 50) {
+        // 좌우 스와이프
+        if (deltaX > 50) {
+          setCurrentIndex((prev) => (prev + 1) % images.length);
+        } else if (deltaX < -50) {
+          setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+        }
       }
     }
     touchStartX.current = null;
@@ -168,6 +196,14 @@ export default function BoardImageModal({ images, initialIndex, onClose }: Board
     setIsMuted(true);
   }, [currentIndex]);
 
+  // reviewInfo가 변경될 때 로컬 상태 업데이트
+  useEffect(() => {
+    if (reviewInfo) {
+      setLocalLiked(reviewInfo.liked);
+      setLocalLikes(reviewInfo.likes);
+    }
+  }, [reviewInfo]);
+
   if (typeof window === 'undefined') return null;
 
   const currentUrl = images[currentIndex];
@@ -182,19 +218,41 @@ export default function BoardImageModal({ images, initialIndex, onClose }: Board
         onTouchEnd={handleTouchEnd}>
         {/* 상단 헤더 */}
         <div className="absolute left-0 right-0 top-0 z-10 flex w-full items-center justify-between py-[0.53rem] pl-[0.62rem] pr-4">
-          <button onClick={onClose} className="flex items-center justify-center rounded-full" title="뒤로가기">
-            <Image src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={35} height={35} className="text-white" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={onClose} className="flex items-center justify-center rounded-full" title="뒤로가기">
+              <Image
+                src="/icons/line-md_chevron-left.svg"
+                alt="뒤로가기"
+                width={35}
+                height={35}
+                className="text-white"
+              />
+            </button>
 
-          <div className="px-3 py-1 text-[0.8125rem] text-gray200">
-            <span className="text-main">{currentIndex + 1}</span>
-            <span className="text-gray200"> / </span>
-            <span className="text-gray200">{images.length}</span>
+            {isReview && <span className="text-[1.5rem] font-bold text-white">{clubName}</span>}
           </div>
 
-          <a href={currentUrl} download className="flex items-center justify-center">
-            <Image src="/icons/사진/Vector.svg" alt="다운로드" width={20} height={20} className="text-white" />
-          </a>
+          {isReview ? (
+            // 리뷰용 헤더: 인덱스만 오른쪽에
+            <div className="px-3 py-1 text-[0.8125rem] text-gray200">
+              <span className="text-main">{currentIndex + 1}</span>
+              <span className="text-gray200"> / </span>
+              <span className="text-gray200">{images.length}</span>
+            </div>
+          ) : (
+            // 게시판용 헤더: 사진 인덱스만
+            <div className="px-3 py-1 text-[0.8125rem] text-gray200">
+              <span className="text-main">{currentIndex + 1}</span>
+              <span className="text-gray200"> / </span>
+              <span className="text-gray200">{images.length}</span>
+            </div>
+          )}
+
+          {!isReview && (
+            <a href={currentUrl} download className="flex items-center justify-center">
+              <Image src="/icons/사진/Vector.svg" alt="다운로드" width={20} height={20} className="text-white" />
+            </a>
+          )}
         </div>
 
         {/* 이미지 또는 영상 */}
@@ -204,7 +262,7 @@ export default function BoardImageModal({ images, initialIndex, onClose }: Board
               <video
                 ref={videoRef}
                 src={currentUrl}
-                className="h-auto max-h-full w-full object-contain"
+                className="h-auto w-full object-cover"
                 preload="metadata"
                 muted={true}
                 onTimeUpdate={handleTimeUpdate}
@@ -215,52 +273,64 @@ export default function BoardImageModal({ images, initialIndex, onClose }: Board
                 onVolumeChange={handleVolumeChange}
               />
 
-              {/* 커스텀 컨트롤 */}
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                {/* 재생/일시정지 버튼과 진행바 */}
-                <div className="flex items-center gap-3">
-                  {/* 재생/일시정지 버튼 */}
-                  <button
-                    onClick={handlePlayPause}
-                    className="flex items-center justify-center "
-                    title={isPlaying ? '일시정지' : '재생'}>
-                    <Image
-                      src={isPlaying ? '/icons/pause.svg' : '/icons/play.svg'}
-                      alt={isPlaying ? '일시정지' : '재생'}
-                      width={30}
-                      height={30}
-                    />
-                  </button>
+              {/* 리뷰일 때 중앙 재생 버튼 */}
+              {isReview && !isPlaying && (
+                <button
+                  onClick={handlePlayPause}
+                  className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
+                  title="재생">
+                  <Image src="/icons/play.svg" alt="재생" width={80} height={80} className="opacity-80" />
+                </button>
+              )}
 
-                  {/* 진행바 */}
-                  <div className="flex flex-1 items-center gap-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max={duration || 0}
-                      value={currentTime}
-                      onChange={handleSeek}
-                      className="h-2 flex-1 cursor-pointer appearance-none bg-white/25"
-                      style={{
-                        background: `linear-gradient(to right, #EE1171 0%, #EE1171 ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) 100%)`,
-                      }}
-                    />
+              {/* 커스텀 컨트롤 - 리뷰 정보가 없을 때만 표시 */}
+              {!isReview || !reviewInfo || isPlaying ? (
+                <div className="absolute bottom-0 left-0 right-0 p-4" onClick={(e) => e.stopPropagation()}>
+                  {/* 재생/일시정지 버튼과 진행바 */}
+                  <div className="flex items-center gap-3">
+                    {/* 재생/일시정지 버튼 */}
+                    <button
+                      onClick={handlePlayPause}
+                      className="flex items-center justify-center"
+                      title={isPlaying ? '일시정지' : '재생'}>
+                      <Image
+                        src={isPlaying ? '/icons/pause.svg' : '/icons/play.svg'}
+                        alt={isPlaying ? '일시정지' : '재생'}
+                        width={30}
+                        height={30}
+                      />
+                    </button>
+
+                    {/* 진행바 */}
+                    <div className="flex flex-1 items-center gap-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max={duration || 0}
+                        value={currentTime}
+                        onChange={handleSeek}
+                        className="h-2 flex-1 cursor-pointer appearance-none bg-white/25"
+                        style={{
+                          background: `linear-gradient(to right, #EE1171 0%, #EE1171 ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) 100%)`,
+                        }}
+                      />
+                    </div>
+
+                    {/* 음소거/음소거해제 버튼 */}
+                    <button
+                      onClick={handleMuteToggle}
+                      className="flex items-center justify-center transition-all hover:bg-opacity-30"
+                      title={isMuted ? '음소거 해제' : '음소거'}>
+                      <Image
+                        src={isMuted ? '/icons/speaker-muted.svg' : '/icons/speaker.svg'}
+                        alt={isMuted ? '음소거 해제' : '음소거'}
+                        width={30}
+                        height={30}
+                      />
+                    </button>
                   </div>
-
-                  {/* 음소거/음소거해제 버튼 */}
-                  <button
-                    onClick={handleMuteToggle}
-                    className="flex items-center justify-center transition-all hover:bg-opacity-30"
-                    title={isMuted ? '음소거 해제' : '음소거'}>
-                    <Image
-                      src={isMuted ? '/icons/speaker-muted.svg' : '/icons/speaker.svg'}
-                      alt={isMuted ? '음소거 해제' : '음소거'}
-                      width={30}
-                      height={30}
-                    />
-                  </button>
                 </div>
-              </div>
+              ) : null}
             </div>
           ) : (
             <Image
@@ -268,7 +338,7 @@ export default function BoardImageModal({ images, initialIndex, onClose }: Board
               alt={`modal-img-${currentIndex}`}
               width={1000}
               height={1000}
-              className="h-auto max-h-full w-full object-contain"
+              className="h-auto max-h-[31.25rem] w-full object-cover"
             />
           )}
 
@@ -293,6 +363,55 @@ export default function BoardImageModal({ images, initialIndex, onClose }: Board
             </>
           )}
         </div>
+
+        {/* 리뷰 정보 (하단) - 동영상이 멈춰있을 때만 표시 */}
+        {isReview && reviewInfo && (!isCurrentVideo || !isPlaying) && (
+          <div className="absolute bottom-0 left-0 right-0 z-10 bg-black/50 px-5 py-[0.88rem]">
+            <div className="flex flex-col">
+              <div className="flex items-start">
+                <Image
+                  src={reviewInfo.profileImageUrl || '/icons/default-avatar.svg'}
+                  alt={`${reviewInfo.nickname}의 프로필 사진`}
+                  className="mr-[0.62rem] h-8 w-8 rounded-full object-cover"
+                  width={32}
+                  height={32}
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-[0.875rem] font-bold text-white">{reviewInfo.nickname}</p>
+                  </div>
+                  <p className="text-[0.75rem] text-gray200">{formatRelativeTime(reviewInfo.createdAt)}</p>
+                </div>
+              </div>
+              <p className="mt-[0.88rem] text-[0.8125rem] text-gray100">{reviewInfo.content}</p>
+              {/* 좋아요 버튼 - 내용 아래 우측에 배치 */}
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    if (onLikeToggle && reviewInfo) {
+                      // 낙관적 업데이트
+                      const newLiked = !localLiked;
+                      const newLikes = newLiked ? localLikes + 1 : localLikes - 1;
+                      setLocalLiked(newLiked);
+                      setLocalLikes(newLikes);
+
+                      // 실제 API 호출
+                      onLikeToggle(reviewInfo.venueReviewId);
+                    }
+                  }}
+                  className={`flex items-center gap-1 ${localLiked ? 'text-main' : 'text-gray300'}`}>
+                  <Image
+                    src={localLiked ? '/icons/thumb-up-clicked.svg' : '/icons/thumb-up.svg'}
+                    alt="좋아요"
+                    width={17}
+                    height={17}
+                  />
+                  <span className="text-[0.75rem]">{localLikes}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>,
     document.body,
