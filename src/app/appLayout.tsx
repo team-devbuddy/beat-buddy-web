@@ -123,7 +123,8 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     pathname.includes('withdrawal') ||
     pathname.includes('option') ||
     pathname.includes('manage') ||
-    pathname.includes('/board/search');
+    pathname.includes('/board/search') ||
+    pathname.includes('bbp-onboarding');
   console.log('shouldHideFooter:', shouldHideFooter);
 
   return (

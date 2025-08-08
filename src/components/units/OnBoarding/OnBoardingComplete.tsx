@@ -47,7 +47,7 @@ export default function OnBoardingComplete() {
           setOnboardingMood([]);
           setOnboardingLocation([]);
 
-          router.push('/bbp-list');
+          router.push('/bbp-onboarding');
         } else {
           alert('Error creating archive');
         }
