@@ -74,7 +74,7 @@ export default function BoardProfileCreatePage() {
   return (
     <>
       <BoardProfileHeader />
-      <div className="min-h-screen bg-BG-black px-5 pt-10 text-white">
+      <div className="bg-BG-black px-5 pt-10 text-white">
         {/* 프로필 이미지 */}
         <div className="relative mb-6 flex justify-center">
           <div className="relative h-[90px] w-[90px] overflow-hidden rounded-full">
