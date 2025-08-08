@@ -83,7 +83,7 @@ export default function BoardProfileCreatePage() {
           <div
             className="absolute bottom-[5px] right-[calc(50%-35px)] translate-x-[50%]"
             onClick={() => document.getElementById('profile-image-input')?.click()}>
-            <div className="flex cursor-pointer items-center justify-center rounded-full bg-gray400 p-[0.19rem]">
+            <div className="flex cursor-pointer items-center justify-center rounded-full p-[0.19rem]">
               <Image src="/icons/bxs_pencil.svg" alt="edit" width={14} height={14} />
             </div>
           </div>
