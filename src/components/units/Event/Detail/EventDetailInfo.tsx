@@ -10,7 +10,6 @@ import { eventState } from '@/context/recoil-context';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { getESsearch } from '@/lib/actions/event-controller/event-write-controller/getESsearch';
-import BoardDropDown from '../../Board/BoardDropDown';
 
 const NaverMap = dynamic(() => import('@/components/common/NaverMap'), { ssr: false });
 

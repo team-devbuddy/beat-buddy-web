@@ -32,7 +32,62 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const dropdownButtonRef = useRef<HTMLImageElement>(null);
-  // 좋아요 처리 함수
+
+  const fallbackShare = () => {
+    const url = window.location.href;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        console.log('링크가 복사되었습니다.');
+        // 사용자에게 알림을 주는 것이 좋습니다
+      })
+      .catch((err) => {
+        console.error('Failed to copy: ', err);
+        // 클립보드 복사가 실패한 경우 URL을 직접 보여줌
+      });
+  };
+
+  const handleShareClick = () => {
+    const url = window.location.href;
+    const title = eventDetail?.title || 'BeatBuddy';
+    const text = `${eventDetail?.title} - BeatBuddy에서 확인해보세요!`;
+
+    console.log('Share Debug:', {
+      navigatorShare: !!navigator.share,
+      url,
+      title,
+      text,
+      userAgent: navigator.userAgent,
+      isSecure: window.location.protocol === 'https:',
+    });
+
+    // 네이티브 공유 API 지원 확인
+    if (navigator.share) {
+      const shareData = {
+        title: title,
+        text: text,
+        url: url,
+      };
+
+      console.log('Attempting native share with data:', shareData);
+
+      navigator
+        .share(shareData)
+        .then(() => {
+          console.log('공유 성공');
+        })
+        .catch((error) => {
+          console.log('공유 취소 또는 오류:', error);
+          // 공유가 취소되거나 실패하면 클립보드 복사로 폴백
+          fallbackShare();
+        });
+    } else {
+      console.log('네이티브 공유 API를 지원하지 않습니다. 클립보드 복사로 폴백합니다.');
+      // 네이티브 공유 API를 지원하지 않는 경우 클립보드 복사
+      fallbackShare();
+    }
+  };
+
   const handleLike = async () => {
     if (!eventDetail || isLiking) return;
 
@@ -175,26 +230,36 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
 
               {/* 오른쪽: 좋아요와 메뉴 버튼 */}
               <div className="flex items-center gap-3">
+                <Image
+                  src="/icons/upload.svg"
+                  alt="공유"
+                  width={24}
+                  height={24}
+                  className="cursor-pointer"
+                  onClick={handleShareClick}
+                />
                 {/* 좋아요 버튼 */}
                 <Image
-                  src={eventDetail.liked ? '/icons/FilledHeart.svg' : '/icons/heart-white.svg'}
+                  src={eventDetail.liked ? '/icons/FilledHeart.svg' : '/icons/eventHeart.svg'}
                   alt="좋아요"
-                  width={28}
-                  height={24}
+                  width={21}
+                  height={21}
                   className="cursor-pointer"
                   onClick={handleLike}
                 />
 
                 {/* 드롭다운 메뉴 */}
-                <Image
-                  src="/icons/dot-vertical-white.svg"
-                  alt="메뉴"
-                  width={9}
-                  height={20}
-                  className="cursor-pointer"
-                  onClick={() => setShowDropdown((prev) => !prev)}
-                  ref={dropdownButtonRef}
-                />
+                {eventDetail.isAuthor && (
+                  <Image
+                    src="/icons/dot-vertical-white.svg"
+                    alt="메뉴"
+                    width={9}
+                    height={20}
+                    className="cursor-pointer"
+                    onClick={() => setShowDropdown((prev) => !prev)}
+                    ref={dropdownButtonRef}
+                  />
+                )}
               </div>
             </div>
           </motion.div>

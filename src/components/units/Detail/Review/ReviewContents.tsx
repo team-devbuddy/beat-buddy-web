@@ -63,6 +63,26 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   const [currentReview, setCurrentReview] = useState<Review | null>(null);
 
+  // 랜덤 프로필 이미지 선택 함수
+  const getRandomProfileImage = (reviewId: string | number) => {
+    const profileImages = [
+      '/icons/default-avatar-5.svg',
+      '/icons/default-avatar-2.svg',
+      '/icons/default-avatar-3.svg',
+      '/icons/default-avatar-4.svg',
+    ];
+
+    // reviewId를 문자열로 변환 후 기반으로 일관된 랜덤 이미지 선택
+    const reviewIdStr = String(reviewId);
+    const hash = reviewIdStr.split('').reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+
+    const index = Math.abs(hash) % profileImages.length;
+    return profileImages[index];
+  };
+
   // 드롭다운 토글 핸들러
   const handleDropdownToggle = (reviewId: string) => {
     setOpenDropdown(openDropdown === reviewId ? null : reviewId);
@@ -283,13 +303,13 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                 className="flex flex-col overflow-hidden border-b border-gray700 px-5 py-[0.88rem] last:border-none">
                 {/* 유저 정보 */}
                 <div className="flex items-center justify-between">
-                  <div className="mb-[0.88rem] flex items-center space-x-[0.62rem]">
+                  <div className="flex items-center space-x-[0.62rem]">
                     <Image
-                      src={review.profileImageUrl || '/icons/default-avatar.svg'}
+                      src={review.profileImageUrl || getRandomProfileImage(review.venueReviewId)}
                       alt={`${review.nickname}의 프로필 사진`}
-                      className="h-10 w-10 rounded-full bg-gray-200 object-cover"
-                      width={32}
-                      height={32}
+                      className="rounded-full object-cover"
+                      width={37}
+                      height={37}
                       style={{ aspectRatio: '1/1' }}
                     />
                     <div>
@@ -303,7 +323,13 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                   {/* 더보기 드롭다운 */}
                   <div className="dropdown-container relative">
                     <button onClick={() => handleDropdownToggle(review.venueReviewId)} title="더보기">
-                      <Image src="/icons/dot-vertical.svg" alt="더보기 아이콘" width={20} height={20} />
+                      <Image
+                        src="/icons/dot-vertical.svg"
+                        alt="더보기 아이콘"
+                        width={19}
+                        height={20}
+                        className="rotate-90"
+                      />
                     </button>
 
                     <AnimatePresence>
@@ -360,7 +386,7 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                         media.includes('blob:');
 
                       return (
-                        <div key={index} className="mb-[0.88rem] flex-shrink-0">
+                        <div key={index} className="mt-[0.88rem] flex-shrink-0">
                           {isVideo ? (
                             <div
                               className="relative h-[150px] w-auto cursor-pointer overflow-hidden rounded-xs"
@@ -387,20 +413,22 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                 )}
 
                 {/* 리뷰 내용 */}
-                <p className="text-[0.8125rem] text-gray100">{review.content}</p>
+                <p className="mt-[0.88rem] text-[0.8125rem] text-gray100">{review.content}</p>
 
                 {/* 좋아요 버튼 */}
                 <div className="flex justify-end">
                   <button
                     onClick={() => handleLikeToggle(review.venueReviewId)}
-                    className={`flex items-end space-x-[0.12rem] rounded-xs px-[0.38rem] text-[0.6875rem] font-medium text-gray300`}>
-                    <div className="flex items-center space-x-1 text-body3-12-medium text-gray300">
+                    className={`flex items-end space-x-[0.12rem] rounded-xs px-[0.38rem] text-[0.75rem] font-medium text-gray300`}>
+                    <div className="flex items-center space-x-1 text-[0.75rem] text-gray300">
                       {isLiked ? (
-                        <Image src="/icons/thumb-up-clicked.svg" alt="좋아요 아이콘" width={17} height={17} />
+                        <Image src="/icons/thumb-up-pink.svg" alt="좋아요 아이콘" width={20} height={20} />
                       ) : (
-                        <Image src="/icons/thumb-up.svg" alt="좋아요 아이콘" width={17} height={17} />
+                        <Image src="/icons/thumb-up.svg" alt="좋아요 아이콘" width={20} height={20} />
                       )}
-                      <span className={`${isLiked ? 'text-main' : 'text-gray300'}`}>{likeCount}</span>
+                      <span className={`min-w-[0.5rem] text-center ${isLiked ? 'text-main' : 'text-gray300'}`}>
+                        {likeCount}
+                      </span>
                     </div>
                   </button>
                 </div>

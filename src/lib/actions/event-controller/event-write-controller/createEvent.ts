@@ -82,9 +82,8 @@ export const createEvent = async (
     }
 
     const result = await res.json();
-    alert('이벤트가 성공적으로 생성되었습니다!');
     // 성공 시 이벤트 목록 페이지로 이동
-    window.location.href = '/event';
+    window.location.href = `/event/detail/${result.id}`;
   } catch (error) {
     console.error('이벤트 생성 에러:', error);
     alert(`이벤트 생성 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);

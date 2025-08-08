@@ -113,6 +113,24 @@ const BoardDropdown = ({
             },
           },
         ];
+      } else if (type === 'event') {
+        // 이벤트인 경우 수정하기, 삭제하기
+        return [
+          {
+            label: '수정하기',
+            icon: '/icons/edit.svg',
+            onClick: () => router.push(`/event/write?eventId=${eventId}`),
+          },
+          {
+            label: '삭제하기',
+            icon: '/icons/trashcan.svg',
+            onClick: async () => {
+              await deletePost(accessToken, eventId!);
+              onPostDelete?.();
+              router.push('/event');
+            },
+          },
+        ];
       } else {
         // 게시글인 경우 수정하기, 삭제하기
         return [
@@ -137,35 +155,17 @@ const BoardDropdown = ({
 
     // 남이 쓴 글~~~
     if (type === 'comment') {
-      // 댓글인 경우 신고하기, 차단하기만
       return [
-        {
-          label: '차단하기',
-          icon: '/icons/block.svg',
-          modalType: 'block',
-        },
-        {
-          label: '신고하기',
-          icon: '/icons/material-symbols_siren-outline.svg',
-          modalType: 'report',
-        },
-      ];
-    } else {
-      // 게시글인 경우 신고하기, 차단하기
-      return [
-        {
-          label: '신고하기',
-          icon: '/icons/material-symbols_siren-outline.svg',
-          modalType: 'report',
-        },
-        {
-          label: '차단하기',
-          icon: '/icons/block.svg',
-          modalType: 'block',
-        },
+        { label: '차단하기', icon: '/icons/block.svg', modalType: 'block' },
+        { label: '신고하기', icon: '/icons/material-symbols_siren-outline.svg', modalType: 'report' },
       ];
     }
-  }, [isAuthor, postId, accessToken, router, onPostDelete, type, commentId, onCommentDelete]);
+    // 6) 남이 쓴 게시글(보드)
+    return [
+      { label: '신고하기', icon: '/icons/material-symbols_siren-outline.svg', modalType: 'report' },
+      { label: '차단하기', icon: '/icons/block.svg', modalType: 'block' },
+    ];
+  }, [isAuthor, type, postId, eventId, accessToken, router, onPostDelete, commentId, onCommentDelete]);
 
   const handleBlock = async () => {
     try {

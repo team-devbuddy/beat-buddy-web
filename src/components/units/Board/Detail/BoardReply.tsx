@@ -224,7 +224,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
     return (
       <div className={containerClass}>
-        <div className="flex items-center pt-[0.62rem] pb-[0.88rem] gap-[0.37rem] text-[0.8125rem] text-gray300">
+        <div className="flex items-center gap-[0.37rem] pb-[0.88rem] pt-[0.62rem] text-[0.8125rem] text-gray300">
           <Image
             src="/icons/cancel.svg"
             alt="profile"
@@ -259,9 +259,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                 <div className="flex items-center justify-center gap-[0.37rem] text-[0.8125rem] text-white">
                   <Image
                     src={
-                      reply.isAnonymous
-                        ? '/icons/default-profile.svg'
-                        : reply.imageUrl || '/icons/default-profile.svg'
+                      reply.isAnonymous ? '/icons/default-profile.svg' : reply.imageUrl || '/icons/default-profile.svg'
                     }
                     alt="profile"
                     width={22}
@@ -270,7 +268,9 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                     onClick={handleProfileClick}
                   />
                   {reply.isPostWriter && <span className="font-bold text-main">{reply.memberName} (작성자)</span>}
-                  {!reply.isPostWriter && <span className="text-[0.8125rem] font-bold text-white">{reply.memberName}</span>}
+                  {!reply.isPostWriter && (
+                    <span className="text-[0.8125rem] font-bold text-white">{reply.memberName}</span>
+                  )}
                   <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
                 </div>
                 <div className="relative">
@@ -351,9 +351,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
               <div className="flex items-center justify-center gap-[0.37rem] text-[0.8125rem] text-white">
                 <Image
                   src={
-                    reply.isAnonymous
-                      ? '/icons/default-profile.svg'
-                      : reply.imageUrl || '/icons/default-profile.svg'
+                    reply.isAnonymous ? '/icons/default-profile.svg' : reply.imageUrl || '/icons/default-profile.svg'
                   }
                   alt="profile"
                   width={22}
@@ -362,7 +360,9 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                   onClick={handleProfileClick}
                 />
                 {reply.isPostWriter && <span className="font-bold text-main">{reply.memberName} (작성자)</span>}
-                {!reply.isPostWriter && <span className="text-[0.8125rem] font-bold text-white">{reply.memberName}</span>}
+                {!reply.isPostWriter && (
+                  <span className="text-[0.8125rem] font-bold text-white">{reply.memberName}</span>
+                )}
                 <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
               </div>
               <div className="relative">

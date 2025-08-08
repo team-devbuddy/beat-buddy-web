@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 import { eventFormState, accessTokenState, isEventEditModeState, eventState } from '@/context/recoil-context';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import EventWriteHeader from '@/components/units/Event/Write/EventWriteHeader';
 import ImageUploader from '@/components/units/Event/Write/EventImageUploader';
@@ -24,6 +25,15 @@ export default function EventWritePage() {
   const event = useRecoilValue(eventState);
   const searchParams = useSearchParams();
   const eventId = searchParams.get('eventId');
+  const router = useRouter();
+
+  // 디버깅 정보 추가
+  console.log('EventWritePage Debug:', {
+    eventId,
+    isEditMode,
+    event: event ? { eventId: event.eventId, title: event.title } : null,
+    searchParams: searchParams.toString(),
+  });
 
   // URL에 eventId가 있으면 수정 모드로 설정
   useEffect(() => {
@@ -265,11 +275,13 @@ export default function EventWritePage() {
 
     try {
       const url =
-        isEditMode && event?.eventId
-          ? `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${event.eventId}`
+        isEditMode && eventId
+          ? `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${eventId}`
           : `${process.env.NEXT_PUBLIC_SERVER_URL}/events`;
 
       const method = isEditMode ? 'PATCH' : 'POST';
+
+      console.log('Request Debug:', { url, method, isEditMode, eventId });
 
       const res = await fetch(url, {
         method,
@@ -285,19 +297,18 @@ export default function EventWritePage() {
       }
 
       const result = await res.json();
-      alert(`${isEditMode ? '이벤트가 성공적으로 수정' : '이벤트가 성공적으로 생성'}되었습니다!`);
+
+      console.log('Response Debug:', result);
 
       // 수정 모드 해제
       if (isEditMode) {
         setIsEditMode(false);
       }
 
-      window.location.href = '/event';
+      // 이전 페이지로 리다이렉트
+      router.back();
     } catch (error) {
       console.error(`${isEditMode ? '이벤트 수정' : '이벤트 생성'} 에러:`, error);
-      alert(
-        `${isEditMode ? '이벤트 수정' : '이벤트 생성'} 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
-      );
     }
   };
 

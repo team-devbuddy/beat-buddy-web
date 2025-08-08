@@ -160,6 +160,9 @@ export interface EventDetail {
   location: string;
   isAttending: boolean;
   isAuthor: boolean;
+  memberName?: string;
+  memberId?: number;
+  isAnonymous?: boolean;
 }
 
 export interface Participant {
