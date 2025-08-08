@@ -77,7 +77,9 @@ export default function FollowerList({ userId, accessToken }: FollowerListProps)
     <div className="bg-BG-black">
       {followers.map((follower, index) => (
         <div key={follower.memberId} ref={index === followers.length - 1 ? lastFollowerElementRef : null}>
-          <FollowItem user={follower} />
+          <div className="px-4 py-[0.88rem]">
+            <FollowItem user={follower} isFollower={true} />
+          </div>
         </div>
       ))}
     </div>

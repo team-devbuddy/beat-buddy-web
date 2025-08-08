@@ -137,19 +137,19 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
     <div>
       {/* 탭 바 */}
       <div
-        className="relative flex justify-around border-b border-gray700 text-[0.9375rem] text-gray300"
+        className="relative flex justify-around  text-[0.9375rem] text-gray300"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         style={{ touchAction: isSwiping ? 'none' : 'auto' }}>
         <button
           onClick={() => setActiveTab('my')}
-          className={classNames('z-10 w-1/2 py-[0.75rem]', activeTab === 'my' ? 'font-bold text-main' : '')}>
+          className={classNames('z-10 w-1/2 pb-[0.75rem] pt-1', activeTab === 'my' ? 'font-bold text-main' : '')}>
           내가 쓴 글
         </button>
         <button
           onClick={() => setActiveTab('scrap')}
-          className={classNames('z-10 w-1/2 py-[0.75rem]', activeTab === 'scrap' ? 'font-bold text-main' : '')}>
+          className={classNames('z-10 w-1/2 pb-[0.75rem] pt-1', activeTab === 'scrap' ? 'font-bold text-main' : '')}>
           스크랩
         </button>
 

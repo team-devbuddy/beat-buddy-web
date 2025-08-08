@@ -119,7 +119,7 @@ export default function BoardProfileInfo({
   };
 
   const goToProfileEdit = () => {
-    router.push('/board/profile/edit');
+    router.push(`/board/profile/edit?memberId=${memberId}`);
   };
 
   const handleProfileShare = async () => {

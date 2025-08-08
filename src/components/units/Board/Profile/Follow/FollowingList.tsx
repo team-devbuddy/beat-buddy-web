@@ -74,10 +74,12 @@ export default function FollowingList({ userId, accessToken }: FollowingListProp
   }
 
   return (
-    <div className="bg-BG-black">
+    <div className="bg-BG-black ">
       {following.map((user, index) => (
         <div key={user.memberId} ref={index === following.length - 1 ? lastFollowingElementRef : null}>
+          <div className="px-4 py-[0.88rem]">
           <FollowItem user={user} />
+          </div>
         </div>
       ))}
     </div>

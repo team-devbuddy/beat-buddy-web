@@ -104,19 +104,19 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
       let hasMoreComments = true;
 
       while (hasMoreComments) {
-        const response: CommentResponse = await getComments(postId, pageNum, 10, accessToken);
+        const response = (await getComments(postId, pageNum, 10, accessToken)) as CommentResponse;
 
         const newComments = response.content.map((comment) => ({
           id: String(comment.id),
           postId: postId,
-          authorId: String(comment.member?.memberId || ''),
+          authorId: String(comment.writerId || ''),
           author: comment.isAnonymous ? '익명' : comment.memberName || '알 수 없음',
-          profileImage: comment.member?.profileImage || '/icons/default-avatar.svg',
+          profileImage: comment.imageUrl || '/icons/default-avatar.svg',
           content: comment.content,
           timestamp: new Date(comment.createdAt).toLocaleString(),
           parentId: comment.replyId === 0 ? null : String(comment.replyId),
           isAnonymous: comment.isAnonymous,
-          isAuthor: currentUser?.memberId === comment.member?.memberId,
+          isAuthor: currentUser?.memberId === comment.writerId,
         }));
 
         allComments = [...allComments, ...newComments];
@@ -139,19 +139,19 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
     if (!accessToken || !postId) return;
 
     try {
-      const response: CommentResponse = await getComments(postId, pageNum, 10, accessToken);
+      const response = (await getComments(postId, pageNum, 10, accessToken)) as CommentResponse;
 
       const newComments = response.content.map((comment) => ({
         id: String(comment.id),
         postId: postId,
-        authorId: String(comment.member?.memberId || ''),
+        authorId: String(comment.writerId || ''),
         author: comment.isAnonymous ? '익명' : comment.memberName || '알 수 없음',
-        profileImage: comment.member?.profileImage || '/icons/default-avatar.svg',
+        profileImage: comment.imageUrl || '/icons/default-avatar.svg',
         content: comment.content,
         timestamp: new Date(comment.createdAt).toLocaleString(),
         parentId: comment.replyId === 0 ? null : String(comment.replyId),
         isAnonymous: comment.isAnonymous,
-        isAuthor: currentUser?.memberId === comment.member?.memberId,
+        isAuthor: currentUser?.memberId === comment.writerId,
       }));
 
       if (pageNum === 0) {
@@ -469,16 +469,47 @@ interface CommentAuthor {
 }
 
 interface CommentResponse {
+  totalElements: number;
+  totalPages: number;
+  size: number;
   content: Array<{
     id: number;
     content: string;
     isAnonymous: boolean;
-    replyId: number;
+    replyId: number | null;
     memberName: string;
+    imageUrl: string;
     likes: number;
     createdAt: string;
-    member?: CommentAuthor;
+    isAuthor: boolean;
+    writerId: number;
+    isFollowing: boolean;
+    isBlocked: boolean;
+    isDeleted: boolean;
+    isPostWriter: boolean;
   }>;
+  number: number;
+  sort: {
+    empty: boolean;
+    unsorted: boolean;
+    sorted: boolean;
+  };
+  numberOfElements: number;
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      empty: boolean;
+      unsorted: boolean;
+      sorted: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 // 서버에서 게시글 정보를 가져오는 함수 추가

@@ -222,7 +222,7 @@ export default function BoardWrite() {
           />
         </div>
 
-        <hr className="mb-5 mt-2 h-[0.0625rem] border-gray500" />
+        <hr className="mb-5 mt-5 h-[0.0625rem] border-gray500" />
 
         <textarea
           ref={textareaRef}
@@ -239,7 +239,7 @@ export default function BoardWrite() {
           placeholder={`광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.\n건강한 커뮤니티 문화를 함께 만들어가요.`}
         />
 
-        {!content && (
+        {/* !content && (
           <div className="mt-[-0.4rem] text-[0.8125rem] text-gray300">
             자세한 내용은{' '}
             <a href="/rules" target="_blank" rel="noopener noreferrer" className="text-gray300 underline">

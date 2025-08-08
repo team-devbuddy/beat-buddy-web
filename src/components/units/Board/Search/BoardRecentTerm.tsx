@@ -51,7 +51,7 @@ const BoardRecentTerm = ({ isEvent }: { isEvent?: boolean }) => {
                 {search}
               </span>
               <div className="cursor-pointer" onClick={() => handleRemoveSearchTerm(search)}>
-                <Image src="/icons/close.svg" alt="remove" width={20} height={20} />
+                <Image src="/icons/Close.svg" alt="remove" width={20} height={20} />
               </div>
             </motion.div>
           ))}

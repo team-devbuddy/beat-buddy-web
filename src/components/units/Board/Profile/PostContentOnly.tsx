@@ -82,7 +82,7 @@ export default function PostContentOnly({ postId, post }: PostProps) {
   const openDropdown = () => {
     if (dropdownTriggerRef.current) {
       const rect = dropdownTriggerRef.current.getBoundingClientRect();
-      setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 });
+      setDropdownPosition({ top: rect.bottom - 70, left: rect.right - 110 });
       setIsDropdownOpen(true);
     }
   };

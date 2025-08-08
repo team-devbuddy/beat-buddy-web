@@ -8,6 +8,7 @@ import { accessTokenState, followMapState, followCountState } from '@/context/re
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
 import BoardDropdown from '../BoardDropDown';
+import { usePathname } from 'next/navigation';
 
 interface BoardProfileHeaderProps {
   isFixed?: boolean;
@@ -42,7 +43,10 @@ export default function BoardProfileHeader({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
   const dropdownTriggerRef = useRef<HTMLImageElement | null>(null);
+  const pathname = usePathname();
 
+  const isProfileEdit = pathname === '/board/profile/edit';
+  const isProfileCreate = pathname === '/board/profile/create';
   // followMapState에서 실시간 팔로우 상태 가져오기 (persist 우선, 서버 데이터 fallback)
   const currentFollowState = followMap[memberId] !== undefined ? followMap[memberId] : isFollowing;
 
@@ -73,7 +77,7 @@ export default function BoardProfileHeader({
   const openDropdown = () => {
     if (dropdownTriggerRef.current) {
       const rect = dropdownTriggerRef.current.getBoundingClientRect();
-      setDropdownPosition({ top: rect.top - 5, left: rect.left - 100 });
+      setDropdownPosition({ top: rect.top - 5, left: rect.left - 80 });
       setIsDropdownOpen(true);
     }
   };
@@ -119,7 +123,7 @@ export default function BoardProfileHeader({
 
   if (isFixed) {
     return (
-      <header className="fixed left-0 right-0 top-0 z-50 transform border-b border-gray700 bg-BG-black transition-transform duration-500 ease-in-out">
+      <header className="fixed left-0 right-0 top-0 z-50 transform  bg-BG-black transition-transform duration-500 ease-in-out">
         <div className="mx-auto flex max-w-[600px] items-center justify-between px-[1.25rem] py-[0.75rem] text-white">
           {/* 왼쪽: 뒤로가기 + 프로필 정보 */}
           <div className="flex items-center">
@@ -142,17 +146,17 @@ export default function BoardProfileHeader({
                 )}
               </div>
               <div className="flex items-center gap-[0.25rem]">
-                <span className="text-[0.6875rem] text-gray300">게시글{postCount}개</span>
+                <span className="text-[0.6875rem] text-gray300">게시글 {postCount}개</span>
               </div>
             </div>
           </div>
 
           {/* 오른쪽: 팔로우 버튼 + 더보기 */}
-          <div className="flex items-center gap-[0.5rem]">
-            {!isAuthor && (
+          <div className="flex items-center ">
+            {!isAuthor && !isProfileEdit && (
               <button
                 onClick={handleFollow}
-                className={`rounded-[0.375rem] px-[0.75rem] py-[0.375rem] text-[0.75rem] font-bold transition-colors ${
+                className={`rounded-[0.375rem] px-[0.81rem] py-[0.25rem] text-[0.75rem] font-bold transition-colors ${
                   currentFollowState ? 'bg-gray500 text-main' : 'bg-main text-white'
                 } disabled:opacity-50`}
                 disabled={loadingFollow}>
@@ -191,7 +195,7 @@ export default function BoardProfileHeader({
 
   // 기본 헤더 (뒤로가기 + 더보기)
   return (
-    <header className="flex items-center justify-between bg-BG-black px-5 pb-[0.88rem] pt-[0.62rem] text-white">
+    <header className={`flex items-center ${isProfileEdit || isProfileCreate ? 'justify-start' : 'justify-between'} bg-BG-black px-5 pb-[0.88rem] pt-[0.62rem] text-white`}>
       <Image
         src="/icons/arrow_back_ios.svg"
         alt="뒤로가기"
@@ -200,8 +204,17 @@ export default function BoardProfileHeader({
         onClick={() => router.back()}
         className="cursor-pointer"
       />
-
-      {!isAuthor && (
+      {isProfileEdit && (
+        <span className="text-[1.25rem] font-bold text-white">
+          프로필 편집
+        </span>
+      )}
+      {isProfileCreate && (
+        <span className="text-[1.25rem] font-bold text-white">
+          프로필 만들기
+        </span>
+      )}
+      {!isAuthor && !isProfileEdit && !isProfileCreate && (
         <Image
           ref={dropdownTriggerRef}
           src="/icons/more_vert.svg"

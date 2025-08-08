@@ -13,9 +13,12 @@ import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap
 import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
 import BoardDropdown from './BoardDropDown';
 import { useRouter } from 'next/navigation';
-import { followMapState } from '@/context/recoil-context';
+import { followMapState, userProfileState } from '@/context/recoil-context';
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
+import { createPortal } from 'react-dom';
+import ProfileModal from '../Common/ProfileModal';
+import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 
 interface PostProps {
   postId: number;
@@ -89,40 +92,70 @@ export default function BoardThread({ postId, post }: PostProps) {
   const [likeMap, setLikeMap] = useRecoilState(postLikeState);
   const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
   const [followMap, setFollowMap] = useRecoilState(followMapState);
+  const userProfile = useRecoilValue(userProfileState);
   const liked = likeMap[post.id] ?? false;
   const scrapped = scrapMap[post.id] ?? false;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
   const [clickedFollow, setClickedFollow] = useState(false);
 
+  // 게시판 프로필 관련 상태
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
   const isFollowing = followMap[post.writerId] ?? post.isFollowing;
 
   const category = 'free';
 
+  // 게시판 프로필 존재 여부 확인
+  const checkBoardProfile = async () => {
+    try {
+      const profileInfo = await getProfileinfo(accessToken);
+      // 프로필 정보가 있고 닉네임이 있으면 게시판 프로필이 존재하는 것으로 간주
+      return profileInfo && profileInfo.nickname && profileInfo.nickname.trim() !== '';
+    } catch (error) {
+      console.error('게시판 프로필 확인 실패:', error);
+      return false;
+    }
+  };
+
+  // 상호작용 전 프로필 체크
+  const handleInteractionWithProfileCheck = async (action: () => void) => {
+    const hasProfile = await checkBoardProfile();
+    if (!hasProfile) {
+      setShowProfileModal(true);
+      return;
+    }
+    action();
+  };
+
   const goToUserProfile = () => {
     // 익명 게시글인 경우 프로필로 이동하지 않음
     if (post.isAnonymous) return;
-    router.push(`/board/profile?writerId=${post.writerId}`);
+    handleInteractionWithProfileCheck(() => {
+      router.push(`/board/profile?writerId=${post.writerId}`);
+    });
   };
 
   const openDropdown = () => {
-    if (dropdownTriggerRef.current) {
-      const rect = dropdownTriggerRef.current.getBoundingClientRect();
-      const dropdownWidth = 89; // w-[5.5625rem] = 89px
-      const dropdownHeight = 64; // 2개 항목 * 32px
+    handleInteractionWithProfileCheck(() => {
+      if (dropdownTriggerRef.current) {
+        const rect = dropdownTriggerRef.current.getBoundingClientRect();
+        const dropdownWidth = 89; // w-[5.5625rem] = 89px
+        const dropdownHeight = 64; // 2개 항목 * 32px
 
-      // 화면 오른쪽 끝에 가까우면 왼쪽으로 표시
-      const shouldShowLeft = rect.right + dropdownWidth > window.innerWidth;
+        // 화면 오른쪽 끝에 가까우면 왼쪽으로 표시
+        const shouldShowLeft = rect.right + dropdownWidth > window.innerWidth;
 
-      // 화면 아래쪽 끝에 가까우면 위쪽으로 표시
-      const shouldShowTop = rect.bottom + dropdownHeight > window.innerHeight;
+        // 화면 아래쪽 끝에 가까우면 위쪽으로 표시
+        const shouldShowTop = rect.bottom + dropdownHeight > window.innerHeight;
 
-      const left = shouldShowLeft ? rect.left - dropdownWidth : rect.right - 10;
-      const top = shouldShowTop ? rect.top - dropdownHeight : rect.bottom - 80;
+        const left = shouldShowLeft ? rect.left - dropdownWidth : rect.right - 10;
+        const top = shouldShowTop ? rect.top - dropdownHeight : rect.bottom - 80;
 
-      setDropdownPosition({ top, left });
-      setIsDropdownOpen(true);
-    }
+        setDropdownPosition({ top, left });
+        setIsDropdownOpen(true);
+      }
+    });
   };
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -132,65 +165,71 @@ export default function BoardThread({ postId, post }: PostProps) {
   const handleFollow = async () => {
     if (loadingFollow || !accessToken) return alert('로그인이 필요합니다.');
 
-    // 애니메이션 시작
-    setClickedFollow(true);
+    handleInteractionWithProfileCheck(async () => {
+      // 애니메이션 시작
+      setClickedFollow(true);
 
-    try {
-      setLoadingFollow(true);
-      if (!isFollowing) {
-        await postFollow(post.writerId, accessToken);
-        setFollowMap((prev) => ({ ...prev, [post.writerId]: true }));
-      } else {
-        await deleteFollow(post.writerId, accessToken);
-        setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
+      try {
+        setLoadingFollow(true);
+        if (!isFollowing) {
+          await postFollow(post.writerId, accessToken);
+          setFollowMap((prev) => ({ ...prev, [post.writerId]: true }));
+        } else {
+          await deleteFollow(post.writerId, accessToken);
+          setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
+        }
+      } catch (err: any) {
+        alert(err.message ?? '요청 실패');
+      } finally {
+        setLoadingFollow(false);
       }
-    } catch (err: any) {
-      alert(err.message ?? '요청 실패');
-    } finally {
-      setLoadingFollow(false);
-    }
+    });
   };
 
   const handleLike = async () => {
     if (!accessToken || isLoadingLike) return;
 
-    setIsLoadingLike(true);
-    try {
-      if (liked) {
-        await deletePostLike(post.id, accessToken);
-        setLikeMap((prev) => ({ ...prev, [post.id]: false }));
-        setLikes((prev) => prev - 1);
-      } else {
-        await addPostLike(post.id, accessToken);
-        setLikeMap((prev) => ({ ...prev, [post.id]: true }));
-        setLikes((prev) => prev + 1);
+    handleInteractionWithProfileCheck(async () => {
+      setIsLoadingLike(true);
+      try {
+        if (liked) {
+          await deletePostLike(post.id, accessToken);
+          setLikeMap((prev) => ({ ...prev, [post.id]: false }));
+          setLikes((prev) => prev - 1);
+        } else {
+          await addPostLike(post.id, accessToken);
+          setLikeMap((prev) => ({ ...prev, [post.id]: true }));
+          setLikes((prev) => prev + 1);
+        }
+      } catch (err: any) {
+        alert(err.message ?? '요청 실패');
+      } finally {
+        setIsLoadingLike(false);
       }
-    } catch (err: any) {
-      alert(err.message ?? '요청 실패');
-    } finally {
-      setIsLoadingLike(false);
-    }
+    });
   };
 
   const handleScrap = async () => {
     if (!accessToken || isLoadingScrap) return;
 
-    setIsLoadingScrap(true);
-    try {
-      if (scrapped) {
-        await deletePostScrap(post.id, accessToken);
-        setScrapMap((prev) => ({ ...prev, [post.id]: false }));
-        setScraps((prev) => prev - 1);
-      } else {
-        await addPostScrap(post.id, accessToken);
-        setScrapMap((prev) => ({ ...prev, [post.id]: true }));
-        setScraps((prev) => prev + 1);
+    handleInteractionWithProfileCheck(async () => {
+      setIsLoadingScrap(true);
+      try {
+        if (scrapped) {
+          await deletePostScrap(post.id, accessToken);
+          setScrapMap((prev) => ({ ...prev, [post.id]: false }));
+          setScraps((prev) => prev - 1);
+        } else {
+          await addPostScrap(post.id, accessToken);
+          setScrapMap((prev) => ({ ...prev, [post.id]: true }));
+          setScraps((prev) => prev + 1);
+        }
+      } catch (err: any) {
+        alert(err.message ?? '요청 실패');
+      } finally {
+        setIsLoadingScrap(false);
       }
-    } catch (err: any) {
-      alert(err.message ?? '요청 실패');
-    } finally {
-      setIsLoadingScrap(false);
-    }
+    });
   };
 
   useEffect(() => {
@@ -206,7 +245,9 @@ export default function BoardThread({ postId, post }: PostProps) {
   }, [post.id]);
 
   const goToPost = () => {
-    router.push(`/board/${category}/${post.id}`);
+    handleInteractionWithProfileCheck(() => {
+      router.push(`/board/${category}/${post.id}`);
+    });
   };
 
   return (
@@ -391,6 +432,9 @@ export default function BoardThread({ postId, post }: PostProps) {
           type="board"
         />
       )}
+
+      {/* 게시판 프로필 생성 모달 */}
+      <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
     </motion.div>
   );
 }

@@ -93,7 +93,7 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
             isAnonymous: comment.isAnonymous,
             replyId: comment.replyId,
             memberName: comment.memberName,
-            profileImageUrl: comment.member?.profileImage,
+            imageUrl: comment.imageUrl,
             likes: comment.likes,
             liked: comment.liked,
             createdAt: comment.createdAt,

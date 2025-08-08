@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { getAllPosts } from '@/lib/actions/post-controller/getAllPosts';
 import { postHashtagSearch } from '@/lib/actions/post-controller/postHashtagSearch';
 import BoardThread from '@/components/units/Board/BoardThread';
@@ -12,6 +12,9 @@ import { accessTokenState, userProfileState } from '@/context/recoil-context';
 import { motion, AnimatePresence } from 'framer-motion';
 import NoResults from '@/components/units/Search/NoResult';
 import Link from 'next/link';
+import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
+import { createPortal } from 'react-dom';
+import ProfileModal from '@/components/units/Common/ProfileModal';
 
 interface PostType {
   profileImageUrl: string;
@@ -48,9 +51,34 @@ export default function BoardPage() {
   const [isScrapped, setIsScrapped] = useState(false);
   const [showButton, setShowButton] = useState(true);
   const lastScrollYRef = useRef(0);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
   const accessToken = useRecoilValue(accessTokenState) || '';
   const userProfile = useRecoilValue(userProfileState);
   const pathname = usePathname();
+  const router = useRouter();
+
+  // 게시판 프로필 존재 여부 확인
+  const checkBoardProfile = async () => {
+    try {
+      const profileInfo = await getProfileinfo(accessToken);
+      // 프로필 정보가 있고 닉네임이 있으면 게시판 프로필이 존재하는 것으로 간주
+      return profileInfo && profileInfo.nickname && profileInfo.nickname.trim() !== '';
+    } catch (error) {
+      console.error('게시판 프로필 확인 실패:', error);
+      return false;
+    }
+  };
+
+  // 상호작용 전 프로필 체크
+  const handleInteractionWithProfileCheck = async (action: () => void) => {
+    const hasProfile = await checkBoardProfile();
+    if (!hasProfile) {
+      setShowProfileModal(true);
+      return;
+    }
+    action();
+  };
 
   // 직접 스크롤 감지
   useEffect(() => {
@@ -319,17 +347,20 @@ export default function BoardPage() {
 
       <div className="pointer-events-none fixed inset-x-0 bottom-[60px] z-50 flex justify-center">
         <div className="w-full max-w-[600px] px-4">
-          <Link
-            href="/board/write"
+          <button
+            onClick={() => handleInteractionWithProfileCheck(() => router.push('/board/write'))}
             className="pointer-events-auto ml-auto flex h-14 w-14 items-center justify-center rounded-full bg-main text-sub2 shadow-lg transition-all duration-300 active:scale-90"
             style={{
               opacity: getOpacity(),
               transform: showButton ? 'translateY(0)' : 'translateY(40px)',
             }}>
             <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
-          </Link>
+          </button>
         </div>
       </div>
+
+      {/* 게시판 프로필 생성 모달 */}
+      <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
     </main>
   );
 }

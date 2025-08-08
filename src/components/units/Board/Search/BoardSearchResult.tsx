@@ -15,6 +15,10 @@ import BoardDropdown from '../BoardDropDown';
 import { useRef } from 'react';
 import { formatRelativeTime } from '../BoardThread';
 import { useRouter } from 'next/navigation';
+import { createPortal } from 'react-dom';
+import { motion } from 'framer-motion';
+import ProfileModal from '../../Common/ProfileModal';
+import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 
 interface PostProps {
   postId: number;
@@ -64,6 +68,9 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
+  // 게시판 프로필 관련 상태
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
   // 팔로우 상태를 올바르게 처리
   const isFollowing = followMap[post.writerId] !== undefined ? followMap[post.writerId] : post.isFollowing ?? false;
 
@@ -80,6 +87,28 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
 
   const category = 'free';
 
+  // 게시판 프로필 존재 여부 확인
+  const checkBoardProfile = async () => {
+    try {
+      const profileInfo = await getProfileinfo(accessToken);
+      // 프로필 정보가 있고 닉네임이 있으면 게시판 프로필이 존재하는 것으로 간주
+      return profileInfo && profileInfo.nickname && profileInfo.nickname.trim() !== '';
+    } catch (error) {
+      console.error('게시판 프로필 확인 실패:', error);
+      return false;
+    }
+  };
+
+  // 상호작용 전 프로필 체크
+  const handleInteractionWithProfileCheck = async (action: () => void) => {
+    const hasProfile = await checkBoardProfile();
+    if (!hasProfile) {
+      setShowProfileModal(true);
+      return;
+    }
+    action();
+  };
+
   // 팔로우 상태 초기화 - followMap이 비어있을 때만 서버 데이터로 설정
   useEffect(() => {
     if (followMap[post.writerId] === undefined && post.isFollowing !== undefined) {
@@ -95,15 +124,19 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
   const goToUserProfile = () => {
     // 익명 게시글인 경우 프로필로 이동하지 않음
     if (post.isAnonymous) return;
-    router.push(`/board/profile?writerId=${post.writerId}`);
+    handleInteractionWithProfileCheck(() => {
+      router.push(`/board/profile?writerId=${post.writerId}`);
+    });
   };
 
   const openDropdown = () => {
-    if (dropdownTriggerRef.current) {
-      const rect = dropdownTriggerRef.current.getBoundingClientRect();
-      setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 });
-      setIsDropdownOpen(true);
-    }
+    handleInteractionWithProfileCheck(() => {
+      if (dropdownTriggerRef.current) {
+        const rect = dropdownTriggerRef.current.getBoundingClientRect();
+        setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 });
+        setIsDropdownOpen(true);
+      }
+    });
   };
 
   const handleImageClick = (index: number) => {
@@ -114,62 +147,68 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
   const handleFollow = async () => {
     if (loadingFollow || !accessToken) return alert('로그인이 필요합니다.');
 
-    try {
-      setLoadingFollow(true);
-      if (!isFollowing) {
-        await postFollow(post.writerId, accessToken);
-        setFollowMap((prev) => ({ ...prev, [post.writerId]: true }));
-      } else {
-        await deleteFollow(post.writerId, accessToken);
-        setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
+    handleInteractionWithProfileCheck(async () => {
+      try {
+        setLoadingFollow(true);
+        if (!isFollowing) {
+          await postFollow(post.writerId, accessToken);
+          setFollowMap((prev) => ({ ...prev, [post.writerId]: true }));
+        } else {
+          await deleteFollow(post.writerId, accessToken);
+          setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
+        }
+      } catch (err: any) {
+        alert(err.message ?? '요청 실패');
+      } finally {
+        setLoadingFollow(false);
       }
-    } catch (err: any) {
-      alert(err.message ?? '요청 실패');
-    } finally {
-      setLoadingFollow(false);
-    }
+    });
   };
 
   const handleLike = async () => {
     if (!accessToken || isLoadingLike) return;
 
-    setIsLoadingLike(true);
-    try {
-      if (liked) {
-        await deletePostLike(post.id, accessToken);
-        setLikeMap((prev) => ({ ...prev, [post.id]: false }));
-        setLikes((prev) => prev - 1);
-      } else {
-        await addPostLike(post.id, accessToken);
-        setLikeMap((prev) => ({ ...prev, [post.id]: true }));
-        setLikes((prev) => prev + 1);
+    handleInteractionWithProfileCheck(async () => {
+      setIsLoadingLike(true);
+      try {
+        if (liked) {
+          await deletePostLike(post.id, accessToken);
+          setLikeMap((prev) => ({ ...prev, [post.id]: false }));
+          setLikes((prev) => prev - 1);
+        } else {
+          await addPostLike(post.id, accessToken);
+          setLikeMap((prev) => ({ ...prev, [post.id]: true }));
+          setLikes((prev) => prev + 1);
+        }
+      } catch (err: any) {
+        alert(err.message ?? '요청 실패');
+      } finally {
+        setIsLoadingLike(false);
       }
-    } catch (err: any) {
-      alert(err.message ?? '요청 실패');
-    } finally {
-      setIsLoadingLike(false);
-    }
+    });
   };
 
   const handleScrap = async () => {
     if (!accessToken || isLoadingScrap) return;
 
-    setIsLoadingScrap(true);
-    try {
-      if (scrapped) {
-        await deletePostScrap(post.id, accessToken);
-        setScrapMap((prev) => ({ ...prev, [post.id]: false }));
-        setScraps((prev) => prev - 1);
-      } else {
-        await addPostScrap(post.id, accessToken);
-        setScrapMap((prev) => ({ ...prev, [post.id]: true }));
-        setScraps((prev) => prev + 1);
+    handleInteractionWithProfileCheck(async () => {
+      setIsLoadingScrap(true);
+      try {
+        if (scrapped) {
+          await deletePostScrap(post.id, accessToken);
+          setScrapMap((prev) => ({ ...prev, [post.id]: false }));
+          setScraps((prev) => prev - 1);
+        } else {
+          await addPostScrap(post.id, accessToken);
+          setScrapMap((prev) => ({ ...prev, [post.id]: true }));
+          setScraps((prev) => prev + 1);
+        }
+      } catch (err: any) {
+        alert(err.message ?? '요청 실패');
+      } finally {
+        setIsLoadingScrap(false);
       }
-    } catch (err: any) {
-      alert(err.message ?? '요청 실패');
-    } finally {
-      setIsLoadingScrap(false);
-    }
+    });
   };
 
   useEffect(() => {
@@ -185,7 +224,9 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
   }, [post.id]);
 
   const goToPost = () => {
-    router.push(`/board/${category}/${post.id}`);
+    handleInteractionWithProfileCheck(() => {
+      router.push(`/board/${category}/${post.id}`);
+    });
   };
 
   return (
@@ -346,6 +387,9 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
           postId={post.id}
         />
       )}
+
+      {/* 게시판 프로필 생성 모달 */}
+      <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
     </div>
   );
 }
