@@ -9,8 +9,8 @@ import { eventTabState } from '@/context/recoil-context';
 const regionMap = {
   이태원: '이태원',
   홍대: '홍대',
-  '압구정 로데오': '압구정_로데오',
-  '강남 신사': '강남_신사',
+  압구정로데오: '압구정_로데오',
+  '강남 · 신사': '강남_신사',
   기타: '기타',
 };
 const regionLabels = Object.keys(regionMap);

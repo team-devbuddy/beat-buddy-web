@@ -5,6 +5,7 @@ import { getNowEvent } from '@/lib/actions/event-controller/getNowEvent';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState, regionState } from '@/context/recoil-context';
 import EventCard from './EventCard';
+import { formatDate, formatDateRange, formatRegion } from './EventLists';
 
 interface EventType {
   eventId: number;
@@ -18,6 +19,7 @@ interface EventType {
   endDate: string;
   isAuthor: boolean;
   liked?: boolean;
+  region: string;
 }
 
 export default function EventNow({ refreshTrigger }: { refreshTrigger: boolean }) {

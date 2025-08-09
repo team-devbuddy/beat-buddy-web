@@ -15,13 +15,13 @@ export default function EventTab() {
   const activeIndex = tabs.findIndex((tab) => tab.key === activeTab);
 
   return (
-    <div className="relative  flex w-full border-b border-gray700">
+    <div className="relative flex w-full">
       {tabs.map(({ label, key }) => (
         <button
           key={key}
           onClick={() => setActiveTab(key)}
           className={`flex-1 py-[0.66rem] text-center text-[0.875rem] ${
-            activeTab === key ? 'font-bold text-main' : 'text-gray100'
+            activeTab === key ? 'font-bold text-main' : 'border-b border-gray400 text-gray100'
           }`}>
           {label}
         </button>

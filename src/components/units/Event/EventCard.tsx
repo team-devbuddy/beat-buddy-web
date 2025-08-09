@@ -5,6 +5,17 @@ import { postLikeEvent } from '@/lib/actions/event-controller/postLikeEvent';
 import { deleteLikeEvent } from '@/lib/actions/event-controller/deleteLikeEvent';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { formatDate, formatDateRange, formatRegion } from './EventLists';
+
+// 지역명을 화면 표시용으로 변환하는 함수
+function convertRegionForDisplay(region: string): string {
+  const conversionMap: { [key: string]: string } = {
+    '압구정 로데오': '압구정로데오',
+    '강남 신사': '강남 · 신사',
+  };
+
+  return conversionMap[region] || region;
+}
 
 interface EventType {
   eventId: number;
@@ -18,6 +29,7 @@ interface EventType {
   endDate: string;
   isAuthor: boolean;
   liked?: boolean;
+  region: string;
 }
 
 export default function EventCard({
@@ -71,9 +83,9 @@ export default function EventCard({
 
         <div className="absolute right-[1.5rem] top-[1.5rem] z-10">
           <Image
-            src={liked ? '/icons/FilledHeart.svg' : '/icons/grayHeart.svg'}
+            src={liked ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
             alt="좋아요"
-            width={24}
+            width={27}
             height={24}
             onClick={handleLike}
             className="cursor-pointer"
@@ -87,10 +99,12 @@ export default function EventCard({
       </div>
 
       <div className="pt-4 text-white">
-        <p className="text-[0.75rem] text-gray100">{event.startDate}</p>
-        <h3 className="mt-1 text-subtitle-20-bold">{event.title}</h3>
+        <p className="text-[0.75rem] text-gray100">{formatDateRange(event.startDate, event.endDate)}</p>
+        <h3 className="mt-1 text-[1.25rem] font-bold">{event.title}</h3>
         <p className="mt-1 truncate text-[0.75rem] text-gray300">{event.content}</p>
-        <p className="mt-2 text-[0.875rem] text-gray100">{event.location}</p>
+        <span className="mt-[0.13rem] inline-block rounded-[0.5rem] bg-gray700 px-2 py-1 text-[0.875rem] text-gray300">
+          {convertRegionForDisplay(formatRegion(event.region))}
+        </span>
       </div>
     </div>
   );

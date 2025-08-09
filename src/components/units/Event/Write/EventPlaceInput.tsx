@@ -5,8 +5,18 @@ import { getESsearch } from '@/lib/actions/event-controller/event-write-controll
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, eventFormState } from '@/context/recoil-context';
 
-const TOP_ROW_PLACES = ['이태원', '홍대', '강남 신사'];
+const TOP_ROW_PLACES = ['이태원', '홍대', '강남 · 신사'];
 const BOTTOM_ROW_PLACES = ['압구정로데오', '기타'];
+
+// 화면 표시용 텍스트를 실제 요청용 텍스트로 변환하는 함수
+const convertDisplayToRequest = (displayText: string): string => {
+  const conversionMap: { [key: string]: string } = {
+    압구정로데오: '압구정 로데오',
+    '강남 · 신사': '강남 신사',
+  };
+
+  return conversionMap[displayText] || displayText;
+};
 
 interface Venue {
   venueId: number;
@@ -64,7 +74,8 @@ export default function EventPlaceInput() {
 
   const handleRecommendedClick = (loc: string) => {
     setSelectedRecommendedPlace(loc);
-    setEventForm({ ...eventForm, region: loc });
+    const requestText = convertDisplayToRequest(loc);
+    setEventForm({ ...eventForm, region: requestText });
     // ✅ 추천 선택은 검색이나 인풋값에 영향을 주지 않음
   };
 
