@@ -23,6 +23,13 @@ export default function EventDateInput() {
       setEventForm({
         ...eventForm,
         endDate: eventForm.startDate,
+        startTime: '00:00',
+        endTime: '23:59',
+      });
+    } else if (!isAllDay) {
+      // 하루종일을 해제하면 시간 값 초기화
+      setEventForm({
+        ...eventForm,
         startTime: '',
         endTime: '',
       });

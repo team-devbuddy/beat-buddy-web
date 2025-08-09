@@ -43,7 +43,9 @@ export default function EventRegisterStepForm() {
         }
 
         if (eventForm.depositAmount) {
-          setAmount(eventForm.depositAmount);
+          // 서버에서 받은 값을 콤마 형식으로 변환
+          const numericAmount = eventForm.depositAmount.replace(/[^\d]/g, '');
+          setAmount(numericAmount ? Number(numericAmount).toLocaleString() : '');
         }
 
         // 모든 필수 필드가 선택되었으면 step 3로 이동
@@ -114,9 +116,9 @@ export default function EventRegisterStepForm() {
       options.push(`예약금 ${amount}원`);
     }
 
-    // boolean 필드들 업데이트
-    setEventForm({
-      ...eventForm,
+    // boolean 필드들 업데이트 (eventForm 의존성 제거)
+    setEventForm((prev) => ({
+      ...prev,
       receiveInfo: isReceivingInfo === true,
       receiveName: selectedFields.includes('이름'),
       receiveGender: selectedFields.includes('성별'),
@@ -126,7 +128,7 @@ export default function EventRegisterStepForm() {
       receiveMoney: selectedFields.includes('사전 예약금 입금 여부'),
       depositAccount: bankName.trim() && accountNumber.trim() ? `${bankName} ${accountNumber}` : '',
       depositAmount: amount.trim() ? amount.replace(/,/g, '') : '', // 콤마 제거 후 저장
-    });
+    }));
   }, [isReceivingInfo, selectedFields, bankName, accountNumber, amount]);
 
   const fields = [
@@ -232,7 +234,7 @@ export default function EventRegisterStepForm() {
           </motion.div>
         )}
 
-        {step === 3 && (
+        {step === 3 && isReceivingInfo === true && (
           <motion.div
             key="step3"
             initial={{ opacity: 0, y: -10 }}
@@ -281,12 +283,15 @@ export default function EventRegisterStepForm() {
                       placeholder="0"
                       value={amount}
                       onChange={(e) => {
-                        // 숫자와 콤마만 허용
-                        const value = e.target.value.replace(/[^\d,]/g, '');
-                        // 콤마 제거 후 숫자만 추출
-                        const numericValue = value.replace(/,/g, '');
+                        // 숫자만 추출
+                        const numericValue = e.target.value.replace(/[^\d]/g, '');
+                        // 빈 값이면 빈 문자열로 설정
+                        if (numericValue === '') {
+                          setAmount('');
+                          return;
+                        }
                         // 숫자를 콤마가 포함된 형태로 변환
-                        const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        const formattedValue = Number(numericValue).toLocaleString();
                         setAmount(formattedValue);
                       }}
                       className="w-full bg-transparent text-right text-[0.875rem] text-gray100 placeholder-gray300 safari-input-fix focus:outline-none"

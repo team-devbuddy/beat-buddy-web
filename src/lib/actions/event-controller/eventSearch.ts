@@ -1,7 +1,7 @@
 export async function eventSearch(keyword: string, accessToken: string, page: number, size: number) {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/es/events/search?keyword=${keyword}&page=${page}&size=${size}`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/events/search?keyword=${keyword}&page=${page}&size=${size}`,
       {
         method: 'GET',
         headers: {

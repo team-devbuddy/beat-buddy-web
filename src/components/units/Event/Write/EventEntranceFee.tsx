@@ -27,7 +27,7 @@ export default function EventEntranceFee() {
     setEventForm({
       ...eventForm,
       entranceFee: value,
-      isFreeEntrance: value === '0' || value === '',
+      isFreeEntrance: value === '0',
     });
   };
 

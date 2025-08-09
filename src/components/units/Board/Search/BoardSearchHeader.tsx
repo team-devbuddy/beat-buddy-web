@@ -31,7 +31,6 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   const isEventSearch = pathname.includes('/event/search');
   const isBoardSearch = pathname === '/board/search';
   const isBoardSearching = pathname === '/board/search' && searchParams.has('q');
-  console.log('Debug:', { pathname, searchParams: searchParams.toString(), isBoardSearching });
   useEffect(() => {
     const query = searchParams.get('q');
     if (query) {
@@ -192,7 +191,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="absolute right-1 top-[3rem] z-50 -translate-x-1/2 bg-transparent px-4 py-2 text-[0.8125rem] text-main">
+              className="absolute left-1 top-[3.1rem] z-50 -translate-x-1/2 bg-transparent px-4 py-2 text-[0.75rem] text-main">
               {errorMessage}
             </motion.div>
           )}

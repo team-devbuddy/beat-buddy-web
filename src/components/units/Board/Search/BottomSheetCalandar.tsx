@@ -104,6 +104,7 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
   const handleDayClick = (day: number) => {
     const clickedDate = { year: currentYear, month: currentMonth, day };
 
+    // 이미 선택된 시작일과 같은 날짜를 클릭한 경우
     if (
       startDay &&
       !endDay &&
@@ -111,22 +112,34 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
       startDay.month === clickedDate.month &&
       startDay.day === clickedDate.day
     ) {
-      setStartDay(null);
-      setClickCount(0);
+      // 하루 검색: 시작일과 종료일을 같게 설정
+      setEndDay(clickedDate);
+      setClickCount(2);
+      return;
+    }
+
+    // 시작일과 종료일이 모두 선택된 상태에서 클릭한 경우 초기화
+    if (startDay && endDay) {
+      setStartDay(clickedDate);
+      setEndDay(null);
+      setClickCount(1);
       return;
     }
 
     const nextClickCount = clickCount + 1;
 
     if (nextClickCount % 2 === 1) {
+      // 첫 번째 클릭: 시작일 설정
       setStartDay(clickedDate);
       setEndDay(null);
     } else {
+      // 두 번째 클릭: 종료일 설정
       if (
         startDay &&
         new Date(clickedDate.year, clickedDate.month, clickedDate.day) <
           new Date(startDay.year, startDay.month, startDay.day)
       ) {
+        // 클릭한 날짜가 시작일보다 이전인 경우 순서 바꿈
         setEndDay(startDay);
         setStartDay(clickedDate);
       } else {

@@ -126,7 +126,7 @@ export default function EventCommentItem({
 
   return (
     <div className="border-b border-gray500 pb-4">
-      <div className="py-[0.88rem]">
+      <div className="py-[1rem] pl-2">
         <div className="flex items-center justify-between gap-[0.63rem] text-[0.75rem] font-bold text-white">
           <div className="flex items-center gap-1">
             <span>{comment.authorNickname}</span>
@@ -167,7 +167,7 @@ export default function EventCommentItem({
 
       {/* 대댓글 목록 */}
       {comment.replies?.map((reply) => (
-        <div key={reply.commentId} id={`reply-${reply.commentId}`} className="flex scroll-mt-24 items-start gap-4">
+        <div key={reply.commentId} id={`reply-${reply.commentId}`} className="flex scroll-mt-24 items-start gap-4 pl-2">
           <div>
             <Image src="/icons/arrow-curve-left-right-gray.svg" alt="arrow" width={18} height={18} />
           </div>

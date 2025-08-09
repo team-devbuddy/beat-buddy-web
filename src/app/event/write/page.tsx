@@ -104,8 +104,8 @@ export default function EventWritePage() {
         isAuthor: event.isAuthor || false,
         isAttending: event.isAttending || false,
       });
-    } else if (!isEditMode) {
-      // 초기 작성 모드일 때 폼 초기화
+    } else {
+      // 수정 모드가 아닌 경우 항상 폼 초기화 (초기 작성 모드)
       setEventForm({
         venueId: 0,
         title: '',
@@ -168,7 +168,9 @@ export default function EventWritePage() {
     endDate.trim() !== '' &&
     location?.trim() !== '' &&
     region.trim() !== '' &&
-    (isFreeEntrance || entranceFee.trim() !== '');
+    (isFreeEntrance || entranceFee.trim() !== '') &&
+    // 사전 예약금 정보를 받겠다고 선택했을 때는 계좌와 금액이 모두 입력되어야 함
+    (!receiveMoney || (depositAccount.trim() !== '' && depositAmount.trim() !== ''));
 
   const normalizeDate = (dateStr: string) => dateStr.replace(/\./g, '-').replace(/\s/g, '').trim();
 

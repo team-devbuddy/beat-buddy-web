@@ -3,18 +3,15 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { eventSearch } from '@/lib/actions/event-controller/eventSearch';
-import BoardHashtag from '@/components/units/Board/BoardHashtag';
 import { accessTokenState } from '@/context/recoil-context';
-import { motion, AnimatePresence } from 'framer-motion';
 import BoardSearchHeader from '@/components/units/Board/Search/BoardSearchHeader';
-import EventSearchResult from '@/components/units/Event/EventSearchResult';
+import EventSearchResults from '@/components/units/Event/EventSearchResults';
 import BoardRecentTerm from '@/components/units/Board/Search/BoardRecentTerm';
 import NoResults from '@/components/units/Search/NoResult';
-import Link from 'next/link';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { userProfileState } from '@/context/recoil-context';
 
-interface PostType {
+interface EventSearchResultType {
   eventId: number;
   title: string;
   content: string;
@@ -43,7 +40,7 @@ export default function EventSearchPage() {
   const pathname = usePathname();
   const router = useRouter();
   const userProfile = useRecoilValue(userProfileState);
-  const [posts, setPosts] = useState<PostType[]>([]);
+  const [events, setEvents] = useState<EventSearchResultType[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -53,7 +50,7 @@ export default function EventSearchPage() {
   const accessToken = useRecoilValue(accessTokenState) || '';
 
   const observer = useRef<IntersectionObserver | null>(null);
-  const lastPostRef = useCallback(
+  const lastEventRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (loading || !hasMore) return;
       if (observer.current) observer.current.disconnect();
@@ -67,26 +64,69 @@ export default function EventSearchPage() {
     [loading, hasMore],
   );
 
-  const fetchSearchPosts = useCallback(
+  const fetchSearchEvents = useCallback(
     async (targetPage: number) => {
       if (loading) return;
       setLoading(true);
 
       try {
         if (selectedTags.length === 0) {
-          const newPosts = await eventSearch(keyword, accessToken, targetPage, PAGE_SIZE); // ✅ 수정
-          if (newPosts.length < PAGE_SIZE) setHasMore(false);
-          setPosts((prevPosts) => (targetPage === 1 ? newPosts : [...prevPosts, ...newPosts]));
+          const response = await eventSearch(keyword, accessToken, targetPage, PAGE_SIZE);
+          const apiEvents = response.data.eventResponseDTOS;
+          // API 응답을 기존 구조로 변환
+          const newEvents = apiEvents.map((event: any) => ({
+            eventId: event.eventId,
+            title: event.title || '',
+            content: event.content,
+            images: event.thumbImage ? [event.thumbImage] : [],
+            liked: event.liked,
+            likes: event.likes,
+            views: event.views,
+            startDate: event.startDate,
+            endDate: event.endDate,
+            receiveInfo: false,
+            receiveName: false,
+            receiveGender: false,
+            receivePhoneNumber: false,
+            receiveSNSId: false,
+            receiveMoney: false,
+            depositAccount: '',
+            depositAmount: 0,
+            isAuthor: event.isAuthor,
+          }));
+          if (newEvents.length < PAGE_SIZE) setHasMore(false);
+          setEvents((prevEvents) => (targetPage === 1 ? newEvents : [...prevEvents, ...newEvents]));
         } else {
-          const postLists = await Promise.all(
-            selectedTags.map((tag) => eventSearch(tag, accessToken, targetPage, PAGE_SIZE)), // ✅ 수정
+          const responses = await Promise.all(
+            selectedTags.map((tag) => eventSearch(tag, accessToken, targetPage, PAGE_SIZE)),
           );
-          const merged = postLists.flat();
+          const apiEvents = responses.flatMap((response) => response.data.eventResponseDTOS);
+          // API 응답을 기존 구조로 변환
+          const merged = apiEvents.map((event: any) => ({
+            eventId: event.eventId,
+            title: event.title || '',
+            content: event.content,
+            images: event.thumbImage ? [event.thumbImage] : [],
+            liked: event.liked,
+            likes: event.likes,
+            views: event.views,
+            startDate: event.startDate,
+            endDate: event.endDate,
+            receiveInfo: false,
+            receiveName: false,
+            receiveGender: false,
+            receivePhoneNumber: false,
+            receiveSNSId: false,
+            receiveMoney: false,
+            depositAccount: '',
+            depositAmount: 0,
+            isAuthor: event.isAuthor,
+          }));
           if (merged.length < PAGE_SIZE * selectedTags.length) setHasMore(false);
 
-          setPosts((prevPosts) => {
-            const combined = targetPage === 1 ? merged : [...prevPosts, ...merged];
-            const unique = [...new Map(combined.map((post) => [post.eventId, post])).values()];
+          setEvents((prevEvents) => {
+            const combined = targetPage === 1 ? merged : [...prevEvents, ...merged];
+            const unique = [...new Map(combined.map((event) => [event.eventId, event])).values()];
             return unique;
           });
         }
@@ -103,16 +143,16 @@ export default function EventSearchPage() {
     if (!isInitialized || !pathname) return;
     localStorage.setItem('selectedTags', JSON.stringify(selectedTags));
     localStorage.setItem('selectedTags_path', pathname);
-    setPosts([]);
+    setEvents([]);
     setPage(1);
     setHasMore(true);
-    fetchSearchPosts(1);
-  }, [keyword, selectedTags, pathname, isInitialized, fetchSearchPosts]);
+    fetchSearchEvents(1);
+  }, [keyword, selectedTags, pathname, isInitialized, fetchSearchEvents]);
 
   useEffect(() => {
     if (!isInitialized || page === 1) return;
-    fetchSearchPosts(page);
-  }, [page, isInitialized, fetchSearchPosts]);
+    fetchSearchEvents(page);
+  }, [page, isInitialized, fetchSearchEvents]);
 
   useEffect(() => {
     if (!pathname) return;
@@ -135,15 +175,15 @@ export default function EventSearchPage() {
     setIsInitialized(true);
   }, [pathname]);
 
-  const handleUpdatePosts = (tags: string[]) => {
+  const handleUpdateEvents = (tags: string[]) => {
     setSelectedTags(tags);
   };
 
   const handleSearchSubmit = () => {
-    setPosts([]);
+    setEvents([]);
     setPage(1);
     setHasMore(true);
-    fetchSearchPosts(1);
+    fetchSearchEvents(1);
   };
 
   return (
@@ -151,19 +191,21 @@ export default function EventSearchPage() {
       <BoardSearchHeader placeholder="이벤트를 입력해주세요." onSearchSubmit={handleSearchSubmit} isEvent={true} />
       {keyword === '' && <BoardRecentTerm isEvent={true} />}
 
-      {posts.map((post, i) => {
-        if (i === posts.length - 1) {
+      {events.map((event, i) => {
+        if (i === events.length - 1) {
           return (
-            <div ref={lastPostRef} key={post.eventId}>
-              <EventSearchResult eventId={post.eventId} event={post} />
+            <div ref={lastEventRef} key={event.eventId}>
+              <EventSearchResults startDate={event.startDate} endDate={event.endDate} />
             </div>
           );
         } else {
-          return <EventSearchResult key={post.eventId} eventId={post.eventId} event={post} />;
+          return <EventSearchResults key={event.eventId} startDate={event.startDate} endDate={event.endDate} />;
         }
       })}
 
-      {!loading && posts.length === 0 && keyword !== '' && <NoResults text="조건에 맞는 검색 결과가 없어요." fullHeight={true} />}
+      {!loading && events.length === 0 && keyword !== '' && (
+        <NoResults text="조건에 맞는 검색 결과가 없어요." fullHeight={true} />
+      )}
     </main>
   );
 }

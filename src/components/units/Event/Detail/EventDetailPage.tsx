@@ -303,7 +303,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
               <button
                 type="button"
                 onClick={() => router.push(`/event/${eventId}/participate`)}
-                className="w-full rounded-md border-none bg-main py-4 text-[1rem] font-bold text-sub2">
+                className="w-full rounded-md border-none bg-main py-[0.81rem] text-[1rem] font-bold text-sub2">
                 참석하기
               </button>
             </div>
