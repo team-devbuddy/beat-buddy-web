@@ -111,7 +111,7 @@ export default function BoardThread({ postId, post }: PostProps) {
     try {
       const profileInfo = await getProfileinfo(accessToken);
       // 프로필 정보가 있고 닉네임이 있으면 게시판 프로필이 존재하는 것으로 간주
-      return profileInfo && profileInfo.nickname && profileInfo.nickname.trim() !== '';
+      return profileInfo.isPostProfileCreated;
     } catch (error) {
       console.error('게시판 프로필 확인 실패:', error);
       return false;

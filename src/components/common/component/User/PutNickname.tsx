@@ -106,7 +106,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
                   className={`absolute right-1 top-1 rounded-[0.5rem] px-3 py-[0.38rem] text-[0.75rem] font-bold ${inputValue ? 'bg-gray700 text-main' : 'bg-gray700 text-gray200'}`}
                   disabled={!inputValue}
                   onClick={handleDuplicateCheck}>
-                  중복확인
+                  중복 확인
                 </button>
               )}
             </div>

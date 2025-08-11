@@ -78,8 +78,13 @@ export default function BoardProfileCreatePage() {
         {/* 프로필 이미지 */}
         <div className="relative mb-6 flex justify-center">
           <div className="relative overflow-hidden rounded-full">
-            <Image className="h-full w-full rounded-full object-cover" width={90} height={90} src={previewUrl} alt="profile" fill />
-          </div>
+<Image
+  className="rounded-full object-cover"
+  width={90}
+  height={90}
+  src={previewUrl}
+  alt="profile"
+/>          </div>
           <div
             className="absolute bottom-[5px] right-[calc(50%-35px)] translate-x-[50%]"
             onClick={() => document.getElementById('profile-image-input')?.click()}>
