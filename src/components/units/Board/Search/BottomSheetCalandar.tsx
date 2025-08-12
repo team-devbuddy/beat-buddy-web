@@ -160,7 +160,7 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
       days.push(
         <div
           key={`prev-${i}`}
-          className="flex h-[40px] w-[40px] items-center justify-center font-suit text-sm text-gray-400">
+          className="text-calendar-date flex h-[45px] w-[45px] items-center justify-center font-suit text-gray-400">
           {prevMonthDays - i}
         </div>,
       );
@@ -182,7 +182,7 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
         new Date(currentYear, currentMonth, day) < new Date(endDay.year, endDay.month, endDay.day);
 
       const classes = `
-        w-[40px] h-[40px] flex items-center justify-center rounded-[0.7rem] text-[0.97513rem] cursor-pointer font-suit
+        w-[45px] h-[45px] flex items-center justify-center rounded-[0.7rem] text-calendar-date cursor-pointer font-suit
         ${isStart || isEnd ? 'bg-main text-white' : isBetween ? 'bg-sub1 text-white' : isToday ? 'text-main' : 'text-gray100'}
         transition-all duration-300
       `;
@@ -201,7 +201,7 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
       days.push(
         <div
           key={`next-${i}`}
-          className="flex h-[40px] w-[40px] items-center justify-center font-suit text-sm text-gray-400">
+          className="text-calendar-date flex h-[45px] w-[45px] items-center justify-center font-suit text-gray-400">
           {i}
         </div>,
       );
@@ -222,37 +222,37 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
         exit={{ y: 300 }}
         transition={{ duration: 0.3 }}
         className="w-full max-w-[600px] rounded-t-[1.5rem] bg-gray700 px-[1.25rem] py-[1.12rem]">
-        <div className="relative mb-4 flex items-center justify-center text-base text-white">
+        <div className="relative mb-4 flex items-center justify-center text-white">
           <div className="absolute left-24">
             <Image
-              src="/icons/chevron-left.svg"
+              src="/icons/calendar-left.svg"
               alt="chevron-left"
-              width={20}
-              height={20}
+              width={28}
+              height={28}
               className="cursor-pointer"
               onClick={goToPrevMonth}
             />
           </div>
-          <span className="font-suit text-[1.0625rem] font-semibold">
+          <span className="text-button-bold">
             {currentYear}년 {currentMonth + 1}월
           </span>
           <div className="absolute right-24">
             <Image
-              src="/icons/chevron-right.svg"
+              src="/icons/calendar-right.svg"
               alt="chevron-right"
-              width={20}
-              height={20}
+              width={28}
+              height={28}
               className="cursor-pointer"
               onClick={goToNextMonth}
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-7 justify-items-center gap-2">
+        <div className="grid grid-cols-7 justify-items-center gap-1">
           {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
             <div
               key={day}
-              className="flex h-[40px] w-[40px] items-center justify-center text-center font-suit text-[0.9rem] font-semibold text-white">
+              className="text-calendar-date-bold flex h-[40px] w-[40px] items-center justify-center text-center font-suit font-semibold text-white">
               {day}
             </div>
           ))}

@@ -32,7 +32,7 @@ const BoardRecentTerm = ({ isEvent }: { isEvent?: boolean }) => {
   return (
     <div className="flex w-full flex-col bg-BG-black px-[1.25rem] py-[0.62rem]">
       {/* 제목 */}
-      <h3 className="mb-[0.62rem] text-[0.75rem] text-gray300">최근 검색어</h3>
+      <h3 className="text-body-12-medium mb-[0.62rem] text-gray300">최근 검색어</h3>
 
       {/* 리스트 */}
       <div className="flex items-center gap-[0.38rem] overflow-x-auto whitespace-nowrap scrollbar-hide">
@@ -46,8 +46,8 @@ const BoardRecentTerm = ({ isEvent }: { isEvent?: boolean }) => {
               whileTap="pressed"
               variants={variants}
               transition={{ duration: 0.3 }}
-              className="flex flex-shrink-0 flex-row items-center  rounded-[0.5rem] bg-gray700 py-[0.25rem] pl-[0.62rem] pr-[0.25rem] text-main">
-              <span className="cursor-pointer text-[0.8125rem]" onClick={() => handleTermClick(search)}>
+              className="flex flex-shrink-0 flex-row items-center rounded-[0.5rem] bg-gray700 py-[0.25rem] pl-[0.5rem] pr-[0.25rem] text-main">
+              <span className="text-body-13-medium cursor-pointer" onClick={() => handleTermClick(search)}>
                 {search}
               </span>
               <div className="cursor-pointer" onClick={() => handleRemoveSearchTerm(search)}>

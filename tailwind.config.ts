@@ -141,10 +141,11 @@ const config: Config = {
           },
         ],
         'button-bold': [
-          '18px',
+          '1.0625rem',
           {
-            lineHeight: '150%',
-            fontWeight: '700',
+            fontWeight: '600',
+            lineHeight: '145%',
+            letterSpacing: '-0.02656rem',
           },
         ],
         'body1-16-bold': [
@@ -276,6 +277,14 @@ const config: Config = {
             lineHeight: '150%',
           },
         ],
+        'body-12-medium': [
+          '12px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+            letterSpacing: '-0.015rem',
+          },
+        ],
         'body-11-medium': [
           '11px',
           {
@@ -289,6 +298,22 @@ const config: Config = {
             fontWeight: '500',
             lineHeight: '160%',
             letterSpacing: '-0.0125rem',
+          },
+        ],
+        'calendar-date': [
+          '0.97513rem',
+          {
+            fontWeight: '500',
+            lineHeight: '155%',
+            letterSpacing: '-0.02438rem',
+          },
+        ],
+        'calendar-day-bold': [
+          '1rem',
+          {
+            fontWeight: '600',
+            lineHeight: '145%',
+            letterSpacing: '-0.025rem',
           },
         ],
       },
