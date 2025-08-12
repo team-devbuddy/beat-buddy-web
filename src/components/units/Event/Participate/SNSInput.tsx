@@ -131,6 +131,7 @@ export default function SNSSelector({
           onClick={() => {
             if (!disabled) {
               hasInteracted.current = true;
+              hasConfirmed.current = true; // SNS 없음 선택 시 자동으로 확인된 것으로 처리
               onTypeChange('');
               onIdChange('');
             }
