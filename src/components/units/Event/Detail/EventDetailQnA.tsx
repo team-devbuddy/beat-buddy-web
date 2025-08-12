@@ -66,7 +66,7 @@ export default function EventQnA({ eventDetail, observerRef }: EventQnAProps) {
   }, [eventDetail.eventId, accessToken]);
 
   return (
-    <div className="px-5 pb-24 pt-3">
+    <div className="px-5 pt-[0.88rem]">
       {comments.length > 0 ? (
         comments.map((comment) =>
           comment ? (
@@ -76,11 +76,11 @@ export default function EventQnA({ eventDetail, observerRef }: EventQnAProps) {
           ) : null,
         )
       ) : (
-        <div className="flex flex-col items-center justify-center py-[3rem]">
-          <Image src="/icons/blackLogo.svg" alt="no result" width={80} height={80} />
-          <div className="mt-3 text-center text-[0.875rem] text-gray300">
-            아직 문의가 없어요
-            <br />첫 번째 문의를 남겨보세요!
+        <div className="flex min-h-[calc(100vh-395px)] flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center">
+            <Image src="/icons/blackLogo.svg" alt="no result" width={50.03} height={46.9} />
+            <span className="text-body-14-bold mt-2 text-center text-gray300">아직 등록된 문의가 없어요</span>
+            <span className="text-body-11-medium text-gray400">궁금한 점을 남겨주세요!</span>
           </div>
         </div>
       )}

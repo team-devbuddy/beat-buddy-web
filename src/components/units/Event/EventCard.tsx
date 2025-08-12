@@ -17,6 +17,7 @@ function convertRegionForDisplay(region: string): string {
   return conversionMap[region] || region;
 }
 
+
 interface EventType {
   eventId: number;
   title: string;

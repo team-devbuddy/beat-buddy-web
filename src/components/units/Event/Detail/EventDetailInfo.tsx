@@ -75,13 +75,13 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
   };
 
   return (
-    <div className="space-y-3 px-[1.25rem] py-[1.5rem]">
+    <div className="space-y-3 px-[1.25rem] pb-[1.5rem] pt-[0.88rem]">
       <section>
-        <h3 className="text-[1rem] font-bold text-white">Notice</h3>
+        <h3 className="text-body1-16-bold text-white">Notice</h3>
         <div className="mt-3 flex flex-col gap-[0.5rem] rounded-md bg-gray700 p-4">
           <div className="flex items-start gap-[0.25rem]">
             <Image src="/icons/calendar.svg" alt="calendar" width={20} height={20} />
-            <p className="text-[0.875rem] text-gray100">
+            <p className="text-body-14-medium text-gray100">
               {formatDate(eventDetail.startDate)} 부터
               <br />
               {formatDate(eventDetail.endDate)} 까지
@@ -89,22 +89,22 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
           </div>
           <div className="flex items-start gap-[0.25rem]">
             <Image src="/icons/database.svg" alt="enter fee" width={20} height={20} />
-            <p className="text-[0.875rem] text-white">
+            <p className="text-body-14-medium text-white">
               {eventDetail.entranceFee ? `입장료 ${formatPrice(eventDetail.entranceFee)}원` : '무료'}
               <br />
-              <span className="text-[0.875rem] text-gray100">{eventDetail.entranceNotice}</span>
+              <span className="text-body-14-medium text-gray100">{eventDetail.entranceNotice}</span>
             </p>
           </div>
           <div className="flex items-start gap-[0.25rem]">
             <Image src="/icons/locationMark.svg" alt="info" width={20} height={20} />
             <div className="flex items-end gap-1">
-              <p className=" text-[0.875rem] text-gray100">{eventDetail.location}</p>
+              <p className="text-body-14-medium text-gray100">{eventDetail.location}</p>
               {eventDetail.location && (
                 <a
                   href={`https://map.naver.com/p/search/${encodeURIComponent(eventDetail.location)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="whitespace-nowrap text-[0.75rem] text-main hover:underline">
+                  className="whitespace-nowrap text-body3-12-medium text-main hover:underline">
                   길찾기
                 </a>
               )}
@@ -145,8 +145,8 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
       </section>
 
       <section className="pb-24">
-        <h3 className="text-[1rem] font-bold text-white">About</h3>
-        <div className="mt-3 rounded-md bg-gray700 px-[1rem] py-[1.25rem] text-[0.875rem] text-gray300">
+        <h3 className="text-body1-16-bold text-white">About</h3>
+        <div className="text-body-14-medium mt-3 rounded-md bg-gray700 px-[1rem] py-[1.25rem] text-gray300">
           {eventDetail.content}
         </div>
       </section>

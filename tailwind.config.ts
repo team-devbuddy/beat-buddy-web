@@ -174,6 +174,7 @@ const config: Config = {
           {
             lineHeight: '150%',
             fontWeight: '500',
+            letterSpacing: '-0.015rem',
           },
         ],
         'body3-12-bold': [
@@ -254,6 +255,7 @@ const config: Config = {
           {
             fontWeight: '700',
             lineHeight: '150%',
+            letterSpacing: '-0.0175rem',
           },
         ],
         'body-14-medium': [
@@ -261,6 +263,7 @@ const config: Config = {
           {
             fontWeight: '500',
             lineHeight: '150%',
+            letterSpacing: '-0.0175rem',
           },
         ],
         'body-13-bold': [
@@ -268,6 +271,7 @@ const config: Config = {
           {
             fontWeight: '700',
             lineHeight: '150%',
+            letterSpacing: '-0.01625rem',
           },
         ],
         'body-13-medium': [
@@ -314,6 +318,14 @@ const config: Config = {
             fontWeight: '600',
             lineHeight: '145%',
             letterSpacing: '-0.025rem',
+          },
+        ],
+        'button-16-semibold': [
+          '1rem',
+          {
+            fontWeight: '600',
+            lineHeight: '135%',
+            letterSpacing: '-0.02rem',
           },
         ],
       },

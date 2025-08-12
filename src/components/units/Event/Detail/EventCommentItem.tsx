@@ -92,30 +92,24 @@ export default function EventCommentItem({
   const handleDelete = async () => {
     if (!deleteTarget) return;
 
-    console.log('🗑️ 댓글 삭제 시작:', {
-      eventId,
-      commentId: deleteTarget.commentId,
-      isReply: deleteTarget.isReply,
-      accessToken: accessToken ? '있음' : '없음',
-    });
-
     try {
-      console.log('🗑️ deleteComment API 호출 중...');
       const response = await deleteEventComment(eventId, deleteTarget.commentId, accessToken);
-      console.log('🗑️ deleteComment API 응답:', response);
 
-      console.log('🗑️ 댓글 목록 새로고침 중...');
       refreshComments();
 
       setShowDeleteModal(false);
       setDeleteTarget(null);
-      console.log('🗑️ 댓글 삭제 완료');
     } catch (error) {
-      console.error('🗑️ 댓글 삭제 실패:', error);
-      console.error('🗑️ 에러 상세:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-      });
+      console.error('댓글 삭제 실패:', error);
+    }
+  };
+
+  const handleDeleteDirectly = async (commentId: number, isReply: boolean = false) => {
+    try {
+      await deleteEventComment(eventId, commentId, accessToken);
+      refreshComments();
+    } catch (error) {
+      console.error('댓글 삭제 실패:', error);
     }
   };
 
@@ -126,65 +120,48 @@ export default function EventCommentItem({
 
   return (
     <div className="border-b border-gray500 pb-4">
-      <div className="py-[1rem] pl-2">
-        <div className="flex items-center justify-between gap-[0.63rem] text-[0.75rem] font-bold text-white">
+      <div className="py-[0.88rem]">
+        <div className="text-body-13-bold flex items-center justify-between gap-[0.63rem] text-white">
           <div className="flex items-center gap-1">
-            <span>{comment.authorNickname}</span>
-            <span className="text-[0.75rem] font-normal text-gray300">·</span>
-            <span className="text-[0.75rem] font-normal text-gray300">{formatRelativeTime(comment.createdAt)}</span>
+            <span className={comment.isStaff ? 'text-main' : 'text-white'}>{comment.authorNickname}</span>
+            <span className="text-body3-12-medium text-gray300">·</span>
+            <span className="text-body3-12-medium text-gray300">{formatRelativeTime(comment.createdAt)}</span>
           </div>
-          {comment.isAuthor ? (
-            <button
-              onClick={() => openDeleteModal(comment.commentId)}
-              className="text-[0.75rem] font-normal text-gray300">
-              삭제
-            </button>
-          ) : (
-            <Image
-              src="/icons/dot-vertical-white.svg"
-              alt="메뉴"
-              width={9}
-              height={20}
-              className="cursor-pointer"
-              ref={buttonRef}
-              onClick={() => setShowDropdown((prev) => !prev)}
-            />
-          )}
+
+          <button
+            onClick={() => handleDeleteDirectly(comment.commentId, false)}
+            className="text-body-12-medium text-gray100">
+            삭제
+          </button>
         </div>
 
-        {showDropdown && (
-          <BoardDropDown
-            isAuthor={comment.isAuthor}
-            onClose={() => setShowDropdown(false)}
-            position={position}
-            postId={comment.commentId}
-            type="board"
-          />
-        )}
-
-        <p className="mt-1 text-[0.75rem] text-[#BFBFBF]">{comment.content}</p>
+        <div className="text-body-14-medium mt-1 whitespace-pre-wrap text-[#BFBFBF]">{comment.content}</div>
       </div>
 
       {/* 대댓글 목록 */}
       {comment.replies?.map((reply) => (
-        <div key={reply.commentId} id={`reply-${reply.commentId}`} className="flex scroll-mt-24 items-start gap-4 pl-2">
-          <div>
+        <div key={reply.commentId} id={`reply-${reply.commentId}`} className="flex scroll-mt-24 items-start">
+          <div className="mt-[0.38rem]">
             <Image src="/icons/arrow-curve-left-right-gray.svg" alt="arrow" width={18} height={18} />
           </div>
-          <div className="flex flex-1 flex-col">
-            <div className="flex items-center justify-between gap-1 text-[0.75rem]">
+          <div className="flex flex-1 flex-col py-1 pl-3">
+            <div className="text-body-13-bold flex items-center justify-between gap-1">
               <div className="flex items-center gap-1">
-                <span className="font-bold text-main">{reply.authorNickname}</span>
-                <span className="text-[0.75rem] font-normal text-gray300">·</span>
-                <span className="text-[0.75rem] font-normal text-gray300">{formatRelativeTime(reply.createdAt)}</span>
+                <span className={`text-body-13-bold ${reply.isStaff ? 'text-main' : 'text-white'}`}>
+                  {reply.authorNickname}
+                </span>
+                <span className="text-body3-12-medium text-gray300">·</span>
+                <span className="text-body3-12-medium text-gray300">{formatRelativeTime(reply.createdAt)}</span>
               </div>
               {reply.isAuthor ? (
-                <button onClick={() => openDeleteModal(reply.commentId, true)} className="text-[0.75rem] text-gray300">
+                <button
+                  onClick={() => handleDeleteDirectly(reply.commentId, true)}
+                  className="text-body-12-medium text-gray100">
                   삭제
                 </button>
               ) : null}
             </div>
-            <p className="pb-[0.88rem] text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
+            <div className="text-body-13-medium whitespace-pre-wrap pb-[0.88rem] text-[#BFBFBF]">{reply.content}</div>
           </div>
         </div>
       ))}
@@ -193,13 +170,13 @@ export default function EventCommentItem({
         <div className="relative">
           <input
             type="text"
-            className="w-full rounded-lg bg-gray700 px-4 py-3 pr-10 text-[0.75rem] text-gray100 placeholder-gray300 outline-none focus:outline-none"
+            className="w-full rounded-[0.5rem] bg-gray700 px-4 py-[0.66rem] pr-10 text-body3-12-medium text-gray100 placeholder-gray300 outline-none focus:outline-none"
             placeholder="대댓글을 입력해주세요"
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
           />
           <button
-            className="text-pink500 absolute right-3 top-1/2 -translate-y-1/2"
+            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
             title="대댓글 작성"
             type="button"
             onClick={handleReply}>
@@ -208,7 +185,7 @@ export default function EventCommentItem({
         </div>
       )}
 
-      {/* 삭제 확인 모달 */}
+      {/* 삭제 확인 모달 
       <AnimatePresence>
         {showDeleteModal && (
           <motion.div
@@ -239,7 +216,7 @@ export default function EventCommentItem({
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </div>
   );
 }

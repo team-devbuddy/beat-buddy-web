@@ -124,7 +124,7 @@ export default function EventPage() {
                 opacity: getOpacity(),
                 transform: showButton ? 'translateY(0)' : 'translateY(40px)',
               }}>
-              <Image src="/icons/search-01.svg" alt="글쓰기" width={16.8} height={16.8} />
+              <Image src="/icons/ic_baseline-plus.svg" alt="글쓰기" width={28} height={28} />
             </Link>
           </div>
         </div>

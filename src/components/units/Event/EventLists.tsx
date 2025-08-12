@@ -190,8 +190,14 @@ export default function EventLists({
 
                 {typeof dday === 'number' && (
                   <div
-                    className={`absolute left-[0.62rem] top-[0.62rem] z-10 rounded-[0.5rem] px-[0.38rem] pb-[0.19rem] pt-[0.12rem] text-body3-12-medium ${dday <= 7 ? 'bg-main text-white' : 'bg-gray500 text-main2'}`}>
-                    D-{dday}
+                    className={`absolute left-[0.62rem] top-[0.62rem] z-10 rounded-[0.5rem] px-[0.38rem] pb-[0.19rem] pt-[0.12rem] text-body3-12-medium ${
+                      dday === 0
+                        ? 'bg-FooterBlack text-main'
+                        : dday <= 7
+                          ? 'bg-main text-white'
+                          : 'bg-gray500 text-main2'
+                    }`}>
+                    {dday === 0 ? 'D-DAY' : `D-${dday}`}
                   </div>
                 )}
 

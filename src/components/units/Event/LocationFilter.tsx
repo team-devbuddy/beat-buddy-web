@@ -125,7 +125,7 @@ export default function LocationFilter() {
                     );
                   }}
                   whileTap={{ scale: 1.1 }}
-                  className={`text-body-13-medium rounded-[0.5rem] px-[0.63rem] pt-[0.25rem] pb-[0.31rem] focus:outline-none ${
+                  className={`text-body-14-medium rounded-[0.5rem] px-[0.63rem] pt-[0.25rem] pb-[0.31rem] focus:outline-none ${
                     isSelected ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
                   }`}
                   transition={{ type: 'spring', stiffness: 300 }}>

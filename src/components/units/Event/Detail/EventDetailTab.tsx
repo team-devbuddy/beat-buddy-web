@@ -129,13 +129,13 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
   return (
     <div className="relative" data-tab>
       {/* 탭 버튼 + 밑줄 */}
-      <div className="relative flex border-b border-gray700">
+      <div className="relative flex">
         {tabs.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
-            className={`flex-1 py-3 text-center text-[0.875rem] ${
-              tab === key ? 'font-bold text-main' : 'text-gray100'
+            className={`flex-1 py-3 text-center ${
+              tab === key ? 'text-body-14-bold text-main' : 'text-body-14-medium text-gray100'
             }`}>
             {label}
           </button>
@@ -204,23 +204,25 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 px-6"
             onClick={() => setShowModal(false)}>
-            <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-5 text-center"
+              onClick={(e) => e.stopPropagation()}>
               <textarea
                 value={qnaContent}
                 onChange={(e) => setQnaContent(e.target.value)}
                 placeholder="문의 내용을 작성해 주세요"
-                className="mb-4 min-h-[7.5rem] w-full min-w-[18rem] resize-none rounded-[0.5rem] bg-gray700 px-4 py-3 text-sm text-gray200 placeholder:text-gray300 focus:outline-none"
+                className="text-body-14-medium mb-4 min-h-[7.5rem] w-full min-w-[18rem] resize-none rounded-[0.5rem] bg-gray700 px-4 py-3 text-gray200 placeholder:text-gray200 focus:outline-none"
               />
-              <div className="flex justify-between gap-2">
+              <div className="flex justify-between gap-3">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                  className="text-button-16-semibold w-full rounded-[0.5rem] bg-gray700 py-3 text-gray200">
                   취소
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-main">
+                  className="text-button-16-semibold w-full rounded-[0.5rem] bg-gray700 py-3 text-main">
                   문의 등록하기
                 </button>
               </div>

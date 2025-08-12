@@ -70,7 +70,7 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
       });
   };
 
-    useEffect(() => {
+  useEffect(() => {
     if (showDropdown && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const scrollY = window.scrollY || document.documentElement.scrollTop;
@@ -104,29 +104,36 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
 
       {/* 오른쪽: 좋아요와 메뉴 버튼 */}
       <div className="flex items-center gap-3">
-        <Image src="/icons/upload.svg" alt="공유" width={24} height={24} className="cursor-pointer" onClick={handleShareClick} />
+        {isAuthor && (
+          <Image
+            src="/icons/stylus.svg"
+            alt="메뉴"
+            width={24}
+            height={24}
+            className="cursor-pointer"
+            ref={buttonRef}
+            onClick={() => setShowDropdown((prev) => !prev)}
+          />
+        )}
+        <Image
+          src="/icons/upload.svg"
+          alt="공유"
+          width={24}
+          height={24}
+          className="cursor-pointer"
+          onClick={handleShareClick}
+        />
         {/* 좋아요 버튼 */}
         <Image
           src={event?.liked ? '/icons/FilledHeart.svg' : '/icons/eventHeart.svg'}
           alt="좋아요"
-          width={21}
-          height={21}
+          width={20.97}
+          height={18.4}
           className="cursor-pointer"
           onClick={handleLike}
         />
 
         {/* 메뉴 버튼 */}
-        {isAuthor && (
-        <Image
-          src="/icons/dot-vertical-white.svg"
-          alt="메뉴"
-          width={9}
-          height={20}
-          className="cursor-pointer"
-          ref={buttonRef}
-            onClick={() => setShowDropdown((prev) => !prev)}
-          />
-        )}
       </div>
 
       {/* 드롭다운 메뉴 */}
