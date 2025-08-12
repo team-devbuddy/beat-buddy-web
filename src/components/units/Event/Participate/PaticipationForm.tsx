@@ -71,7 +71,6 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   const handleSubmit = async () => {
     try {
       const response = await postParticipate(accessToken, eventId, form);
-      toast.success('참여 완료');
       router.back();
     } catch (err) {
       console.error('참여 실패:', err);
@@ -103,7 +102,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   return (
     <div className="flex flex-col gap-5 px-5 text-white">
       {/* 이름 입력 */}
-      <NameInput value={form.name} onChange={(val) => updateForm('name', val)} />
+      <NameInput value={form.name} onChange={(val) => updateForm('name', val)} disabled={mode === 'edit'} />
 
       {/* 성별 */}
       <AnimatePresence>
@@ -112,7 +111,11 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}>
-            <GenderSelector value={form.gender} onChange={(val) => updateForm('gender', val)} />
+            <GenderSelector
+              value={form.gender}
+              onChange={(val) => updateForm('gender', val)}
+              disabled={mode === 'edit'}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -124,7 +127,11 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}>
-            <PhoneInput value={form.phoneNumber} onChange={(val) => updateForm('phoneNumber', val)} />
+            <PhoneInput
+              value={form.phoneNumber}
+              onChange={(val) => updateForm('phoneNumber', val)}
+              disabled={mode === 'edit'}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -141,6 +148,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
               snsId={form.snsId}
               onTypeChange={(val) => updateForm('snsType', val)}
               onIdChange={(val) => updateForm('snsId', val)}
+              disabled={mode === 'edit'}
             />
           </motion.div>
         )}
@@ -153,7 +161,11 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}>
-            <PeopleCounter value={form.totalNumber} onChange={(val) => updateForm('totalNumber', val)} />
+            <PeopleCounter
+              value={form.totalNumber}
+              onChange={(val) => updateForm('totalNumber', val)}
+              disabled={mode === 'edit'}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -165,15 +177,15 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}>
-            <DepositInfo value={form.isPaid} onChange={(val) => updateForm('isPaid', val)} />
-            <SubmitButton onClick={handleSubmit} />
+            <DepositInfo value={form.isPaid} onChange={(val) => updateForm('isPaid', val)} disabled={mode === 'edit'} />
+            {mode !== 'edit' && <SubmitButton onClick={handleSubmit} />}
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* 신청 버튼 (사전예약금이 필요하지 않은 경우) */}
       <AnimatePresence>
-        {canSubmit && !showDeposit && (
+        {canSubmit && !showDeposit && mode !== 'edit' && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}

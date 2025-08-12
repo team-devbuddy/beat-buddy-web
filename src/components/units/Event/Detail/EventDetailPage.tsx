@@ -215,7 +215,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
     <div className="relative min-h-screen bg-BG-black">
       {/* 기본 헤더 */}
       <div className="absolute left-0 top-0 z-30 w-full">
-        <EventDetailHeader handleBackClick={() => router.back()} />
+        <EventDetailHeader handleBackClick={() => router.push('/event')} />
       </div>
 
       {/* 스크롤 시 나타나는 요약 헤더 */}

@@ -22,7 +22,7 @@ export interface EventType {
   region: string;
 }
 
-export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming' | 'past'; refreshTrigger: boolean }) {
+export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming' | 'past'; refreshTrigger: number }) {
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [events, setEvents] = useState<EventType[]>([]);
   const [page, setPage] = useState(2);
@@ -107,7 +107,7 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
   }, [loaderRef, hasMore]);
 
   useEffect(() => {
-    if (page > 2) fetchMoreEvents(); // page가 올라갔을 때만 호출
+    if (page > 1) fetchMoreEvents(); // page가 올라갔을 때만 호출
   }, [page]);
 
   useEffect(() => {

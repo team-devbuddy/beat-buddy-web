@@ -16,7 +16,7 @@ export default function EventPage() {
   const accessToken = useRecoilValue(accessTokenState);
   const isBusiness = useRecoilValue(isBusinessState);
   const [activeTab, setActiveTab] = useRecoilState(eventTabState);
-  const [refreshTrigger, setRefreshTrigger] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [showButton, setShowButton] = useState(true);
   const lastScrollYRef = useRef(0);
 
@@ -49,9 +49,11 @@ export default function EventPage() {
     if (isLeftSwipe && activeIndex < tabs.length - 1) {
       // 왼쪽으로 스와이프 - 다음 탭으로 이동
       setActiveTab(tabs[activeIndex + 1]);
+      setRefreshTrigger((prev) => prev + 1); // 탭 변경 시 새로고침 트리거
     } else if (isRightSwipe && activeIndex > 0) {
       // 오른쪽으로 스와이프 - 이전 탭으로 이동
       setActiveTab(tabs[activeIndex - 1]);
+      setRefreshTrigger((prev) => prev + 1); // 탭 변경 시 새로고침 트리거
     }
 
     setTouchStart(null);
@@ -107,9 +109,11 @@ export default function EventPage() {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="w-full">
-            {activeTab === 'now' && <EventNow refreshTrigger={refreshTrigger} />}
-            {activeTab === 'upcoming' && <EventContainer tab="upcoming" refreshTrigger={refreshTrigger} />}
-            {activeTab === 'past' && <EventContainer tab="past" refreshTrigger={refreshTrigger} />}
+            {activeTab === 'now' && <EventNow key="now" refreshTrigger={refreshTrigger} />}
+            {activeTab === 'upcoming' && (
+              <EventContainer key="upcoming" tab="upcoming" refreshTrigger={refreshTrigger} />
+            )}
+            {activeTab === 'past' && <EventContainer key="past" tab="past" refreshTrigger={refreshTrigger} />}
           </motion.div>
         </AnimatePresence>
       </div>

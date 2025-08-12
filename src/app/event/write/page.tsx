@@ -341,7 +341,7 @@ export default function EventWritePage() {
   };
 
   return (
-    <div className="pb-10">
+    <div className="min-h-screen pb-10">
       <EventWriteHeader />
       <h1 className="px-5 py-2 text-[1.25rem] font-bold tracking-[-0.025rem] text-white">
         {isEditMode ? '이벤트를 수정해주세요!' : '다가오는 특별한 이벤트 소식을 전해주세요!'}
@@ -361,12 +361,12 @@ export default function EventWritePage() {
         <EventIntroInput />
         <EventRegisterStepForm />
       </div>
-      <div className="flex px-5">
+      <div className="flex px-5 pb-5">
         <button
           disabled={!isFormValid}
           onClick={handleSubmit}
-          className={`w-full rounded-[0.38rem] py-4 text-[0.875rem] font-bold ${
-            isFormValid ? 'bg-main text-sub2 hover:bg-main' : 'bg-gray500 text-gray300'
+          className={`text-button-16-semibold w-full rounded-[0.38rem] py-[0.88rem] ${
+            isFormValid ? 'bg-main text-sub2' : 'bg-gray500 text-gray300'
           }`}>
           {isEditMode ? '이벤트 수정하기' : '이벤트 등록하기'}
         </button>

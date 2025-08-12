@@ -14,7 +14,7 @@ export default function ParticipatePage() {
   if (!eventId) return <div>Event not found</div>;
 
   return (
-    <main className="min-h-screen bg-BG-black text-white">
+    <main className="bg-BG-black text-white">
       <EventWriteHeader />
       {/* ✅ key 추가해서 컴포넌트 강제 리마운트 */}
       <ParticipateForm key={eventId} eventId={eventId} mode={mode} />

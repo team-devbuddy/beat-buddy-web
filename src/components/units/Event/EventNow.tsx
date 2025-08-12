@@ -22,7 +22,7 @@ interface EventType {
   region: string;
 }
 
-export default function EventNow({ refreshTrigger }: { refreshTrigger: boolean }) {
+export default function EventNow({ refreshTrigger }: { refreshTrigger: number }) {
   const [events, setEvents] = useState<EventType[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
