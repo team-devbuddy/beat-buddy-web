@@ -15,7 +15,17 @@ export default function PeopleCounter({
   onComplete?: () => void;
   disabled?: boolean;
 }) {
-  // 자동 진행 로직 제거 - 사용자가 확인 버튼을 클릭해야만 진행
+  // 초기값 1명으로 설정되어 있을 때 자동으로 완료
+  useEffect(() => {
+    if (onComplete && value > 0 && !disabled) {
+      // 약간의 지연을 두어 사용자가 선택을 완료했음을 인지할 수 있도록 함
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [value, onComplete, disabled]);
 
   const handleDecrease = (value: number) => {
     if (value > 1) {

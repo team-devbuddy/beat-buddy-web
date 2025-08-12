@@ -84,9 +84,11 @@ export default function PhoneInput({
         disabled={disabled}
       />
 
-      {/* 확인 버튼 - 맨 아래에 위치, 가로 중앙 정렬 */}
+      {/* 확인 버튼 - 키보드 위에 고정 */}
       {isKeyboardVisible && isPhoneValid && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg">
+        <div
+          className="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
+          style={{ bottom: 'env(keyboard-inset-height, 0px)' }}>
           <div className="w-full max-w-[600px]">
             <button
               onClick={handleConfirm}

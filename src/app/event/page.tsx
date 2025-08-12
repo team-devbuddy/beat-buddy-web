@@ -61,6 +61,13 @@ export default function EventPage() {
     setIsSwiping(false);
   };
 
+  // 스와이프 방향에 따른 애니메이션 방향 결정
+  const getAnimationDirection = () => {
+    if (!touchStart || !touchEnd) return 0;
+    const distance = touchStart - touchEnd;
+    return distance > 0 ? 1 : -1; // 1: 왼쪽 스와이프, -1: 오른쪽 스와이프
+  };
+
   // 직접 스크롤 감지
   useEffect(() => {
     const handleScroll = () => {
@@ -104,9 +111,15 @@ export default function EventPage() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, x: 20 }}
+            initial={{
+              opacity: 0,
+              x: getAnimationDirection() * 100, // 스와이프 방향에 따라 다른 시작 위치
+            }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            exit={{
+              opacity: 0,
+              x: -getAnimationDirection() * 100, // 스와이프 방향에 따라 다른 종료 위치
+            }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="w-full">
             {activeTab === 'now' && <EventNow key="now" refreshTrigger={refreshTrigger} />}
