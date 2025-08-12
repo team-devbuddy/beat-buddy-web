@@ -67,11 +67,9 @@ export default function NameInput({
         disabled={disabled}
       />
 
-      {/* 확인 버튼 - 키보드 위에 고정 */}
+      {/* 확인 버튼 - 키보드 위에 위치 */}
       {isKeyboardVisible && value.trim().length > 0 && (
-        <div
-          className="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
-          style={{ bottom: 'env(keyboard-inset-height, 0px)' }}>
+        <div className="sticky bottom-0 left-0 right-0 z-50 mt-4 flex justify-center bg-BG-black p-4 shadow-lg">
           <div className="w-full max-w-[600px]">
             <button
               onClick={handleConfirm}
