@@ -154,6 +154,7 @@ const config: Config = {
           {
             lineHeight: '160%',
             fontWeight: '700',
+            letterSpacing: '-0.02rem',
           },
         ],
         'body1-16-medium': [

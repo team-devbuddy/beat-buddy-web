@@ -91,13 +91,13 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
   }, [showDropdown]);
 
   return (
-    <div className="relative mx-auto flex max-w-[600px] items-center justify-between px-5 pb-[0.88rem] pt-[0.62rem]">
+    <div className="relative mx-auto flex max-w-[600px] items-center justify-between pl-[0.63rem] pr-4 pb-[0.53rem] pt-[0.53rem]">
       {/* 왼쪽: 백버튼 */}
       <Image
-        src="/icons/arrow_back_ios.svg"
+        src="/icons/participateBack.svg"
         alt="뒤로가기"
-        width={24}
-        height={24}
+        width={35}
+        height={35}
         onClick={handleBackClick}
         className="cursor-pointer"
       />

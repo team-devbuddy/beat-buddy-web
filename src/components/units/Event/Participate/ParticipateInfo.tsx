@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import * as XLSX from 'xlsx';
 import { useRecoilValue } from 'recoil';
 import { eventState } from '@/context/recoil-context';
-import EventDetailHeader from '@/components/units/Event/Detail/EventDetailHeader';
 import { useRouter } from 'next/navigation';
 import NoResults from '@/components/units/Search/NoResult';
 import { usePathname } from 'next/navigation';
@@ -34,10 +33,28 @@ export default function ParticipateInfo({ participants }: { participants?: Parti
     return Array.isArray(participants) ? participants : [participants];
   }, [participants]);
 
+  // 디버깅용 로그
+  console.log('participants prop:', participants);
+  console.log('dataToShow:', dataToShow);
+
   const handleDownloadExcel = () => {
+    // 서버에서 받은 전체 데이터 사용 (화면에 보이는 것과 관계없이)
+    const allParticipants = Array.isArray(participants) ? participants : participants ? [participants] : [];
+
     const wsData = [
-      ['이름', '성별', '전화번호'],
-      ...dataToShow.map((p) => [p.name || '-', p.gender || '-', p.phoneNumber || '-']),
+      ['이벤트ID', '회원ID', '이름', '성별', 'SNS 타입', 'SNS ID', '전화번호', '결제여부', '총 인원', '등록일시'],
+      ...allParticipants.map((p) => [
+        p.eventId || '-',
+        p.memberId || '-',
+        p.name || '-',
+        p.gender || '-',
+        p.snsType || '-',
+        p.snsId || '-',
+        p.phoneNumber || '-',
+        p.isPaid ? '결제완료' : '미결제',
+        p.totalMember || '-',
+        p.createdAt ? new Date(p.createdAt).toLocaleString('ko-KR') : '-',
+      ]),
     ];
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(wsData);
@@ -48,7 +65,16 @@ export default function ParticipateInfo({ participants }: { participants?: Parti
     <div className="relative flex min-h-screen flex-col bg-BG-black">
       {/* 상단 고정 헤더 */}
       <div className="fixed left-0 top-0 z-30 w-full">
-        <EventDetailHeader handleBackClick={() => router.push(`/event/${eventId}`)} />
+        <div className="mx-auto flex max-w-[600px] items-center px-[0.63rem] pb-[0.53rem] pt-[0.53rem]">
+          <Image
+            src="/icons/participateBack.svg"
+            alt="뒤로가기"
+            width={35}
+            height={35}
+            onClick={() => router.push(`/event/${eventId}`)}
+            className="cursor-pointer"
+          />
+        </div>
       </div>
 
       {/* 스크롤 영역 */}
@@ -59,40 +85,42 @@ export default function ParticipateInfo({ participants }: { participants?: Parti
           </h2>
 
           {dataToShow.length > 0 ? (
-            <div className="text-body-14-medium mt-6 w-full text-gray100">
-              {/* 헤더 */}
-              <div className="mb-2 grid grid-cols-3 text-center font-semibold text-white">
-                <div className="pl-4 text-left">이름</div>
-                <div className="pl-4 text-left">성별</div>
-                <div className="pl-4 text-left">전화번호</div>
-              </div>
-
-              <div className="flex w-full gap-2">
-                {/* 이름 column */}
-                <div className="flex flex-1 flex-col gap-4 rounded-md bg-gray700 px-4 py-4 text-center">
-                  {dataToShow.map((p, i) => (
-                    <div key={`name-${i}`} className="whitespace-nowrap">
-                      {p.name || '-'}
-                    </div>
-                  ))}
+            <div className="mt-6 w-full text-gray200">
+              <div className="flex w-full gap-[0.44rem]">
+                {/* 이름 컬럼 세트 */}
+                <div className="flex flex-1 flex-col">
+                  <div className="mb-2 text-center text-body1-16-bold text-white">이름</div>
+                  <div className="flex flex-col gap-4 rounded-[0.63rem] bg-gray700 py-[0.94rem] pl-[1.44rem] pr-[1.37rem] text-center">
+                    {dataToShow.map((p, i) => (
+                      <div key={`name-${i}`} className="text-body-14-medium whitespace-nowrap">
+                        {p.name || '-'}
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* 성별 column */}
-                <div className="flex flex-[0.5] flex-col gap-4 rounded-md bg-gray700 px-4 py-4 text-center">
-                  {dataToShow.map((p, i) => (
-                    <div key={`gender-${i}`} className="whitespace-nowrap">
-                      {p.gender || '-'}
-                    </div>
-                  ))}
+                {/* 성별 컬럼 세트 */}
+                <div className="flex flex-[0.5] flex-col">
+                  <div className="mb-2 text-center text-body1-16-bold text-white">성별</div>
+                  <div className="flex flex-col gap-4 rounded-[0.63rem] bg-gray700 py-[0.94rem] pl-[1.38rem] pr-[1.31rem] text-center">
+                    {dataToShow.map((p, i) => (
+                      <div key={`gender-${i}`} className="text-body-14-medium whitespace-nowrap">
+                        {p.gender || '-'}
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* 전화번호 column */}
-                <div className="flex flex-[1.5] flex-col gap-4 rounded-md bg-gray700 px-4 py-4 text-center">
-                  {dataToShow.map((p, i) => (
-                    <div key={`phone-${i}`} className="whitespace-nowrap">
-                      {p.phoneNumber || '-'}
-                    </div>
-                  ))}
+                {/* 전화번호 컬럼 세트 */}
+                <div className="flex flex-[1.5] flex-col">
+                  <div className="mb-2 text-center text-body1-16-bold text-white">전화번호</div>
+                  <div className="flex flex-col gap-4 rounded-[0.63rem] bg-gray700 py-[0.94rem] pl-[2.31rem] pr-[2.35rem] text-center">
+                    {dataToShow.map((p, i) => (
+                      <div key={`phone-${i}`} className="text-body-14-medium whitespace-nowrap">
+                        {p.phoneNumber || '-'}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -108,7 +136,7 @@ export default function ParticipateInfo({ participants }: { participants?: Parti
           <div className="mx-auto w-full max-w-[560px]">
             <button
               onClick={handleDownloadExcel}
-              className="w-full rounded-md border-none bg-main py-4 text-[1rem] font-bold text-sub2">
+              className="w-full rounded-md border-none bg-main py-[0.88rem] text-[1rem] font-bold text-sub2">
               Excel 파일 다운로드
             </button>
           </div>
