@@ -232,6 +232,22 @@ const config: Config = {
             letterSpacing: '-2%',
           },
         ],
+        'body-15-medium': [
+          '15px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+            letterSpacing: '-0.01875rem',
+          },
+        ],
+        'body-15-bold': [
+          '15px',
+          {
+            fontWeight: '700',
+            lineHeight: '150%',
+            letterSpacing: '-0.01875rem',
+          },
+        ],
         'body-14-bold': [
           '14px',
           {

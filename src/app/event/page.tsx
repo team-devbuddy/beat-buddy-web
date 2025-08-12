@@ -10,6 +10,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { eventTabState, accessTokenState, isBusinessState } from '@/context/recoil-context';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 export default function EventPage() {
   const accessToken = useRecoilValue(accessTokenState);
@@ -123,7 +124,7 @@ export default function EventPage() {
                 opacity: getOpacity(),
                 transform: showButton ? 'translateY(0)' : 'translateY(40px)',
               }}>
-              <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
+              <Image src="/icons/search-01.svg" alt="글쓰기" width={16.8} height={16.8} />
             </Link>
           </div>
         </div>

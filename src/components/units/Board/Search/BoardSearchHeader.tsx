@@ -112,7 +112,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
           <div className="relative w-full rounded-[0.5rem] bg-gray700">
             <input
               ref={inputRef}
-              className={`w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-[0.9375rem] font-bold text-white safari-input-fix placeholder:font-medium placeholder:text-gray300 focus:outline-none ${
+              className={`text-body-15-bold placeholder:font-body-15-medium placeholder:text-body-15-medium w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none ${
                 isEvent ? 'pr-[5rem]' : ''
               }`}
               placeholder={isLoading ? '' : placeholder}
@@ -124,7 +124,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
             />
 
             {/* 🔍 Search icon - 검색창 내부 오른쪽 */}
-            <div className="absolute bottom-[0.72rem] right-[0.88rem] cursor-pointer">
+            <div className="absolute bottom-[0.56rem] right-[0.88rem] cursor-pointer">
               {isEvent ? (
                 <div className="flex items-center gap-1">
                   <Image
@@ -142,7 +142,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
                       width={22}
                       height={22}
                       onClick={handleSearch}
-                      className="mt-[0.05rem] cursor-pointer"
+                      className="cursor-pointer"
                     />
                   ) : (
                     <Image
@@ -151,7 +151,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
                       width={22}
                       height={22}
                       onClick={handleSearch}
-                      className="mt-[0.05rem] cursor-pointer"
+                      className="cursor-pointer"
                     />
                   )}
                 </div>

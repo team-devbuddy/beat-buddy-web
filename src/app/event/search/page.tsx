@@ -188,7 +188,7 @@ export default function EventSearchPage() {
 
   return (
     <main className="bg-BG-black text-white">
-      <BoardSearchHeader placeholder="이벤트를 입력해주세요." onSearchSubmit={handleSearchSubmit} isEvent={true} />
+      <BoardSearchHeader placeholder="검색어를 입력해주세요" onSearchSubmit={handleSearchSubmit} isEvent={true} />
       {keyword === '' && <BoardRecentTerm isEvent={true} />}
 
       {events.map((event, i) => {
