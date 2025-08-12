@@ -134,7 +134,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
         <div
           ref={scrollContainerRef}
           className={`flex flex-col overflow-y-auto ${shouldHideFooter ? 'h-full' : 'flex-1'} ${
-            shouldHideFooter ? '' : !pathname.includes('venue') && !pathname.includes('search') ? 'pb-[64px]' : ''
+            shouldHideFooter ? '' : !pathname.includes('venue') && !pathname.includes('search') ? 'pb-[58px]' : ''
           }`}
           style={{ minHeight: 0 }}>
           {children}

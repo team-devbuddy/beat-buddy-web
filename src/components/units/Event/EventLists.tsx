@@ -45,9 +45,21 @@ export function formatDate(dateString: string) {
 
 // 날짜 범위를 YYYY-MM-DD ~ YYYY-MM-DD 형식으로 변환하는 함수
 export function formatDateRange(startDate: string, endDate: string) {
-  const formattedStart = formatDate(startDate);
-  const formattedEnd = formatDate(endDate);
-  return `${formattedStart} ~ ${formattedEnd}`;
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  // 같은 날짜인지 확인 (시간 제외)
+  const isSameDay = start.toDateString() === end.toDateString();
+
+  if (isSameDay) {
+    // 같은 날짜면 시작 날짜만 표시
+    return formatDate(startDate);
+  } else {
+    // 다른 날짜면 범위로 표시
+    const formattedStart = formatDate(startDate);
+    const formattedEnd = formatDate(endDate);
+    return `${formattedStart} ~ ${formattedEnd}`;
+  }
 }
 
 // region의 언더스코어를 띄어쓰기로 변환하는 함수
@@ -171,30 +183,28 @@ export default function EventLists({
                   <Image
                     src={event.liked ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
                     alt="heart"
-                    width={27}
+                    width={27.43}
                     height={24}
                   />
                 </div>
 
                 {typeof dday === 'number' && (
                   <div
-                    className={`absolute left-[0.62rem] top-[0.62rem] z-10 rounded-[0.5rem] px-[0.38rem] py-[0.19rem] text-[0.75rem] ${dday <= 7 ? 'bg-main text-white' : 'bg-gray500 text-main2'}`}>
+                    className={`absolute left-[0.62rem] top-[0.62rem] z-10 rounded-[0.5rem] px-[0.38rem] pb-[0.19rem] pt-[0.12rem] text-body3-12-medium ${dday <= 7 ? 'bg-main text-white' : 'bg-gray500 text-main2'}`}>
                     D-{dday}
                   </div>
                 )}
 
                 <div className="absolute bottom-3 left-3 z-10 flex items-center space-x-1">
                   <Image src="/icons/PinkHeart.svg" alt="pink-heart" width={15} height={13} />
-                  <span className="text-[0.75rem] font-medium text-gray300">
-                    {String(event.likes || 0).padStart(3, '0')}
-                  </span>
+                  <span className="text-body3-12-medium text-gray300">{String(event.likes || 0).padStart(3, '0')}</span>
                 </div>
               </div>
 
               <div className="relative pb-5 pt-3 text-white">
-                <h3 className="truncate text-[0.875rem] font-bold">{event.title}</h3>
-                <p className="text-[0.625rem] text-gray100">{formatDateRange(event.startDate, event.endDate)}</p>
-                <div className="mt-[0.38rem] inline-block rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.75rem] text-gray300">
+                <h3 className="text-body-14-bold truncate">{event.title}</h3>
+                <p className="text-body-10-medium text-gray100">{formatDateRange(event.startDate, event.endDate)}</p>
+                <div className="text-body-11-medium mt-[0.38rem] inline-block rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-[0.25rem] pt-[0.19rem] text-gray300">
                   {convertRegionForDisplay(formatRegion(event.region))}
                 </div>
               </div>

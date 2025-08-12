@@ -31,22 +31,35 @@ export default function EventTimePicker({ selectedHour, selectedMinute, onChange
   const [internalHour, setInternalHour] = useState(selectedHour);
   const [internalMinute, setInternalMinute] = useState(selectedMinute);
 
-  const hourMidIndex = selectedHour + HOUR_RANGE * Math.floor(MULTIPLIER / 2);
-  const minuteMidIndex = selectedMinute + MINUTE_RANGE * Math.floor(MULTIPLIER / 2);
-
   useEffect(() => {
-    scrollToItem(hourRef, hourMidIndex);
-    scrollToItem(minuteRef, minuteMidIndex);
+    console.log('🕐 EventTimePicker useEffect - selectedHour:', selectedHour, 'selectedMinute:', selectedMinute);
+
+    // 선택된 값으로 직접 스크롤
+    scrollToItem(hourRef, selectedHour);
+    scrollToItem(minuteRef, selectedMinute);
     setInternalHour(selectedHour);
     setInternalMinute(selectedMinute);
-    onChange(selectedHour, selectedMinute);
-  }, []);
 
-  const scrollToItem = (ref: React.RefObject<HTMLDivElement>, index: number) => {
+    console.log('🔄 내부 상태 설정 - internalHour:', selectedHour, 'internalMinute:', selectedMinute);
+  }, [selectedHour, selectedMinute]);
+
+  const scrollToItem = (ref: React.RefObject<HTMLDivElement>, value: number) => {
     const el = ref.current;
     if (!el) return;
+
+    // 선택된 값을 중앙에 위치시키기 (VISIBLE_COUNT가 3이므로 중앙은 1번째 인덱스)
+    const centerOffset = ITEM_HEIGHT; // 3개 중 중앙(1번째) 위치
+    const scrollTop = value * ITEM_HEIGHT - centerOffset;
+
+    console.log('📜 scrollToItem:', {
+      value,
+      ITEM_HEIGHT,
+      centerOffset,
+      scrollTop,
+    });
+
     el.scrollTo({
-      top: index * ITEM_HEIGHT - CENTER_OFFSET,
+      top: scrollTop,
       behavior: 'auto',
     });
   };
@@ -58,15 +71,28 @@ export default function EventTimePicker({ selectedHour, selectedMinute, onChange
     type: 'hour' | 'minute',
   ) => {
     const scrollTop = target.scrollTop;
-    const index = Math.round((scrollTop + CENTER_OFFSET) / ITEM_HEIGHT);
-    const value = ((index % range) + range) % range;
+    const centerOffset = ITEM_HEIGHT; // 3개 중 중앙(1번째) 위치
+    const value = Math.round((scrollTop + centerOffset) / ITEM_HEIGHT);
 
-    setFn(value);
-    scrollToItem({ current: target }, index); // 중앙 맞춤 재조정
+    console.log(`🎯 handleScrollEnd - ${type}:`, {
+      scrollTop,
+      centerOffset,
+      value,
+      range,
+      ITEM_HEIGHT,
+    });
 
+    // 선택된 값을 중앙에 맞추기
+    scrollToItem({ current: target }, value);
+
+    // 내부 상태 업데이트 후 onChange 호출
     if (type === 'hour') {
+      console.log('⏰ 시간 변경 - 새로운 hour:', value, '현재 minute:', internalMinute);
+      setInternalHour(value);
       onChange(value, internalMinute);
     } else {
+      console.log('⏰ 분 변경 - 현재 hour:', internalHour, '새로운 minute:', value);
+      setInternalMinute(value);
       onChange(internalHour, value);
     }
   };
@@ -95,14 +121,20 @@ export default function EventTimePicker({ selectedHour, selectedMinute, onChange
     const totalCount = range * MULTIPLIER;
 
     const handleItemClick = (value: number) => {
+      console.log(`🖱️ handleItemClick - ${type}:`, value);
+
       if (type === 'hour') {
+        console.log('⏰ 시간 클릭 - 새로운 hour:', value, '현재 minute:', internalMinute);
         setInternalHour(value);
+        scrollToItem(ref, value);
+        // 즉시 onChange 호출
         onChange(value, internalMinute);
-        scrollToItem(ref, value + HOUR_RANGE * Math.floor(MULTIPLIER / 2));
       } else {
+        console.log('⏰ 분 클릭 - 현재 hour:', internalHour, '새로운 minute:', value);
         setInternalMinute(value);
+        scrollToItem(ref, value);
+        // 즉시 onChange 호출
         onChange(internalHour, value);
-        scrollToItem(ref, value + MINUTE_RANGE * Math.floor(MULTIPLIER / 2));
       }
     };
 

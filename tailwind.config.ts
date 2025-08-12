@@ -267,6 +267,14 @@ const config: Config = {
             lineHeight: '150%',
           },
         ],
+        'body-10-medium': [
+          '10px',
+          {
+            fontWeight: '500',
+            lineHeight: '160%',
+            letterSpacing: '-0.0125rem',
+          },
+        ],
       },
     },
   },

@@ -43,11 +43,14 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
         return;
       }
 
-      const newEvents = res.map((event) => ({
-        ...event,
-        liked: event.liked ?? false,
-        likes: event.likes ?? 0,
-      }));
+      const newEvents = res.map((event) => {
+        console.log('서버 응답 event:', event); // 디버깅용 로그
+        return {
+          ...event,
+          liked: event.liked ?? false,
+          likes: event.likes ?? 0,
+        };
+      });
 
       // 중복 제거
       setEvents((prev) => {
@@ -69,11 +72,14 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
           ? await getUpcomingEvent(accessToken, sort, 1, 10, region)
           : await getPastEvent(accessToken, 1, 10, region);
 
-      const newEvents = (res || []).map((event: EventType) => ({
-        ...event,
-        liked: event.liked ?? false,
-        likes: event.likes ?? 0,
-      }));
+      const newEvents = (res || []).map((event: EventType) => {
+        console.log('초기화 event:', event); // 디버깅용 로그
+        return {
+          ...event,
+          liked: event.liked ?? false,
+          likes: event.likes ?? 0,
+        };
+      });
 
       setEvents(newEvents);
       setPage(2); // 다음 요청은 page 2부터 시작
@@ -112,11 +118,14 @@ export default function EventContainer({ tab, refreshTrigger }: { tab: 'upcoming
           ? await getUpcomingEvent(accessToken, sort, 1, 10, region)
           : await getPastEvent(accessToken, 1, 10, region);
 
-      const newEvents = (res || []).map((event: EventType) => ({
-        ...event,
-        liked: event.liked ?? false,
-        likes: event.likes ?? 0,
-      }));
+      const newEvents = (res || []).map((event: EventType) => {
+        console.log('새로고침 event:', event); // 디버깅용 로그
+        return {
+          ...event,
+          liked: event.liked ?? false,
+          likes: event.likes ?? 0,
+        };
+      });
 
       setEvents(newEvents);
       setPage(2);

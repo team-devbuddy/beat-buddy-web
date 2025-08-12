@@ -130,14 +130,21 @@ export default function EventDateInput() {
                 {activePopup === 'startTime' && !isAllDay && (
                   <div className="flex justify-end py-2">
                     <EventTimePicker
-                      selectedHour={Number(eventForm.startTime.split(':')[0] || '0')}
-                      selectedMinute={Number(eventForm.startTime.split(':')[1] || '0')}
-                      onChange={(hour, minute) =>
+                      selectedHour={eventForm.startTime ? Number(eventForm.startTime.split(':')[0]) : 0}
+                      selectedMinute={eventForm.startTime ? Number(eventForm.startTime.split(':')[1]) : 0}
+                      onChange={(hour, minute) => {
+                        const newStartTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                        console.log('🕐 시작 시간 변경:', {
+                          hour,
+                          minute,
+                          newStartTime,
+                          currentStartTime: eventForm.startTime,
+                        });
                         setEventForm({
                           ...eventForm,
-                          startTime: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
-                        })
-                      }
+                          startTime: newStartTime,
+                        });
+                      }}
                     />
                   </div>
                 )}
@@ -205,14 +212,21 @@ export default function EventDateInput() {
                 {activePopup === 'endTime' && !isAllDay && (
                   <div className="flex justify-end py-2">
                     <EventTimePicker
-                      selectedHour={Number(eventForm.endTime.split(':')[0] || '0')}
-                      selectedMinute={Number(eventForm.endTime.split(':')[1] || '0')}
-                      onChange={(hour, minute) =>
+                      selectedHour={eventForm.endTime ? Number(eventForm.endTime.split(':')[0]) : 0}
+                      selectedMinute={eventForm.endTime ? Number(eventForm.endTime.split(':')[1]) : 0}
+                      onChange={(hour, minute) => {
+                        const newEndTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                        console.log('🕐 종료 시간 변경:', {
+                          hour,
+                          minute,
+                          newEndTime,
+                          currentEndTime: eventForm.endTime,
+                        });
                         setEventForm({
                           ...eventForm,
-                          endTime: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
-                        })
-                      }
+                          endTime: newEndTime,
+                        });
+                      }}
                     />
                   </div>
                 )}

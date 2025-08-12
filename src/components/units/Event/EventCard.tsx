@@ -100,9 +100,9 @@ export default function EventCard({
 
       <div className="pt-4 text-white">
         <p className="text-body3-12-medium text-gray100">{formatDateRange(event.startDate, event.endDate)}</p>
-        <h3 className="mt-1 text-subtitle-20-bold">{event.title}</h3>
-        <p className="mt-1 truncate text-body3-12-medium text-gray300">{event.content}</p>
-        <span className="mt-[0.13rem] inline-block rounded-[0.5rem] bg-gray700 px-2 py-1 text-body-13-medium text-gray300">
+        <h3 className="mt-[0.12rem] text-subtitle-20-bold">{event.title}</h3>
+        <p className="mt-[0.12rem] truncate text-body3-12-medium text-gray300">{event.content}</p>
+        <span className="mt-[0.38rem] inline-block rounded-[0.5rem] bg-gray700 px-2 py-1 text-body-13-medium text-gray300">
           {convertRegionForDisplay(formatRegion(event.region))}
         </span>
       </div>

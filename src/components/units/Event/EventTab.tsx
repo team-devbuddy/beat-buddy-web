@@ -20,8 +20,8 @@ export default function EventTab() {
         <button
           key={key}
           onClick={() => setActiveTab(key)}
-          className={`flex-1 py-[0.66rem] text-center text-[0.875rem] ${
-            activeTab === key ? 'font-bold text-main' : 'border-b border-gray400 text-gray100'
+          className={`text-body-14-medium flex-1 py-[0.66rem] text-center ${
+            activeTab === key ? 'font-bold text-main' : 'text-gray100'
           }`}>
           {label}
         </button>

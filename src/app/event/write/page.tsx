@@ -33,6 +33,12 @@ export default function EventWritePage() {
     isEditMode,
     event: event ? { eventId: event.eventId, title: event.title } : null,
     searchParams: searchParams.toString(),
+    startDate: eventForm.startDate,
+    startTime: eventForm.startTime,
+    endDate: eventForm.endDate,
+    endTime: eventForm.endTime,
+    fullStartDateTime: eventForm.startDate + ' ' + eventForm.startTime,
+    fullEndDateTime: eventForm.endDate + ' ' + eventForm.endTime,
   });
 
   // URL에 eventId가 있으면 수정 모드로 설정
@@ -202,13 +208,24 @@ export default function EventWritePage() {
       if (entranceNotice !== event.entranceNotice) updateData.entranceNotice = entranceNotice;
 
       // 날짜와 시간 관련
-      const currentStartDate = event.startDate ? new Date(event.startDate).toISOString() : '';
-      const currentEndDate = event.endDate ? new Date(event.endDate).toISOString() : '';
-      const newStartDate = new Date(`${normalizedStartDate}T${startTime || '00:00'}:00`).toISOString();
-      const newEndDate = new Date(`${normalizedEndDate}T${endTime || '00:00'}:00`).toISOString();
+      const currentStartDate = event.startDate || '';
+      const currentEndDate = event.endDate || '';
+      const newStartDate = `${normalizedStartDate}T${startTime || '00:00'}:00`;
+      const newEndDate = `${normalizedEndDate}T${endTime || '00:00'}:00`;
 
       if (newStartDate !== currentStartDate) updateData.startDate = newStartDate;
       if (newEndDate !== currentEndDate) updateData.endDate = newEndDate;
+
+      console.log('📅 수정 요청 데이터:', {
+        currentStartDate,
+        currentEndDate,
+        newStartDate,
+        newEndDate,
+        startTime,
+        endTime,
+        normalizedStartDate,
+        normalizedEndDate,
+      });
 
       // 입장료 관련
       const currentIsFreeEntrance = event.entranceFee === 0 || event.isFreeEntrance;
@@ -250,8 +267,8 @@ export default function EventWritePage() {
         venueId: venueId || 0, // venueId가 0이면 기본값 사용
         title,
         content,
-        startDate: new Date(`${normalizedStartDate}T${startTime || '00:00'}:00`).toISOString(),
-        endDate: new Date(`${normalizedEndDate}T${endTime || '00:00'}:00`).toISOString(),
+        startDate: `${normalizedStartDate}T${startTime || '00:00'}:00`,
+        endDate: `${normalizedEndDate}T${endTime || '00:00'}:00`,
         receiveInfo,
         receiveName,
         receiveGender,
@@ -268,6 +285,15 @@ export default function EventWritePage() {
         region,
         location,
       };
+
+      console.log('📅 생성 요청 데이터:', {
+        startDate: eventCreateRequestDTO.startDate,
+        endDate: eventCreateRequestDTO.endDate,
+        startTime,
+        endTime,
+        normalizedStartDate,
+        normalizedEndDate,
+      });
 
       formData.append(
         'eventCreateRequestDTO',

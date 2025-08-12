@@ -40,7 +40,7 @@ export default function LocationFilter() {
       {/* 상단 필터 헤더 */}
       <div className="flex items-center justify-between">
         <button
-          className={`rounded-[0.5rem] px-[0.62rem] py-[0.25rem] text-[0.875rem] focus:outline-none ${
+          className={`text-body-14-medium rounded-[0.5rem] px-[0.62rem] pt-[0.25rem] pb-[0.31rem] focus:outline-none ${
             selectedRegions.length > 0 ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
           }`}
           onClick={() => setShowFilter(!showFilter)}>
@@ -51,7 +51,7 @@ export default function LocationFilter() {
         {activeTab === 'upcoming' && (
           <div className="relative inline-block text-left">
             <button
-              className="flex items-center gap-[0.25rem] whitespace-nowrap text-[0.875rem] text-gray300"
+              className="text-body-14-medium flex items-center gap-[0.25rem] whitespace-nowrap text-gray300"
               onClick={() => setSortOpen(!sortOpen)}>
               {selectedSort}
               <Image
@@ -84,8 +84,8 @@ export default function LocationFilter() {
                       <button
                         key={option}
                         onClick={() => handleSortSelect(option)}
-                        className={`block w-full py-[0.56rem] text-center text-[0.8125rem] hover:bg-gray700 ${
-                          selectedSort === option ? 'bg-gray500 font-bold text-main' : 'bg-gray500 text-gray100'
+                        className={`text-body-13-medium block w-full py-[0.56rem] text-center hover:bg-gray700 ${
+                          selectedSort === option ? 'bg-gray500 text-main' : 'bg-gray500 text-gray100'
                         }`}>
                         {option}
                       </button>
@@ -125,8 +125,8 @@ export default function LocationFilter() {
                     );
                   }}
                   whileTap={{ scale: 1.1 }}
-                  className={`rounded-[0.38rem] px-[0.63rem] py-[0.25rem] text-[0.875rem] focus:outline-none ${
-                    isSelected ? 'bg-sub2 text-main' : 'bg-gray700 text-gray400'
+                  className={`text-body-13-medium rounded-[0.5rem] px-[0.63rem] pt-[0.25rem] pb-[0.31rem] focus:outline-none ${
+                    isSelected ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
                   }`}
                   transition={{ type: 'spring', stiffness: 300 }}>
                   {label}
