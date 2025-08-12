@@ -1,69 +1,119 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 export default function PhoneInput({
   value,
   onChange,
+  onConfirm,
   disabled = false,
 }: {
   value: string;
   onChange: (value: string) => void;
+  onConfirm: () => void;
   disabled?: boolean;
 }) {
-  // 전화번호 포맷팅 함수
-  const formatPhoneNumber = (input: string) => {
-    // 숫자만 추출
-    const numbers = input.replace(/[^0-9]/g, '');
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-    // 길이에 따라 하이픈 추가
-    if (numbers.length <= 3) {
-      return numbers;
-    } else if (numbers.length <= 7) {
-      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
-    } else if (numbers.length <= 11) {
-      return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
-    } else {
-      // 11자리 초과 시 11자리까지만
-      return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+  // 키보드 감지 (모바일)
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        const currentHeight = window.innerHeight;
+        const initialHeight = window.visualViewport?.height || currentHeight;
+        setIsKeyboardVisible(currentHeight < initialHeight);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    if ('visualViewport' in window) {
+      window.visualViewport?.addEventListener('resize', handleResize);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if ('visualViewport' in window) {
+        window.visualViewport?.removeEventListener('resize', handleResize);
+      }
+    };
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 숫자만 추출하여 저장
+    const numbers = e.target.value.replace(/[^0-9]/g, '');
+    if (numbers.length <= 11) {
+      onChange(numbers);
     }
   };
 
-  // 입력값 검증 함수
-  const validatePhoneNumber = (input: string) => {
-    const numbers = input.replace(/[^0-9]/g, '');
-
-    // 각 구간별로 완성 여부 확인
-    if (numbers.length < 3) return false; // 첫 번째 구간 미완성
-    if (numbers.length < 7) return false; // 두 번째 구간 미완성
-    if (numbers.length < 11) return false; // 세 번째 구간 미완성
-
-    return true; // 모든 구간 완성
+  // 전화번호 포맷팅 함수 (화면에 표시용)
+  const formatPhoneNumber = (input: string) => {
+    if (input.length <= 3) {
+      return input;
+    } else if (input.length <= 7) {
+      return `${input.slice(0, 3)}-${input.slice(3)}`;
+    } else if (input.length <= 11) {
+      return `${input.slice(0, 3)}-${input.slice(3, 7)}-${input.slice(7)}`;
+    } else {
+      return `${input.slice(0, 3)}-${input.slice(3, 7)}-${input.slice(7, 11)}`;
+    }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    const formattedValue = formatPhoneNumber(inputValue);
-    onChange(formattedValue);
+  const handleConfirm = () => {
+    console.log('📱 PhoneInput handleConfirm 호출됨, value:', value, 'length:', value.length);
+    if (value.length >= 10) {
+      console.log('📱 onConfirm 함수 호출함');
+      onConfirm();
+    } else {
+      console.log('📱 전화번호가 너무 짧음, 진행 불가');
+    }
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log('📱 PhoneInput handleKeyDown 호출됨, key:', e.key, 'value:', value, 'length:', value.length);
+    if (e.key === 'Enter' && value.length >= 10) {
+      console.log('📱 엔터키 눌림, handleConfirm 호출');
+      handleConfirm();
+    } else if (e.key === 'Enter') {
+      console.log('📱 엔터키 눌렸지만 전화번호가 너무 짧음');
+    }
+  };
+
+  const isPhoneValid = value.length >= 10;
 
   return (
     <div>
       <div className="mb-[0.62rem] flex items-end justify-start gap-[0.38rem]">
         <label className="block text-body1-16-bold">전화번호 </label>
-        <label className="text-body-14-medium block text-gray300">Contact </label>
+        <label className="block text-body-14-medium text-gray300">Contact </label>
       </div>
       <input
         type="text"
         placeholder="연락 가능한 전화번호를 입력해주세요"
-        className={`text-body-14-medium w-full border-b border-gray300 bg-BG-black px-4 py-3 text-gray100 placeholder-gray300 safari-input-fix focus:outline-none ${
-          disabled ? 'cursor-not-allowed ' : ''
+        className={`w-full border-b border-gray300 bg-BG-black px-4 py-3 text-body-14-medium text-gray100 placeholder-gray300 safari-input-fix focus:outline-none ${
+          disabled ? 'cursor-not-allowed' : ''
         }`}
-        value={value}
+        value={formatPhoneNumber(value)}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         maxLength={13}
-        pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
-        title="전화번호 형식: 010-1234-5678"
+        inputMode="numeric"
+        pattern="[0-9]*"
         disabled={disabled}
       />
+
+      {/* 키보드 위 확인 버튼 (모바일) - 키보드 바로 위에 위치 */}
+      {isKeyboardVisible && isPhoneValid && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-BG-black p-4 shadow-lg">
+          <button
+            onClick={handleConfirm}
+            disabled={disabled}
+            className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
+            확인
+          </button>
+        </div>
+      )}
     </div>
   );
 }
