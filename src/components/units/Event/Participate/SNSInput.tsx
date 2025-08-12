@@ -25,24 +25,72 @@ export default function SNSSelector({
 
   // 키보드 감지 (모바일)
   useEffect(() => {
+    let initialHeight = window.innerHeight;
+    let timeoutId: NodeJS.Timeout;
+
     const handleResize = () => {
       const isMobile = window.innerWidth <= 768;
       if (isMobile) {
         const currentHeight = window.innerHeight;
-        const initialHeight = window.visualViewport?.height || currentHeight;
-        setIsKeyboardVisible(currentHeight < initialHeight);
+
+        // Safari를 위한 추가 키보드 감지 방법
+        const isKeyboardVisible = currentHeight < initialHeight * 0.8; // 화면 높이가 80% 이하로 줄어들면 키보드로 간주
+
+        console.log('🔵 키보드 감지 (Safari 포함):', {
+          currentHeight,
+          initialHeight,
+          isKeyboardVisible,
+          isMobile,
+          ratio: currentHeight / initialHeight,
+        });
+
+        setIsKeyboardVisible(isKeyboardVisible);
       }
     };
 
+    const handleFocus = () => {
+      // 입력 필드에 포커스될 때 키보드가 올라올 것으로 예상
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        console.log('🔵 입력 필드 포커스됨 - 키보드 예상');
+        // 약간의 지연 후 키보드 상태 확인
+        timeoutId = setTimeout(() => {
+          handleResize();
+        }, 300);
+      }
+    };
+
+    const handleBlur = () => {
+      // 입력 필드에서 포커스가 벗어날 때 키보드가 내려갈 것으로 예상
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        console.log('🔵 입력 필드 블러됨 - 키보드 숨김 예상');
+        setIsKeyboardVisible(false);
+      }
+    };
+
+    // 초기 상태 설정
+    handleResize();
+
+    // 이벤트 리스너 등록
     window.addEventListener('resize', handleResize);
+    window.addEventListener('focusin', handleFocus);
+    window.addEventListener('focusout', handleBlur);
+
+    // visualViewport가 지원되는 경우 추가
     if ('visualViewport' in window) {
       window.visualViewport?.addEventListener('resize', handleResize);
     }
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('focusin', handleFocus);
+      window.removeEventListener('focusout', handleBlur);
       if ('visualViewport' in window) {
         window.visualViewport?.removeEventListener('resize', handleResize);
+      }
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
     };
   }, []);
@@ -85,6 +133,7 @@ export default function SNSSelector({
     }
   };
 
+  // SNS 타입만 선택했을 때는 완료할 수 없음
   const canConfirm = snsType === '' || (snsType && snsId.trim().length > 0);
 
   return (
@@ -99,6 +148,7 @@ export default function SNSSelector({
           onClick={() => {
             if (!disabled) {
               hasInteracted.current = true;
+              hasConfirmed.current = false; // SNS 타입 선택 시에는 아직 확인되지 않음
               onTypeChange('Instagram');
               onIdChange('');
             }
@@ -115,6 +165,7 @@ export default function SNSSelector({
           onClick={() => {
             if (!disabled) {
               hasInteracted.current = true;
+              hasConfirmed.current = false; // SNS 타입 선택 시에는 아직 확인되지 않음
               onTypeChange('Facebook');
               onIdChange('');
             }
@@ -199,6 +250,8 @@ export default function SNSSelector({
           </button>
         </div>
       )}
+
+      
     </div>
   );
 }
