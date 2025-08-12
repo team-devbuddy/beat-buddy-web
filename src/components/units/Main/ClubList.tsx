@@ -136,7 +136,7 @@ export default function ClubList({
                     initial="initial"
                     animate="initial">
                     <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15.6} height={13.7} />
-                    <span className="text-[0.75rem] text-gray300">
+                    <span className="text-body3-12-medium text-gray300">
                       {heartbeatNums[venue.venueId] !== undefined
                         ? String(heartbeatNums[venue.venueId]).padStart(3, '0')
                         : '000'}
@@ -162,22 +162,20 @@ export default function ClubList({
                 </div>
                 <div className="mt-[0.75rem] flex flex-grow flex-col justify-between">
                   <div>
-                    <h3 className="line-height-[1.6rem] text-ellipsis text-[0.875rem] font-bold text-white">
-                      {venue.englishName}
-                    </h3>
+                    <h3 className="text-body-14-bold text-ellipsis text-white">{venue.englishName}</h3>
                     <div className="mt-[0.38rem] flex flex-wrap gap-[0.25rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span
                             key={`${venue.venueId}-${tag}-${index}`}
-                            className="rounded-[0.5rem] border border-gray500 bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+                            className="text-body-11-medium rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
                         <span
                           key={`${venue.venueId}-no-tags`}
-                          className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+                          className="text-body-11-medium rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-gray300">
                           No tagList
                         </span>
                       )}

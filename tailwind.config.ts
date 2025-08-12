@@ -13,6 +13,8 @@ const config: Config = {
       queensides: ['Queensides'],
       suit: ['SUIT', 'sans-serif'],
       paperlogy: ['Paperlogy-7Bold', 'sans-serif'],
+      pretendard: ['Pretendard', 'sans-serif'],
+      sans: ['var(--font-pretendard)', 'sans-serif'],
     },
     extend: {
       scrollbarHide: {
@@ -105,8 +107,8 @@ const config: Config = {
         'title-32': [
           '32px',
           {
-            lineHeight: '150%',
             fontWeight: '700',
+            lineHeight: '150%',
           },
         ],
         'title-24-bold': [
@@ -204,11 +206,63 @@ const config: Config = {
         ],
         'navigate-queen': [
           '0.6875rem',
-
           {
             lineHeight: '160%', // 1.1rem
             fontWeight: '700', // bold
             letterSpacing: '-0.01375rem', // letter spacing
+          },
+        ],
+
+        // 이미지에 맞는 새로운 스타일들
+        'subtitle-22-bold': [
+          '22px',
+          {
+            fontWeight: '700',
+            lineHeight: '140%',
+            letterSpacing: '-2%',
+          },
+        ],
+        'subtitle-22-medium': [
+          '22px',
+          {
+            fontWeight: '500',
+            lineHeight: '140%',
+            letterSpacing: '-2%',
+          },
+        ],
+        'body-14-bold': [
+          '14px',
+          {
+            fontWeight: '700',
+            lineHeight: '150%',
+          },
+        ],
+        'body-14-medium': [
+          '14px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+          },
+        ],
+        'body-13-bold': [
+          '13px',
+          {
+            fontWeight: '700',
+            lineHeight: '150%',
+          },
+        ],
+        'body-13-medium': [
+          '13px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+          },
+        ],
+        'body-11-medium': [
+          '11px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
           },
         ],
       },
