@@ -102,6 +102,7 @@ const config: Config = {
           {
             fontWeight: '700',
             lineHeight: '150%',
+            letterSpacing: '-0.025rem',
           },
         ],
         'title-32': [
@@ -186,6 +187,7 @@ const config: Config = {
           {
             lineHeight: '160%',
             fontWeight: '500',
+            letterSpacing: '-0.015rem',
           },
         ],
         'now-hot': [

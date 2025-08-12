@@ -94,15 +94,15 @@ export default function EventCard({
 
         <div className="absolute bottom-[1.5rem] left-[1.5rem] z-10 flex items-center space-x-[0.25rem]">
           <Image src="/icons/PinkHeart.svg" alt="하트" width={16} height={16} />
-          <span className="text-[0.75rem] text-gray100">{String(likes).padStart(3, '0')}</span>
+          <span className="text-body3-12-medium text-gray100">{String(likes).padStart(3, '0')}</span>
         </div>
       </div>
 
       <div className="pt-4 text-white">
-        <p className="text-[0.75rem] text-gray100">{formatDateRange(event.startDate, event.endDate)}</p>
-        <h3 className="mt-1 text-[1.25rem] font-bold">{event.title}</h3>
-        <p className="mt-1 truncate text-[0.75rem] text-gray300">{event.content}</p>
-        <span className="mt-[0.13rem] inline-block rounded-[0.5rem] bg-gray700 px-2 py-1 text-[0.875rem] text-gray300">
+        <p className="text-body3-12-medium text-gray100">{formatDateRange(event.startDate, event.endDate)}</p>
+        <h3 className="mt-1 text-subtitle-20-bold">{event.title}</h3>
+        <p className="mt-1 truncate text-body3-12-medium text-gray300">{event.content}</p>
+        <span className="mt-[0.13rem] inline-block rounded-[0.5rem] bg-gray700 px-2 py-1 text-body-13-medium text-gray300">
           {convertRegionForDisplay(formatRegion(event.region))}
         </span>
       </div>
