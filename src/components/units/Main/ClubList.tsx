@@ -135,9 +135,11 @@ export default function ClubList({
                     className="absolute bottom-[0.62rem] left-[0.62rem] flex items-center space-x-[0.25rem]"
                     initial="initial"
                     animate="initial">
-                    <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15} height={13} />
+                    <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15.6} height={13.7} />
                     <span className="text-[0.75rem] text-gray300">
-                      {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
+                      {heartbeatNums[venue.venueId] !== undefined
+                        ? String(heartbeatNums[venue.venueId]).padStart(3, '0')
+                        : '000'}
                     </span>
                   </motion.div>
                   <div className="club-gradient absolute inset-0"></div>
@@ -151,7 +153,7 @@ export default function ClubList({
                     initial="initial"
                     animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
                     <Image
-                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
                       alt="heart icon"
                       width={27}
                       height={24}
@@ -168,14 +170,14 @@ export default function ClubList({
                         filteredTags.map((tag, index) => (
                           <span
                             key={`${venue.venueId}-${tag}-${index}`}
-                            className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+                            className="rounded-[0.5rem] border border-gray500 bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
                         <span
                           key={`${venue.venueId}-no-tags`}
-                          className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+                          className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
                           No tagList
                         </span>
                       )}
