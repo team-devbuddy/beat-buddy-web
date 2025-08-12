@@ -15,69 +15,48 @@ export default function PhoneInput({
 }) {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  // 키보드 감지 (모바일)
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth <= 768;
-      if (isMobile) {
-        const currentHeight = window.innerHeight;
-        const initialHeight = window.visualViewport?.height || currentHeight;
-        setIsKeyboardVisible(currentHeight < initialHeight);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    if ('visualViewport' in window) {
-      window.visualViewport?.addEventListener('resize', handleResize);
-    }
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if ('visualViewport' in window) {
-        window.visualViewport?.removeEventListener('resize', handleResize);
-      }
-    };
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 숫자만 추출하여 저장
-    const numbers = e.target.value.replace(/[^0-9]/g, '');
-    if (numbers.length <= 11) {
-      onChange(numbers);
-    }
+  const formatPhoneNumber = (value: string) => {
+    const numbers = value.replace(/[^0-9]/g, '');
+    if (numbers.length <= 3) return numbers;
+    if (numbers.length <= 7) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
   };
 
-  // 전화번호 포맷팅 함수 (화면에 표시용)
-  const formatPhoneNumber = (input: string) => {
-    if (input.length <= 3) {
-      return input;
-    } else if (input.length <= 7) {
-      return `${input.slice(0, 3)}-${input.slice(3)}`;
-    } else if (input.length <= 11) {
-      return `${input.slice(0, 3)}-${input.slice(3, 7)}-${input.slice(7)}`;
-    } else {
-      return `${input.slice(0, 3)}-${input.slice(3, 7)}-${input.slice(7, 11)}`;
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const numbers = e.target.value.replace(/[^0-9]/g, '');
+    onChange(numbers);
   };
 
   const handleConfirm = () => {
-    console.log('📱 PhoneInput handleConfirm 호출됨, value:', value, 'length:', value.length);
+    console.log('🔵 PhoneInput handleConfirm 호출됨');
+    console.log('🔵 value:', value, 'length:', value.length, 'isPhoneValid:', isPhoneValid);
     if (value.length >= 10) {
-      console.log('📱 onConfirm 함수 호출함');
+      console.log('🔵 onConfirm 호출함');
+      // 확인 버튼 클릭 시 키보드 숨김 후 onConfirm 호출
+      setIsKeyboardVisible(false);
       onConfirm();
     } else {
-      console.log('📱 전화번호가 너무 짧음, 진행 불가');
+      console.log('🔵 전화번호가 너무 짧음, onConfirm 호출 안함');
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log('📱 PhoneInput handleKeyDown 호출됨, key:', e.key, 'value:', value, 'length:', value.length);
     if (e.key === 'Enter' && value.length >= 10) {
-      console.log('📱 엔터키 눌림, handleConfirm 호출');
       handleConfirm();
-    } else if (e.key === 'Enter') {
-      console.log('📱 엔터키 눌렸지만 전화번호가 너무 짧음');
     }
+  };
+
+  const handleFocus = () => {
+    // 모바일에서만 키보드 감지
+    if (window.innerWidth <= 768) {
+      console.log('🔵 전화번호 입력 필드 포커스');
+      setIsKeyboardVisible(true);
+    }
+  };
+
+  const handleBlur = () => {
+    // onBlur에서 즉시 숨기지 않음 - 확인 버튼 클릭 후에만 숨김
+    console.log('🔵 전화번호 입력 필드 블러');
   };
 
   const isPhoneValid = value.length >= 10;
@@ -97,21 +76,25 @@ export default function PhoneInput({
         value={formatPhoneNumber(value)}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         maxLength={13}
         inputMode="numeric"
         pattern="[0-9]*"
         disabled={disabled}
       />
 
-      {/* 키보드 위 확인 버튼 (모바일) - 키보드 바로 위에 위치 */}
+      {/* 확인 버튼 - 맨 아래에 위치, 가로 중앙 정렬 */}
       {isKeyboardVisible && isPhoneValid && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-BG-black p-4 shadow-lg">
-          <button
-            onClick={handleConfirm}
-            disabled={disabled}
-            className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
-            확인
-          </button>
+        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg">
+          <div className="w-full max-w-[600px]">
+            <button
+              onClick={handleConfirm}
+              disabled={disabled}
+              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
+              확인
+            </button>
+          </div>
         </div>
       )}
     </div>

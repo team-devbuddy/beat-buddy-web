@@ -15,31 +15,22 @@ export default function PeopleCounter({
   onComplete?: () => void;
   disabled?: boolean;
 }) {
-  const hasInteracted = useRef(false);
-  const initialValue = useRef(value);
-
-  // 사용자가 동행인원을 변경했을 때만 다음 단계로 진행
-  useEffect(() => {
-    if (onComplete && hasInteracted.current && value > 0 && !disabled) {
-      // 약간의 지연을 두어 사용자가 선택을 완료했음을 인지할 수 있도록 함
-      const timer = setTimeout(() => {
-        onComplete();
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [value, onComplete, disabled]);
+  // 자동 진행 로직 제거 - 사용자가 확인 버튼을 클릭해야만 진행
 
   const handleDecrease = (value: number) => {
     if (value > 1) {
-      hasInteracted.current = true;
       onChange(value - 1);
     }
   };
 
   const handleIncrease = (value: number) => {
-    hasInteracted.current = true;
     onChange(value + 1);
+  };
+
+  const handleConfirm = () => {
+    if (value > 0 && onComplete) {
+      onComplete();
+    }
   };
 
   return (

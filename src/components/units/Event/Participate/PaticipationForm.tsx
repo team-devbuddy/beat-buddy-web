@@ -137,8 +137,8 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
 
   const handlePeopleComplete = () => {
     // 동행 인원 선택 완료 시 마지막 단계로 진행
-    // 사전예약금이 필요한 경우 DepositInfo가 표시되고,
-    // 그렇지 않은 경우 SubmitButton이 표시됨
+    setCurrentStep(5);
+    console.log('🔵 동행인원 선택 완료, 마지막 단계로 진행');
   };
 
   // currentStep 상태 변화 추적
@@ -153,6 +153,9 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   const showPeople = currentStep >= 5;
   const showDeposit = showPeople && form.totalNumber > 0 && event?.receiveMoney === true;
 
+  // 마지막 단계 정의
+  const isLastStep = currentStep >= 5; // 동행인원 선택 완료 후
+
   console.log(
     '🟢 렌더링 상태 - showGender:',
     showGender,
@@ -162,10 +165,13 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
     showSNS,
     'showPeople:',
     showPeople,
+    'isLastStep:',
+    isLastStep,
   );
 
-  // 신청 버튼 표시 조건
+  // 신청 버튼 표시 조건 - 마지막 단계에서만 표시
   const canSubmit =
+    isLastStep && // 마지막 단계여야 함
     form.name.trim().length > 0 && // 이름 입력됨
     form.gender !== '' && // 성별 선택됨
     form.phoneNumber.length >= 10 && // 연락처 입력됨 (10자리 이상)
@@ -196,9 +202,9 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-50 flex items-center justify-center">
+              className="fixed inset-0 z-50 flex items-center justify-center p-5">
               <div
-                className="mx-5 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
+                className="w-full max-w-[600px] rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
                 onClick={(e) => e.stopPropagation()}>
                 <h3 className="mb-6 text-subtitle-20-bold text-white">참석 명단 작성이 완료되었어요!</h3>
 

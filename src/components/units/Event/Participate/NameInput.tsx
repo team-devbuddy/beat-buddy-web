@@ -15,33 +15,16 @@ export default function NameInput({
 }) {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  // 키보드 감지 (모바일)
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth <= 768;
-      if (isMobile) {
-        const currentHeight = window.innerHeight;
-        const initialHeight = window.visualViewport?.height || currentHeight;
-        setIsKeyboardVisible(currentHeight < initialHeight);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    if ('visualViewport' in window) {
-      window.visualViewport?.addEventListener('resize', handleResize);
-    }
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if ('visualViewport' in window) {
-        window.visualViewport?.removeEventListener('resize', handleResize);
-      }
-    };
-  }, []);
-
   const handleConfirm = () => {
+    console.log('🔵 NameInput handleConfirm 호출됨');
+    console.log('🔵 value:', value, 'trim length:', value.trim().length);
     if (value.trim().length > 0) {
+      console.log('🔵 onConfirm 호출함');
+      // 확인 버튼 클릭 시 키보드 숨김 후 onConfirm 호출
+      setIsKeyboardVisible(false);
       onConfirm();
+    } else {
+      console.log('🔵 이름이 비어있음, onConfirm 호출 안함');
     }
   };
 
@@ -49,6 +32,19 @@ export default function NameInput({
     if (e.key === 'Enter' && value.trim().length > 0) {
       handleConfirm();
     }
+  };
+
+  const handleFocus = () => {
+    // 모바일에서만 키보드 감지
+    if (window.innerWidth <= 768) {
+      console.log('🔵 이름 입력 필드 포커스');
+      setIsKeyboardVisible(true);
+    }
+  };
+
+  const handleBlur = () => {
+    // onBlur에서 즉시 숨기지 않음 - 확인 버튼 클릭 후에만 숨김
+    console.log('🔵 이름 입력 필드 블러');
   };
 
   return (
@@ -66,18 +62,22 @@ export default function NameInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         disabled={disabled}
       />
 
-      {/* 키보드 위 확인 버튼 (모바일) - 키보드 바로 위에 위치 */}
+      {/* 확인 버튼 - 맨 아래에 위치, 가로 중앙 정렬 */}
       {isKeyboardVisible && value.trim().length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-BG-black p-4 shadow-lg">
-          <button
-            onClick={handleConfirm}
-            disabled={disabled}
-            className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
-            확인
-          </button>
+        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg">
+          <div className="w-full max-w-[600px]">
+            <button
+              onClick={handleConfirm}
+              disabled={disabled}
+              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
+              확인
+            </button>
+          </div>
         </div>
       )}
     </div>

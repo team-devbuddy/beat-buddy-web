@@ -23,94 +23,13 @@ export default function SNSSelector({
   const hasInteracted = useRef(false);
   const hasConfirmed = useRef(false);
 
-  // 키보드 감지 (모바일)
-  useEffect(() => {
-    let initialHeight = window.innerHeight;
-    let timeoutId: NodeJS.Timeout;
+  // SNS 타입만 선택했을 때는 완료할 수 없음
+  const canConfirm =
+    snsType === '' || // SNS 없음 선택
+    (snsType === 'Instagram' && snsId.trim().length > 0) || // Instagram + ID 입력
+    (snsType === 'Facebook' && snsId.trim().length > 0); // Facebook + ID 입력
 
-    const handleResize = () => {
-      const isMobile = window.innerWidth <= 768;
-      if (isMobile) {
-        const currentHeight = window.innerHeight;
-
-        // Safari를 위한 추가 키보드 감지 방법
-        const isKeyboardVisible = currentHeight < initialHeight * 0.8; // 화면 높이가 80% 이하로 줄어들면 키보드로 간주
-
-        console.log('🔵 키보드 감지 (Safari 포함):', {
-          currentHeight,
-          initialHeight,
-          isKeyboardVisible,
-          isMobile,
-          ratio: currentHeight / initialHeight,
-        });
-
-        setIsKeyboardVisible(isKeyboardVisible);
-      }
-    };
-
-    const handleFocus = () => {
-      // 입력 필드에 포커스될 때 키보드가 올라올 것으로 예상
-      const isMobile = window.innerWidth <= 768;
-      if (isMobile) {
-        console.log('🔵 입력 필드 포커스됨 - 키보드 예상');
-        // 약간의 지연 후 키보드 상태 확인
-        timeoutId = setTimeout(() => {
-          handleResize();
-        }, 300);
-      }
-    };
-
-    const handleBlur = () => {
-      // 입력 필드에서 포커스가 벗어날 때 키보드가 내려갈 것으로 예상
-      const isMobile = window.innerWidth <= 768;
-      if (isMobile) {
-        console.log('🔵 입력 필드 블러됨 - 키보드 숨김 예상');
-        setIsKeyboardVisible(false);
-      }
-    };
-
-    // 초기 상태 설정
-    handleResize();
-
-    // 이벤트 리스너 등록
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('focusin', handleFocus);
-    window.addEventListener('focusout', handleBlur);
-
-    // visualViewport가 지원되는 경우 추가
-    if ('visualViewport' in window) {
-      window.visualViewport?.addEventListener('resize', handleResize);
-    }
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('focusin', handleFocus);
-      window.removeEventListener('focusout', handleBlur);
-      if ('visualViewport' in window) {
-        window.visualViewport?.removeEventListener('resize', handleResize);
-      }
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, []);
-
-  // SNS 입력이 완료되면 자동으로 다음 단계로 진행 (사용자가 확인했을 때만)
-  useEffect(() => {
-    if (
-      onComplete &&
-      hasInteracted.current &&
-      hasConfirmed.current &&
-      (snsType === '' || (snsType && snsId.trim().length > 0))
-    ) {
-      // 약간의 지연을 두어 사용자가 입력을 완료했음을 인지할 수 있도록 함
-      const timer = setTimeout(() => {
-        onComplete();
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [snsType, snsId, onComplete]);
+  // 자동 진행 로직 제거 - 오직 확인 버튼이나 엔터 키로만 진행
 
   const getButtonClass = (sns: string) => {
     const isSelected = snsType === sns;
@@ -120,9 +39,16 @@ export default function SNSSelector({
   };
 
   const handleConfirm = () => {
-    if (snsType === '' || (snsType && snsId.trim().length > 0)) {
+    console.log('🔵 SNSInput handleConfirm 호출됨');
+    console.log('🔵 canConfirm:', canConfirm, 'snsType:', snsType, 'snsId:', snsId);
+    if (canConfirm) {
       hasConfirmed.current = true;
+      console.log('🔵 onComplete 호출함');
+      // 확인 버튼 클릭 시 키보드 숨김 후 onComplete 호출
+      setIsKeyboardVisible(false);
       onComplete?.();
+    } else {
+      console.log('🔵 SNS 입력이 완료되지 않음, onComplete 호출 안함');
     }
   };
 
@@ -132,9 +58,6 @@ export default function SNSSelector({
       handleConfirm();
     }
   };
-
-  // SNS 타입만 선택했을 때는 완료할 수 없음
-  const canConfirm = snsType === '' || (snsType && snsId.trim().length > 0);
 
   return (
     <div>
@@ -148,7 +71,7 @@ export default function SNSSelector({
           onClick={() => {
             if (!disabled) {
               hasInteracted.current = true;
-              hasConfirmed.current = false; // SNS 타입 선택 시에는 아직 확인되지 않음
+              // hasConfirmed는 ID 입력 후 확인 버튼 클릭 시에만 true로 설정
               onTypeChange('Instagram');
               onIdChange('');
             }
@@ -165,7 +88,7 @@ export default function SNSSelector({
           onClick={() => {
             if (!disabled) {
               hasInteracted.current = true;
-              hasConfirmed.current = false; // SNS 타입 선택 시에는 아직 확인되지 않음
+              // hasConfirmed는 ID 입력 후 확인 버튼 클릭 시에만 true로 설정
               onTypeChange('Facebook');
               onIdChange('');
             }
@@ -185,6 +108,10 @@ export default function SNSSelector({
               hasConfirmed.current = true; // SNS 없음 선택 시 자동으로 확인된 것으로 처리
               onTypeChange('');
               onIdChange('');
+              // SNS 없음 선택 시 바로 다음 단계로 진행
+              setTimeout(() => {
+                onComplete?.();
+              }, 500);
             }
           }}
           whileHover={disabled ? {} : { scale: 1.02 }}
@@ -211,6 +138,20 @@ export default function SNSSelector({
             }
           }}
           onKeyDown={handleKeyDown}
+          onFocus={() => {
+            // 모바일에서만 키보드 감지
+            if (window.innerWidth <= 768) {
+              console.log('🔵 Instagram 입력 필드 포커스');
+              setIsKeyboardVisible(true);
+            }
+          }}
+          onBlur={() => {
+            // 모바일에서만 키보드 감지
+            if (window.innerWidth <= 768) {
+              console.log('🔵 Instagram 입력 필드 블러');
+              // onBlur에서 즉시 숨기지 않음 - 확인 버튼 클릭 후에만 숨김
+            }
+          }}
           pattern="[a-zA-Z0-9._]+"
           title="영어, 숫자, 언더스코어(_), 점(.)만 입력 가능합니다"
           disabled={disabled}
@@ -233,25 +174,39 @@ export default function SNSSelector({
             }
           }}
           onKeyDown={handleKeyDown}
+          onFocus={() => {
+            // 모바일에서만 키보드 감지
+            if (window.innerWidth <= 768) {
+              console.log('🔵 Facebook 입력 필드 포커스');
+              setIsKeyboardVisible(true);
+            }
+          }}
+          onBlur={() => {
+            // 모바일에서만 키보드 감지
+            if (window.innerWidth <= 768) {
+              console.log('🔵 Facebook 입력 필드 블러');
+              // onBlur에서 즉시 숨기지 않음 - 확인 버튼 클릭 후에만 숨김
+            }
+          }}
           pattern="[a-zA-Z0-9._]+"
           title="영어, 숫자, 언더스코어(_), 점(.)만 입력 가능합니다"
           disabled={disabled}
         />
       )}
 
-      {/* 키보드 위 확인 버튼 (모바일) - 키보드 바로 위에 위치 */}
+      {/* 확인 버튼 - 맨 아래에 위치, 가로 중앙 정렬 */}
       {isKeyboardVisible && canConfirm && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-BG-black p-4 shadow-lg">
-          <button
-            onClick={handleConfirm}
-            disabled={disabled}
-            className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
-            확인
-          </button>
+        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg">
+          <div className="w-full max-w-[600px]">
+            <button
+              onClick={handleConfirm}
+              disabled={disabled}
+              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
+              확인
+            </button>
+          </div>
         </div>
       )}
-
-      
     </div>
   );
 }
