@@ -168,8 +168,23 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
       container?.addEventListener('scroll', handleScroll, { passive: true });
     });
 
-    // 초기 상태 설정을 위해 한 번 호출
-    setTimeout(handleScroll, 100);
+    // 초기 상태 설정을 위해 한 번 호출 (버튼은 숨김 상태로 시작)
+    setTimeout(() => {
+      const scrollContainer =
+        document.querySelector('[ref="scrollContainerRef"]') || document.querySelector('.overflow-y-auto') || window;
+      const scrollTop = (scrollContainer as HTMLElement).scrollTop ?? window.pageYOffset;
+
+      const summaryElement = document.querySelector('[data-summary]') as HTMLElement;
+      const summaryHeight = summaryElement ? summaryElement.offsetHeight : 0;
+
+      // Summary 헤더만 초기 설정, 버튼은 스크롤할 때만 표시
+      if (scrollTop > summaryHeight) {
+        setShowSummaryHeader(true);
+      } else {
+        setShowSummaryHeader(false);
+      }
+      // showButton은 초기에 false로 유지
+    }, 100);
 
     return () => {
       containers.forEach((container) => {
@@ -299,7 +314,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
       {eventDetailTab === 'info' && showButton && (
         <>
           {!eventDetail?.isAuthor && !eventDetail?.isAttending && (
-            <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 border-none px-[1.25rem] pb-[1.25rem] pt-2">
+            <div className="fixed bottom-0 left-0 z-50 w-full max-w-[600px] border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"
                 onClick={() => router.push(`/event/${eventId}/participate`)}
@@ -309,7 +324,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
             </div>
           )}
           {!eventDetail?.isAuthor && eventDetail?.isAttending && (
-            <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 border-none px-[1.25rem] pb-[1.25rem] pt-2">
+            <div className="fixed bottom-0 left-0 z-50 w-full max-w-[600px] border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"
                 onClick={() => router.push(`/event/${eventId}/participate?mode=edit`)}
@@ -318,7 +333,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
               </button>
             </div>
           )}
-          {eventDetail?.isAuthor && eventDetail.receiveInfo && (
+          {eventDetail?.isAuthor && (
             <div className="fixed bottom-0 left-0 z-50 w-full border-none px-[1.25rem] pb-[1.25rem] pt-2">
               <button
                 type="button"

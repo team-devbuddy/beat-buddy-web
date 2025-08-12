@@ -10,6 +10,40 @@ import BoardDropDown from '../../Board/BoardDropDown';
 import { deleteEventComment } from '@/lib/actions/event-controller/deleteEventComment';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// 일주일 이내는 상대적 시간, 일주일 이후는 날짜 형식: "25.08.05 09:57"
+const formatEventCommentDate = (isoString: string): string => {
+  const now = new Date();
+  const date = new Date(isoString);
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // 일주일(7일) 이내면 상대적 시간 표시
+  if (diffDays < 7) {
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHours = Math.floor(diffMin / 60);
+
+    if (diffSec < 60) {
+      return '방금 전';
+    } else if (diffMin < 60) {
+      return `${diffMin}분 전`;
+    } else if (diffHours < 24) {
+      return `${diffHours}시간 전`;
+    } else {
+      return `${diffDays}일 전`;
+    }
+  }
+
+  // 일주일 이후면 날짜 형식으로 표시
+  const year = String(date.getFullYear()).slice(-2); // "2025" -> "25"
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // "8" -> "08"
+  const day = String(date.getDate()).padStart(2, '0'); // "5" -> "05"
+  const hours = String(date.getHours()).padStart(2, '0'); // "9" -> "09"
+  const minutes = String(date.getMinutes()).padStart(2, '0'); // "57" -> "57"
+
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
+};
+
 interface CommentType {
   commentId: number;
   commentLevel: number;
@@ -125,7 +159,7 @@ export default function EventCommentItem({
           <div className="flex items-center gap-1">
             <span className={comment.isStaff ? 'text-main' : 'text-white'}>{comment.authorNickname}</span>
             <span className="text-body3-12-medium text-gray300">·</span>
-            <span className="text-body3-12-medium text-gray300">{formatRelativeTime(comment.createdAt)}</span>
+            <span className="text-body3-12-medium text-gray300">{formatEventCommentDate(comment.createdAt)}</span>
           </div>
 
           <button
@@ -151,7 +185,7 @@ export default function EventCommentItem({
                   {reply.authorNickname}
                 </span>
                 <span className="text-body3-12-medium text-gray300">·</span>
-                <span className="text-body3-12-medium text-gray300">{formatRelativeTime(reply.createdAt)}</span>
+                <span className="text-body3-12-medium text-gray300">{formatEventCommentDate(reply.createdAt)}</span>
               </div>
               {reply.isAuthor ? (
                 <button

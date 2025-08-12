@@ -14,19 +14,24 @@ interface Participant {
   memberId: number;
   name: string;
   gender: string;
+  snsType?: string;
+  snsId?: string;
   phoneNumber: string;
   isPaid: boolean;
   totalMember: number;
   createdAt: string;
 }
 
-export default function ParticipateInfo({ participants }: { participants?: Participant[] }) {
+export default function ParticipateInfo({ participants }: { participants?: Participant | Participant[] }) {
   const event = useRecoilValue(eventState);
   const router = useRouter();
   const pathname = usePathname();
   const eventId = event?.eventId || pathname.split('/')[2];
+
   const dataToShow = useMemo(() => {
-    return participants ?? [];
+    if (!participants) return [];
+    // 단일 객체인 경우 배열로 변환, 이미 배열인 경우 그대로 사용
+    return Array.isArray(participants) ? participants : [participants];
   }, [participants]);
 
   const handleDownloadExcel = () => {
@@ -49,12 +54,12 @@ export default function ParticipateInfo({ participants }: { participants?: Parti
       {/* 스크롤 영역 */}
       <div className="flex-1 overflow-y-auto px-5 pb-32 pt-[3.5rem]">
         <div className="mx-auto w-full max-w-[600px]">
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="text-title-24-bold text-white">
             총 <span className="text-main">{dataToShow.length}</span>명 참석
           </h2>
 
           {dataToShow.length > 0 ? (
-            <div className="mt-6 w-full text-sm text-gray100">
+            <div className="text-body-14-medium mt-6 w-full text-gray100">
               {/* 헤더 */}
               <div className="mb-2 grid grid-cols-3 text-center font-semibold text-white">
                 <div className="pl-4 text-left">이름</div>
@@ -92,7 +97,7 @@ export default function ParticipateInfo({ participants }: { participants?: Parti
               </div>
             </div>
           ) : (
-            <NoResults text="참석자가 없습니다." />
+            <NoResults text="참석자가 없습니다" />
           )}
         </div>
       </div>

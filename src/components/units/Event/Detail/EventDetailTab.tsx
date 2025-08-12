@@ -202,16 +202,16 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 px-6"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
             onClick={() => setShowModal(false)}>
             <div
-              className="rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-5 text-center"
+              className="mx-6 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-5 text-center"
               onClick={(e) => e.stopPropagation()}>
               <textarea
                 value={qnaContent}
                 onChange={(e) => setQnaContent(e.target.value)}
                 placeholder="문의 내용을 작성해 주세요"
-                className="text-body-14-medium mb-4 min-h-[7.5rem] w-full min-w-[18rem] resize-none rounded-[0.5rem] bg-gray700 px-4 py-3 text-gray200 placeholder:text-gray200 focus:outline-none"
+                className="text-body-14-medium mb-4 min-h-[7.5rem] w-full resize-none rounded-[0.5rem] bg-gray700 px-4 py-3 text-gray200 placeholder:text-gray200 focus:outline-none"
               />
               <div className="flex justify-between gap-3">
                 <button

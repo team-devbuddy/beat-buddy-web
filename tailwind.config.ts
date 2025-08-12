@@ -117,6 +117,7 @@ const config: Config = {
           {
             lineHeight: '150%',
             fontWeight: '700',
+            letterSpacing: '-0.03rem',
           },
         ],
         'title-24-medium': [

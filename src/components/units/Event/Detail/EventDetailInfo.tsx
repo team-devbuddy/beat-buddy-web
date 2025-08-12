@@ -97,7 +97,7 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
           </div>
           <div className="flex items-start gap-[0.25rem]">
             <Image src="/icons/locationMark.svg" alt="info" width={20} height={20} />
-            <div className="flex items-end gap-1">
+            <div className="flex items-center gap-1">
               <p className="text-body-14-medium text-gray100">{eventDetail.location}</p>
               {eventDetail.location && (
                 <a
