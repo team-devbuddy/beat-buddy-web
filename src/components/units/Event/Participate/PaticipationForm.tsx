@@ -16,7 +16,7 @@ import SNSInput2 from './SNSInput2';
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export default function ParticipateForm({ eventId, mode }: { eventId: string; mode?: string | null }) {
   const accessToken = useRecoilValue(accessTokenState) || '';
@@ -24,6 +24,10 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   const event = useRecoilValue(eventState);
   const router = useRouter();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+
+  // 키보드 상태 관리
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   // localStorage에서 currentStep 복원 또는 초기값 설정
   const [currentStep, setCurrentStep] = useState(() => {
@@ -145,22 +149,107 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
     console.log('🔵 currentStep을 5로 설정함');
   };
 
+  // 중앙 확인 버튼 클릭 핸들러
+  const handleConfirmButtonClick = () => {
+    console.log('🔵 중앙 확인 버튼 클릭, 현재 단계:', currentStep);
+
+    switch (currentStep) {
+      case 1:
+        handleNameConfirm();
+        break;
+      case 2:
+        handleGenderComplete();
+        break;
+      case 3:
+        handlePhoneConfirm();
+        break;
+      case 4:
+        handleSNSComplete();
+        break;
+      default:
+        break;
+    }
+
+    // 키보드 숨김
+    setIsKeyboardVisible(false);
+  };
+
+  // VisualViewport API를 사용한 키보드 감지
+  useEffect(() => {
+    const handleViewportResize = () => {
+      if ('visualViewport' in window) {
+        const windowHeight = window.innerHeight;
+        const viewportHeight = window.visualViewport?.height || windowHeight;
+        const heightDiff = windowHeight - viewportHeight;
+        const threshold = 50; // 50px 이상 차이나야 키보드로 인식
+
+        console.log('🔵 PaticipationForm 키보드 감지:', { windowHeight, viewportHeight, heightDiff, threshold });
+
+        if (heightDiff > threshold) {
+          setIsKeyboardVisible(true);
+          setKeyboardHeight(heightDiff);
+          console.log('🔵 키보드 감지됨:', heightDiff);
+        } else {
+          setIsKeyboardVisible(false);
+          setKeyboardHeight(0);
+          console.log('🔵 키보드 없음');
+        }
+      }
+    };
+
+    // 초기 상태 설정
+    handleViewportResize();
+
+    // 이벤트 리스너 등록
+    if ('visualViewport' in window) {
+      window.visualViewport?.addEventListener('resize', handleViewportResize);
+    }
+
+    return () => {
+      if ('visualViewport' in window) {
+        window.visualViewport?.removeEventListener('resize', handleViewportResize);
+      }
+    };
+  }, []);
+
   // currentStep 상태 변화 추적
   useEffect(() => {
     console.log('🟡 currentStep 변경됨:', currentStep);
   }, [currentStep]);
 
   // 조건별 렌더링 플래그 설정 (단계별로 변경)
-  const showName =  event?.receiveName === true && currentStep >= 1;
+  const showName = event?.receiveName === true && currentStep >= 1;
   const showGender = event?.receiveGender === true && currentStep >= 2;
   const showPhone = event?.receivePhoneNumber === true && currentStep >= 3;
   const showSNS = event?.receiveSNSId === true && currentStep >= 4;
   const showPeople = event?.receiveAccompany === true && currentStep >= 5;
   // 사전예약금이 필요한 이벤트이고, 동행인원이 선택되었을 때만 표시
-  const showDeposit = event?.receiveMoney === true && form.totalNumber >=5;
+  const showDeposit = event?.receiveMoney === true && form.totalNumber >= 5;
 
   // 마지막 단계 정의
   const isLastStep = showPeople; // 동행인원 선택 완료 후
+
+  // 현재 단계에서 확인 버튼을 보여줄지 결정
+  const shouldShowConfirmButton = () => {
+    if (!isKeyboardVisible) return false;
+
+    switch (currentStep) {
+      case 1: // 이름 입력
+        return form.name.trim().length > 0;
+      case 2: // 성별 선택
+        return form.gender !== '';
+      case 3: // 전화번호 입력
+        return form.phoneNumber.length >= 10;
+      case 4: // SNS 입력
+        return (
+          form.snsType === 'None' ||
+          (form.snsType === 'Instagram' && form.snsId.trim().length > 0) ||
+          (form.snsType === 'Facebook' && form.snsId.trim().length > 0)
+        );
+      default:
+        return false;
+    }
+  };
 
   console.log(
     '🟢 렌더링 상태 - showGender:',
@@ -228,10 +317,10 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
       <div className="flex flex-col gap-5 px-5 pb-6 text-white">
         {/* 이름 입력 */}
         {showName && (
-        <NameInput
-          value={form.name}
-          onChange={(val) => updateForm('name', val)}
-          onConfirm={handleNameConfirm}
+          <NameInput
+            value={form.name}
+            onChange={(val) => updateForm('name', val)}
+            onConfirm={handleNameConfirm}
             disabled={mode === 'edit'}
           />
         )}
@@ -341,6 +430,25 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
           )}
         </AnimatePresence>
       </div>
+
+      {/* 중앙 확인 버튼 - 키보드 위에 표시 */}
+      {shouldShowConfirmButton() && (
+        <div
+          className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
+          style={{
+            bottom: `${keyboardHeight}px`,
+            transition: 'bottom 0.3s ease-out',
+          }}>
+          <div className="w-full max-w-[600px]">
+            <button
+              onClick={handleConfirmButtonClick}
+              disabled={mode === 'edit'}
+              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
