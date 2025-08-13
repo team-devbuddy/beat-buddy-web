@@ -220,7 +220,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col gap-5 px-5 text-white">
+      <div className="flex flex-col gap-5 px-5 text-white pb-6">
         {/* 이름 입력 */}
         <NameInput
           value={form.name}

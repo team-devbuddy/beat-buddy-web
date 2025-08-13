@@ -21,37 +21,24 @@ export default function SNSSelector({
 }: SNSSelectorProps) {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const hasInteracted = useRef(false);
   const hasConfirmed = useRef(false);
 
   // VisualViewport API를 사용한 키보드 감지
   useEffect(() => {
     const handleViewportResize = () => {
-      if (!('visualViewport' in window)) return;
+      if ('visualViewport' in window) {
+        const windowHeight = window.innerHeight;
+        const viewportHeight = window.visualViewport?.height || windowHeight;
 
-      // 실제 모바일 디바이스인지 감지 (UA 또는 포인터 특성 기반)
-      const isMobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-      const isCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-      const mobile = isMobileUA || isCoarsePointer;
-      setIsMobile(mobile);
-
-      if (!mobile) {
-        setIsKeyboardVisible(false);
-        setKeyboardHeight(0);
-        return;
-      }
-
-      const windowHeight = window.innerHeight;
-      const viewportHeight = window.visualViewport?.height || windowHeight;
-
-      // 키보드가 올라왔는지 확인 (window height > viewport height)
-      if (windowHeight > viewportHeight) {
-        setIsKeyboardVisible(true);
-        setKeyboardHeight(windowHeight - viewportHeight);
-      } else {
-        setIsKeyboardVisible(false);
-        setKeyboardHeight(0);
+        // 키보드가 올라왔는지 확인 (window height > viewport height)
+        if (windowHeight > viewportHeight) {
+          setIsKeyboardVisible(true);
+          setKeyboardHeight(windowHeight - viewportHeight);
+        } else {
+          setIsKeyboardVisible(false);
+          setKeyboardHeight(0);
+        }
       }
     };
 
@@ -239,8 +226,8 @@ export default function SNSSelector({
         />
       )}
 
-      {/* 확인 버튼 - 모바일에서만 표시 */}
-      {isMobile && isKeyboardVisible && shouldShowConfirmButton && (
+      {/* 확인 버튼 - 모바일 키보드가 올라왔을 때만 표시 (Name/Phone과 동일) */}
+      {isKeyboardVisible && shouldShowConfirmButton && (
         <div
           className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
           style={{
