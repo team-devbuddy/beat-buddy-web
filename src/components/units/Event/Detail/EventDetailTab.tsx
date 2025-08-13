@@ -211,18 +211,23 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
                 value={qnaContent}
                 onChange={(e) => setQnaContent(e.target.value)}
                 placeholder="문의 내용을 작성해 주세요"
-                className="text-body-14-medium mb-4 min-h-[7.5rem] w-full resize-none rounded-[0.5rem] bg-gray700 px-4 py-3 text-gray200 placeholder:text-gray200 focus:outline-none"
+                className="mb-4 min-h-[7.5rem] w-full resize-none rounded-[0.5rem] bg-gray700 px-4 py-3 text-body-14-medium text-gray200 placeholder:text-gray200 focus:outline-none"
+                style={{
+                  marginBottom: '1rem',
+                  display: 'block',
+                  verticalAlign: 'top',
+                }}
               />
               <div className="flex justify-between gap-3">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-button-16-semibold w-full rounded-[0.5rem] bg-gray700 py-3 text-gray200">
+                  className="w-full rounded-[0.5rem] bg-gray700 py-3 text-button-16-semibold text-gray200">
                   취소
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="text-button-16-semibold w-full rounded-[0.5rem] bg-gray700 py-3 text-main">
+                  className="w-full rounded-[0.5rem] bg-gray700 py-3 text-button-16-semibold text-main">
                   문의 등록하기
                 </button>
               </div>

@@ -161,6 +161,31 @@ export default function SNSInput2({
               onIdChange(value);
             }
           }}
+          onFocus={() => {
+            console.log('🔵 Instagram 입력 필드 포커스');
+            // 포커스 시 즉시 키보드 감지 시도
+            setTimeout(() => {
+              if ('visualViewport' in window) {
+                const windowHeight = window.innerHeight;
+                const viewportHeight = window.visualViewport?.height || windowHeight;
+                const heightDiff = windowHeight - viewportHeight;
+                const threshold = 50;
+
+                console.log('🔵 Instagram focus 후 키보드 체크:', {
+                  windowHeight,
+                  viewportHeight,
+                  heightDiff,
+                  threshold,
+                });
+
+                if (heightDiff > threshold) {
+                  setIsKeyboardVisible(true);
+                  setKeyboardHeight(heightDiff);
+                  console.log('🔵 Instagram focus 후 키보드 감지됨');
+                }
+              }
+            }, 100);
+          }}
           onKeyDown={handleKeyDown}
           pattern="[a-zA-Z0-9._]+"
           title="영어, 숫자, 언더스코어(_), 점(.)만 입력 가능합니다"
@@ -182,6 +207,31 @@ export default function SNSInput2({
               const value = e.target.value.replace(/[^a-zA-Z0-9._]/g, '');
               onIdChange(value);
             }
+          }}
+          onFocus={() => {
+            console.log('🔵 Facebook 입력 필드 포커스');
+            // 포커스 시 즉시 키보드 감지 시도
+            setTimeout(() => {
+              if ('visualViewport' in window) {
+                const windowHeight = window.innerHeight;
+                const viewportHeight = window.visualViewport?.height || windowHeight;
+                const heightDiff = windowHeight - viewportHeight;
+                const threshold = 50;
+
+                console.log('🔵 Facebook focus 후 키보드 체크:', {
+                  windowHeight,
+                  viewportHeight,
+                  heightDiff,
+                  threshold,
+                });
+
+                if (heightDiff > threshold) {
+                  setIsKeyboardVisible(true);
+                  setKeyboardHeight(heightDiff);
+                  console.log('🔵 Facebook focus 후 키보드 감지됨');
+                }
+              }
+            }, 100);
           }}
           onKeyDown={handleKeyDown}
           pattern="[a-zA-Z0-9._]+"
