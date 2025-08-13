@@ -154,7 +154,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   const showDeposit = showPeople && form.totalNumber > 0 && event?.receiveMoney === true;
 
   // 마지막 단계 정의
-  const isLastStep = currentStep >= 5; // 동행인원 선택 완료 후
+  const isLastStep = showDeposit; // 동행인원 선택 완료 후
 
   console.log(
     '🟢 렌더링 상태 - showGender:',

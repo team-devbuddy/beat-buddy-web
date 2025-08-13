@@ -63,6 +63,12 @@ export default function SNSSelector({
     (snsType === 'Instagram' && snsId.trim().length > 0) || // Instagram + ID 입력
     (snsType === 'Facebook' && snsId.trim().length > 0); // Facebook + ID 입력
 
+  // 확인 버튼을 보여줄지 결정하는 조건 (더 엄격함)
+  const shouldShowConfirmButton =
+    snsType === '' || // SNS 없음 선택 시
+    (snsType === 'Instagram' && snsId.trim().length > 0) || // Instagram + ID 입력 완료 시
+    (snsType === 'Facebook' && snsId.trim().length > 0); // Facebook + ID 입력 완료 시
+
   // 자동 진행 로직 제거 - 오직 확인 버튼이나 엔터 키로만 진행
 
   const getButtonClass = (sns: string) => {
@@ -229,7 +235,7 @@ export default function SNSSelector({
       )}
 
       {/* 확인 버튼 - VisualViewport를 사용하여 키보드 위에 정확히 위치 */}
-      {canConfirm && (
+      {shouldShowConfirmButton && (
         <div
           className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
           style={{
