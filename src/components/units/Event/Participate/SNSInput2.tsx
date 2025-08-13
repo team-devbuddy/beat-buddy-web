@@ -20,20 +20,27 @@ export default function SNSInput2({
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  // VisualViewport API를 사용한 키보드 감지
+  // VisualViewport API를 사용한 키보드 감지 (스크롤바 오차 보정)
   useEffect(() => {
     const handleViewportResize = () => {
       if ('visualViewport' in window) {
         const windowHeight = window.innerHeight;
         const viewportHeight = window.visualViewport?.height || windowHeight;
 
-        // 키보드가 올라왔는지 확인 (window height > viewport height)
-        if (windowHeight > viewportHeight) {
+        // 스크롤바로 인한 오차를 보정하기 위해 threshold 추가
+        const heightDiff = windowHeight - viewportHeight;
+        const threshold = 50; // 50px 이상 차이나야 키보드로 인식
+
+        console.log('🔵 SNSInput2 키보드 감지:', { windowHeight, viewportHeight, heightDiff, threshold });
+
+        if (heightDiff > threshold) {
           setIsKeyboardVisible(true);
-          setKeyboardHeight(windowHeight - viewportHeight);
+          setKeyboardHeight(heightDiff);
+          console.log('🔵 키보드 감지됨:', heightDiff);
         } else {
           setIsKeyboardVisible(false);
           setKeyboardHeight(0);
+          console.log('🔵 키보드 없음');
         }
       }
     };

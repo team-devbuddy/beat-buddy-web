@@ -149,6 +149,7 @@ export interface EventDetail {
   receiveGender: boolean;
   receivePhoneNumber: boolean;
   receiveSNSId: boolean;
+  receiveAccompany: boolean;
   receiveMoney: boolean;
   depositAccount: string;
   depositAmount: number;

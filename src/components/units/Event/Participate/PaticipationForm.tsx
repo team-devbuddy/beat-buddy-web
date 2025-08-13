@@ -22,7 +22,6 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [form, setForm] = useRecoilState(participateFormState);
   const event = useRecoilValue(eventState);
-  console.log('🔵 event:', event);
   const router = useRouter();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
@@ -152,12 +151,13 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   }, [currentStep]);
 
   // 조건별 렌더링 플래그 설정 (단계별로 변경)
-  const showGender = currentStep >= 2;
-  const showPhone = currentStep >= 3;
-  const showSNS = currentStep >= 4;
-  const showPeople = currentStep >= 5;
+  const showName =  event?.receiveName === true && currentStep >= 1;
+  const showGender = event?.receiveGender === true && currentStep >= 2;
+  const showPhone = event?.receivePhoneNumber === true && currentStep >= 3;
+  const showSNS = event?.receiveSNSId === true && currentStep >= 4;
+  const showPeople = event?.receiveAccompany === true && currentStep >= 5;
   // 사전예약금이 필요한 이벤트이고, 동행인원이 선택되었을 때만 표시
-  const showDeposit = event?.receiveMoney === true && form.totalNumber > 0;
+  const showDeposit = event?.receiveMoney === true && form.totalNumber >=5;
 
   // 마지막 단계 정의
   const isLastStep = showPeople; // 동행인원 선택 완료 후
@@ -227,12 +227,14 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
 
       <div className="flex flex-col gap-5 px-5 pb-6 text-white">
         {/* 이름 입력 */}
+        {showName && (
         <NameInput
           value={form.name}
           onChange={(val) => updateForm('name', val)}
           onConfirm={handleNameConfirm}
-          disabled={mode === 'edit'}
-        />
+            disabled={mode === 'edit'}
+          />
+        )}
 
         {/* 성별 */}
         <AnimatePresence mode="wait">
