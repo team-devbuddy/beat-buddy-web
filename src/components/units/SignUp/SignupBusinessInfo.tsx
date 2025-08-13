@@ -103,20 +103,20 @@ export default function SignUpBusinessNickname() {
         <div ref={containerRef}>
           {step === 1 && (
             <>
-              <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">비즈니스명을 입력해주세요.</h1>
+              <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">비즈니스명을 입력해주세요</h1>
               <label className="mb-[0.62rem] block text-[1rem] font-bold">비즈니스명</label>
               <input
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="ex. 클럽 사운드, UPA"
-                className="w-full border-b border-white bg-transparent px-1 py-3 text-[0.875rem] text-white placeholder-gray200 safari-input-fix outline-none"
+                className="w-full border-b border-white bg-transparent px-1 py-3 text-[0.875rem] text-white placeholder-gray200 outline-none safari-input-fix"
               />
             </>
           )}
 
           {step === 2 && (
             <>
-              <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">닉네임을 입력해주세요.</h1>
+              <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">닉네임을 입력해주세요</h1>
               <label className="mb-[0.62rem] block text-[1rem] font-bold">닉네임</label>
               <div className="relative">
                 <input
@@ -127,8 +127,8 @@ export default function SignUpBusinessNickname() {
                     setIsAvailable(false);
                     setNicknameChecked(false);
                   }}
-                  placeholder="닉네임을 입력해 주세요."
-                  className="w-full border-b border-white bg-transparent px-1 py-3 pr-10 text-[0.875rem] text-white placeholder-gray200 safari-input-fix outline-none"
+                  placeholder="닉네임을 입력해 주세요"
+                  className="w-full border-b border-white bg-transparent px-1 py-3 pr-10 text-[0.875rem] text-white placeholder-gray200 outline-none safari-input-fix"
                 />
                 {nicknameChecked && isAvailable ? (
                   <Image
@@ -151,15 +151,15 @@ export default function SignUpBusinessNickname() {
               <div className="mt-2">
                 {!nicknameChecked && (
                   <p className="text-[0.75rem] text-gray300">
-                    공백없이 12자 이하로 입력해주세요. 특수 기호는 불가능해요.
+                    공백없이 12자 이하로 입력해주세요 특수 기호는 불가능해요
                   </p>
                 )}
                 {nicknameChecked && (
                   <p className="mt-2 text-[0.875rem]">
                     {isAvailable ? (
-                      <span className="text-[0.75rem] text-main">사용 가능한 닉네임이에요.</span>
+                      <span className="text-[0.75rem] text-main">사용 가능한 닉네임이에요</span>
                     ) : (
-                      <span className="text-main">중복된 닉네임이에요.</span>
+                      <span className="text-main">중복된 닉네임이에요</span>
                     )}
                   </p>
                 )}

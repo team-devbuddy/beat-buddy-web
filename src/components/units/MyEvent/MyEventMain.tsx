@@ -469,8 +469,8 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
                   : type === 'my-event'
                     ? '내가 작성한 이벤트가 없어요!'
                     : activeTab === 'attending'
-                      ? '아직 참석한 이벤트가 없어요!\n이벤트에 참석해보세요.'
-                      : '아직 좋아한 이벤트가 없어요!\n마음에 드는 이벤트를 찾아보세요.'
+                      ? '아직 참석한 이벤트가 없어요!\n이벤트에 참석해보세요'
+                      : '아직 좋아한 이벤트가 없어요!\n마음에 드는 이벤트를 찾아보세요'
               }
             />
           )}

@@ -81,7 +81,7 @@ const ImageUploader = ({ onUpload, uploadedFiles }: ImageUploaderProps) => {
             htmlFor="file-upload"
             className="flex cursor-pointer flex-col items-center justify-center text-gray100">
             <Image src="/icons/folder-plus-02.svg" alt="Upload Icon" width={48} height={48} />
-            <span className="text-[0.875rem] text-gray100">사진이나 영상을 추가해주세요.</span>
+            <span className="text-[0.875rem] text-gray100">사진이나 영상을 추가해주세요</span>
           </label>
           <input
             id="file-upload"

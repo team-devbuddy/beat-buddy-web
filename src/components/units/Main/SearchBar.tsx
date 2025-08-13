@@ -58,8 +58,8 @@ export default function SearchBar() {
             <Link href="/search" className="block w-full">
               <div className="relative w-full">
                 <input
-                  className="safari-input-fix w-full cursor-pointer bg-transparent px-[0.88rem] py-3 text-[0.8125rem] text-gray300 placeholder:text-gray300 focus:outline-none"
-                  placeholder="지금 인기 있는 베뉴를 검색해보세요."
+                  className="w-full cursor-pointer bg-transparent px-[0.88rem] py-3 text-[0.8125rem] text-gray300 safari-input-fix placeholder:text-gray300 focus:outline-none"
+                  placeholder="지금 인기 있는 베뉴를 검색해보세요"
                   readOnly
                   style={{ WebkitAppearance: 'none', borderRadius: 0 }}
                 />
@@ -77,8 +77,8 @@ export default function SearchBar() {
           <div className="relative w-full">
             <input
               ref={inputRef}
-              className="safari-input-fix w-full cursor-pointer bg-transparent px-[0.88rem] py-3 text-[0.8125rem] text-white placeholder:text-gray300 focus:outline-none"
-              placeholder="지금 인기 있는 베뉴를 검색해보세요."
+              className="w-full cursor-pointer bg-transparent px-[0.88rem] py-3 text-[0.8125rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none"
+              placeholder="지금 인기 있는 베뉴를 검색해보세요"
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}

@@ -125,7 +125,7 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
   }, [replyingTo, setReplyingTo]);
 
   return (
-    <main className="relative  bg-BG-black  text-white">
+    <main className="relative bg-BG-black text-white">
       <div className="flex items-center justify-between py-[0.53rem] pl-[0.62rem] pr-4">
         <Image
           onClick={() => router.back()}
@@ -144,7 +144,7 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
       ) : post ? (
         <BoardDetail postId={post.id} post={post} />
       ) : (
-        <NoResults text="아직 게시글이 없어요." />
+        <NoResults text="아직 게시글이 없어요" />
       )}
       {post && <BoardComments postId={post.id} comments={comments} setComments={setComments} bottomRef={bottomRef} />}
 

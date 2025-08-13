@@ -115,7 +115,7 @@ export default function BBPOnboardingPage() {
       <Filter setFilteredClubs={setFilteredClubs} BBPClubs={BBPClubs} />
       <main className="pb-[3rem]">
         {filteredClubs.length === 0 && filteredClubs !== BBPClubs ? (
-          <NoResults text="조건에 맞는 추천 결과가 없어요.\n취향을 다시 설정해볼까요?" fullHeight />
+          <NoResults text="조건에 맞는 추천 결과가 없어요\n취향을 다시 설정해볼까요?" fullHeight />
         ) : (
           <VenueCard
             clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}

@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import { PostGenre } from '@/lib/action'; // 경로를 적절히 수정하세요.
+import { PostGenre } from '@/lib/action'; // 경로를 적절히 수정하세요
 import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 import { accessTokenState, memberGenreIdState, onboardingGenreState } from '@/context/recoil-context';
 import Image from 'next/image';

@@ -48,7 +48,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
 
   const handleSearch = () => {
     if (searchQuery.trim().length < 2) {
-      setErrorMessage('2글자 이상 입력해주세요.');
+      setErrorMessage('2글자 이상 입력해주세요');
       setTimeout(() => setErrorMessage(''), 2000);
       return;
     }
@@ -112,7 +112,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
           <div className="relative w-full rounded-[0.5rem] bg-gray700">
             <input
               ref={inputRef}
-              className={`text-body-15-bold placeholder:font-body-15-medium placeholder:text-body-15-medium w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none ${
+              className={`placeholder:font-body-15-medium w-full cursor-pointer bg-transparent py-[0.72rem] pl-[2.37rem] pr-[3rem] text-body-15-bold text-white safari-input-fix placeholder:text-body-15-medium placeholder:text-gray300 focus:outline-none ${
                 isEvent ? 'pr-[5rem]' : ''
               }`}
               placeholder={isLoading ? '' : placeholder}

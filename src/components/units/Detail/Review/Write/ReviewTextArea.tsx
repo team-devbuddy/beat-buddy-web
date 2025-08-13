@@ -54,7 +54,7 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
 
         {!value && (
           <div className="mt-[-2.55rem] rounded-[0.5rem] pb-8 pl-4 pr-5 text-[0.8125rem] text-gray300">
-            광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요. 자세한 내용은{' '}
+            광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요 자세한 내용은{' '}
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -63,7 +63,7 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
               className="text-gray300 underline">
               리뷰 작성 규칙
             </button>
-            을 참고해주세요.
+            을 참고해주세요
           </div>
         )}
       </div>

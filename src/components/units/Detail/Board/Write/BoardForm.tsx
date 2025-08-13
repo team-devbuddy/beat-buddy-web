@@ -235,7 +235,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
 
   const handleMonthClick = () => {
     if (!formData.date.year) {
-      setErrorMessage('연도를 먼저 선택해주세요.');
+      setErrorMessage('연도를 먼저 선택해주세요');
       return;
     }
     setErrorMessage('');
@@ -244,11 +244,11 @@ const BoardForm: React.FC<BoardFormProps> = ({
 
   const handleDayClick = () => {
     if (!formData.date.year) {
-      setErrorMessage('연도를 먼저 선택해주세요.');
+      setErrorMessage('연도를 먼저 선택해주세요');
       return;
     }
     if (!formData.date.month) {
-      setErrorMessage('월을 먼저 선택해주세요.');
+      setErrorMessage('월을 먼저 선택해주세요');
       return;
     }
     setErrorMessage('');
@@ -311,7 +311,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
             <WriteField
               value={formData.title}
               onChange={(value) => handleInputChange('title', value)}
-              placeholder="글 제목을 입력해주세요."
+              placeholder="글 제목을 입력해주세요"
               className={`w-full rounded-xs border px-4 py-3 focus:outline-none ${getBorderStyle(formData.title)}`}
             />
           </div>
@@ -504,7 +504,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
             <WriteField
               value={formData.cost}
               onChange={handleCostChange}
-              placeholder="총 비용을 입력해주세요."
+              placeholder="총 비용을 입력해주세요"
               className={`w-full rounded-xs border px-4 py-3 focus:outline-none ${getBorderStyle(formData.cost)}`}
             />
             <div className="mt-2 text-gray300">
@@ -526,7 +526,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
           <WriteField
             value={formData.title}
             onChange={(value) => handleInputChange('title', value)}
-            placeholder="글 제목을 입력해주세요."
+            placeholder="글 제목을 입력해주세요"
             className={`w-full rounded-xs border px-4 py-3 focus:outline-none ${getBorderStyle(formData.title)}`}
           />
         </div>
@@ -540,7 +540,7 @@ const BoardForm: React.FC<BoardFormProps> = ({
           onChange={(value) => handleInputChange('content', value)}
           className={`w-full rounded-xs border px-4 py-3 focus:outline-none ${getBorderStyle(formData.content)}`}
           placeholder={
-            boardType === '조각 게시판' ? '조각 모집 관련 내용을 입력해주세요.' : '자유롭게 내용을 입력해주세요.'
+            boardType === '조각 게시판' ? '조각 모집 관련 내용을 입력해주세요' : '자유롭게 내용을 입력해주세요'
           }
           isTextArea={true}
         />

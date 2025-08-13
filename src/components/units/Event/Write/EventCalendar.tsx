@@ -8,9 +8,9 @@ import Image from 'next/image';
 interface EventCalendarProps {
   selectedDate: string;
   onSelectDate: (date: string) => void;
-    onClose: () => void;
-    minDate?: string;
-    maxDate?: string;
+  onClose: () => void;
+  minDate?: string;
+  maxDate?: string;
 }
 
 export default function EventCalendar({ selectedDate, onSelectDate, onClose, minDate, maxDate }: EventCalendarProps) {
@@ -49,7 +49,7 @@ export default function EventCalendar({ selectedDate, onSelectDate, onClose, min
     const selected = `${year}. ${String(month + 1).padStart(2, '0')}. ${String(day).padStart(2, '0')}`;
     setLocalSelectedDate(selected); // ✅ 즉시 스타일 반영
     onSelectDate(selected); // 상위에도 전달 (startDate는 외부 클릭 시 적용됨)
-  };    
+  };
   // 🔥 여기가 수정된 캘린더 렌더링 로직입니다.
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(year, month);
@@ -61,20 +61,20 @@ export default function EventCalendar({ selectedDate, onSelectDate, onClose, min
     const totalCells = firstDay + daysInMonth;
     const nextDays = (7 - (totalCells % 7)) % 7;
 
-      const calendarDays = [];
-      
-      const isBeforeMinDate = (day: number) => {
-        if (!minDate) return false;
-        const current = new Date(year, month, day);
-        const min = new Date(minDate);
-        return current < min;
-      };
-      const isAfterMaxDate = (day: number) => {
-        if (!maxDate) return false;
-        const current = new Date(year, month, day);
-        const max = new Date(maxDate);
-        return current > max;
-      };
+    const calendarDays = [];
+
+    const isBeforeMinDate = (day: number) => {
+      if (!minDate) return false;
+      const current = new Date(year, month, day);
+      const min = new Date(minDate);
+      return current < min;
+    };
+    const isAfterMaxDate = (day: number) => {
+      if (!maxDate) return false;
+      const current = new Date(year, month, day);
+      const max = new Date(maxDate);
+      return current > max;
+    };
     // 1. 이전 달 날짜 채우기
     for (let i = firstDay - 1; i >= 0; i--) {
       const day = prevMonthDays - i;
@@ -97,8 +97,16 @@ export default function EventCalendar({ selectedDate, onSelectDate, onClose, min
       calendarDays.push(
         <div
           key={`${year}-${month + 1}-${day}`}
-          className={`flex aspect-square cursor-pointer items-center justify-center rounded-[0.75rem] text-[0.75rem] transition ${
-            isSelected ? 'bg-main text-white' : isToday ? 'text-main' : isDisabled ? 'text-gray400 cursor-not-allowed' : isDisabledMax ? 'text-gray400 cursor-not-allowed' : 'hover:bg-gray700'
+          className={`flex aspect-square cursor-pointer items-center justify-center rounded-[0.75rem] text-body3-12-medium transition ${
+            isSelected
+              ? 'bg-main text-white'
+              : isToday
+                ? 'text-main'
+                : isDisabled
+                  ? 'cursor-not-allowed text-gray300'
+                  : isDisabledMax
+                    ? 'cursor-not-allowed text-gray300'
+                    : 'hover:bg-gray700'
           }`}
           onClick={() => {
             if (!isDisabled && !isDisabledMax) handleSelectDate(day);
@@ -113,7 +121,7 @@ export default function EventCalendar({ selectedDate, onSelectDate, onClose, min
       calendarDays.push(
         <div
           key={`next-${i}`}
-          className="flex aspect-square cursor-default items-center justify-center text-[0.75rem] text-gray400">
+          className="flex aspect-square cursor-default items-center justify-center text-body3-12-medium text-gray300">
           {i}
         </div>,
       );
@@ -122,28 +130,28 @@ export default function EventCalendar({ selectedDate, onSelectDate, onClose, min
     return calendarDays;
   };
   return (
-    <div className="bg-gray900 relative w-full max-w-[17rem] rounded-md border border-gray600 p-3 shadow-md">
+    <div className="bg-gray900 relative w-full max-w-[17rem] rounded-[0.25rem] border border-gray600 p-2">
       {/* 헤더 */}
-      <div className="relative mb-4 flex items-center justify-center text-white">
+      <div className="relative mt-[0.63rem] mb-[0.34rem] flex items-center justify-center text-white">
         <div className="absolute left-16">
           <Image
-            src="/icons/chevron-left-1.svg"
+            src="/icons/calendar-left.svg"
             alt="chevron-left"
-            width={18}
-            height={18}
+            width={22}
+            height={22}
             className="cursor-pointer"
             onClick={handlePrevMonth}
           />
         </div>
-        <span className="font-suit text-[0.875rem] font-semibold">
+        <span className=" text-body-14-semibold">
           {year}년 {month + 1}월
         </span>
         <div className="absolute right-16">
           <Image
-            src="/icons/chevron-left-2.svg"
+            src="/icons/calendar-right.svg"
             alt="chevron-right"
-            width={18}
-            height={18}
+            width={22}
+            height={22}
             className="cursor-pointer"
             onClick={handleNextMonth}
           />
@@ -151,9 +159,9 @@ export default function EventCalendar({ selectedDate, onSelectDate, onClose, min
       </div>
 
       {/* 요일 + 날짜 */}
-      <div className="grid grid-cols-7 gap-[2px] text-center text-[0.75rem] text-gray200">
+      <div className="grid grid-cols-7 gap-[0.25rem] text-center  text-gray200">
         {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
-          <div key={day} className="flex aspect-square items-center justify-center font-bold">
+          <div key={day} className="flex aspect-square items-center text-body3-12-bold justify-center">
             {day}
           </div>
         ))}

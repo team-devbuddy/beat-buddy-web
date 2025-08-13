@@ -190,13 +190,13 @@ const BoardDropdown = ({
       setShowBlockCompleteModal(true);
     } catch (error) {
       console.error('차단 처리 실패:', error);
-      alert('차단 처리에 실패했습니다. 다시 시도해주세요.');
+      alert('차단 처리에 실패했습니다. 다시 시도해주세요');
     }
   };
 
   const handleReport = async () => {
     if (!reportReason.trim()) {
-      alert('신고 사유를 입력해주세요.');
+      alert('신고 사유를 입력해주세요');
       return;
     }
 
@@ -229,7 +229,7 @@ const BoardDropdown = ({
       }
     } catch (error) {
       console.error('신고 처리 실패:', error);
-      alert('신고 처리에 실패했습니다. 다시 시도해주세요.');
+      alert('신고 처리에 실패했습니다. 다시 시도해주세요');
     }
   };
 
@@ -308,7 +308,7 @@ const BoardDropdown = ({
                 <br />
                 차단은 해제할 수 없으며, 되돌릴 수 없습니다.
                 <br />
-                신중히 결정해주세요.
+                신중히 결정해주세요
               </p>
               <div className="flex justify-between gap-3">
                 <button
@@ -380,7 +380,7 @@ const BoardDropdown = ({
             className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
               <h3 className="mb-[0.38rem] text-[1.25rem] font-bold text-white">신고가 완료되었어요</h3>
-              <p className="text-[0.875rem] text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요.</p>
+              <p className="text-[0.875rem] text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요</p>
               <p className="mb-5 text-[0.875rem] text-gray300">허위 신고 시 제재가 있을 수 있습니다.</p>
               <button
                 onClick={() => {

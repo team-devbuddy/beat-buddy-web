@@ -113,7 +113,7 @@ export default function OtherUserPosts({ userId }: OtherUserPostsProps) {
   }, [userId, accessToken, page]);
 
   if (posts.length === 0 && !loading) {
-    return <NoResults text="아직 게시글이 없어요." />;
+    return <NoResults text="아직 게시글이 없어요" />;
   }
 
   return (

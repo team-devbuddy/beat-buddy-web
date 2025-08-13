@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { PostLocation } from '@/lib/action'; // 경로를 적절히 수정하세요.
+import { PostLocation } from '@/lib/action'; // 경로를 적절히 수정하세요
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, authState } from '@/context/recoil-context';
 import Image from 'next/image';

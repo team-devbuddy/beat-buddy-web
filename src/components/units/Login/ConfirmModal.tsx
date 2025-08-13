@@ -23,18 +23,13 @@ export default function ConfirmedModal({ onClose, loginType }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-      <div className="bg-BG-black text-white px-6 pt-8 pb-6 rounded-md w-[320px] text-center shadow-xl">
-        <p className="text-subtitle-20-bold mb-2">
-          {providerNameMap[loginType]} 계정으로 확인되었어요
-        </p>
-        <p className="text-body2-15-medium text-gray200 mb-[1.56rem]">
-          비즈니스 등록 및 연락처 인증을 완료해주세요.
-        </p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="w-[320px] rounded-md bg-BG-black px-6 pb-6 pt-8 text-center text-white shadow-xl">
+        <p className="mb-2 text-subtitle-20-bold">{providerNameMap[loginType]} 계정으로 확인되었어요</p>
+        <p className="mb-[1.56rem] text-body2-15-medium text-gray200">비즈니스 등록 및 연락처 인증을 완료해주세요</p>
         <button
           onClick={handleConfirm}
-          className="w-full py-2 rounded-md bg-main text-body2-15-medium font-semibold text-white hover:bg-[#e5006e] transition"
-        >
+          className="w-full rounded-md bg-main py-2 text-body2-15-medium font-semibold text-white transition hover:bg-[#e5006e]">
           확인
         </button>
       </div>

@@ -1,172 +1,122 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import classNames from 'classnames';
+import { useEffect, useRef, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Mousewheel } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/free-mode';
 
-function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
-    if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(this, args), delay);
-  };
-}
-
-interface EventTimePickerProps {
+type Props = {
   selectedHour: number;
   selectedMinute: number;
-  onChange: (hour: number, minute: number) => void;
-}
+  onChange: (h: number, m: number) => void;
+};
 
-const MULTIPLIER = 10;
-const ITEM_HEIGHT = 40;
-const VISIBLE_COUNT = 3;
-const CENTER_OFFSET = ITEM_HEIGHT * Math.floor(VISIBLE_COUNT / 2);
 const HOUR_RANGE = 24;
 const MINUTE_RANGE = 60;
+const pad2 = (n: number) => String(n).padStart(2, '0');
 
-export default function EventTimePicker({ selectedHour, selectedMinute, onChange }: EventTimePickerProps) {
-  const hourRef = useRef<HTMLDivElement>(null);
-  const minuteRef = useRef<HTMLDivElement>(null);
+export default function TimePickerSwiper({ selectedHour, selectedMinute, onChange }: Props) {
+  const [hour, setHour] = useState(selectedHour % HOUR_RANGE);
+  const [minute, setMinute] = useState(selectedMinute % MINUTE_RANGE);
 
-  const [internalHour, setInternalHour] = useState(selectedHour);
-  const [internalMinute, setInternalMinute] = useState(selectedMinute);
+  const hourSwiperRef = useRef<any>(null);
+  const minuteSwiperRef = useRef<any>(null);
 
+  // 외부 값 변경 시 위치 동기화 (애니메이션 없이 즉시)
   useEffect(() => {
-    console.log('🕐 EventTimePicker useEffect - selectedHour:', selectedHour, 'selectedMinute:', selectedMinute);
-
-    // 선택된 값으로 직접 스크롤
-    scrollToItem(hourRef, selectedHour);
-    scrollToItem(minuteRef, selectedMinute);
-    setInternalHour(selectedHour);
-    setInternalMinute(selectedMinute);
-
-    console.log('🔄 내부 상태 설정 - internalHour:', selectedHour, 'internalMinute:', selectedMinute);
+    const h = selectedHour % HOUR_RANGE;
+    const m = selectedMinute % MINUTE_RANGE;
+    setHour(h);
+    setMinute(m);
+    hourSwiperRef.current?.slideToLoop(h, 0);
+    minuteSwiperRef.current?.slideToLoop(m, 0);
   }, [selectedHour, selectedMinute]);
 
-  const scrollToItem = (ref: React.RefObject<HTMLDivElement>, value: number) => {
-    const el = ref.current;
-    if (!el) return;
-
-    // 선택된 값을 중앙에 위치시키기 (VISIBLE_COUNT가 3이므로 중앙은 1번째 인덱스)
-    const centerOffset = ITEM_HEIGHT; // 3개 중 중앙(1번째) 위치
-    const scrollTop = value * ITEM_HEIGHT - centerOffset;
-
-    console.log('📜 scrollToItem:', {
-      value,
-      ITEM_HEIGHT,
-      centerOffset,
-      scrollTop,
-    });
-
-    el.scrollTo({
-      top: scrollTop,
-      behavior: 'auto',
-    });
+  // 공통 옵션: 세로 3개, 센터 기준 스냅, 루프, 클릭 시 해당 슬라이드로 이동
+  const common = {
+    direction: 'vertical' as const,
+    slidesPerView: 3,
+    centeredSlides: true,
+    loop: true,
+    freeMode: { enabled: true, sticky: true },
+    modules: [FreeMode, Mousewheel],
+    mousewheel: { forceToAxis: true, sensitivity: 0.6 },
+    slideToClickedSlide: true, // ✅ 클릭 시 해당 항목으로 “스르륵”
+    speed: 200,
+    resistance: true,
+    resistanceRatio: 0.35,
+    roundLengths: true,
+    spaceBetween: 0,
+    grabCursor: true,
   };
 
-  const handleScrollEnd = (
-    target: HTMLDivElement,
-    range: number,
-    setFn: React.Dispatch<React.SetStateAction<number>>,
-    type: 'hour' | 'minute',
-  ) => {
-    const scrollTop = target.scrollTop;
-    const centerOffset = ITEM_HEIGHT; // 3개 중 중앙(1번째) 위치
-    const value = Math.round((scrollTop + centerOffset) / ITEM_HEIGHT);
-
-    console.log(`🎯 handleScrollEnd - ${type}:`, {
-      scrollTop,
-      centerOffset,
-      value,
-      range,
-      ITEM_HEIGHT,
-    });
-
-    // 선택된 값을 중앙에 맞추기
-    scrollToItem({ current: target }, value);
-
-    // 내부 상태 업데이트 후 onChange 호출
-    if (type === 'hour') {
-      console.log('⏰ 시간 변경 - 새로운 hour:', value, '현재 minute:', internalMinute);
-      setInternalHour(value);
-      onChange(value, internalMinute);
-    } else {
-      console.log('⏰ 분 변경 - 현재 hour:', internalHour, '새로운 minute:', value);
-      setInternalMinute(value);
-      onChange(internalHour, value);
-    }
-  };
-
-  const handleHourScroll = useCallback(
-    debounce(() => {
-      if (hourRef.current) handleScrollEnd(hourRef.current, HOUR_RANGE, setInternalHour, 'hour');
-    }, 100),
-    [internalMinute, onChange],
-  );
-
-  const handleMinuteScroll = useCallback(
-    debounce(() => {
-      if (minuteRef.current) handleScrollEnd(minuteRef.current, MINUTE_RANGE, setInternalMinute, 'minute');
-    }, 100),
-    [internalHour, onChange],
-  );
-
-  const renderList = (
-    range: number,
-    currentValue: number,
-    scrollHandler: () => void,
-    ref: React.RefObject<HTMLDivElement>,
-    type: 'hour' | 'minute',
-  ) => {
-    const totalCount = range * MULTIPLIER;
-
-    const handleItemClick = (value: number) => {
-      console.log(`🖱️ handleItemClick - ${type}:`, value);
-
-      if (type === 'hour') {
-        console.log('⏰ 시간 클릭 - 새로운 hour:', value, '현재 minute:', internalMinute);
-        setInternalHour(value);
-        scrollToItem(ref, value);
-        // 즉시 onChange 호출
-        onChange(value, internalMinute);
-      } else {
-        console.log('⏰ 분 클릭 - 현재 hour:', internalHour, '새로운 minute:', value);
-        setInternalMinute(value);
-        scrollToItem(ref, value);
-        // 즉시 onChange 호출
-        onChange(internalHour, value);
-      }
-    };
-
-    return (
-      <div
-        ref={ref}
-        className="h-[100px] w-[50px] snap-y snap-mandatory overflow-y-scroll scrollbar-hide"
-        onScroll={scrollHandler}>
-        {[...Array(totalCount)].map((_, i) => {
-          const val = i % range;
-          const isSelected = val === currentValue;
-
-          return (
-            <div
-              key={i}
-              onClick={() => handleItemClick(val)}
-              className={classNames(
-                'flex h-[40px] cursor-pointer snap-center items-center justify-center text-[0.875rem] transition-all hover:bg-gray700',
-                isSelected ? 'text-main' : 'text-gray-400',
-              )}>
-              {String(val).padStart(2, '0')}
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
+  // 슬라이드 높이/컨텐츠 높이 일치 (여백 불균형 방지)
+  const slideClass = 'flex h-[1.8125rem] items-center justify-center'; // ≈ 29px
+  const cellBase = 'flex h-[1.8125rem] items-center justify-center text-body-14-semibold';
 
   return (
-    <div className="bg-BG_black flex items-center justify-center rounded-xl border border-gray500 p-4 text-white">
-      {renderList(HOUR_RANGE, internalHour, handleHourScroll, hourRef, 'hour')}
-      {renderList(MINUTE_RANGE, internalMinute, handleMinuteScroll, minuteRef, 'minute')}
+    <div className="flex items-center justify-center rounded-[0.25rem] border border-gray500 bg-BG-black px-[0.63rem] py-2 text-white">
+      {/* Hour */}
+      <div className="relative h-[5.4375rem] w-[5.1563rem]">
+        {' '}
+        {/* 약 29px * 3 */}
+        <Swiper
+          {...common}
+          onSwiper={(sw) => (hourSwiperRef.current = sw)}
+          initialSlide={hour}
+          // ✅ 절반 넘으면 활성 인덱스가 바뀌면서 여기로 콜백 들어옴 → 그 값을 선택으로 사용
+          onActiveIndexChange={(sw) => {
+            const val = sw.realIndex % HOUR_RANGE;
+            if (val !== hour) {
+              setHour(val);
+              onChange(val, minute);
+            }
+          }}
+          className="h-full">
+          {Array.from({ length: HOUR_RANGE }, (_, i) => (
+            <SwiperSlide key={`h-${i}`} className={slideClass}>
+              <div
+                // 보장용 클릭 핸들러(옵션 slideToClickedSlide가 동작 안 하는 환경 대비)
+                onClick={() => {
+                  hourSwiperRef.current?.slideToLoop(i, 200);
+                  // 상태/콜백 업데이트는 onActiveIndexChange에서 일관 처리
+                }}
+                className={`${cellBase} ${i === hour ? 'rounded-l-[0.25rem] bg-gray700 text-main' : 'text-gray300'}`}>
+                {pad2(i)}
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* Minute */}
+      <div className="relative h-[5.4375rem] w-[5.1563rem]">
+        <Swiper
+          {...common}
+          onSwiper={(sw) => (minuteSwiperRef.current = sw)}
+          initialSlide={minute}
+          onActiveIndexChange={(sw) => {
+            const val = sw.realIndex % MINUTE_RANGE;
+            if (val !== minute) {
+              setMinute(val);
+              onChange(hour, val);
+            }
+          }}
+          className="h-full">
+          {Array.from({ length: MINUTE_RANGE }, (_, i) => (
+            <SwiperSlide key={`m-${i}`} className={slideClass}>
+              <div
+                onClick={() => {
+                  minuteSwiperRef.current?.slideToLoop(i, 200);
+                }}
+                className={`${cellBase} ${i === minute ? 'rounded-r-[0.25rem] bg-gray700 text-main' : 'text-gray300'}`}>
+                {pad2(i)}
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
     </div>
   );
 }

@@ -100,7 +100,7 @@ export default function CouponCard({ venueId }: { venueId: number }) {
       }
     } catch (error) {
       console.error('쿠폰 사용 실패:', error);
-      alert('쿠폰 사용에 실패했습니다. 다시 시도해주세요.');
+      alert('쿠폰 사용에 실패했습니다. 다시 시도해주세요');
     } finally {
       setIsUsing(false);
     }
@@ -295,7 +295,7 @@ export default function CouponCard({ venueId }: { venueId: number }) {
             {/* ✅ 모달 바로 아래에 붙는 안내 텍스트 */}
             <div className="text-center" onClick={(e) => e.stopPropagation()}>
               <p className="text-[0.875rem] text-main">직원확인 버튼 클릭 시 쿠폰이 즉시 사용 처리됩니다.</p>
-              <p className="text-[0.875rem] text-main">직원만 확인을 눌러주세요.</p>
+              <p className="text-[0.875rem] text-main">직원만 확인을 눌러주세요</p>
             </div>
           </div>,
           document.body,

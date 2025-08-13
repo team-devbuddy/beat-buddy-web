@@ -41,7 +41,7 @@ export default function SignUpBusiness1({ onNext }: Props) {
     <div className="min-h-screen bg-BG-black text-white">
       <Prev url="/onBoarding?userType=business" />
       <div className="px-4">
-        <h1 className="pb-[2rem] text-title-24-bold">실명을 입력해주세요.</h1>
+        <h1 className="pb-[2rem] text-title-24-bold">실명을 입력해주세요</h1>
 
         <label className="block text-body1-16-bold">이름</label>
         <input

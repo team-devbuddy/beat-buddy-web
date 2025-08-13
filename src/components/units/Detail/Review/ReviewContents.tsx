@@ -152,12 +152,12 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
   // 신고 제출
   const handleSubmitReport = async () => {
     if (!reportingReviewId || !reportReason.trim()) {
-      alert('신고 사유를 입력해주세요.');
+      alert('신고 사유를 입력해주세요');
       return;
     }
 
     if (reportReason.length > 100) {
-      alert('신고 사유는 100자 이하로 입력해주세요.');
+      alert('신고 사유는 100자 이하로 입력해주세요');
       return;
     }
 
@@ -394,8 +394,8 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                               onClick={() => handleMediaClick(review.imageUrls!, index, review)}>
                               {/* 영상 썸네일 - 서버에서 제공하는 thumbnail 사용 */}
                               <Image
-                                  src={review.thumbImages?.[index] || '/images/defaultImage.png'}
-                                  alt="video thumbnail"
+                                src={review.thumbImages?.[index] || '/images/defaultImage.png'}
+                                alt="video thumbnail"
                                 className="h-full w-full object-cover"
                                 width={120}
                                 height={150}
@@ -503,7 +503,7 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
               className="rounded-[0.75rem] bg-BG-black p-5 text-center"
               onClick={(e) => e.stopPropagation()}>
               <h3 className="mb-[0.38rem] text-[1.25rem] font-bold text-white">신고가 완료되었어요</h3>
-              <p className="text-[0.875rem] text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요.</p>
+              <p className="text-[0.875rem] text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요</p>
               <p className="mb-5 text-[0.875rem] text-gray300">허위 신고 시 제재가 있을 수 있습니다.</p>
               <button
                 onClick={() => {

@@ -103,7 +103,7 @@ export default function BoardWrite() {
       setTagLimitMessage(''); // 메시지 제거
     } else {
       if (selectedTags.length >= 3) {
-        setTagLimitMessage('해시태그는 최대 3개까지만 선택할 수 있어요.');
+        setTagLimitMessage('해시태그는 최대 3개까지만 선택할 수 있어요');
         return;
       }
       setSelectedTags((prev) => [...prev, tag]);
@@ -115,7 +115,7 @@ export default function BoardWrite() {
     if (e.target.files) {
       const newImages = Array.from(e.target.files);
       if (images.length + newImages.length > 20) {
-        alert('이미지는 최대 20장까지 업로드할 수 있어요.');
+        alert('이미지는 최대 20장까지 업로드할 수 있어요');
         return;
       }
       setImages((prev) => [...prev, ...newImages]);
@@ -135,7 +135,7 @@ export default function BoardWrite() {
 
     // 글 내용 필수 검증
     if (!content.trim()) {
-      alert('글 내용을 입력해주세요.');
+      alert('글 내용을 입력해주세요');
       return;
     }
 
@@ -146,7 +146,7 @@ export default function BoardWrite() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (!accessToken) {
-        alert('로그인 후 이용해주세요.');
+        alert('로그인 후 이용해주세요');
         router.push('/login');
         return;
       }
@@ -236,7 +236,7 @@ export default function BoardWrite() {
           }}
           className="w-full overflow-hidden whitespace-pre-wrap border-none bg-transparent text-[0.8125rem] text-white placeholder:text-gray300 focus:outline-none"
           style={{ minHeight: '2rem', resize: 'none' }}
-          placeholder={`광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요.\n건강한 커뮤니티 문화를 함께 만들어가요.`}
+          placeholder={`광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요\n건강한 커뮤니티 문화를 함께 만들어가요`}
         />
 
         {/* !content && (
@@ -245,7 +245,7 @@ export default function BoardWrite() {
             <a href="/rules" target="_blank" rel="noopener noreferrer" className="text-gray300 underline">
               커뮤니티 이용 규칙
             </a>
-            을 참고해주세요.
+            을 참고해주세요
           </div>
         )}
 

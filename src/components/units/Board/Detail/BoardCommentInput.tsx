@@ -140,7 +140,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
           ref={inputRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="댓글을 입력해주세요."
+          placeholder="댓글을 입력해주세요"
           className="flex-1 border-none bg-transparent pl-5 text-[0.875rem] text-white placeholder:text-gray300 focus:outline-none"
         />
 

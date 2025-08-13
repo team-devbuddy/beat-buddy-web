@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent } from 'react';
 import Image from 'next/image';
-import { PostDuplicateCheck, PostNickname } from '@/lib/action'; // API 요청 함수의 경로를 적절히 수정하세요.
+import { PostDuplicateCheck, PostNickname } from '@/lib/action'; // API 요청 함수의 경로를 적절히 수정하세요
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 
@@ -33,7 +33,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
   const validateInput = (value: string): string | null => {
     const regex = /^[a-zA-Z0-9가-힣]{1,12}$/;
     if (!regex.test(value)) {
-      return '공백 없이, 12자 이하로 입력해주세요. 특수 기호는 불가능해요. ';
+      return '공백 없이, 12자 이하로 입력해주세요 특수 기호는 불가능해요 ';
     }
     return null;
   };
@@ -51,7 +51,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
 
       if (response.ok) {
         const data = await response.json();
-        const isValid = data; // 서버 응답의 형태에 따라 조정하세요.
+        const isValid = data; // 서버 응답의 형태에 따라 조정하세요
         setIsDuplicateValid(isValid);
         setIsDuplicateChecked(true);
 
@@ -59,7 +59,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
           setSuccessMessage('사용 가능한 닉네임이에요!');
           setErrorMessage(''); // 에러 메시지 초기화
         } else {
-          setErrorMessage('닉네임이 중복이에요. 다른 닉네임을 입력해주세요.');
+          setErrorMessage('닉네임이 중복이에요 다른 닉네임을 입력해주세요');
           setSuccessMessage(''); // 성공 메시지 초기화
         }
       } else {
@@ -93,7 +93,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
             <div className="relative flex">
               <input
                 className="w-full border-b border-white bg-transparent py-3 pl-1 text-[0.875rem] text-white outline-none safari-input-fix placeholder:text-gray200"
-                placeholder="닉네임을 입력해주세요."
+                placeholder="닉네임을 입력해주세요"
                 value={inputValue}
                 onChange={handleChange}
               />
@@ -115,7 +115,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
               className={`px-1 py-[0.63rem] text-[0.75rem] ${
                 errorMessage ? 'text-main' : successMessage ? 'text-main' : 'text-gray300'
               }`}>
-              {errorMessage || successMessage || '공백 없이, 12자 이하로 입력해주세요. 특수 기호는 불가능해요. '}
+              {errorMessage || successMessage || '공백 없이, 12자 이하로 입력해주세요 특수 기호는 불가능해요 '}
             </p>
           </div>
         </div>

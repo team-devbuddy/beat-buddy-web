@@ -204,7 +204,7 @@ export default function EventSearchPage() {
       })}
 
       {!loading && events.length === 0 && keyword !== '' && (
-        <NoResults text="조건에 맞는 검색 결과가 없어요." fullHeight={true} />
+        <NoResults text="조건에 맞는 검색 결과가 없어요" fullHeight={true} />
       )}
     </main>
   );

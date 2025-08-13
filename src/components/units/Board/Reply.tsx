@@ -207,7 +207,7 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
     }
 
     if (!commentContent.trim()) {
-      alert('댓글 내용을 입력해주세요.');
+      alert('댓글 내용을 입력해주세요');
       return;
     }
 
@@ -314,7 +314,7 @@ const Reply = ({ postId, showPieceBar = false, onScroll, currentUserId }: ReplyP
               type="text"
               value={commentContent}
               onChange={(e) => setCommentContent(e.target.value)}
-              placeholder="댓글을 입력해주세요."
+              placeholder="댓글을 입력해주세요"
               className="flex-1 bg-transparent px-4 py-3 text-body2-15-medium text-gray100 placeholder-gray300 focus:outline-none"
             />
             <button

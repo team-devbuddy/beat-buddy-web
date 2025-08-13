@@ -30,7 +30,7 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
       <div className="px-4">
         <h1 className="pb-[2rem] text-title-24-bold">
           주민등록번호의
-          <br />앞 7자리를 입력해주세요.
+          <br />앞 7자리를 입력해주세요
         </h1>
 
         <label className="mb-2 block text-body1-16-bold">주민등록번호</label>
@@ -71,9 +71,7 @@ export default function SignUpBusiness2({ onNext, onBack }: Props) {
             onClick={handleNext}
             disabled={ssnFront.length !== 6 || ssnBack.length !== 1}
             className={`w-full rounded-md py-4 font-bold ${
-              ssnFront.length === 6 && ssnBack.length === 1
-                ? 'bg-main text-BG-black'
-                : 'bg-gray400 text-gray300'
+              ssnFront.length === 6 && ssnBack.length === 1 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
             }`}>
             다음
           </button>

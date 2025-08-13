@@ -27,7 +27,7 @@ export default function BoardProfileCreatePage() {
 
   const handleSubmit = async () => {
     if (!nickname.trim()) {
-      alert('닉네임을 입력해주세요.');
+      alert('닉네임을 입력해주세요');
       return;
     }
 
@@ -74,17 +74,12 @@ export default function BoardProfileCreatePage() {
   return (
     <>
       <BoardProfileHeader />
-      <div className=" bg-BG-black px-5 pt-10 text-white">
+      <div className="bg-BG-black px-5 pt-10 text-white">
         {/* 프로필 이미지 */}
         <div className="relative mb-6 flex justify-center">
           <div className="relative overflow-hidden rounded-full">
-<Image
-  className="rounded-full object-cover"
-  width={90}
-  height={90}
-  src={previewUrl}
-  alt="profile"
-/>          </div>
+            <Image className="rounded-full object-cover" width={90} height={90} src={previewUrl} alt="profile" />{' '}
+          </div>
           <div
             className="absolute bottom-[5px] right-[calc(50%-35px)] translate-x-[50%]"
             onClick={() => document.getElementById('profile-image-input')?.click()}>

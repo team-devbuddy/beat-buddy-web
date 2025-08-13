@@ -49,13 +49,13 @@ export default function EventDateInput() {
   return (
     <div ref={popupWrapperRef} className="bg-BG-black px-5 text-white">
       <label className="mb-[0.62rem] flex items-center justify-between">
-        <span className="text-[1rem] font-bold">일자</span>
+        <span className="text-body1-16-bold">일자</span>
         <div
           onClick={() => {
             setIsAllDay(!isAllDay);
             setActivePopup(null);
           }}
-          className={`flex cursor-pointer items-center justify-center gap-[0.12rem] text-[0.75rem] text-gray300 ${
+          className={`flex cursor-pointer items-center justify-center gap-[0.12rem] text-body3-12-medium text-gray300 ${
             isAllDay ? 'text-main' : ''
           }`}>
           <Image
@@ -64,17 +64,17 @@ export default function EventDateInput() {
             width={18}
             height={18}
           />
-          <span>하루종일</span>
+          <span className="text-body3-12-medium">하루종일</span>
         </div>
       </label>
 
       {/* 시작일자 섹션 */}
-      <div className="relative mb-4 flex flex-col gap-2 text-[0.875rem]">
+      <div className="relative mb-4 flex flex-col gap-2 text-body-14-medium">
         <div className="flex justify-between">
           <div className="flex items-center gap-4">
-            <label className="whitespace-nowrap text-gray100">시작 일자</label>
+            <label className="whitespace-nowrap text-body-14-medium text-gray100">시작 일자</label>
             <div
-              className={`w-full cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-[0.8125rem] text-gray300 ${
+              className={`w-full min-w-[7.5rem] cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-center text-body-13-medium text-gray300 ${
                 eventForm.startDate ? 'border-main text-white' : ''
               }`}
               onClick={() => setActivePopup(activePopup === 'startCalendar' ? null : 'startCalendar')}>
@@ -84,9 +84,9 @@ export default function EventDateInput() {
 
           {!isAllDay && (
             <div className="flex items-center justify-end gap-4">
-              <label className="whitespace-nowrap text-gray100">시간</label>
+              <label className="whitespace-nowrap text-body-14-medium text-gray100">시간</label>
               <div
-                className={`cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-[0.8125rem] text-gray300 ${
+                className={`min-w-[4.5rem] cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-center text-body-13-medium text-gray300 ${
                   eventForm.startTime ? 'border-main text-white' : ''
                 }`}
                 onClick={() => setActivePopup(activePopup === 'startTime' ? null : 'startTime')}>
@@ -154,12 +154,12 @@ export default function EventDateInput() {
         </AnimatePresence>
       </div>
       {/* 종료일자 섹션 */}
-      <div className="relative flex flex-col gap-2 text-[0.875rem]">
+      <div className="relative flex flex-col gap-2 text-body-14-medium">
         <div className="flex justify-between">
           <div className="flex items-center gap-4">
-            <label className="whitespace-nowrap text-gray100">종료 일자</label>
+            <label className="whitespace-nowrap text-body-14-medium text-gray100">종료 일자</label>
             <div
-              className={`w-full cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-[0.8125rem] text-gray300 ${
+              className={`w-full min-w-[7.5rem] cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-center text-body-13-medium text-gray300 ${
                 eventForm.endDate ? 'border-main text-white' : ''
               }`}
               onClick={() => setActivePopup(activePopup === 'endCalendar' ? null : 'endCalendar')}>
@@ -168,9 +168,9 @@ export default function EventDateInput() {
           </div>
           {!isAllDay && (
             <div className="flex items-center justify-end gap-4">
-              <label className="whitespace-nowrap text-gray100">시간</label>
+              <label className="whitespace-nowrap text-body-14-medium text-gray100">시간</label>
               <div
-                className={`cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-[0.8125rem] text-gray300 ${
+                className={`min-w-[4.5rem] cursor-pointer whitespace-nowrap border-b border-gray300 bg-transparent px-4 py-3 text-center text-body-13-medium text-gray300 ${
                   eventForm.endTime ? 'border-main text-white' : ''
                 }`}
                 onClick={() => setActivePopup(activePopup === 'endTime' ? null : 'endTime')}>

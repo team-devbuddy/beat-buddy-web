@@ -136,7 +136,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
       setReplyLike((prev) => ({ ...prev, [reply.id]: previousLiked }));
       setReplyLikeCount((prev) => ({ ...prev, [reply.id]: previousCount }));
 
-      alert('좋아요 처리에 실패했습니다. 다시 시도해주세요.');
+      alert('좋아요 처리에 실패했습니다. 다시 시도해주세요');
     } finally {
       setIsLoadingLike(false);
     }

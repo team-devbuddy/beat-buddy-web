@@ -184,7 +184,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ formData, onFormChange }) => {
 
   const handleMonthClick = () => {
     if (!formData.date.year) {
-      setErrorMessage('연도를 먼저 선택해주세요.');
+      setErrorMessage('연도를 먼저 선택해주세요');
       return;
     }
     setErrorMessage('');
@@ -193,11 +193,11 @@ const NewsForm: React.FC<NewsFormProps> = ({ formData, onFormChange }) => {
 
   const handleDayClick = () => {
     if (!formData.date.year) {
-      setErrorMessage('연도를 먼저 선택해주세요.');
+      setErrorMessage('연도를 먼저 선택해주세요');
       return;
     }
     if (!formData.date.month) {
-      setErrorMessage('월을 먼저 선택해주세요.');
+      setErrorMessage('월을 먼저 선택해주세요');
       return;
     }
     setErrorMessage('');
@@ -213,7 +213,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ formData, onFormChange }) => {
           type="text"
           value={formData.eventName}
           onChange={(e) => onFormChange('eventName', e.target.value)}
-          placeholder="이벤트명을 입력해주세요."
+          placeholder="이벤트명을 입력해주세요"
           className={`w-full rounded-xs border bg-gray500 px-4 py-3 text-body2-15-medium placeholder-gray300 outline-none safari-input-fix ${getBorderStyle(
             formData.eventName,
           )} ${getTextColor(formData.date.year)}`}
@@ -386,7 +386,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ formData, onFormChange }) => {
           type="text"
           value={formData.location}
           onChange={handleLocationChange}
-          placeholder="장소 정보를 입력해주세요."
+          placeholder="장소 정보를 입력해주세요"
           className={`w-full rounded-xs border bg-gray500 px-4 py-3 text-body2-15-medium placeholder-gray300 outline-none safari-input-fix ${getBorderStyle(
             formData.location,
           )} ${getTextColor(formData.location)}`}
@@ -413,7 +413,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ formData, onFormChange }) => {
         <textarea
           value={formData.description}
           onChange={(e) => onFormChange('description', e.target.value)}
-          placeholder="이벤트 소개를 입력해주세요."
+          placeholder="이벤트 소개를 입력해주세요"
           rows={4}
           className={`w-full resize-none rounded-xs border bg-gray500 px-4 py-3 text-body2-15-medium placeholder-gray300 outline-none ${getBorderStyle(
             formData.description,

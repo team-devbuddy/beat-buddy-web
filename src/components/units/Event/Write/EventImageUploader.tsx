@@ -14,7 +14,7 @@ const ImageUploader = ({ onUpload, uploadedImages, existingImages = [] }: ImageU
     if (e.target.files) {
       const fileArray = Array.from(e.target.files);
 
-      if (uploadedImages.length + fileArray.length > 5) {
+      if (uploadedImages.length + fileArray.length > 20) {
         return;
       }
 
@@ -30,12 +30,12 @@ const ImageUploader = ({ onUpload, uploadedImages, existingImages = [] }: ImageU
   return (
     <div className="relative px-5">
       {uploadedImages.length === 0 && existingImages.length === 0 ? (
-        <div className="mt-5 rounded-[0.5rem] bg-gray600 py-[4rem]">
+        <div className="mt-5 rounded-[0.5rem] bg-gray600 py-[3.94rem]">
           <label
             htmlFor="image-upload"
             className="flex cursor-pointer flex-col items-center justify-center text-gray100">
             <Image src="/icons/folder-plus-02.svg" alt="Upload Icon" width={48} height={48} />
-            <span className="mt-[0.38rem] text-[0.875rem] text-gray100">포스터 및 사진을 추가해주세요.</span>
+            <span className="mt-[0.38rem] text-body-14-medium text-gray100">포스터 및 사진을 추가해주세요</span>
           </label>
           <input
             id="image-upload"
@@ -47,12 +47,12 @@ const ImageUploader = ({ onUpload, uploadedImages, existingImages = [] }: ImageU
           />
         </div>
       ) : (
-        <div className="no-scrollbar mt-7 flex items-center space-x-4 overflow-x-scroll">
+        <div className="no-scrollbar mt-7 flex items-center space-x-2 overflow-x-scroll">
           {/* 기존 이미지들 표시 */}
           {existingImages.map((imageUrl, index) => (
             <div
               key={`existing-${index}`}
-              className="relative h-[9.8rem] w-[9.8rem] flex-shrink-0 rounded-xs bg-gray500">
+              className="relative h-[12.5rem] w-[12.5rem] flex-shrink-0 rounded-xs bg-gray500">
               <Image src={imageUrl} alt={`Existing ${index}`} layout="fill" objectFit="cover" className="rounded-xs" />
               <div className="absolute left-2 top-2 rounded bg-black/70 px-2 py-1 text-xs text-white">
                 {index + 1}/{existingImages.length + uploadedImages.length}
@@ -64,34 +64,30 @@ const ImageUploader = ({ onUpload, uploadedImages, existingImages = [] }: ImageU
           {uploadedImages.map((image, index) => (
             <div
               key={`uploaded-${index}`}
-              className="relative h-[9.8rem] w-[9.8rem] flex-shrink-0 rounded-xs bg-gray500">
+              className="relative h-[12.5rem] w-[12.5rem] flex-shrink-0 rounded-[0.25rem] bg-[#17181C]/70">
               <Image
                 src={URL.createObjectURL(image)}
                 alt={`Uploaded ${index}`}
                 layout="fill"
                 objectFit="cover"
-                className="rounded-xs"
+                className="rounded-[0.25rem]"
               />
-              <div onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1 cursor-pointer">
-                <Image
-                  src="/icons/x-square-contained.svg"
-                  alt="Remove Icon"
-                  width={24}
-                  height={24}
-                  className="hover:opacity-80"
-                />
+              <div
+                onClick={() => handleRemoveImage(index)}
+                className="absolute right-[0.62rem] top-[0.62rem] cursor-pointer">
+                <Image src="/icons/x-square-contained.svg" alt="Remove Icon" width={24} height={24} className="" />
               </div>
-              <div className="absolute left-2 top-2 rounded bg-black/70 px-2 py-1 text-xs text-white">
+              <div className="absolute left-[0.62rem] top-[0.62rem] rounded-[0.5rem] bg-black/70 px-2 py-[0.19rem] text-body-11-medium text-gray200">
                 {existingImages.length + index + 1}/{existingImages.length + uploadedImages.length}
               </div>
             </div>
           ))}
 
-          {existingImages.length + uploadedImages.length < 5 && (
-            <div className="relative h-[9.8rem] w-[9.8rem] flex-shrink-0 rounded-xs border border-dashed border-gray300 bg-gray500">
+          {existingImages.length + uploadedImages.length < 20 && (
+            <div className="relative h-[12.5rem] w-[12.5rem] flex-shrink-0 rounded-[0.25rem] bg-gray500">
               <label
                 htmlFor="image-upload"
-                className="flex h-full w-full cursor-pointer flex-col items-center justify-center text-gray100">
+                className="flex h-full w-full cursor-pointer flex-col items-center justify-center text-body-14-medium text-gray100">
                 <Image src="/icons/folder-plus-02.svg" alt="Upload Icon" width={32} height={32} />
                 <span>추가</span>
               </label>
@@ -107,8 +103,8 @@ const ImageUploader = ({ onUpload, uploadedImages, existingImages = [] }: ImageU
           )}
         </div>
       )}
-      {existingImages.length + uploadedImages.length >= 5 && (
-        <p className="mt-2 text-start text-body3-12-medium text-red-500">최대 5장까지만 업로드 가능합니다.</p>
+      {existingImages.length + uploadedImages.length >= 20 && (
+        <p className="mt-2 text-start text-body3-12-medium text-red-500">최대 20장까지만 업로드 가능합니다.</p>
       )}
     </div>
   );

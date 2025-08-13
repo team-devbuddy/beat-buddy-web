@@ -16,12 +16,12 @@ const ReviewCompleteModal = ({ isOpen, onClose, venueName }: ReviewCompleteModal
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-BG-black mx-5 min-w-[20.9375rem] rounded-[0.75rem] p-5 text-center">
+      <div className="mx-5 min-w-[20.9375rem] rounded-[0.75rem] bg-BG-black p-5 text-center">
         <h2 className="text-[1.25rem] font-bold text-white">리뷰 작성이 완료되었어요!</h2>
         <p className="mt-[0.37rem] text-[0.875rem] text-gray300">
           작성해주신 소중한 리뷰는
           <br />
-          베뉴를 찾는 버디들에게 도움이 될 거예요.
+          베뉴를 찾는 버디들에게 도움이 될 거예요
         </p>
         <button
           onClick={onClose}

@@ -88,11 +88,11 @@ export default function EventPlaceInput() {
 
   return (
     <div className="bg-BG-black px-5">
-      <label className="mb-[0.62rem] flex items-center text-[1rem] font-bold text-white">장소</label>
+      <label className="mb-[0.62rem] flex items-center text-body1-16-bold text-white">장소</label>
 
       <input
         type="text"
-        className={`w-full border-b border-gray300 bg-BG-black px-4 py-3 text-[0.8125rem] text-gray100 placeholder-gray300 safari-input-fix focus:outline-none ${
+        className={`w-full border-b border-gray300 bg-BG-black px-4 py-3 text-body-13-medium text-gray100 placeholder-gray300 safari-input-fix focus:outline-none ${
           eventForm.location ? 'border-main' : ''
         }`}
         placeholder="ex) 서울특별시 마포구 와우산로 94"
@@ -112,12 +112,12 @@ export default function EventPlaceInput() {
               <button
                 key={venue.venueId}
                 onClick={() => handleSelectVenue(venue)}
-                className="truncate rounded-[0.5rem] bg-gray700 px-[0.38rem] py-1 text-[0.8125rem] text-main">
+                className="truncate rounded-[0.5rem] bg-gray700 px-[0.38rem] py-1 text-body-13-medium text-main">
                 {venue.koreanName}
               </button>
             ))}
           </div>
-          <button onClick={() => setSuggestions([])} className="whitespace-nowrap text-[0.8125rem] text-gray400">
+          <button onClick={() => setSuggestions([])} className="whitespace-nowrap text-body-13-medium text-gray300">
             이 장소가 아니에요
           </button>
         </div>
@@ -131,7 +131,7 @@ export default function EventPlaceInput() {
             <button
               key={loc}
               onClick={() => handleRecommendedClick(loc)}
-              className={`rounded-[0.38rem] py-3 text-[0.875rem] ${
+              className={`rounded-[0.38rem] py-3 text-body-14-medium ${
                 isSelected ? 'border border-main bg-sub2 text-white' : 'bg-gray500 text-gray300'
               }`}>
               {loc}

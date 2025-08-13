@@ -182,7 +182,7 @@ export default function EventWritePage() {
 
   const handleSubmit = async () => {
     if (!isFormValid) {
-      alert('모든 필수 항목을 입력해주세요.');
+      alert('모든 필수 항목을 입력해주세요');
       return;
     }
 
@@ -343,7 +343,7 @@ export default function EventWritePage() {
   return (
     <div className="min-h-screen pb-10">
       <EventWriteHeader />
-      <h1 className="px-5 py-2 text-[1.25rem] font-bold tracking-[-0.025rem] text-white">
+      <h1 className="px-5 pb-2 pt-3 text-subtitle-20-bold text-white">
         {isEditMode ? '이벤트를 수정해주세요!' : '다가오는 특별한 이벤트 소식을 전해주세요!'}
       </h1>
 
@@ -365,7 +365,7 @@ export default function EventWritePage() {
         <button
           disabled={!isFormValid}
           onClick={handleSubmit}
-          className={`text-button-16-semibold w-full rounded-[0.38rem] py-[0.88rem] ${
+          className={`w-full rounded-[0.38rem] py-[0.88rem] text-button-16-semibold ${
             isFormValid ? 'bg-main text-sub2' : 'bg-gray500 text-gray300'
           }`}>
           {isEditMode ? '이벤트 수정하기' : '이벤트 등록하기'}

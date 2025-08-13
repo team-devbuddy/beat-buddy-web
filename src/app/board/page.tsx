@@ -340,7 +340,7 @@ export default function BoardPage() {
         })}
 
         {!loading && posts.length === 0 && (
-          <NoResults text="아직 게시글이 없어요.\n첫 게시글을 작성해보세요." fullHeight />
+          <NoResults text="아직 게시글이 없어요\n첫 게시글을 작성해보세요" fullHeight />
         )}
       </div>
 

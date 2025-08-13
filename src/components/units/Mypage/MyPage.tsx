@@ -110,7 +110,7 @@ export default function MyPageComponent() {
         if (response.ok) {
           toast(<CustomToast>변경되었습니다!</CustomToast>);
         } else {
-          toast(<CustomToast>다시 시도해주세요.</CustomToast>);
+          toast(<CustomToast>다시 시도해주세요</CustomToast>);
         }
       } catch (error) {
         console.error('Error putting archive:', error);
@@ -310,7 +310,7 @@ export default function MyPageComponent() {
               className="mx-4 w-full max-w-sm rounded-[0.75rem] bg-BG-black px-4 pb-5 pt-7"
               onClick={(e) => e.stopPropagation()}>
               <div className="flex flex-col items-center space-y-2">
-                <h3 className="text-[1.25rem] font-bold mb-[1rem] text-white">문의 방법을 선택해주세요</h3>
+                <h3 className="mb-[1rem] text-[1.25rem] font-bold text-white">문의 방법을 선택해주세요</h3>
 
                 {/* 카카오톡 */}
                 <div

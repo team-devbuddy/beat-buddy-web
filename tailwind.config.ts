@@ -260,6 +260,14 @@ const config: Config = {
             letterSpacing: '-0.0175rem',
           },
         ],
+        'body-14-semibold': [
+          '14px',
+          {
+            fontWeight: '600',
+            lineHeight: '150%',
+            letterSpacing: '-0.0175rem',
+          },
+        ],
         'body-14-medium': [
           '14px',
           {

@@ -101,7 +101,7 @@ export default function MyHeartbeatMain() {
             handleHeartClickWrapper={handleHeartClickWrapper}
           />
         ) : (
-          <NoResults text="아직 하트비트가 없어요!\n좋아하는 베뉴를 찾아보세요." fullHeight />
+          <NoResults text="아직 하트비트가 없어요!\n좋아하는 베뉴를 찾아보세요" fullHeight />
         )}
       </div>
     </div>

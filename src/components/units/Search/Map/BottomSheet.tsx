@@ -246,7 +246,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
                         />
                       </div>
                     ) : (
-                      <NoResults text="조건에 맞는 검색 결과가 없어요." />
+                      <NoResults text="조건에 맞는 검색 결과가 없어요" />
                     )}
                   </div>
                 </div>

@@ -128,15 +128,15 @@ export default function SignUpBusiness() {
     <>
       <Prev onBack={step > 1 ? handleBack : undefined} url={step === 1 ? '/onBoarding?userType=business' : undefined} />
       <div className="w-full bg-BG-black px-5 text-white" tabIndex={0} onClick={handleBlur} onKeyDown={handleKeyDown}>
-        {step === 1 && <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">실명을 입력해주세요.</h1>}
+        {step === 1 && <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">실명을 입력해주세요</h1>}
         {step === 2 && (
           <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">
             주민등록번호의
-            <br />앞 7자리를 입력해주세요.
+            <br />앞 7자리를 입력해주세요
           </h1>
         )}
-        {step === 3 && <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">통신사를 선택해주세요.</h1>}
-        {step === 4 && <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">전화번호를 입력해주세요.</h1>}
+        {step === 3 && <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">통신사를 선택해주세요</h1>}
+        {step === 4 && <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold">전화번호를 입력해주세요</h1>}
 
         {step === 1 && (
           <div className="transition-all duration-500">
@@ -199,7 +199,7 @@ export default function SignUpBusiness() {
                   e.stopPropagation();
                   setDropdownOpen(!dropdownOpen);
                 }}>
-                <span className={telecom ? 'pl-2' : 'pl-2 text-gray200 text-[0.875rem]'}>
+                <span className={telecom ? 'pl-2' : 'pl-2 text-[0.875rem] text-gray200'}>
                   {telecom || '통신사 선택'}
                 </span>
                 <Image src="/icons/chevron-down.svg" alt="arrow-down" width={24} height={24} />
@@ -287,7 +287,7 @@ export default function SignUpBusiness() {
                 <input
                   value={signupBusiness.ssnFront}
                   disabled
-                  className="font-mono w-full border-b border-gray200 bg-transparent pb-3 pt-3 text-center text-[0.875rem] tracking-widest text-gray200 outline-none disabled:border-gray200 disabled:bg-transparent disabled:text-gray200 disabled:opacity-100 safari-input-fix"
+                  className="font-mono w-full border-b border-gray200 bg-transparent pb-3 pt-3 text-center text-[0.875rem] tracking-widest text-gray200 outline-none safari-input-fix disabled:border-gray200 disabled:bg-transparent disabled:text-gray200 disabled:opacity-100"
                 />
                 <span className="text-gray200">-</span>
                 <div className="flex items-center justify-center border-b border-gray200 py-3">
