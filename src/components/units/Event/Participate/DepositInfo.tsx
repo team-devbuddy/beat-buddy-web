@@ -65,7 +65,7 @@ export default function DepositInfo({
         type="button"
         whileTap={disabled ? {} : { scale: 0.97 }}
         onClick={() => !disabled && onChange(!value)}
-        className={`mt-2 flex w-full items-center justify-center gap-2 rounded-[0.13rem] border py-3 text-body-14-bold text-white transition-colors ${
+        className={`mt-2 flex w-full items-center justify-center gap-2 rounded-[0.38rem] border py-3 text-body-14-bold text-white transition-colors ${
           disabled ? 'cursor-not-allowed border-main bg-sub1' : value ? 'border-main bg-sub1' : 'border-main bg-sub1'
         }`}
         disabled={disabled}>

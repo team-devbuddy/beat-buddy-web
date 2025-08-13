@@ -60,6 +60,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="beforeInteractive"
         />
         <Script src="/MarkerClustering.js" strategy="beforeInteractive" />
+        <Script
+          src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+          strategy="beforeInteractive"
+        />
       </body>
     </html>
   );

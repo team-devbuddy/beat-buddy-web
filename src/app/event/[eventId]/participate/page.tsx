@@ -16,8 +16,10 @@ export default function ParticipatePage() {
   return (
     <main className="bg-BG-black text-white">
       <EventWriteHeader />
-      {/* ✅ key 추가해서 컴포넌트 강제 리마운트 */}
-      <ParticipateForm key={eventId} eventId={eventId} mode={mode} />
+      <div className="">
+        {/* ✅ key 추가해서 컴포넌트 강제 리마운트 */}
+        <ParticipateForm key={eventId} eventId={eventId} mode={mode} />
+      </div>
     </main>
   );
 }

@@ -6,6 +6,18 @@ import { signupUserTypeState, isBusinessState } from '@/context/recoil-context';
 import HeartIcon from '@/components/icons/HeartIcon';
 import SoundIcon from '@/components/icons/SoundIcon';
 
+// Apple ID JS SDK 타입 정의
+declare global {
+  interface Window {
+    AppleID: {
+      auth: {
+        init: (config: any) => void;
+        signIn: () => Promise<any>;
+      };
+    };
+  }
+}
+
 interface Props {
   onBusinessClick: () => void;
   onClose: () => void;
@@ -36,20 +48,85 @@ export default function JoinModal({ onBusinessClick, onClose, loginType }: Props
     // 잠시 후 localStorage 재확인
     setTimeout(() => {
       console.log('1초 후 localStorage userType:', localStorage.getItem('userType'));
-      console.log('1초 후 localStorage isBusiness:', localStorage.getItem('isBusiness'));
+      console.log('1초 후 localStorage isBusiness', localStorage.getItem('isBusiness'));
     }, 1000);
 
     // state 파라미터에 유저 타입 정보 포함
     const stateParam = encodeURIComponent(JSON.stringify({ userType: type }));
 
-    const loginUrls = {
-      kakao: `https://api.beatbuddy.world/oauth2/authorization/kakao?state=${stateParam}`,
-      google: `https://api.beatbuddy.world/oauth2/authorization/google?state=${stateParam}`,
-      apple: `https://api.beatbuddy.world/oauth2/authorization/apple?state=${stateParam}`,
-    };
+    // 애플 로그인은 Apple ID JS SDK, 나머지는 리다이렉트 방식
+    if (loginType === 'apple') {
+      handleAppleLogin(stateParam);
+    } else {
+      const loginUrls = {
+        kakao: `https://api.beatbuddy.world/oauth2/authorization/kakao?state=${stateParam}`,
+        google: `https://api.beatbuddy.world/oauth2/authorization/google?state=${stateParam}`,
+      };
 
-    console.log('리다이렉트 URL:', loginUrls[loginType]);
-    window.location.href = loginUrls[loginType];
+      console.log('리다이렉트 URL:', loginUrls[loginType]);
+      window.location.href = loginUrls[loginType];
+    }
+  };
+
+  // Apple ID JS SDK를 사용한 애플 로그인
+  const handleAppleLogin = async (stateParam: string) => {
+    try {
+      // Apple ID JS SDK가 로드되었는지 확인
+      if (typeof window.AppleID === 'undefined') {
+        console.log('Apple ID JS SDK가 로드되지 않음, 리다이렉트로 폴백');
+        window.location.href = `https://api.beatbuddy.world/oauth2/authorization/apple?state=${stateParam}`;
+        return;
+      }
+
+      // Apple ID 초기화
+      window.AppleID.auth.init({
+        clientId: process.env.NEXT_PUBLIC_APPLE_CLIENT_ID || '',
+        scope: 'email name',
+        redirectURI: process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI || '',
+        state: stateParam,
+        usePopup: true, // 팝업 방식 사용
+      });
+
+      // 애플 로그인 실행
+      const response = await window.AppleID.auth.signIn();
+      console.log('Apple 로그인 성공:', response);
+
+      // 응답에서 authorization code 추출
+      if (response.authorization) {
+        // 백엔드로 authorization code 전송
+        const loginResponse = await fetch('/api/apple-login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            authorization: response.authorization,
+            state: stateParam,
+          }),
+        });
+
+        if (loginResponse.ok) {
+          const loginData = await loginResponse.json();
+          // 로그인 성공 후 처리
+          if (loginData.access) {
+            // 토큰 저장 및 페이지 이동
+            window.location.href = loginData.redirectUrl || '/';
+          }
+        } else {
+          throw new Error('백엔드 로그인 실패');
+        }
+      }
+    } catch (error: any) {
+      console.error('Apple 로그인 오류:', error);
+
+      // 오류 발생 시 리다이렉트로 폴백
+      if (error.code === 'popup_closed_by_user') {
+        console.log('사용자가 팝업을 닫음');
+      } else {
+        console.log('Apple ID JS SDK 오류, 리다이렉트로 폴백');
+        window.location.href = `https://api.beatbuddy.world/oauth2/authorization/apple?state=${stateParam}`;
+      }
+    }
   };
 
   // 외부 클릭 감지
