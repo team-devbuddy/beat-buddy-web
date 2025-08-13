@@ -59,6 +59,7 @@ export default function SNSSelector({
 
   // SNS 타입을 선택하고 ID를 입력했을 때만 완료할 수 있음
   const canConfirm =
+    snsType === '' || // SNS 없음 선택
     (snsType === 'Instagram' && snsId.trim().length > 0) || // Instagram + ID 입력
     (snsType === 'Facebook' && snsId.trim().length > 0); // Facebook + ID 입력
 
