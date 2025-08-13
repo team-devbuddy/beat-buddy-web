@@ -47,12 +47,10 @@ function Heartbeat() {
   return (
     <div className="flex flex-col">
       <Link href="/myheartbeat">
-        <div className="flex items-center justify-between rounded-[0.5rem]">
+        <div className="flex cursor-pointer items-center justify-between rounded-[0.5rem]">
           <div className="flex flex-col">
-            <span className="line-height-[150%] font-paperlogy text-[1.125rem] font-semibold tracking-[-0.05rem] text-main">
-              My Heart Beat
-            </span>
-            <div className="cursor-pointer text-[0.8125rem] text-gray300">관심있는 베뉴들의 정보를 확인하세요</div>
+            <Image src="/My Heart Beat.svg" alt="My Heart Beat" width={129} height={27} className="my-[0.38rem]" />
+            <div className="cursor-pointer text-body-13-medium text-gray300">관심있는 베뉴들의 정보를 확인하세요</div>
           </div>
           <Image src="/icons/arrow_back_ios_new.svg" alt="Arrow head right icon" width={20} height={20} />
         </div>

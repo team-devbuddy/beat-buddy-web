@@ -412,24 +412,25 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
                 onChange={(val) => updateForm('isPaid', val)}
                 disabled={mode === 'edit'}
               />
-              {mode !== 'edit' && <SubmitButton onClick={handleSubmit} />}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* 신청 버튼 (사전예약금이 필요하지 않은 경우) */}
-        <AnimatePresence mode="wait">
-          {canSubmit && !showDeposit && mode !== 'edit' && (
-            <motion.div
-              key="submit"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}>
-              <SubmitButton onClick={handleSubmit} />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* 하단 고정 참석하기 버튼 */}
+      {canSubmit && mode !== 'edit' && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-BG-black p-4 shadow-lg">
+          <div className="mx-auto w-full max-w-[600px]">
+            <motion.button
+              onClick={handleSubmit}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90">
+              참석하기
+            </motion.button>
+          </div>
+        </div>
+      )}
 
       {/* 중앙 확인 버튼 - 키보드 위에 표시 */}
       {shouldShowConfirmButton() && (

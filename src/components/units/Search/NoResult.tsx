@@ -17,11 +17,17 @@ export default function NoResults({ text, minHeight = 'min-h-[50vh]', fullHeight
 
   return (
     <div className={`relative flex w-full flex-col bg-BG-black ${heightClass}`}>
-      <div className="flex flex-1 flex-col items-center justify-center px-4">
-        <Image src="/icons/blackLogo.svg" alt="caution image" width={120} height={120} />
-        <div className="mt-[0.5rem] whitespace-pre-wrap text-center text-body2-15-medium text-gray300">
-          {/* 👇 원본 text 대신 치환된 processedText를 사용 */}
-          {processedText}
+      <div className="flex flex-1 flex-col items-center justify-center px-5">
+        <Image src="/icons/blackLogo.svg" alt="caution image" width={69} height={64} />
+        <div className="mt-[0.5rem] text-center text-gray300">
+          {/* 👇 줄바꿈된 텍스트를 각 줄별로 다른 폰트 크기 적용 */}
+          {processedText.split('\n').map((line, index) => (
+            <div
+              key={index}
+              className={`whitespace-pre-wrap ${index === 0 ? 'text-body-14-bold' : 'text-gray400 text-body-11-medium'}`}>
+              {line}
+            </div>
+          ))}
         </div>
       </div>
     </div>

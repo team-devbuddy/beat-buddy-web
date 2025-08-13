@@ -92,7 +92,7 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
 
   return (
     <div className="flex w-full flex-col bg-BG-black">
-      <div className="mb-[2.5rem] grid grid-cols-1 gap-x-[0.5rem] gap-y-[1.75rem] px-[0.75rem] sm:grid-cols-2">
+      <div className="mb-[2.5rem] grid grid-cols-1 gap-x-[0.5rem] gap-y-[1.5rem] px-[0.75rem] sm:grid-cols-2">
         {clubs.map((venue, index) => {
           const { firstImageUrl, filteredTags } = memoizedValues[index];
 
@@ -140,27 +140,29 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   {/* 하트 개수 - 왼쪽 하단 고정 */}
                   <div className="absolute bottom-5 left-7 flex items-center space-x-[0.25rem] text-gray100">
                     <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15} height={13} />
-                    <span className="text-[0.875rem]">
-                      {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
+                    <span className="text-body-14-medium">
+                      {heartbeatNums[venue.venueId] !== undefined
+                        ? heartbeatNums[venue.venueId].toString().padStart(3, '0')
+                        : '000'}
                     </span>
                   </div>
                 </div>
                 <div className="mt-[1rem] flex flex-grow flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">
-                      <h3 className="text-ellipsis text-[1.25rem] font-bold text-white">{venue.englishName}</h3>
+                      <h3 className="text-ellipsis text-subtitle-20-bold text-white">{venue.englishName}</h3>
                     </div>
                     <div className="mt-[0.25rem] flex w-2/3 flex-wrap gap-[0.5rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span
                             key={index}
-                            className="rounded-[0.5rem]  bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.8125rem] text-gray300">
+                            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-body-13-medium text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
-                        <span className="rounded-[0.5rem]  bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.8125rem] text-gray300">
+                        <span className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-body-13-medium text-gray300">
                           No tagList
                         </span>
                       )}

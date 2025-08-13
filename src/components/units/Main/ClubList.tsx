@@ -168,14 +168,14 @@ export default function ClubList({
                         filteredTags.map((tag, index) => (
                           <span
                             key={`${venue.venueId}-${tag}-${index}`}
-                            className="text-body-11-medium rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-gray300">
+                            className="text-body-11-medium rounded-[0.5rem] bg-gray700 px-[0.5rem] pt-[0.19rem] pb-[0.25rem] text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
                         <span
                           key={`${venue.venueId}-no-tags`}
-                          className="text-body-11-medium rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-gray300">
+                          className="text-body-11-medium rounded-[0.5rem] bg-gray700 px-[0.5rem] pt-[0.19rem] pb-[0.25rem] text-gray300">
                           No tagList
                         </span>
                       )}

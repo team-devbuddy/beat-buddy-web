@@ -29,7 +29,7 @@ export default function MainHeader() {
           <Image
             src="/icons/logotype.svg"
             alt="logo"
-            width={126}
+            width={126.03}
             height={26}
             className="mt-[0.13rem] cursor-pointer safari-icon-fix"
             priority
@@ -42,7 +42,7 @@ export default function MainHeader() {
             {!pathname.includes('search') && (
               <Link href="/alert">
                 <Image
-                  src={hasUnreadAlarm ? '/icons/alarm-bell-02.svg' : '/icons/Headers/bell-02.svg'}
+                  src={hasUnreadAlarm ? '/icons/alarm-bell-02.svg' : '/icons/bell-02.svg'}
                   alt="alert"
                   width={24}
                   height={24}

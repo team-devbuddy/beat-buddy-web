@@ -12,7 +12,7 @@ const config: Config = {
       poppins: ['poppins', 'sans-serif'],
       queensides: ['Queensides'],
       suit: ['SUIT', 'sans-serif'],
-      paperlogy: ['Paperlogy-7Bold', 'sans-serif'],
+      paperlogy: ['Paperlogy', 'sans-serif'],
       pretendard: ['Pretendard', 'sans-serif'],
       sans: ['var(--font-pretendard)', 'sans-serif'],
     },
@@ -336,6 +336,14 @@ const config: Config = {
             fontWeight: '600',
             lineHeight: '135%',
             letterSpacing: '-0.02rem',
+          },
+        ],
+        'paperlogy-1125-600': [
+          '1.125rem',
+          {
+            fontWeight: '600',
+            lineHeight: '150%',
+            letterSpacing: '-0.0225rem',
           },
         ],
       },

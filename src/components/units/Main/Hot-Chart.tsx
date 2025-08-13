@@ -1,6 +1,7 @@
 import React from 'react';
 import ClubList from './ClubList';
 import { Club } from '@/lib/types';
+import Image from 'next/image';
 
 interface HotVenuesProps {
   clubs: Club[];
@@ -12,11 +13,9 @@ interface HotVenuesProps {
 const HotVenues = ({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: HotVenuesProps) => {
   return (
     <div className="flex flex-col">
-      <div className="flex cursor-pointer flex-col items-start ">
-        <span className="text-[1.125rem] text-main font-paperlogy font-bold line-height-[150%] tracking-[-0.05rem]">
-          Hot Venue
-        </span>
-        <span className="text-[0.8125rem] text-gray300">실시간으로 인기있는 베뉴 정보입니다.</span>
+      <div className="flex flex-col items-start">
+        <Image src="/Hot Venue.svg" alt="Hot Venue" width={94} height={27} className="my-[0.38rem]" />
+        <span className="text-body-13-medium text-gray300">지금 인기 있는 베뉴의 정보를 확인해보세요</span>
       </div>
       <div className="py-[0.88rem]">
         <ClubList

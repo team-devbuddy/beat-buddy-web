@@ -28,7 +28,7 @@ export default function Magazine({
   return (
     <Link href={`/magazine/${magazineId}`}>
       {/* 양쪽 1.25rem 패딩을 고려한 너비 */}
-      <div className="relative h-[calc(100vw_-_2.5rem)] max-h-[21rem] w-[calc(100vw_-_2.5rem)] max-w-none cursor-pointer overflow-hidden rounded-xl shadow-lg md:max-h-[21rem] md:max-w-[21rem]">
+      <div className="relative h-[calc(100vw_-_2.5rem)] max-h-[21rem] w-[calc(100vw_-_2.5rem)] max-w-none cursor-pointer overflow-hidden rounded-[0.5rem] shadow-lg md:max-h-[21rem] md:max-w-[21rem]">
         <Image
           src={thumbImageUrl || '/images/DefaultImage.png'}
           alt={title}
@@ -50,7 +50,7 @@ export default function Magazine({
               e.preventDefault(); // 부모 링크 막기
               router.push('/magazine');
             }}
-            className="flex items-center justify-center rounded-[0.5rem] bg-black/70 px-[0.38rem] py-[0.19rem] text-[0.6875rem] font-medium text-gray200">
+            className="flex items-center justify-center rounded-[0.5rem] bg-black/70 px-[0.38rem] py-[0.19rem] text-body-11-medium text-gray200">
             {orderInHome} | {totalCount}
             <Image className="ml-[0.12rem]" src="/icons/rightArrowMagazine.svg" alt="Arrow head right icon" width={8.75} height={14} />
           </button>
@@ -59,16 +59,16 @@ export default function Magazine({
         {/* 하단 콘텐츠 */}
         <div className="absolute bottom-0 left-0 right-0 z-10 p-[1.5rem] text-white">
           {picked ? (
-            <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-white">
+            <span className="inline-block rounded-[0.5rem] bg-main px-[0.5rem] py-[0.19rem] text-body-11-medium text-white">
               BeatBuddy Pick!
             </span>
           ) : (
-            <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-white">
+            <span className="inline-block rounded-[0.5rem] bg-main px-[0.5rem] py-[0.19rem] text-body-11-medium text-white">
               Magazine
             </span>
           )}
 
-          <h2 className="line-height-[140%] py-2 text-[1.375rem] font-bold tracking-[-0.0275rem] drop-shadow-md">
+          <h2 className="text-subtitle-22-bold py-2 drop-shadow-md">
             {title.split('\n').map((line, index, array) => (
               <span key={index}>
                 {line}
@@ -76,11 +76,7 @@ export default function Magazine({
               </span>
             ))}
           </h2>
-          <p
-            className="line-height-[150%] text-[0.8125rem] tracking-[-0.01625rem] text-[#FFFFFF] drop-shadow-md"
-            style={{ color: 'rgba(255, 255, 255, 0.60)' }}>
-            {content}
-          </p>
+          <p className="text-body-13-medium text-white/60 drop-shadow-md">{content}</p>
         </div>
       </div>
     </Link>

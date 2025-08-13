@@ -202,6 +202,18 @@ input[type='range']::-ms-thumb {
   src: url('/assets/fonts/SUIT-Variable.ttf');
 }
 
+@font-face {
+  font-family: 'Paperlogy';
+  font-weight: 600;
+  src: url('/src/assets/fonts/Paperlogy-6SemiBold.ttf');
+}
+
+@font-face {
+  font-family: 'Paperlogy';
+  font-weight: 700;
+  src: url('/src/assets/fonts/Paperlogy-7Bold.ttf');
+}
+
 /* Swiper Magazine Carousel Styles */
 .magazine-swiper {
   overflow: hidden !important;
@@ -212,6 +224,26 @@ input[type='range']::-ms-thumb {
   box-sizing: border-box;
 }
 
+/* 무한루프 강화 */
+.magazine-swiper .swiper-wrapper {
+  transition-timing-function: ease-out;
+}
+
+.magazine-swiper .swiper-slide {
+  transition: transform 0.5s ease-out;
+}
+
+/* 무한루프를 위한 추가 슬라이드 처리 */
+.magazine-swiper .swiper-slide-duplicate {
+  pointer-events: none;
+}
+
+/* 루프 전환 시 부드러운 애니메이션 */
+.magazine-swiper .swiper-slide-active {
+  z-index: 1;
+}
+
+/* 매거진 캐러셀 자동 전환 강화 */
 .magazine-swiper .swiper-wrapper {
   align-items: center;
   transition-timing-function: ease-out;
@@ -221,7 +253,7 @@ input[type='range']::-ms-thumb {
 .magazine-swiper .swiper-slide {
   opacity: 1;
   transform: scale(1);
-  transition: all 0.3s ease;
+  transition: all 0.6s ease;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -237,10 +269,16 @@ input[type='range']::-ms-thumb {
 .magazine-swiper .swiper-slide-active {
   opacity: 1;
   transform: scale(1);
+  z-index: 1;
 }
 
 .magazine-swiper .swiper-slide-next,
 .magazine-swiper .swiper-slide-prev {
   opacity: 1;
   transform: scale(1);
+}
+
+/* 무한루프를 위한 추가 슬라이드 처리 */
+.magazine-swiper .swiper-slide-duplicate {
+  pointer-events: none;
 }

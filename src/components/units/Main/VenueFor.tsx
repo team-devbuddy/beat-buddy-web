@@ -16,7 +16,7 @@ export default function VenueFor({ userName }: VenueForProps) {
     <Link href="/bbp-list" passHref>
       {/* 그라디언트 테두리 */}
       <div
-        className="cursor-pointer rounded-[0.5rem] p-[0.8px] transition-all duration-200"
+        className="cursor-pointer rounded-[0.5rem] p-[0.8px]"
         style={{
           background:
             'linear-gradient(90deg, #FF91C1 1%, #EE1171 25%, #FF91C1 50%, #92003F 75%, rgba(238, 23, 113, 0.05) 100%)',
@@ -34,7 +34,7 @@ export default function VenueFor({ userName }: VenueForProps) {
           <div className="flex flex-col justify-center gap-y-[0.13rem]">
             <div className="flex items-center gap-x-[0.25rem]">
               <Image src="/icons/bbpLogo.svg" alt="Arrow head right icon" width={16} height={15} />
-              <span className="text-[1rem] text-[#FFCAE1]">
+              <span className="text-button-16-semibold text-[#FFCAE1]">
                 {!isBusiness ? (
                   <>
                     Venue for <span className="font-bold">{userName}버디</span>
@@ -44,9 +44,7 @@ export default function VenueFor({ userName }: VenueForProps) {
                 )}
               </span>
             </div>
-            <span
-              className="line-height-[150%] text-[0.75rem] font-medium tracking-[-0.015rem]"
-              style={{ color: 'rgba(255, 202, 225, 0.70)' }}>
+            <span className="text-body-12-medium" style={{ color: 'rgba(255, 202, 225, 0.70)' }}>
               {!isBusiness ? '나에게 딱 맞는 베뉴들의 정보를 확인하세요!' : 'BeatBuddy에 나의 이벤트를 등록해보세요!'}
             </span>
           </div>

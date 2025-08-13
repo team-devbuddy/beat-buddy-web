@@ -19,6 +19,7 @@ import styled from 'styled-components';
 import NoResults from '@/components/units/Search/NoResult';
 import { getUserName } from '@/lib/actions/user-controller/fetchUsername';
 import Loading from '../loading';
+import { useRouter } from 'next/navigation';
 
 const BBPickHeader = dynamic(() => import('@/components/units/BBPList/BBPHeader'), { ssr: false });
 
@@ -31,7 +32,7 @@ export default function BBPOnboardingPage() {
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   const [showToast, setShowToast] = useState<boolean>(false);
   const [userName, setUserName] = useState<string | null>(null);
-
+  const router = useRouter();
   const fetchUserName = async (token: string) => {
     try {
       const name = await getUserName(token);
@@ -103,10 +104,10 @@ export default function BBPOnboardingPage() {
       {/* 온보딩 후 전용 헤더 */}
       <header className="flex flex-col bg-BG-black">
         <div className="flex flex-col px-[1.25rem] pb-[0.62rem] pt-[0.62rem]">
-          <span className="text-[1.5rem] font-bold tracking-[-0.03rem] text-main">
+          <span className="text-title-24-bold text-main">
             {userName ? `Venue for ${userName}버디` : 'BeatBuddy Pick'}
           </span>
-          <span className="mt-[0.38rem] text-[0.875rem] font-light text-gray200">
+          <span className="mt-[0.38rem] text-body-14-bold text-gray200">
             테스트 결과를 바탕으로 맞춤 메뉴를 추천해드려요
           </span>
         </div>
@@ -128,11 +129,11 @@ export default function BBPOnboardingPage() {
 
       {/* 홈으로가기 버튼 - 항상 표시 */}
       <div className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-[37.5rem] px-5 py-4">
-        <Link
-          href="/"
-          className="flex w-full items-center justify-center rounded-[0.5rem] bg-main py-[0.88rem] font-bold text-sub2">
+        <button
+          onClick={() => router.push('/')}
+          className="flex w-full items-center justify-center rounded-[0.5rem] bg-main py-[0.88rem] text-button-16-semibold text-sub2">
           홈으로 가기
-        </Link>
+        </button>
       </div>
     </div>
   );
