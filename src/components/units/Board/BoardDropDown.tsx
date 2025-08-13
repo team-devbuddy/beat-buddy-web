@@ -11,6 +11,7 @@ import { deletePost } from '@/lib/actions/post-controller/deletePost';
 import { getPostDetail } from '@/lib/actions/detail-controller/board/boardWriteUtils';
 import { deleteComment } from '@/lib/actions/comment-controller/deleteComment';
 import { submitReport } from '@/lib/actions/report-controller/submitReport';
+import { deleteEvent } from '@/lib/actions/event-controller/deleteEvent';
 
 interface PostProps {
   nickname: string;
@@ -125,7 +126,7 @@ const BoardDropdown = ({
             label: '삭제하기',
             icon: '/icons/trashcan.svg',
             onClick: async () => {
-              await deletePost(accessToken, eventId!);
+              await deleteEvent(eventId!, accessToken);
               onPostDelete?.();
               router.push('/event');
             },

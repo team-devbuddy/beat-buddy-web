@@ -1,6 +1,6 @@
 // lib/actions/event-controller/getParticipants.ts
 export async function getParticipants(eventId: string, accessToken: string) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/events/${eventId}/attendance`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/events/${eventId}/attendance-list`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
