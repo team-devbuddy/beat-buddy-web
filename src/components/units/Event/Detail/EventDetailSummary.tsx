@@ -3,13 +3,16 @@
 import Image from 'next/image';
 import { EventDetail } from '@/lib/types';
 import { differenceInCalendarDays } from 'date-fns';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import BoardImageModal from '@/components/units/Board/BoardImageModal';
-import { motion, AnimatePresence } from 'framer-motion';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 export default function EventDetailSummary({ eventDetail }: { eventDetail: EventDetail }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const sliderRef = useRef<Slider>(null);
   const today = new Date();
   const start = new Date(eventDetail.startDate);
   const dDay = differenceInCalendarDays(start, today);
@@ -27,80 +30,48 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
     currentIndex: currentImageIndex,
   });
 
-  // 스와이프 관련 상태
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  // react-slick 슬라이더 설정 (Preview.tsx와 동일)
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: false,
+    arrows: false,
+    draggable: true,
+    swipe: true,
+    touchMove: true,
+    touchThreshold: 5,
+    swipeToSlide: true,
+    beforeChange: (current: number, next: number) => {
+      setCurrentImageIndex(next);
+    },
+  };
 
   const handleImageClick = () => {
     setShowModal(true);
   };
 
-  const handleNextImage = () => {
-    if (images.length > 1) {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }
-  };
-
-  const handlePrevImage = () => {
-    if (images.length > 1) {
-      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-    }
-  };
-
-  // 스와이프 감지 함수들
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50; // 왼쪽으로 스와이프 (다음 이미지)
-    const isRightSwipe = distance < -50; // 오른쪽으로 스와이프 (이전 이미지)
-
-    if (isLeftSwipe) {
-      handleNextImage();
-    } else if (isRightSwipe) {
-      handlePrevImage();
-    }
-
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
-
   return (
     <div className="relative w-full" data-summary>
       {/* 이미지 캐러셀 */}
-      <div
-        className="relative h-[21.875rem] w-full overflow-hidden"
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentImageIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="relative h-full w-full">
-            <Image
-              src={images[currentImageIndex]}
-              alt="event"
-              fill
-              sizes="100vw"
-              className="cursor-pointer object-cover"
-              priority
-              onClick={handleImageClick}
-            />
-          </motion.div>
-        </AnimatePresence>
+      <div className="relative h-[21.875rem] w-full overflow-hidden">
+        <Slider ref={sliderRef} {...settings} className="h-full w-full touch-pan-x">
+          {images.map((url, index) => (
+            <div key={index} className="relative h-[21.875rem] w-full">
+              <Image
+                src={url}
+                alt={`Event ${index}`}
+                fill
+                sizes="100vw"
+                className="cursor-pointer object-cover"
+                priority
+                onClick={handleImageClick}
+              />
+            </div>
+          ))}
+        </Slider>
 
         {/* 텍스트 오버레이 (제목 + D-Day + 날짜 + 지역 전부 이미지 안에 위치) */}
         <div className="absolute bottom-0 left-0 z-10 w-full bg-gradient-to-t from-black/80 to-transparent px-5 py-5">
@@ -108,7 +79,7 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
           <div className="flex items-center gap-2">
             <h2 className="text-title-24-bold text-white">{eventDetail.title}</h2>
             <div
-              className={`text-body-13-medium rounded-[0.5rem] px-2 py-1 ${
+              className={`rounded-[0.5rem] px-2 py-1 text-body-13-medium ${
                 dDay <= 7 && dDay >= 0 ? 'bg-main text-white' : 'bg-gray500 text-gray100'
               }`}>
               {dDay > 0 ? `D-${dDay}` : dDay === 0 ? 'D-DAY' : `D-${Math.abs(dDay)}`}
@@ -129,7 +100,7 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
 
         {/* 이미지 인덱스 표시 (우측 하단) */}
 
-        <div className="text-body-10-medium absolute bottom-5 right-5 z-20 rounded-[0.5rem] bg-[#17181C]/70 px-2 py-1 text-gray200">
+        <div className="absolute bottom-5 right-5 z-20 rounded-[0.5rem] bg-[#17181C]/70 px-2 py-1 text-body-10-medium text-gray200">
           {currentImageIndex + 1}/{images.length}
         </div>
       </div>
