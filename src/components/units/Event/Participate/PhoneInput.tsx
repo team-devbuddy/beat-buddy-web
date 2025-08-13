@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
+import { motion } from 'framer-motion';
 export default function PhoneInput({
   value,
   onChange,
@@ -131,7 +131,7 @@ export default function PhoneInput({
               whileTap={!disabled ? { scale: 0.98 } : {}}
               className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
               확인
-            </button>
+            </motion.button>
           </div>
         </div>
       )}
