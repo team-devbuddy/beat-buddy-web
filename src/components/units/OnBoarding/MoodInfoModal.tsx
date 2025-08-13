@@ -41,10 +41,10 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
         {moodDescriptions.map((mood, index) => (
           <div key={index} className="flex flex-col">
             <div className="flex items-baseline gap-1">
-              <span className="text-[0.875rem] font-bold text-main2">{mood.title}</span>
-              <span className="text-[0.75rem] font-bold text-main2">{mood.subtitle}</span>
+              <span className="text-body-14-bold text-main2">{mood.title}</span>
+              <span className="text-body3-12-bold text-main2">{mood.subtitle}</span>
             </div>
-            <p className="text-[0.75rem] text-gray100">{mood.description}</p>
+            <p className="text-body3-12-medium text-gray100">{mood.description}</p>
           </div>
         ))}
       </motion.div>

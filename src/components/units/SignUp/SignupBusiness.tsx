@@ -402,7 +402,7 @@ export default function SignUpBusiness() {
             transition: 'bottom 0.3s ease-out',
           }}>
           <div className="w-full max-w-[600px]">
-            <button
+            <motion.button
               onClick={() => {
                 if (step === 4) {
                   handleComplete();
@@ -412,9 +412,11 @@ export default function SignUpBusiness() {
                 // 키보드 숨김
                 setIsKeyboardVisible(false);
               }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90">
               확인
-            </button>
+            </motion.button>
           </div>
         </div>
       )}

@@ -10,6 +10,7 @@ import { accessTokenState, isBusinessState, agreementTermsState } from '@/contex
 import { PostAgree } from '@/lib/action';
 import Loading from '@/app/loading';
 import Prev from '@/components/common/Prev';
+import { motion } from 'framer-motion';
 
 export default function AgreementTerm() {
   const [terms, setTerms] = useRecoilState(agreementTermsState);
@@ -194,14 +195,16 @@ export default function AgreementTerm() {
       </div>
 
       <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
-        <button
+        <motion.button
           onClick={onClickSubmit}
           disabled={!buttonEnabled}
+          whileHover={buttonEnabled ? { scale: 1.02 } : {}}
+          whileTap={buttonEnabled ? { scale: 0.98 } : {}}
           className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold transition-colors ${
             buttonEnabled ? 'bg-main text-sub2' : 'bg-gray500 text-gray300'
           }`}>
           동의하고 가입하기
-        </button>
+        </motion.button>
       </div>
     </div>
   );

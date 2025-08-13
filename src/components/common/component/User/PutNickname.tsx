@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { PostDuplicateCheck, PostNickname } from '@/lib/action'; // API 요청 함수의 경로를 적절히 수정하세요
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
+import { motion } from 'framer-motion';
 
 interface PutNickNameProps {
   buttonText: string;
@@ -92,7 +93,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
           <div className="flex flex-col">
             <div className="relative flex">
               <input
-                className="w-full border-b border-white bg-transparent py-3 pl-1 text-[0.875rem] text-white outline-none safari-input-fix placeholder:text-gray200"
+                className="w-full border-b border-white bg-transparent py-3 pl-1 text-body-14-medium text-white outline-none safari-input-fix placeholder:text-gray200"
                 placeholder="닉네임을 입력해주세요"
                 value={inputValue}
                 onChange={handleChange}
@@ -103,7 +104,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
                 </div>
               ) : (
                 <button
-                  className={`absolute right-1 top-1 rounded-[0.5rem] px-3 py-[0.38rem] text-[0.75rem] font-bold ${inputValue ? 'bg-gray700 text-main' : 'bg-gray700 text-gray200'}`}
+                  className={`absolute right-1 top-1 rounded-[0.5rem] px-3 py-[0.38rem] text-body3-12-bold ${inputValue ? 'bg-gray700 text-main' : 'bg-gray700 text-gray200'}`}
                   disabled={!inputValue}
                   onClick={handleDuplicateCheck}>
                   중복 확인
@@ -112,7 +113,7 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
             </div>
 
             <p
-              className={`px-1 py-[0.63rem] text-[0.75rem] ${
+              className={`px-1 py-[0.63rem] text-body3-12-medium ${
                 errorMessage ? 'text-main' : successMessage ? 'text-main' : 'text-gray300'
               }`}>
               {errorMessage || successMessage || '공백 없이, 12자 이하로 입력해주세요 특수 기호는 불가능해요 '}
@@ -121,14 +122,16 @@ export default function PutNickName({ buttonText, redirectUrl }: PutNickNameProp
         </div>
       </div>
       <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
-        <button
+        <motion.button
           onClick={onClickSubmit}
           disabled={!isDuplicateChecked || !isDuplicateValid}
-          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold ${
+          whileHover={isDuplicateChecked && isDuplicateValid ? { scale: 1.02 } : {}}
+          whileTap={isDuplicateChecked && isDuplicateValid ? { scale: 0.98 } : {}}
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-button-16-semibold ${
             isDuplicateChecked && isDuplicateValid ? 'bg-[#EE1171] text-sub2' : 'bg-gray400 text-gray300'
           }`}>
           {buttonText}
-        </button>
+        </motion.button>
       </div>
     </>
   );

@@ -5,6 +5,7 @@ import { PostGenre } from '@/lib/action'; // 경로를 적절히 수정하세요
 import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 import { accessTokenState, memberGenreIdState, onboardingGenreState } from '@/context/recoil-context';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export default function OnBoardingGenre() {
   const genreMap: { [key: string]: string } = {
@@ -99,7 +100,7 @@ export default function OnBoardingGenre() {
           height={24}
           className="absolute right-5 top-[-36px]"
         />
-        <h1 className="pb-[1.88rem] pt-[0.62rem] text-[1.5rem] font-bold text-white">
+        <h1 className="pb-[1.88rem] pt-[0.62rem] text-title-24-bold text-white">
           선호하는 장르를
           <br />
           모두 선택해주세요
@@ -108,10 +109,12 @@ export default function OnBoardingGenre() {
         <div className="flex w-full justify-center gap-2">
           <div className="grid w-full grid-cols-2 gap-2">
             {genres.map((genre, index) => (
-              <div
+              <motion.div
                 key={index}
                 onClick={() => toggleGenre(genre)}
-                className={`relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[1.37rem] text-[1rem] transition-all duration-300 ease-in-out ${
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`relative flex w-full cursor-pointer items-center justify-center rounded-[0.25rem] py-[1.37rem] text-body1-16-medium ${
                   selectedGenres.includes(genre) ? 'text-main' : 'text-white'
                 }`}
                 style={{
@@ -120,25 +123,32 @@ export default function OnBoardingGenre() {
                   backgroundPosition: 'center',
                 }}>
                 {selectedGenres.includes(genre) && (
-                  <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70 transition-all duration-300 ease-in-out"></div>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 0.7, scale: 1 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"
+                  />
                 )}
                 <span className="relative z-10">{genre}</span>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
 
-        {error && <div className="mt-[0.63rem] text-[0.75rem] text-main">{error}</div>}
+        {error && <div className="mt-[0.63rem] text-body3-12-medium text-main">{error}</div>}
       </div>
       <div className="fixed bottom-5 left-0 right-0 z-50 flex w-full justify-center px-5">
-        <button
+        <motion.button
           onClick={onClickSubmit}
           disabled={!isButtonEnabled}
-          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold transition-colors ${
-            isButtonEnabled ? 'bg-main text-sub2' : 'cursor-not-allowed bg-gray500 text-gray300'
+          whileHover={isButtonEnabled ? { scale: 1.02 } : {}}
+          whileTap={isButtonEnabled ? { scale: 0.98 } : {}}
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-button-16-semibold transition-colors ${
+            isButtonEnabled ? 'bg-main text-sub2 hover:bg-main/90' : 'cursor-not-allowed bg-gray500 text-gray300'
           }`}>
           다음{' '}
-        </button>
+        </motion.button>
       </div>
     </>
   );

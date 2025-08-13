@@ -120,6 +120,39 @@ body {
   outline: none;
 }
 
+/* 글로벌 버튼 애니메이션 */
+@layer components {
+  button {
+    transition: transform 0.2s ease-in-out;
+  }
+
+  button:hover:not(:disabled) {
+    transform: scale(1.02);
+  }
+
+  button:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  /* 특정 버튼 타입별 애니메이션 */
+  button[class*='bg-main'],
+  button[class*='bg-[#EE1171]'] {
+    transition:
+      transform 0.2s ease-in-out,
+      background-color 0.2s ease-in-out;
+  }
+
+  button[class*='bg-main']:hover:not(:disabled),
+  button[class*='bg-[#EE1171]']:hover:not(:disabled) {
+    transform: scale(1.02);
+  }
+
+  button[class*='bg-main']:active:not(:disabled),
+  button[class*='bg-[#EE1171]']:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
 /* Range input thumb 제거 */
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;

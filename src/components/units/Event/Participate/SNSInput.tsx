@@ -272,12 +272,14 @@ export default function SNSSelector({
             transition: 'bottom 0.3s ease-out',
           }}>
           <div className="w-full max-w-[600px]">
-            <button
+            <motion.button
               onClick={handleConfirm}
               disabled={disabled}
+              whileHover={!disabled ? { scale: 1.02 } : {}}
+              whileTap={!disabled ? { scale: 0.98 } : {}}
               className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
               확인
-            </button>
+            </motion.button>
           </div>
         </div>
       )}

@@ -5,7 +5,7 @@ import { PostMood } from '@/lib/action';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, memberMoodIdState, onboardingMoodState } from '@/context/recoil-context';
 import Image from 'next/image';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import InfoModal from './MoodInfoModal';
 
 const moodMap: { [key: string]: string } = {
@@ -98,7 +98,7 @@ export default function OnBoardingMood() {
           className="absolute right-5 top-[-36px]"
         />
         <div className="flex items-start justify-between pb-[1.88rem] pt-[0.62rem]">
-          <h1 className="text-[1.5rem] font-bold text-white">
+          <h1 className="text-title-24-bold text-white">
             어떤 분위기를
             <br />
             좋아하세요?
@@ -118,10 +118,12 @@ export default function OnBoardingMood() {
 
         <div className="grid w-full grid-cols-3 gap-2">
           {moods.map((mood, index) => (
-            <div
+            <motion.div
               key={index}
               onClick={() => toggleMood(mood)}
-              className={`relative aspect-square w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-[1rem] transition-all duration-300 ease-in-out ${
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`relative aspect-square w-full cursor-pointer items-center justify-center rounded-[0.25rem] text-body1-16-medium ${
                 selectedMoods.includes(mood) ? 'text-main' : 'text-white'
               } flex`} // ← flex로 텍스트 정렬 추가
               style={{
@@ -130,24 +132,31 @@ export default function OnBoardingMood() {
                 backgroundPosition: 'center',
               }}>
               {selectedMoods.includes(mood) && (
-                <div className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70 transition-all duration-300 ease-in-out"></div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 0.7, scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0 rounded-[0.25rem] border-2 border-main bg-black opacity-70"
+                />
               )}
               <span className="relative z-10">{mood}</span>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {error && <div className="mt-[0.63rem] text-[0.75rem] text-main">{error}</div>}
+        {error && <div className="mt-[0.63rem] text-body3-12-medium text-main">{error}</div>}
       </div>
       <div className="z-5 fixed bottom-5 left-0 right-0 flex w-full justify-center px-5">
-        <button
+        <motion.button
           onClick={onClickSubmit}
           disabled={!isButtonEnabled}
-          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-[1rem] font-bold transition-colors ${
-            isButtonEnabled ? 'bg-main text-sub2' : 'cursor-not-allowed bg-gray500 text-gray300'
+          whileHover={isButtonEnabled ? { scale: 1.02 } : {}}
+          whileTap={isButtonEnabled ? { scale: 0.98 } : {}}
+          className={`w-full max-w-[560px] rounded-[0.5rem] py-[0.81rem] text-button-16-semibold transition-colors ${
+            isButtonEnabled ? 'bg-main text-sub2 hover:bg-main/90' : 'cursor-not-allowed bg-gray500 text-gray300'
           }`}>
           다음{' '}
-        </button>
+        </motion.button>
       </div>
     </>
   );
