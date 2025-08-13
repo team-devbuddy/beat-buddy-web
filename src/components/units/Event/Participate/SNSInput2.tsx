@@ -159,6 +159,32 @@ export default function SNSInput2({
               // 영어, 숫자, 언더스코어, 점만 허용
               const value = e.target.value.replace(/[^a-zA-Z0-9._]/g, '');
               onIdChange(value);
+
+              // 값이 입력되면 즉시 키보드 상태 체크
+              if (value.trim().length > 0) {
+                setTimeout(() => {
+                  if ('visualViewport' in window) {
+                    const windowHeight = window.innerHeight;
+                    const viewportHeight = window.visualViewport?.height || windowHeight;
+                    const heightDiff = windowHeight - viewportHeight;
+                    const threshold = 50;
+
+                    console.log('🔵 Instagram onChange 후 키보드 체크:', {
+                      windowHeight,
+                      viewportHeight,
+                      heightDiff,
+                      threshold,
+                      value: value.trim().length,
+                    });
+
+                    if (heightDiff > threshold) {
+                      setIsKeyboardVisible(true);
+                      setKeyboardHeight(heightDiff);
+                      console.log('🔵 Instagram onChange 후 키보드 감지됨');
+                    }
+                  }
+                }, 50);
+              }
             }
           }}
           onFocus={() => {
@@ -206,6 +232,32 @@ export default function SNSInput2({
               // 영어, 숫자, 언더스코어, 점만 허용
               const value = e.target.value.replace(/[^a-zA-Z0-9._]/g, '');
               onIdChange(value);
+
+              // 값이 입력되면 즉시 키보드 상태 체크
+              if (value.trim().length > 0) {
+                setTimeout(() => {
+                  if ('visualViewport' in window) {
+                    const windowHeight = window.innerHeight;
+                    const viewportHeight = window.visualViewport?.height || windowHeight;
+                    const heightDiff = windowHeight - viewportHeight;
+                    const threshold = 50;
+
+                    console.log('🔵 Facebook onChange 후 키보드 체크:', {
+                      windowHeight,
+                      viewportHeight,
+                      heightDiff,
+                      threshold,
+                      value: value.trim().length,
+                    });
+
+                    if (heightDiff > threshold) {
+                      setIsKeyboardVisible(true);
+                      setKeyboardHeight(heightDiff);
+                      console.log('🔵 Facebook onChange 후 키보드 감지됨');
+                    }
+                  }
+                }, 50);
+              }
             }
           }}
           onFocus={() => {
