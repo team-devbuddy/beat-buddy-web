@@ -24,9 +24,55 @@ export default function SignUpBusiness() {
   const router = useRouter();
   const ssnBackRef = useRef<HTMLInputElement>(null);
 
+  // 키보드 상태 관리 (PaticipationForm과 동일)
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
   useEffect(() => {
     setDropdownOpen(false);
   }, [step]);
+
+  // VisualViewport API를 사용한 키보드 감지 (PaticipationForm과 동일)
+  useEffect(() => {
+    const handleViewportResize = () => {
+      if ('visualViewport' in window) {
+        const windowHeight = window.innerHeight;
+        const viewportHeight = window.visualViewport?.height || windowHeight;
+        const heightDiff = windowHeight - viewportHeight;
+        const threshold = 50; // 50px 이상 차이나야 키보드로 인식
+
+        if (heightDiff > threshold) {
+          setIsKeyboardVisible(true);
+          setKeyboardHeight(heightDiff);
+        } else {
+          setIsKeyboardVisible(false);
+          setKeyboardHeight(0);
+        }
+      }
+    };
+
+    // 초기 상태 설정
+    handleViewportResize();
+
+    // 이벤트 리스너 등록
+    if ('visualViewport' in window) {
+      window.visualViewport?.addEventListener('resize', handleViewportResize);
+    }
+
+    return () => {
+      if ('visualViewport' in window) {
+        window.visualViewport?.removeEventListener('resize', handleViewportResize);
+      }
+    };
+  }, []);
+
+  // 통신사 선택 시 자동으로 다음 단계로 넘어가기
+  useEffect(() => {
+    if (step === 3 && telecom) {
+      setSignupBusiness((prev) => ({ ...prev, telecom }));
+      setStep(4);
+    }
+  }, [step, telecom, setSignupBusiness]);
 
   const tryStepAdvance = () => {
     if (step === 1 && /^[가-힣]{2,5}$/.test(name)) {
@@ -95,6 +141,20 @@ export default function SignUpBusiness() {
     }
   };
 
+  // 현재 단계에서 확인 버튼을 보여줄지 결정 (PaticipationForm과 동일)
+  const shouldShowConfirmButton = () => {
+    switch (step) {
+      case 1: // 이름 입력
+        return isKeyboardVisible && /^[가-힣]{2,5}$/.test(name);
+      case 2: // 주민등록번호 입력
+        return isKeyboardVisible && ssnFront.length === 6 && ssnBack.length === 1;
+      case 4: // 전화번호 입력
+        return isKeyboardVisible && phoneNumber && phoneNumber.length >= 10;
+      default:
+        return false;
+    }
+  };
+
   const handleComplete = async () => {
     if (phoneNumber) {
       const residentRegistration = ssnFront + ssnBack;
@@ -154,16 +214,6 @@ export default function SignUpBusiness() {
             {name.length > 0 && !/^[가-힣]{2,5}$/.test(name) && (
               <p className="mt-2 text-body-12-medium text-main">실명을 입력해 주세요</p>
             )}
-            <div className="fixed bottom-5 left-0 w-full px-5">
-              <button
-                onClick={() => tryStepAdvance()}
-                disabled={!/^[가-힣]{2,5}$/.test(name)}
-                className={`w-full rounded-[0.5rem] py-[0.81rem] text-button-16-semibold ${
-                  /^[가-힣]{2,5}$/.test(name) ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
-                }`}>
-                확인
-              </button>
-            </div>
           </div>
         )}
 
@@ -198,16 +248,6 @@ export default function SignUpBusiness() {
             <div className="pt-6 text-gray200">
               <label className="mb-[0.62rem] block text-body1-16-bold">이름</label>
               <p className="border-b border-gray200 px-2 py-2">{signupBusiness.name}</p>
-            </div>
-            <div className="fixed bottom-5 left-0 w-full px-5">
-              <button
-                onClick={() => tryStepAdvance()}
-                disabled={ssnFront.length !== 6 || ssnBack.length !== 1}
-                className={`w-full rounded-[0.5rem] py-[0.81rem] text-button-16-semibold ${
-                  ssnFront.length === 6 && ssnBack.length === 1 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
-                }`}>
-                확인
-              </button>
             </div>
           </div>
         )}
@@ -298,16 +338,6 @@ export default function SignUpBusiness() {
               <label className="mb-[0.62rem] block text-body1-16-bold">이름</label>
               <p className="border-b border-gray200 px-2 py-2">{signupBusiness.name}</p>
             </div>
-            <div className="fixed bottom-5 left-0 w-full px-5">
-              <button
-                onClick={() => tryStepAdvance()}
-                disabled={!telecom}
-                className={`w-full rounded-[0.5rem] py-[0.81rem] text-button-16-semibold ${
-                  telecom ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
-                }`}>
-                확인
-              </button>
-            </div>
           </div>
         )}
 
@@ -320,6 +350,11 @@ export default function SignUpBusiness() {
                 const value = e.target.value.replace(/[^0-9]/g, '');
                 if (value.length <= 11) {
                   setPhoneNumber(value);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && phoneNumber && phoneNumber.length >= 10) {
+                  handleComplete();
                 }
               }}
               placeholder="전화번호를 입력해 주세요"
@@ -354,19 +389,35 @@ export default function SignUpBusiness() {
               <label className="mb-[0.62rem] block text-body1-16-bold">이름</label>
               <p className="border-b border-gray200 px-2 py-3 text-body-14-medium">{signupBusiness.name}</p>
             </div>
-            <div className="fixed bottom-5 left-0 w-full px-5">
-              <button
-                onClick={handleComplete}
-                disabled={!phoneNumber || phoneNumber.length < 10}
-                className={`w-full rounded-[0.5rem] py-[0.81rem] text-button-16-semibold ${
-                  phoneNumber && phoneNumber.length >= 10 ? 'bg-main text-BG-black' : 'bg-gray400 text-gray300'
-                }`}>
-                확인
-              </button>
-            </div>
           </div>
         )}
       </div>
+
+      {/* 중앙 확인 버튼 - 키보드 위에 표시 (PaticipationForm과 동일) */}
+      {shouldShowConfirmButton() && (
+        <div
+          className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
+          style={{
+            bottom: `${keyboardHeight}px`,
+            transition: 'bottom 0.3s ease-out',
+          }}>
+          <div className="w-full max-w-[600px]">
+            <button
+              onClick={() => {
+                if (step === 4) {
+                  handleComplete();
+                } else {
+                  tryStepAdvance();
+                }
+                // 키보드 숨김
+                setIsKeyboardVisible(false);
+              }}
+              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90">
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

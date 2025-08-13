@@ -195,10 +195,10 @@ export default function EventRegisterStepForm() {
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.15, ease: 'easeInOut' }}
                     className={classNames(
-                      'rounded-[0.38rem] py-3 text-body-14-semibold',
+                      'text-body-14-semibold rounded-[0.38rem] py-3',
                       selectedFields.includes(f.label)
                         ? 'border border-main bg-sub1 text-white'
-                        : 'border border-gray500 text-body-14-semibold bg-gray500 text-gray300',
+                        : 'text-body-14-semibold border border-gray500 bg-gray500 text-gray300',
                     )}>
                     {f.label}
                   </motion.button>
@@ -216,10 +216,10 @@ export default function EventRegisterStepForm() {
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.15, ease: 'easeInOut' }}
                     className={classNames(
-                      'rounded-[0.38rem] py-3 text-body-14-semibold',
+                      'text-body-14-semibold rounded-[0.38rem] py-3',
                       selectedFields.includes(f.label)
                         ? 'border border-main bg-sub1 text-white'
-                        : 'border border-gray500 text-body-14-semibold bg-gray500 text-gray300',
+                        : 'text-body-14-semibold border border-gray500 bg-gray500 text-gray300',
                     )}>
                     {f.label}
                   </motion.button>
@@ -237,10 +237,10 @@ export default function EventRegisterStepForm() {
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.15, ease: 'easeInOut' }}
                     className={classNames(
-                      'w-full rounded-[0.38rem] py-3 text-body-14-semibold',
+                      'text-body-14-semibold w-full rounded-[0.38rem] py-3',
                       selectedFields.includes(f.label)
                         ? 'border border-main bg-sub1 text-white'
-                        : 'border border-gray500 text-body-14-semibold bg-gray500 text-gray300',
+                        : 'text-body-14-semibold border border-gray500 bg-gray500 text-gray300',
                     )}>
                     {f.label}
                   </motion.button>
@@ -262,7 +262,7 @@ export default function EventRegisterStepForm() {
               <>
                 <h2 className="mb-[0.62rem] text-[1rem] font-bold">사전 예약금 정보</h2>
                 <div className="flex items-center gap-4 pb-[0.62rem]">
-                  <label className="whitespace-nowrap text-body-14-semibold text-gray100">입금 계좌</label>
+                  <label className="text-body-14-semibold whitespace-nowrap text-gray100">입금 계좌</label>
 
                   <div
                     className={`flex items-center border-b px-3 py-2 ${bankName.trim() ? 'border-main' : 'border-gray300'}`}>
@@ -289,7 +289,7 @@ export default function EventRegisterStepForm() {
 
                 {/* 입금 금액 - 사전 예약금 입금 여부가 선택된 경우에만 표시 */}
                 <div className="flex items-center gap-4">
-                  <label className="whitespace-nowrap text-body-14-semibold text-gray100">입금 금액</label>
+                  <label className="text-body-14-semibold whitespace-nowrap text-gray100">입금 금액</label>
 
                   <div
                     className={`flex flex-1 items-center gap-2 border-b px-3 py-2 ${amount.trim() ? 'border-main' : 'border-gray300'}`}>
