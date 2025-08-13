@@ -149,7 +149,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   // 조건별 렌더링 플래그 설정 (단계별로 변경)
   const showGender = currentStep >= 2;
   const showPhone = currentStep >= 3;
-  const showSNS = currentStep >= 4;
+  const showSNS = currentStep === 4 ;
   const showPeople = currentStep >= 5;
   const showDeposit = showPeople && form.totalNumber > 0 && event?.receiveMoney === true;
 
