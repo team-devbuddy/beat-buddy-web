@@ -87,7 +87,6 @@ export default function SNSSelector({
       // 확인 버튼 클릭 시 키보드 숨김 후 onComplete 호출
       setIsKeyboardVisible(false);
       onConfirm();
-
     } else {
       console.log('🔵 SNS 입력이 완료되지 않음, onComplete 호출 안함');
     }

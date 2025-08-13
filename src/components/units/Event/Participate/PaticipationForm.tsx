@@ -279,8 +279,10 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
               animate={{ opacity: 1, height: 'auto' }}
               transition={{ duration: 0.3 }}>
               <SNSInput2
-                value={form.snsId}
-                onChange={(val) => updateForm('snsId', val)}
+                snsType={form.snsType}
+                snsId={form.snsId}
+                onTypeChange={(val) => updateForm('snsType', val)}
+                onIdChange={(val) => updateForm('snsId', val)}
                 onConfirm={handleSNSComplete}
                 disabled={mode === 'edit'}
               />
