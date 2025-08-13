@@ -12,6 +12,7 @@ import SNSSelector from './SNSInput';
 import PeopleCounter from './PeopleCounter';
 import DepositInfo from './DepositInfo';
 import SubmitButton from './SubmitButton';
+import SNSInput2 from './SNSInput2';
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -277,11 +278,9 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               transition={{ duration: 0.3 }}>
-              <SNSSelector
-                snsType={form.snsType}
-                snsId={form.snsId}
-                onTypeChange={(val) => updateForm('snsType', val)}
-                onIdChange={(val) => updateForm('snsId', val)}
+              <SNSInput2
+                value={form.snsId}
+                onChange={(val) => updateForm('snsId', val)}
                 onConfirm={handleSNSComplete}
                 disabled={mode === 'edit'}
               />
@@ -305,7 +304,10 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
               />
             </motion.div>
           )}
+        </AnimatePresence>
 
+        {/* 사전 예약금 */}
+        <AnimatePresence mode="wait">
           {showDeposit && (
             <motion.div
               key="deposit"

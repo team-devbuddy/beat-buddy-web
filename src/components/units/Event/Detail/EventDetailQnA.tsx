@@ -66,7 +66,7 @@ export default function EventQnA({ eventDetail, observerRef }: EventQnAProps) {
   }, [eventDetail.eventId, accessToken]);
 
   return (
-    <div className="px-5 pt-[0.88rem]">
+    <div className="px-5 pt-[0.88rem] pb-24">
       {comments.length > 0 ? (
         comments.map((comment) =>
           comment ? (

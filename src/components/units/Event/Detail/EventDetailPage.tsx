@@ -310,8 +310,8 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
       {/* 탭 & 탭 콘텐츠 */}
       {eventDetail && <EventDetailTab eventDetail={eventDetail} />}
 
-      {/* 참석하기 버튼 */}
-      {eventDetailTab === 'info' && showButton && (
+      {/* 참석하기 버튼 - receiveInfo가 true인 경우에만 표시 */}
+      {eventDetailTab === 'info' && showButton && eventDetail?.receiveInfo && (
         <>
           {!eventDetail?.isAuthor && !eventDetail?.isAttending && (
             <div className="fixed bottom-0 left-0 z-50 w-full max-w-[600px] border-none px-[1.25rem] pb-[1.25rem] pt-2">
