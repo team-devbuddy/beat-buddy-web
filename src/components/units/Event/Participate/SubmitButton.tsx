@@ -26,7 +26,7 @@ export default function SubmitButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       type="submit"
-      className={`text-button-16-semibold my-6 w-full rounded py-3 ${
+      className={`mt-6 w-full rounded-[0.5rem] py-[0.87rem] text-button-16-semibold ${
         isComplete ? 'bg-main text-sub2' : 'cursor-not-allowed bg-gray500 text-gray300'
       }`}
       onClick={isComplete ? onClick : undefined}>

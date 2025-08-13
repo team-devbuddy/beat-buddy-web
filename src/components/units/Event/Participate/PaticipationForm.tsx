@@ -132,7 +132,9 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   };
 
   const handleSNSComplete = () => {
+    console.log('🔵 handleSNSComplete 호출됨, 현재 단계:', currentStep);
     setCurrentStep(5);
+    console.log('🔵 currentStep을 5로 설정함');
   };
 
   const handlePeopleComplete = () => {
@@ -220,7 +222,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col gap-5 px-5 text-white pb-6">
+      <div className="flex flex-col gap-5 px-5 pb-6 text-white">
         {/* 이름 입력 */}
         <NameInput
           value={form.name}

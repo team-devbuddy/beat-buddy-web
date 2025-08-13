@@ -64,12 +64,13 @@ export default function SNSSelector({
 
   // SNS 타입을 선택하고 ID를 입력했을 때만 완료할 수 있음
   const canConfirm =
-    snsType === '' || // SNS 없음 선택
+    snsType === 'None' || // SNS 없음 선택
     (snsType === 'Instagram' && snsId.trim().length > 0) || // Instagram + ID 입력
     (snsType === 'Facebook' && snsId.trim().length > 0); // Facebook + ID 입력
 
   // 확인 버튼을 보여줄지 결정하는 조건 (모바일에서, 유효 입력일 때만)
   const shouldShowConfirmButton =
+    snsType === 'None' || // SNS 없음 선택 시
     (snsType === 'Instagram' && snsId.trim().length > 0) || // Instagram + ID 입력 완료 시
     (snsType === 'Facebook' && snsId.trim().length > 0); // Facebook + ID 입력 완료 시
 
@@ -145,13 +146,13 @@ export default function SNSSelector({
         </motion.button>
         <motion.button
           type="button"
-          className={getButtonClass('')}
+          className={getButtonClass('None')}
           onClick={() => {
             if (!disabled) {
               hasInteracted.current = true;
               hasConfirmed.current = true; // SNS 없음 선택 시 자동으로 확인된 것으로 처리
               setIsKeyboardVisible(false);
-              onTypeChange('');
+              onTypeChange('None');
               onIdChange('');
               // SNS 없음 선택 시 바로 다음 단계로 진행
               setTimeout(() => {
@@ -185,6 +186,24 @@ export default function SNSSelector({
           onKeyDown={handleKeyDown}
           onFocus={() => {
             console.log('🔵 Instagram 입력 필드 포커스');
+            // focus 시점에 즉시 키보드 상태 체크
+            setTimeout(() => {
+              if ('visualViewport' in window) {
+                const windowHeight = window.innerHeight;
+                const viewportHeight = window.visualViewport?.height || windowHeight;
+                console.log('🔵 Instagram focus 후 키보드 체크:', {
+                  windowHeight,
+                  viewportHeight,
+                  diff: windowHeight - viewportHeight,
+                });
+
+                if (windowHeight > viewportHeight && windowHeight - viewportHeight > 150) {
+                  setIsKeyboardVisible(true);
+                  setKeyboardHeight(windowHeight - viewportHeight);
+                  console.log('🔵 Instagram focus 후 키보드 감지됨');
+                }
+              }
+            }, 100);
           }}
           onBlur={() => {
             // 모바일에서만 키보드 감지
@@ -217,6 +236,24 @@ export default function SNSSelector({
           onKeyDown={handleKeyDown}
           onFocus={() => {
             console.log('🔵 Facebook 입력 필드 포커스');
+            // focus 시점에 즉시 키보드 상태 체크
+            setTimeout(() => {
+              if ('visualViewport' in window) {
+                const windowHeight = window.innerHeight;
+                const viewportHeight = window.visualViewport?.height || windowHeight;
+                console.log('🔵 Facebook focus 후 키보드 체크:', {
+                  windowHeight,
+                  viewportHeight,
+                  diff: windowHeight - viewportHeight,
+                });
+
+                if (windowHeight > viewportHeight && windowHeight - viewportHeight > 150) {
+                  setIsKeyboardVisible(true);
+                  setKeyboardHeight(windowHeight - viewportHeight);
+                  console.log('🔵 Facebook focus 후 키보드 감지됨');
+                }
+              }
+            }, 100);
           }}
           onBlur={() => {
             // 모바일에서만 키보드 감지
