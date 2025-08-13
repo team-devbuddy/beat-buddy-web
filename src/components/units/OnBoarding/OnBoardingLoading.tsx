@@ -28,7 +28,7 @@ export default function OnBoardingLoading() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push('/onBoarding/complete');
-    }, 3000000); // 테스트용 3초
+    }, 10000); // 테스트용 3초
     return () => clearTimeout(timer);
   }, [router]);
 
