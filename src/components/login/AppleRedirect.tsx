@@ -35,7 +35,6 @@ const AppleRedirect: React.FC = () => {
           // }
           // 성인 인증 X && 장르, 분위기, 지역 선택 X
           if (responseJson.genre === false || responseJson.mood === false || responseJson.region === false) {
-            alert('온보딩을 진행해주세요');
             const businessQuery = isBusiness ? '?userType=business' : '';
             router.push(`/onBoarding${businessQuery}`);
           }

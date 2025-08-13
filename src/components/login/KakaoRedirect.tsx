@@ -42,7 +42,6 @@ const KakaoRedirect: React.FC = () => {
           // }
           // 성인 인증 X && 장르, 분위기, 지역 선택 X
           if (responseJson.genre === false || responseJson.mood === false || responseJson.region === false) {
-            alert('온보딩을 진행해주세요');
             console.log(`리다이렉트: /onBoarding${businessQuery}`);
             router.push(`/onBoarding${businessQuery}`);
           }

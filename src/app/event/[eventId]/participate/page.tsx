@@ -4,7 +4,7 @@
 import { useParams, useSearchParams } from 'next/navigation';
 import ParticipateForm from '@/components/units/Event/Participate/PaticipationForm';
 import EventWriteHeader from '@/components/units/Event/Write/EventWriteHeader';
-
+import ParticipationFormUnified from '@/components/units/Event/Participate/ParticipationFormUnified';
 export default function ParticipatePage() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -18,7 +18,7 @@ export default function ParticipatePage() {
       <EventWriteHeader />
       <div className="">
         {/* ✅ key 추가해서 컴포넌트 강제 리마운트 */}
-        <ParticipateForm key={eventId} eventId={eventId} mode={mode} />
+        <ParticipationFormUnified key={eventId} eventId={eventId} mode={mode} />
       </div>
     </main>
   );

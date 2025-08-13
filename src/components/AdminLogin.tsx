@@ -34,7 +34,6 @@ export default function AdminLogin() {
           }
           // 성인 인증 X && 장르, 분위기, 지역 선택 X
           else if (responseJson.genre === false || responseJson.mood === false || responseJson.region === false) {
-            alert('온보딩을 진행해주세요');
             router.push('/onBoarding');
           }
           // 성인 인증 O && 장르, 분위기, 지역 선택 O %responseJson.adultCert &&
