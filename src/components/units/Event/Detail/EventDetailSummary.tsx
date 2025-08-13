@@ -87,7 +87,7 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
             key={currentImageIndex}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
             className="relative h-full w-full">
             <Image

@@ -24,20 +24,25 @@ export default function SNSSelector({
   const hasInteracted = useRef(false);
   const hasConfirmed = useRef(false);
 
-  // VisualViewport API를 사용한 키보드 감지
+  // VisualViewport API를 사용한 키보드 감지 (블로그 글 방식)
   useEffect(() => {
     const handleViewportResize = () => {
       if ('visualViewport' in window) {
         const windowHeight = window.innerHeight;
         const viewportHeight = window.visualViewport?.height || windowHeight;
 
+        console.log('🔵 VisualViewport 감지:', { windowHeight, viewportHeight, diff: windowHeight - viewportHeight });
+
         // 키보드가 올라왔는지 확인 (window height > viewport height)
-        if (windowHeight > viewportHeight) {
+        // 스크롤 상태에서도 정확하게 감지하기 위해 threshold 추가
+        if (windowHeight > viewportHeight && windowHeight - viewportHeight > 150) {
           setIsKeyboardVisible(true);
           setKeyboardHeight(windowHeight - viewportHeight);
+          console.log('🔵 키보드 감지됨:', windowHeight - viewportHeight);
         } else {
           setIsKeyboardVisible(false);
           setKeyboardHeight(0);
+          console.log('🔵 키보드 없음');
         }
       }
     };
