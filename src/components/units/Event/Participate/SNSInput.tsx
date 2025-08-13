@@ -57,9 +57,8 @@ export default function SNSSelector({
     };
   }, []);
 
-  // SNS 타입만 선택했을 때는 완료할 수 없음
+  // SNS 타입을 선택하고 ID를 입력했을 때만 완료할 수 있음
   const canConfirm =
-    snsType === '' || // SNS 없음 선택
     (snsType === 'Instagram' && snsId.trim().length > 0) || // Instagram + ID 입력
     (snsType === 'Facebook' && snsId.trim().length > 0); // Facebook + ID 입력
 
@@ -229,11 +228,11 @@ export default function SNSSelector({
       )}
 
       {/* 확인 버튼 - VisualViewport를 사용하여 키보드 위에 정확히 위치 */}
-      {isKeyboardVisible && canConfirm && (
+      {canConfirm && (
         <div
           className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
           style={{
-            bottom: `${keyboardHeight}px`,
+            bottom: isKeyboardVisible ? `${keyboardHeight}px` : '0px',
             transition: 'bottom 0.3s ease-out',
           }}>
           <div className="w-full max-w-[600px]">

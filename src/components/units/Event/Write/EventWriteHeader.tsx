@@ -112,7 +112,7 @@ export default function EventWriteHeader() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}>
             <motion.div
-              className="w-full max-w-[600px] rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-8 text-center"
+              className="w-full max-w-[600px] rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
