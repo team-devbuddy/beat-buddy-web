@@ -137,8 +137,9 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
 
   const handlePeopleComplete = () => {
     // 동행 인원 선택 완료 시 마지막 단계로 진행
+    console.log('🔵 handlePeopleComplete 호출됨, 현재 단계:', currentStep);
     setCurrentStep(5);
-    console.log('🔵 동행인원 선택 완료, 마지막 단계로 진행');
+    console.log('🔵 currentStep을 5로 설정함');
   };
 
   // currentStep 상태 변화 추적
@@ -149,12 +150,12 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   // 조건별 렌더링 플래그 설정 (단계별로 변경)
   const showGender = currentStep >= 2;
   const showPhone = currentStep >= 3;
-  const showSNS = currentStep === 4 ;
+  const showSNS = currentStep >= 4;
   const showPeople = currentStep >= 5;
   const showDeposit = showPeople && form.totalNumber > 0 && event?.receiveMoney === true;
 
   // 마지막 단계 정의
-  const isLastStep = showDeposit; // 동행인원 선택 완료 후
+  const isLastStep = showPeople; // 동행인원 선택 완료 후
 
   console.log(
     '🟢 렌더링 상태 - showGender:',

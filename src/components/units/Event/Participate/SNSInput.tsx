@@ -234,12 +234,12 @@ export default function SNSSelector({
         />
       )}
 
-      {/* 확인 버튼 - VisualViewport를 사용하여 키보드 위에 정확히 위치 */}
-      {shouldShowConfirmButton && (
+      {/* 확인 버튼 - 모바일에서만 표시 */}
+      {isKeyboardVisible && shouldShowConfirmButton && (
         <div
           className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
           style={{
-            bottom: isKeyboardVisible ? `${keyboardHeight}px` : '0px',
+            bottom: `${keyboardHeight}px`,
             transition: 'bottom 0.3s ease-out',
           }}>
           <div className="w-full max-w-[600px]">

@@ -17,9 +17,12 @@ export default function PeopleCounter({
 }) {
   // 초기값 1명으로 설정되어 있을 때 자동으로 완료
   useEffect(() => {
+    console.log('🔵 PeopleCounter useEffect 실행:', { value, onComplete: !!onComplete, disabled });
     if (onComplete && value > 0 && !disabled) {
+      console.log('🔵 PeopleCounter 자동 완료 실행, 500ms 후 onComplete 호출');
       // 약간의 지연을 두어 사용자가 선택을 완료했음을 인지할 수 있도록 함
       const timer = setTimeout(() => {
+        console.log('🔵 PeopleCounter onComplete 호출');
         onComplete();
       }, 500);
 
