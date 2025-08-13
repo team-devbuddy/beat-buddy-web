@@ -20,8 +20,42 @@ export default function SNSSelector({
   disabled = false,
 }: SNSSelectorProps) {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const hasInteracted = useRef(false);
   const hasConfirmed = useRef(false);
+
+  // VisualViewport API를 사용한 키보드 감지
+  useEffect(() => {
+    const handleViewportResize = () => {
+      if ('visualViewport' in window) {
+        const windowHeight = window.innerHeight;
+        const viewportHeight = window.visualViewport?.height || windowHeight;
+
+        // 키보드가 올라왔는지 확인 (window height > viewport height)
+        if (windowHeight > viewportHeight) {
+          setIsKeyboardVisible(true);
+          setKeyboardHeight(windowHeight - viewportHeight);
+        } else {
+          setIsKeyboardVisible(false);
+          setKeyboardHeight(0);
+        }
+      }
+    };
+
+    // 초기 상태 설정
+    handleViewportResize();
+
+    // 이벤트 리스너 등록
+    if ('visualViewport' in window) {
+      window.visualViewport?.addEventListener('resize', handleViewportResize);
+    }
+
+    return () => {
+      if ('visualViewport' in window) {
+        window.visualViewport?.removeEventListener('resize', handleViewportResize);
+      }
+    };
+  }, []);
 
   // SNS 타입만 선택했을 때는 완료할 수 없음
   const canConfirm =
@@ -194,9 +228,14 @@ export default function SNSSelector({
         />
       )}
 
-      {/* 확인 버튼 - 키보드 위에 위치 */}
+      {/* 확인 버튼 - VisualViewport를 사용하여 키보드 위에 정확히 위치 */}
       {isKeyboardVisible && canConfirm && (
-        <div className="sticky bottom-0 left-0 right-0 z-50 mt-4 flex justify-center bg-BG-black p-4 shadow-lg">
+        <div
+          className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
+          style={{
+            bottom: `${keyboardHeight}px`,
+            transition: 'bottom 0.3s ease-out',
+          }}>
           <div className="w-full max-w-[600px]">
             <button
               onClick={handleConfirm}
