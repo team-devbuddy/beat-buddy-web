@@ -7,7 +7,7 @@ interface SNSSelectorProps {
   snsId: string;
   onTypeChange: (value: string) => void;
   onIdChange: (value: string) => void;
-  onComplete?: () => void;
+  onConfirm: () => void;
   disabled?: boolean;
 }
 
@@ -16,7 +16,7 @@ export default function SNSSelector({
   snsId,
   onTypeChange,
   onIdChange,
-  onComplete,
+  onConfirm,
   disabled = false,
 }: SNSSelectorProps) {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -24,25 +24,20 @@ export default function SNSSelector({
   const hasInteracted = useRef(false);
   const hasConfirmed = useRef(false);
 
-  // VisualViewport API를 사용한 키보드 감지 (블로그 글 방식)
+  // VisualViewport API를 사용한 키보드 감지
   useEffect(() => {
     const handleViewportResize = () => {
       if ('visualViewport' in window) {
         const windowHeight = window.innerHeight;
         const viewportHeight = window.visualViewport?.height || windowHeight;
 
-        console.log('🔵 VisualViewport 감지:', { windowHeight, viewportHeight, diff: windowHeight - viewportHeight });
-
         // 키보드가 올라왔는지 확인 (window height > viewport height)
-        // 스크롤 상태에서도 정확하게 감지하기 위해 threshold 추가
-        if (windowHeight > viewportHeight && windowHeight - viewportHeight > 150) {
+        if (windowHeight > viewportHeight) {
           setIsKeyboardVisible(true);
           setKeyboardHeight(windowHeight - viewportHeight);
-          console.log('🔵 키보드 감지됨:', windowHeight - viewportHeight);
         } else {
           setIsKeyboardVisible(false);
           setKeyboardHeight(0);
-          console.log('🔵 키보드 없음');
         }
       }
     };
@@ -91,7 +86,8 @@ export default function SNSSelector({
       console.log('🔵 onComplete 호출함');
       // 확인 버튼 클릭 시 키보드 숨김 후 onComplete 호출
       setIsKeyboardVisible(false);
-      onComplete?.();
+      onConfirm();
+
     } else {
       console.log('🔵 SNS 입력이 완료되지 않음, onComplete 호출 안함');
     }
@@ -156,7 +152,7 @@ export default function SNSSelector({
               onIdChange('');
               // SNS 없음 선택 시 바로 다음 단계로 진행
               setTimeout(() => {
-                onComplete?.();
+                onConfirm();
               }, 500);
             }
           }}
@@ -268,8 +264,8 @@ export default function SNSSelector({
         />
       )}
 
-      {/* 확인 버튼 - 모바일 키보드가 올라왔을 때만 표시 (Name/Phone과 동일) */}
-      {isKeyboardVisible && shouldShowConfirmButton && (
+      {/* 확인 버튼 - VisualViewport를 사용하여 키보드 위에 정확히 위치 */}
+      {isKeyboardVisible && snsId.trim().length > 0 && (
         <div
           className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
           style={{

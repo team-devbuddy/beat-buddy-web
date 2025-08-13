@@ -21,6 +21,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [form, setForm] = useRecoilState(participateFormState);
   const event = useRecoilValue(eventState);
+  console.log('🔵 event:', event);
   const router = useRouter();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
@@ -154,7 +155,8 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
   const showPhone = currentStep >= 3;
   const showSNS = currentStep >= 4;
   const showPeople = currentStep >= 5;
-  const showDeposit = showPeople && form.totalNumber > 0 && event?.receiveMoney === true;
+  // 사전예약금이 필요한 이벤트이고, 동행인원이 선택되었을 때만 표시
+  const showDeposit = event?.receiveMoney === true && form.totalNumber > 0;
 
   // 마지막 단계 정의
   const isLastStep = showPeople; // 동행인원 선택 완료 후
@@ -280,7 +282,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
                 snsId={form.snsId}
                 onTypeChange={(val) => updateForm('snsType', val)}
                 onIdChange={(val) => updateForm('snsId', val)}
-                onComplete={handleSNSComplete}
+                onConfirm={handleSNSComplete}
                 disabled={mode === 'edit'}
               />
             </motion.div>
@@ -303,10 +305,7 @@ export default function ParticipateForm({ eventId, mode }: { eventId: string; mo
               />
             </motion.div>
           )}
-        </AnimatePresence>
 
-        {/* 사전 예약금 */}
-        <AnimatePresence mode="wait">
           {showDeposit && (
             <motion.div
               key="deposit"
