@@ -162,6 +162,63 @@ export default function BoardImageModal({
     }
   };
 
+  // 사진첩에 다운로드하는 함수
+  const handleDownload = async (url: string) => {
+    try {
+      // 모바일 환경인지 확인
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // 모바일에서만 사진첩에 저장 시도
+        const urlParts = url.split('.');
+        const extension = urlParts[urlParts.length - 1]?.split('?')[0] || 'jpg';
+        const filename = `beatbuddy_${Date.now()}.${extension}`;
+
+        // fetch로 이미지 데이터 가져오기
+        const response = await fetch(url);
+        const blob = await response.blob();
+
+        // Web Share API 사용 (iOS 12.3+, Android Chrome 75+)
+        if ('share' in navigator && navigator.canShare) {
+          const file = new File([blob], filename, { type: blob.type });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'BeatBuddy 이미지',
+              text: 'BeatBuddy에서 다운로드한 이미지입니다.',
+            });
+            return;
+          }
+        }
+
+        // Web Share API를 지원하지 않는 경우 Blob URL로 다운로드
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = filename;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+
+        alert('다운로드가 완료되었습니다. 사진첩을 확인해주세요.');
+      } else {
+        // 데스크톱에서는 기존 방식으로 다운로드
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `beatbuddy_${Date.now()}.jpg`;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error('다운로드 실패:', error);
+      alert('다운로드에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
   // 영상 재생 시작 시 볼륨 상태 확인
   const handlePlay = () => {
     setIsPlaying(true);
@@ -249,9 +306,12 @@ export default function BoardImageModal({
           )}
 
           {!isReview && (
-            <a href={currentUrl} download className="flex items-center justify-center">
+            <button
+              onClick={() => handleDownload(currentUrl)}
+              className="flex items-center justify-center"
+              title="사진첩에 저장">
               <Image src="/icons/사진/Vector.svg" alt="다운로드" width={20} height={20} className="text-white" />
-            </a>
+            </button>
           )}
         </div>
 
@@ -391,7 +451,7 @@ export default function BoardImageModal({
 
         {/* 리뷰 정보 (하단) - 동영상이 멈춰있을 때만 표시 */}
         {isReview && reviewInfo && (!isCurrentVideo || !isPlaying) && (
-          <div className="absolute bottom-0 left-0 right-0 z-10  px-5 py-[0.88rem]">
+          <div className="absolute bottom-0 left-0 right-0 z-10 px-5 py-[0.88rem]">
             <div className="flex flex-col">
               <div className="flex items-start">
                 <Image

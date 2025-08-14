@@ -377,83 +377,66 @@ export default function BoardWrite() {
         )}
       </div>
 
-      {/* 하단 고정 바 - 키보드 상태에 따라 조건부 렌더링 (SignupBusiness와 동일) */}
-      {isKeyboardVisible ? (
-        /* 키보드가 열렸을 때: 확인 버튼만 표시 */
-        <div
-          className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
-          style={{
-            bottom: `${keyboardHeight}px`,
-            transition: 'bottom 0.3s ease-out',
-          }}>
-          <div className="w-full max-w-[600px]">
-            <motion.button
-              onClick={handleUpload}
-              disabled={isLoading || !content.trim()}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:bg-gray500 disabled:text-gray300">
-              {postId && !isNaN(postId) ? '수정하기' : '글쓰기'}
-            </motion.button>
+      {/* 하단 고정 바 - 키보드 상태에 따라 위치만 조정 */}
+      <div
+        className="fixed left-0 right-0 z-50 w-full max-w-[600px] bg-BG-black px-[1.25rem] py-[0.75rem]"
+        style={{
+          bottom: isKeyboardVisible ? `${keyboardHeight}px` : '3rem',
+          transition: 'bottom 0.3s ease-out',
+        }}>
+        {/* 해시태그 선택 제한 메시지 */}
+        {tagLimitMessage && <p className="mb-1 ml-1 text-body-11-medium text-main">{tagLimitMessage}</p>}
+
+        {/* 해시태그 */}
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2">
+            {orderedTags.map((tag) => (
+              <span
+                key={tag}
+                onClick={() => handleTagClick(tag)}
+                className={`cursor-pointer whitespace-nowrap rounded-[0.5rem] px-2 py-1 text-body-13-medium ${
+                  selectedTags.includes(tag) ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
+                }`}>
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
-      ) : (
-        /* 키보드가 닫혔을 때: 해시태그와 이미지 업로드 버튼 */
-        <div className="fixed bottom-[3rem] z-50 w-full max-w-[600px] bg-BG-black px-[1.25rem] py-[0.75rem]">
-          {/* 해시태그 선택 제한 메시지 */}
-          {tagLimitMessage && <p className="mb-1 ml-1 text-body-11-medium text-main">{tagLimitMessage}</p>}
 
-          {/* 해시태그 */}
-          <div className="overflow-x-auto scrollbar-hide">
-            <div className="flex gap-2">
-              {orderedTags.map((tag) => (
-                <span
-                  key={tag}
-                  onClick={() => handleTagClick(tag)}
-                  className={`cursor-pointer whitespace-nowrap rounded-[0.5rem] px-2 py-1 text-body-13-medium ${
-                    selectedTags.includes(tag) ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
-                  }`}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
+        <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 transform bg-gray700 px-[1.25rem]">
+          <div className="flex items-center justify-between bg-gray700 py-[0.88rem]">
+            {/* 미디어 업로드 */}
+            <button
+              className="flex items-center text-white"
+              onClick={() => fileInputRef.current?.click()}
+              title="미디어 업로드">
+              <Image src="/icons/add_a_photo.svg" alt="미디어" width={24} height={24} />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,video/*"
+              hidden
+              onChange={handleMediaChange}
+            />
 
-          <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 transform bg-gray700 px-[1.25rem]">
-            <div className="flex items-center justify-between bg-gray700 py-[0.88rem]">
-              {/* 미디어 업로드 */}
-              <button
-                className="flex items-center text-white"
-                onClick={() => fileInputRef.current?.click()}
-                title="미디어 업로드">
-                <Image src="/icons/add_a_photo.svg" alt="미디어" width={24} height={24} />
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept="image/*,video/*"
-                hidden
-                onChange={handleMediaChange}
+            {/* 익명 */}
+            <div className="flex cursor-pointer items-center gap-x-[0.12rem]" onClick={handleAnonymous}>
+              <Image
+                src={anonymous ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
+                alt="익명"
+                width={18}
+                height={18}
               />
-
-              {/* 익명 */}
-              <div className="flex cursor-pointer items-center gap-x-[0.12rem]" onClick={handleAnonymous}>
-                <Image
-                  src={anonymous ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
-                  alt="익명"
-                  width={18}
-                  height={18}
-                />
-                <label
-                  className={`flex items-center gap-2 text-body3-12-medium ${anonymous ? 'text-main' : 'text-gray200'}`}>
-                  익명으로 작성
-                </label>
-              </div>
+              <label
+                className={`flex items-center gap-2 text-body3-12-medium ${anonymous ? 'text-main' : 'text-gray200'}`}>
+                익명으로 작성
+              </label>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
