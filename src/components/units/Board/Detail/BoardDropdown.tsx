@@ -45,14 +45,12 @@ const BoardDropdown = ({
 
   const handleReport = () => {
     // TODO: 신고 기능 구현
-    alert('신고 기능은 준비 중입니다.');
     onReport?.();
     onClose();
   };
 
   const handleBlock = () => {
     // TODO: 차단 기능 구현
-    alert('차단 기능은 준비 중입니다.');
     onBlock?.();
     onClose();
   };

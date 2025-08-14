@@ -267,6 +267,7 @@ const BoardDropdown = ({
                 onClick={async () => {
                   if (item.modalType) {
                     setModalType(item.modalType);
+                    // onClose() 제거 - 모달이 열리도록 유지
                     return;
                   }
                   if (item.onClick) {
@@ -294,19 +295,21 @@ const BoardDropdown = ({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <p className="mb-2 w-[18rem] text-[1.25rem] font-bold text-white">
+            <div
+              className="mx-5 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
+              onClick={(e) => e.stopPropagation()}>
+              <p className="mb-[0.38rem] text-subtitle-20-bold text-white">
                 {type === 'comment' && `${commentAuthorName}님을 차단하시겠어요?`}
                 {type === 'board' && `${post.isAnonymous ? '익명' : post.nickname}님을 차단하시겠어요?`}
               </p>
-              <p className="mb-4 text-center text-[0.875rem] text-gray300">
+              <p className="mb-5 text-center text-body-14-medium text-gray300">
                 해당 작성자의 게시글과 댓글이
                 <br />
-                더 이상 표시되지 않습니다.
+                더 이상 표시되지 않습니다
                 <br />
-                차단은 해제할 수 없으며, 되돌릴 수 없습니다.
-                <br />
-                신중히 결정해주세요
+                <p className="mt-[0.38rem] text-body-12-medium text-gray500">
+                  차단은 해제할 수 없으니 신중히 결정해주세요
+                </p>
               </p>
               <div className="flex justify-between gap-3">
                 <button
@@ -314,12 +317,12 @@ const BoardDropdown = ({
                     setModalType(null);
                     onClose();
                   }}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] text-gray200">
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-gray200">
                   취소
                 </button>
                 <button
                   onClick={handleBlock}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] text-main">
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-main">
                   차단하기
                 </button>
               </div>
@@ -337,15 +340,19 @@ const BoardDropdown = ({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-4 text-[1.25rem] font-bold text-white">
-                {type === 'comment' ? '댓글 신고' : '게시물 신고'}
-              </h3>
+            <div
+              className="mx-5 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-5 text-center"
+              onClick={(e) => e.stopPropagation()}>
               <textarea
                 value={reportReason}
                 onChange={(e) => setReportReason(e.target.value)}
-                placeholder="신고 사유를 작성해 주세요 (예: 부적절한 콘텐츠, 스팸, 욕설 등)"
-                className="mb-4 min-h-[7.5rem] w-full min-w-[18rem] resize-none rounded-[0.5rem] bg-gray700 p-2 text-sm text-gray200 placeholder:text-gray300 focus:outline-none"
+                placeholder="신고 사유를 작성해 주세요"
+                className="mb-4 min-h-[7.5rem] w-full resize-none rounded-[0.5rem] bg-gray700 px-4 py-3 text-body-14-medium text-gray200 placeholder:text-gray200 focus:outline-none"
+                style={{
+                  marginBottom: '1rem',
+                  display: 'block',
+                  verticalAlign: 'top',
+                }}
               />
               <div className="flex justify-between gap-2">
                 <button
@@ -353,12 +360,12 @@ const BoardDropdown = ({
                     setModalType(null);
                     onClose();
                   }}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-gray200">
                   취소
                 </button>
                 <button
                   onClick={handleReport}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-main">
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-main">
                   신고하기
                 </button>
               </div>
@@ -376,16 +383,18 @@ const BoardDropdown = ({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-[0.38rem] text-[1.25rem] font-bold text-white">신고가 완료되었어요</h3>
-              <p className="text-[0.875rem] text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요</p>
-              <p className="mb-5 text-[0.875rem] text-gray300">허위 신고 시 제재가 있을 수 있습니다.</p>
+            <div
+              className="mx-5 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
+              onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-[0.38rem] text-subtitle-20-bold text-white">신고가 완료되었어요</h3>
+              <p className="text-body-14-medium text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요</p>
+              <p className="mb-5 text-body-14-medium text-gray300">허위 신고 시 제재가 있을 수 있습니다.</p>
               <button
                 onClick={() => {
                   setShowReportCompleteModal(false);
                   onClose();
                 }}
-                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-gray200">
                 닫기
               </button>
             </div>
@@ -402,16 +411,18 @@ const BoardDropdown = ({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="rounded-lg bg-BG-black px-5 pb-6 pt-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-[0.38rem] text-[1.25rem] font-bold text-white">차단이 완료되었어요</h3>
-              <p className="text-[0.875rem] text-gray300">해당 사용자의 게시글과 댓글이 더 이상 표시되지 않습니다.</p>
-              <p className="mb-5 text-[0.875rem] text-gray300">차단은 해제할 수 없으며, 되돌릴 수 없습니다.</p>
+            <div
+              className="mx-5 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
+              onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-[0.38rem] text-subtitle-20-bold text-white">차단이 완료되었어요</h3>
+              <p className="text-body-14-medium text-gray300">해당 사용자의 게시글과 댓글이</p>
+              <p className="mb-5 text-body-14-medium text-gray300">더 이상 표시되지 않습니다</p>
               <button
                 onClick={() => {
                   setShowBlockCompleteModal(false);
                   onClose();
                 }}
-                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-gray200">
                 닫기
               </button>
             </div>

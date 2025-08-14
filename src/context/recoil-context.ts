@@ -151,6 +151,12 @@ export const postScrapState = atom<{ [postId: number]: boolean }>({
   default: {},
 });
 
+export const postCommentCountState = atom<{ [postId: number]: number }>({
+  key: 'postCommentCountState',
+  default: {},
+});
+
+  
 export const boardRecentSearchState = atom<string[]>({
   key: 'boardRecentSearchState',
   default: [],

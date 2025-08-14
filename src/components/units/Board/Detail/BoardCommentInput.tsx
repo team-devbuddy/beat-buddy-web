@@ -104,6 +104,11 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
 
       console.log('새 댓글 데이터:', newComment);
 
+      // ✅ 댓글 작성 성공 시 BoardDetail의 상태 업데이트 함수 호출
+      if ((window as any).commentHandlers && (window as any).commentHandlers[postId]) {
+        (window as any).commentHandlers[postId].addComment();
+      }
+
       setContent('');
       onCommentAdded(newComment);
       setReplyingTo(null);
@@ -114,9 +119,9 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
   };
   return (
     <div className="space-y-2 whitespace-nowrap px-[0.63rem]">
-      <div className="flex items-center justify-between rounded-[0.75rem] bg-gray500 px-[0.75rem] py-[0.5rem]">
+      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-[0.62rem] rounded-[0.75rem] bg-gray500 px-[0.75rem] py-[0.5rem]">
         <label
-          className={`flex items-center gap-[0.12rem] text-[0.75rem] ${isAnonymous ? 'text-main' : 'text-gray300'}`}>
+          className={`flex items-center gap-[0.12rem] text-[0.75rem] ${isAnonymous ? 'text-main' : 'text-gray300'} whitespace-nowrap`}>
           <Image
             src={isAnonymous ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
             alt="check"
@@ -133,7 +138,7 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
               setIsAnonymous(!isAnonymous);
             }}
           />
-          익명
+          <span className="min-w-0">익명</span>
         </label>
 
         <input
@@ -141,13 +146,13 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="댓글을 입력해주세요"
-          className="flex-1 border-none bg-transparent pl-5 text-[0.875rem] text-white placeholder:text-gray300 focus:outline-none"
+          className="w-full border-none bg-transparent text-[0.875rem] text-white placeholder:text-gray300 focus:outline-none"
         />
 
         <button
           onClick={handleSubmit}
           disabled={!content.trim()}
-          className="rounded-[0.5rem] bg-gray700 px-3 py-[0.38rem] text-[0.75rem] font-bold text-main disabled:text-gray300">
+          className="whitespace-nowrap rounded-[0.5rem] bg-gray700 px-3 py-[0.38rem] text-[0.75rem] font-bold text-main disabled:text-gray300">
           등록
         </button>
       </div>

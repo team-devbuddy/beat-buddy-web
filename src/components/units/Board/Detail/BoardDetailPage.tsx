@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import BoardComments from './BoardComments';
 import BoardCommentInput from './BoardCommentInput';
 import { CommentType } from './BoardComments';
+import Loading from '@/app/loading';
 
 interface PostType {
   id: number;
@@ -139,7 +140,7 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
 
       {loading ? (
         <div className="flex h-full items-center justify-center">
-          <p>Loading...</p>
+          <Loading />
         </div>
       ) : post ? (
         <BoardDetail postId={post.id} post={post} />

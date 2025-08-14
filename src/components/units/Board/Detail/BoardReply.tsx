@@ -146,6 +146,11 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
     try {
       await deleteComment(postId, reply.id, accessToken);
 
+      // ✅ 댓글 삭제 성공 시 BoardDetail의 상태 업데이트 함수 호출
+      if ((window as any).commentHandlers && (window as any).commentHandlers[postId]) {
+        (window as any).commentHandlers[postId].deleteComment();
+      }
+
       // 자식댓글이 있는지 확인
       const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked);
 

@@ -5,7 +5,13 @@ import BoardImageModal from '../BoardImageModal';
 import { useState, useEffect, useRef } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
-import { accessTokenState, followMapState, postLikeState, postScrapState } from '@/context/recoil-context';
+import {
+  accessTokenState,
+  followMapState,
+  postLikeState,
+  postScrapState,
+  postCommentCountState,
+} from '@/context/recoil-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
 import { deletePostLike } from '@/lib/actions/post-interaction-controller/deleteLike';
@@ -58,11 +64,14 @@ export default function BoardDetail({ postId, post }: PostProps) {
   const [isLoadingScrap, setIsLoadingScrap] = useState(false);
   const [likes, setLikes] = useState(post.likes);
   const [scraps, setScraps] = useState(post.scraps);
+  const [commentCount, setCommentCount] = useState(post.comments);
+  const [hasCommented, setHasCommented] = useState(post.hasCommented);
   const dropdownTriggerRef = useRef<HTMLImageElement | null>(null);
 
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [likeMap, setLikeMap] = useRecoilState(postLikeState);
   const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
+  const [commentCountMap, setCommentCountMap] = useRecoilState(postCommentCountState);
 
   // 🔥 렌더링 시점에 상태를 파생시켜 불필요한 재렌더링을 방지
   const liked = likeMap[post.id] ?? post.liked;
@@ -70,6 +79,58 @@ export default function BoardDetail({ postId, post }: PostProps) {
   const isFollowing = followMap[post.writerId] ?? post.isFollowing;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
+
+  // 댓글 추가 시 UI 즉시 업데이트
+  const handleCommentAdded = () => {
+    console.log('댓글 추가됨!', { postId: post.id, before: commentCount });
+    setCommentCount((prev) => {
+      const newCount = prev + 1;
+      console.log('댓글 수 업데이트:', { before: prev, after: newCount });
+      return newCount;
+    });
+    setHasCommented(true);
+    setCommentCountMap((prev) => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
+  };
+
+  // 댓글 삭제 시 UI 즉시 업데이트
+  const handleCommentDeleted = () => {
+    console.log('댓글 삭제됨!', { postId: post.id, before: commentCount });
+    setCommentCount((prev) => {
+      const newCount = Math.max(0, prev - 1);
+      console.log('댓글 수 업데이트:', { before: prev, after: newCount });
+      // 댓글이 0개가 되면 hasCommented를 false로 설정
+      if (newCount === 0) {
+        setHasCommented(false);
+      }
+      return newCount;
+    });
+    setCommentCountMap((prev) => ({ ...prev, [post.id]: Math.max(0, (prev[post.id] || 0) - 1) }));
+  };
+
+  // 외부에서 댓글 상태 변경 시 동기화
+  useEffect(() => {
+    setCommentCount(post.comments);
+    setHasCommented(post.hasCommented);
+  }, [post.comments, post.hasCommented]);
+
+  // 댓글 관련 함수들을 외부로 노출 (부모 컴포넌트에서 사용)
+  useEffect(() => {
+    // 전역 객체에 함수 등록
+    (window as any).commentHandlers = {
+      ...(window as any).commentHandlers,
+      [post.id]: {
+        addComment: handleCommentAdded,
+        deleteComment: handleCommentDeleted,
+      },
+    };
+
+    return () => {
+      // 컴포넌트 언마운트 시 정리
+      if ((window as any).commentHandlers && (window as any).commentHandlers[post.id]) {
+        delete (window as any).commentHandlers[post.id];
+      }
+    };
+  }, [post.id]); // commentCount 의존성 제거
 
   const goToEdit = () => {
     router.push(`/board/write?postId=${post.id}`);
@@ -84,7 +145,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
   const openDropdown = () => {
     if (dropdownTriggerRef.current) {
       const rect = dropdownTriggerRef.current.getBoundingClientRect();
-      setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 });
+      setDropdownPosition({ top: rect.bottom - 70, left: rect.right - 110 });
       setIsDropdownOpen(true);
     }
   };
@@ -94,7 +155,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
   };
 
   const handleFollow = async () => {
-    if (loadingFollow || !accessToken) return alert('로그인이 필요합니다.');
+    if (loadingFollow || !accessToken) return;
 
     try {
       setLoadingFollow(true);
@@ -106,7 +167,6 @@ export default function BoardDetail({ postId, post }: PostProps) {
         setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
       }
     } catch (err: any) {
-      alert(err.message ?? '요청 실패');
     } finally {
       setLoadingFollow(false);
     }
@@ -127,7 +187,6 @@ export default function BoardDetail({ postId, post }: PostProps) {
         setLikes((prev) => prev + 1);
       }
     } catch (err: any) {
-      alert(err.message ?? '요청 실패');
     } finally {
       setIsLoadingLike(false);
     }
@@ -148,7 +207,6 @@ export default function BoardDetail({ postId, post }: PostProps) {
         setScraps((prev) => prev + 1);
       }
     } catch (err: any) {
-      alert(err.message ?? '요청 실패');
     } finally {
       setIsLoadingScrap(false);
     }
@@ -185,21 +243,21 @@ export default function BoardDetail({ postId, post }: PostProps) {
             )}
           </div>
           <div>
-            <p className="text-[0.875rem] font-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
-            <p className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</p>
+            <p className="text-body-14-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
+            <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
           </div>
         </div>
         {!post.isAuthor && !post.isAnonymous && (
           <button
             onClick={handleFollow}
-            className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
+            className={`text-body-14-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
             disabled={loadingFollow}>
             {isFollowing ? '팔로잉' : '팔로우'}
           </button>
         )}
       </div>
-      <p className="py-[0.75rem] text-[1rem] font-bold text-white">{post.title}</p>
-      <p className="whitespace-pre-wrap text-[0.8125rem] text-gray100">{post.content}</p>
+      <p className="py-[0.75rem] text-body1-16-bold text-white">{post.title}</p>
+      <p className="whitespace-pre-wrap text-body-13-medium text-gray100">{post.content}</p>
 
       {post.imageUrls && post.imageUrls.length > 0 && (
         <div className="mt-[0.75rem] flex gap-[0.5rem] overflow-x-auto">
@@ -238,13 +296,13 @@ export default function BoardDetail({ postId, post }: PostProps) {
           post.hashtags.map((tag) => (
             <span
               key={tag}
-              className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.75rem] text-gray300">
+              className="rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-[0.25rem] pt-[0.19rem] text-body3-12-medium text-gray300">
               {tag}
             </span>
           ))}
       </div>
       <div className="flex justify-between">
-        <div className="mt-[0.75rem] flex gap-[0.5rem] text-[0.75rem] text-gray300">
+        <div className="mt-[0.75rem] flex gap-[0.5rem] text-body3-12-medium text-gray300">
           <span className={`flex items-center gap-[0.12rem] ${liked ? 'text-main' : ''}`}>
             <button onClick={handleLike} disabled={isLoadingLike} title="좋아요" className="flex items-center">
               <Image
@@ -256,14 +314,14 @@ export default function BoardDetail({ postId, post }: PostProps) {
             </button>
             <span className="min-w-[0.45rem] text-left">{likes}</span>
           </span>
-          <span className={`flex items-center gap-[0.12rem] ${post.hasCommented ? 'text-main' : ''}`}>
+          <span className={`flex items-center gap-[0.12rem] ${hasCommented ? 'text-main' : ''}`}>
             <Image
-              src={post.hasCommented ? '/icons/maps_ugc-pink.svg' : '/icons/maps_ugc.svg'}
+              src={hasCommented ? '/icons/maps_ugc-pink.svg' : '/icons/maps_ugc.svg'}
               alt="comment"
               width={20}
               height={20}
             />
-            <span className="min-w-[0.45rem] text-left">{post.comments}</span>
+            <span className="min-w-[0.45rem] text-left">{commentCount}</span>
           </span>
           <span className={`flex items-center gap-[0.12rem] ${scrapped ? 'text-main' : ''}`}>
             <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
@@ -280,7 +338,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
           </span>
         </div>
         <div className="flex items-end gap-[0.5rem]">
-          <p className="text-[0.75rem] text-gray300">조회 {post.views}회</p>
+          <p className="text-body3-12-medium text-gray300">조회 {post.views}회</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}

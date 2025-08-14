@@ -378,34 +378,40 @@ export default function BoardWrite() {
       </div>
 
       {/* 하단 고정 바 - 키보드 상태에 따라 위치만 조정 */}
+      {/* 하단 고정 바 (전체 폭 + 안전영역 + 키보드 대응) */}
       <div
-        className="fixed left-0 right-0 z-50 w-full max-w-[600px] bg-BG-black px-[1.25rem] py-[0.75rem]"
+        className="fixed inset-x-0 z-50 bg-BG-black"
         style={{
-          bottom: isKeyboardVisible ? `${keyboardHeight}px` : '3rem',
-          transition: 'bottom 0.3s ease-out',
+          bottom: isKeyboardVisible ? `${keyboardHeight}px` : '0px',
+          // iOS 안전영역 (홈 인디케이터) 대응
+          paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0px)',
         }}>
-        {/* 해시태그 선택 제한 메시지 */}
-        {tagLimitMessage && <p className="mb-1 ml-1 text-body-11-medium text-main">{tagLimitMessage}</p>}
+        {/* 내용 패딩 */}
+        <div className="px-[1.25rem] pt-[0.75rem]">
+          {/* 제한 메시지 */}
+          {tagLimitMessage && <p className="mb-1 ml-1 text-body-11-medium text-main">{tagLimitMessage}</p>}
 
-        {/* 해시태그 */}
-        <div className="overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2">
-            {orderedTags.map((tag) => (
-              <span
-                key={tag}
-                onClick={() => handleTagClick(tag)}
-                className={`cursor-pointer whitespace-nowrap rounded-[0.5rem] px-2 py-1 text-body-13-medium ${
-                  selectedTags.includes(tag) ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
-                }`}>
-                {tag}
-              </span>
-            ))}
+          {/* 해시태그 스크롤 (가로 꽉) */}
+          <div className="mb-3 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2">
+              {orderedTags.map((tag) => (
+                <span
+                  key={tag}
+                  onClick={() => handleTagClick(tag)}
+                  className={`cursor-pointer whitespace-nowrap rounded-[0.5rem] px-2 py-1 text-body-13-medium ${
+                    selectedTags.includes(tag) ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
+                  }`}>
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[600px] -translate-x-1/2 transform bg-gray700 px-[1.25rem]">
-          <div className="flex items-center justify-between bg-gray700 py-[0.88rem]">
-            {/* 미디어 업로드 */}
+        {/* ▶︎ 회색 바: 가로 전체(풀 폭) */}
+        <div className="w-full bg-gray700">
+          <div className="mx-auto flex max-w-none items-center justify-between px-[1.25rem] py-[0.88rem]">
+            {/* 미디어 업로드 (왼쪽) */}
             <button
               className="flex items-center text-white"
               onClick={() => fileInputRef.current?.click()}
@@ -421,7 +427,7 @@ export default function BoardWrite() {
               onChange={handleMediaChange}
             />
 
-            {/* 익명 */}
+            {/* 익명 토글 (오른쪽) */}
             <div className="flex cursor-pointer items-center gap-x-[0.12rem]" onClick={handleAnonymous}>
               <Image
                 src={anonymous ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
