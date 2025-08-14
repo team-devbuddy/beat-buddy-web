@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import Prev from './common/Prev';
-import { accessTokenState, authState } from '@/context/recoil-context';
+import { accessTokenState, authState, isBusinessState } from '@/context/recoil-context';
 import { useRecoilState } from 'recoil';
 import { useState } from 'react';
 import { GetOnBoardingStatus } from '@/lib/action';
@@ -11,6 +11,7 @@ export default function AdminLogin() {
   const [id, setId] = useState('');
   const [isAuth, setIsAuth] = useRecoilState(authState);
   const [access, setAccess] = useRecoilState(accessTokenState);
+  const [isBusiness, setIsBusiness] = useRecoilState(isBusinessState);
 
   const onClickSubmit = async () => {
     try {
@@ -27,6 +28,7 @@ export default function AdminLogin() {
         const data = await response.json();
         setAccess(data.access);
         setIsAuth(true);
+        setIsBusiness(true); // 어드민 로그인 시 business 상태를 true로 설정
         if (access) {
           const response2 = await GetOnBoardingStatus(access);
           if (response2.ok) {

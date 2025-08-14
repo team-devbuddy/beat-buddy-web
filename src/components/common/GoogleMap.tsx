@@ -268,11 +268,10 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, G
             });
           },
           () => {
-            alert('Error: The Geolocation service failed.');
           },
         );
       } else {
-        alert("Error: Your browser doesn't support geolocation.");
+        console.error('Geolocation is not supported by this browser.');
       }
     };
 

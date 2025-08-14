@@ -43,7 +43,6 @@ const ReviewWritePage = () => {
 
   const handleSubmit = async () => {
     if (!accessToken) {
-      alert('로그인 후 이용해주세요');
       return;
     }
 
@@ -54,7 +53,6 @@ const ReviewWritePage = () => {
       router.back(); // detail 페이지로 돌아가기
     } catch (error) {
       console.error('리뷰 제출 실패:', error);
-      alert('리뷰 제출에 실패했습니다.');
     }
   };
 

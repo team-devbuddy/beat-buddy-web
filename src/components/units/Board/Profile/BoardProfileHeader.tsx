@@ -123,8 +123,8 @@ export default function BoardProfileHeader({
 
   if (isFixed) {
     return (
-      <header className="fixed left-0 right-0 top-0 z-50 transform  bg-BG-black transition-transform duration-500 ease-in-out">
-        <div className="mx-auto flex max-w-[600px] items-center justify-between px-[1.25rem] py-[0.75rem] text-white">
+      <header className="fixed left-0 right-0 top-0 z-50 transform bg-BG-black transition-transform duration-500 ease-in-out">
+        <div className="mx-auto flex max-w-[600px] items-center justify-between px-[1.25rem] pb-[0.88rem] pt-[0.62rem] text-white">
           {/* 왼쪽: 뒤로가기 + 프로필 정보 */}
           <div className="flex items-center">
             <Image
@@ -138,9 +138,9 @@ export default function BoardProfileHeader({
 
             <div className="flex flex-col items-start">
               <div className="flex items-center gap-[0.25rem]">
-                <span className="text-[0.875rem] font-bold text-white">{nickname}</span>
+                <span className="text-body-14-bold text-white">{nickname}</span>
                 {role === 'BUSINESS' && (
-                  <span className="rounded-[0.25rem] bg-sub2 px-[0.25rem] py-[0.125rem] text-[0.5rem] text-main">
+                  <span className="rounded-[0.25rem] bg-sub2 px-2 pb-1 pt-[0.19rem] text-body-11-medium text-main">
                     비즈니스
                   </span>
                 )}
@@ -152,7 +152,7 @@ export default function BoardProfileHeader({
           </div>
 
           {/* 오른쪽: 팔로우 버튼 + 더보기 */}
-          <div className="flex items-center ">
+          <div className="flex items-center">
             {!isAuthor && !isProfileEdit && (
               <button
                 onClick={handleFollow}
@@ -195,7 +195,8 @@ export default function BoardProfileHeader({
 
   // 기본 헤더 (뒤로가기 + 더보기)
   return (
-    <header className={`flex items-center ${isProfileEdit || isProfileCreate ? 'justify-start' : 'justify-between'} bg-BG-black px-5 pb-[0.88rem] pt-[0.62rem] text-white`}>
+    <header
+      className={`flex items-center ${isProfileEdit || isProfileCreate ? 'justify-start' : 'justify-between'} bg-BG-black px-5 pb-[0.88rem] pt-[0.62rem] text-white`}>
       <Image
         src="/icons/arrow_back_ios.svg"
         alt="뒤로가기"
@@ -204,16 +205,8 @@ export default function BoardProfileHeader({
         onClick={() => router.back()}
         className="cursor-pointer"
       />
-      {isProfileEdit && (
-        <span className="text-[1.25rem] font-bold text-white">
-          프로필 편집
-        </span>
-      )}
-      {isProfileCreate && (
-        <span className="text-[1.25rem] font-bold text-white">
-          프로필 만들기
-        </span>
-      )}
+      {isProfileEdit && <span className="text-subtitle-20-bold text-white">프로필 편집</span>}
+      {isProfileCreate && <span className="text-subtitle-20-bold text-white">프로필 만들기</span>}
       {!isAuthor && !isProfileEdit && !isProfileCreate && (
         <Image
           ref={dropdownTriggerRef}

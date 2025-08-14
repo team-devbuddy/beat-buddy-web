@@ -182,7 +182,6 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
                 }
               },
               (error) => {
-                alert('현재 위치를 찾을 수 없습니다.');
                 console.error(error);
               },
               {
@@ -192,7 +191,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
               },
             );
           } else {
-            alert('현재 위치 기능을 지원하지 않는 브라우저입니다.');
+            console.error('Geolocation is not supported by this browser.');
           }
         });
       }

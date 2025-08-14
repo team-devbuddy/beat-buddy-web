@@ -46,11 +46,11 @@ const BoardHashtag = ({ selectedTags, setSelectedTags, onUpdatePosts }: BoardHas
       <div className="flex items-start gap-[0.5rem]">
         {/* # 버튼 */}
         <button
-          className={`flex h-[1.8125rem] w-[1.8125rem] items-center justify-center rounded-[0.5rem] ${
+          className={`flex items-center justify-center rounded-[0.5rem] px-[0.62rem] py-1 ${
             selectedTags.length > 0 ? 'bg-sub2' : 'bg-gray700'
           }`}
           onClick={toggleOpen}>
-          <p className={`text-body3-12-medium ${selectedTags.length > 0 ? 'text-main' : 'text-gray300'}`}>#</p>
+          <p className={`text-body-13-medium ${selectedTags.length > 0 ? 'text-main' : 'text-gray300'}`}>#</p>
         </button>
 
         {/* 말풍선/태그 */}
@@ -64,7 +64,7 @@ const BoardHashtag = ({ selectedTags, setSelectedTags, onUpdatePosts }: BoardHas
               transition={{ duration: 0.2 }}
               className="flex max-w-[80%] flex-wrap gap-[0.5rem]">
               {selectedTags.length === 0 ? (
-                <div className="relative ml-[0.25rem] rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.62rem] py-[0.3rem] text-[0.75rem] text-gray200">
+                <div className="relative ml-[0.25rem] rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.62rem] py-[0.3rem] text-body-13-medium text-gray200">
                   <p>#를 눌러 관련 게시물만 모아보세요!</p>
                   <div className="absolute -left-[0.5rem] top-1/2 h-0 w-0 -translate-y-1/2 border-y-[4px] border-r-[8px] border-y-transparent border-r-gray500" />
                 </div>
@@ -72,7 +72,7 @@ const BoardHashtag = ({ selectedTags, setSelectedTags, onUpdatePosts }: BoardHas
                 selectedTags.map((tag, idx) => (
                   <div
                     key={idx}
-                    className="rounded-[0.5rem] bg-sub2 px-[0.62rem] py-[0.3rem] text-body3-12-medium text-main">
+                    className="rounded-[0.5rem] bg-sub2 px-2 py-1 text-body-13-medium text-main">
                     {tag}
                   </div>
                 ))
@@ -92,7 +92,7 @@ const BoardHashtag = ({ selectedTags, setSelectedTags, onUpdatePosts }: BoardHas
                   <button
                     key={idx}
                     onClick={() => handleTagClick(tag)}
-                    className={`font-body2-15-medium rounded-[0.5rem] px-[0.62rem] py-[0.3rem] text-[0.75rem] ${
+                    className={`rounded-[0.5rem] px-[0.62rem] py-1 text-body-13-medium ${
                       isSelected ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
                     }`}>
                     {tag}

@@ -10,16 +10,16 @@ import { motion } from 'framer-motion';
 const locationMap: { [key: string]: string } = {
   홍대: 'HONGDAE',
   이태원: 'ITAEWON',
-  압구정: 'APGUJEONG',
-  '강남/신사': 'GANGNAM/SINSA',
+  압구정로데오: 'APGUJEONG',
+  '강남 · 신사': 'GANGNAM/SINSA',
   기타: 'OTHERS',
 };
 
 const locationImages: { [key: string]: string } = {
   홍대: '/images/onBoarding/background/onboarding-4.webp',
-  압구정: '/images/onBoarding/background/onboarding-2.webp',
+  압구정로데오: '/images/onBoarding/background/onboarding-2.webp',
   이태원: '/images/onBoarding/background/onboarding-5.webp',
-  '강남/신사': '/images/onBoarding/background/onboarding-7.webp',
+  '강남 · 신사': '/images/onBoarding/background/onboarding-7.webp',
   기타: '/images/onBoarding/background/onboarding-9.webp',
 };
 

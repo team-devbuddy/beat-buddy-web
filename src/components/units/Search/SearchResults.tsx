@@ -40,8 +40,8 @@ const genresMap: { [key: string]: string } = {
 const locationsMap: { [key: string]: string } = {
   홍대: '홍대',
   이태원: '이태원',
-  '강남/신사': '강남/신사',
-  압구정: '압구정',
+  '강남 · 신사': '강남/신사',
+  압구정로데오: '압구정',
   기타: '기타',
 };
 
@@ -82,7 +82,7 @@ export default function SearchResults({
     () => ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'],
     [],
   );
-  const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정', '기타'], []);
+  const locations = useMemo(() => ['홍대', '이태원', '강남 · 신사', '압구정로데오', '기타'], []);
   const criteria = useMemo(() => ['가까운 순', '인기순'], []);
 
   // 현재 위치 가져오기 함수

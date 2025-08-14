@@ -54,7 +54,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
   const [currentFilteredClubs, setCurrentFilteredClubs] = useState(filteredClubs);
 
   const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'];
-  const locations = ['홍대', '이태원', '강남/신사', '압구정', '기타'];
+  const locations = ['홍대', '이태원', '강남 · 신사', '압구정로데오', '기타'];
   const sorts = ['가까운 순', '인기순'];
 
   // 매핑 객체들
@@ -74,8 +74,8 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
   const locationsMap: { [key: string]: string } = {
     홍대: '홍대',
     이태원: '이태원',
-    '강남/신사': '강남/신사',
-    압구정: '압구정',
+    '강남 · 신사': '강남/신사',
+    압구정로데오: '압구정',
     기타: '기타',
   };
 

@@ -60,8 +60,7 @@ const BoardWritePage = () => {
   // 게시글 제출 핸들러
   const handleSubmit = async () => {
     if (!accessToken) {
-      alert('로그인이 필요합니다.');
-      router.push('/login');
+        router.push('/login');
       return;
     }
 
@@ -85,7 +84,6 @@ const BoardWritePage = () => {
       setStep(2);
     } catch (error) {
       console.error('게시글 등록 실패:', error);
-      alert('게시글 등록 중 오류가 발생했습니다.');
     }
   };
 

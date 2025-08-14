@@ -53,10 +53,10 @@ const BoardHeader = ({ profileImageUrl }: BoardHeaderProps) => {
 
   return (
     <div className="flex items-center justify-between bg-BG-black px-[1.25rem] pb-[0.88rem] pt-[0.62rem]">
-      <h1 className="text-[1.25rem] font-bold text-white">게시판</h1>
+      <h1 className="text-title-24-bold text-white">게시판</h1>
       <div className="flex items-center gap-[0.88rem]">
         <Image
-          src="/icons/search-01-gray.svg"
+          src="/icons/search-01.svg"
           alt="search icon"
           width={24}
           height={24}

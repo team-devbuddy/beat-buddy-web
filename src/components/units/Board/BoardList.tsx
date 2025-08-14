@@ -41,13 +41,13 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
     setLoading(true);
     try {
       const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/post/${boardType}?page=${pageNum}&size=10${venueId ? `&venueId=${venueId}` : ''}`;
-      
+
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          ...(accessToken && { 'Access': `Bearer ${accessToken}` })
-        }
+          ...(accessToken && { Access: `Bearer ${accessToken}` }),
+        },
       });
 
       if (!response.ok) {
@@ -55,11 +55,11 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
       }
 
       const data: PostsResponse = await response.json();
-      
+
       if (reset) {
         setPosts(data.content);
       } else {
-        setPosts(prev => [...prev, ...data.content]);
+        setPosts((prev) => [...prev, ...data.content]);
       }
 
       setHasMore(pageNum < data.totalPages - 1);
@@ -102,34 +102,31 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
       <div className="py-[0.5rem]">
         {/* 상단 헤더 */}
         <div className="flex items-center">
-          <h1 className="text-title-24-bold px-4">
-            {boardType === 'piece' ? '조각 게시판' : '자유 게시판'}
-          </h1>
+          <h1 className="px-4 text-title-24-bold">{boardType === 'piece' ? '조각 게시판' : '자유 게시판'}</h1>
         </div>
 
         {/* 게시글 목록 */}
-        {(loading && page === 0) ? (
-          <div className="text-center py-8">게시글을 불러오는 중...</div>
+        {loading && page === 0 ? (
+          <div className="py-8 text-center">게시글을 불러오는 중...</div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-8 text-gray300">게시글이 없습니다.</div>
+          <div className="py-8 text-center text-gray300">게시글이 없습니다.</div>
         ) : (
-          <div className='pb-12'>
+          <div className="pb-12">
             {posts.map((post) => (
               <div
                 key={post.id}
                 onClick={() => handlePostClick(post.id)}
-                className="border-b border-gray600 cursor-pointer hover:bg-gray600 transition-colors "
-              >
-                <div className="px-4 py-[1.25rem] flex justify-between items-start">
+                className="cursor-pointer border-b border-gray600 transition-colors hover:bg-gray600">
+                <div className="flex items-start justify-between px-4 py-[1.25rem]">
                   <div className="flex-1">
-                    <h3 className="text-body2-15-bold text-white mb-1">{post.title}</h3>
-                    <div className="flex items-center text-gray300 text-body3-12-medium gap-2">
+                    <h3 className="mb-1 text-body2-15-bold text-white">{post.title}</h3>
+                    <div className="flex items-center gap-2 text-body3-12-medium text-gray300">
                       <div className="flex items-center">
-                        <img src="/icons/thumb-up.svg" alt="likes" className="w-3 h-3 mr-1" />
+                        <img src="/icons/thumb-up.svg" alt="likes" className="mr-1 h-3 w-3" />
                         <span className="text-main">{post.likes}</span>
                       </div>
                       <div className="flex items-center">
-                        <img src="/icons/message-square.svg" alt="comments" className="w-3 h-3 mr-1" />
+                        <img src="/icons/message-square.svg" alt="comments" className="mr-1 h-3 w-3" />
                         <span>{post.comments}</span>
                       </div>
                       <span>|</span>
@@ -155,7 +152,7 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
                             return postDate.toLocaleDateString('ko-KR', {
                               year: 'numeric',
                               month: 'long',
-                              day: 'numeric'
+                              day: 'numeric',
                             });
                           }
                         })()}
@@ -166,12 +163,8 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
                   </div>
                   {post.images && post.images.length > 0 && (
                     <div className="ml-4 flex-shrink-0">
-                      <div className="w-[4.5rem] h-[4.5rem] rounded overflow-hidden">
-                        <img 
-                          src={post.images[0]} 
-                          alt="게시글 이미지" 
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="h-[4.5rem] w-[4.5rem] overflow-hidden rounded">
+                        <img src={post.images[0]} alt="게시글 이미지" className="h-full w-full object-cover" />
                       </div>
                     </div>
                   )}
@@ -187,8 +180,7 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
             <button
               onClick={() => fetchPosts(page, false)}
               disabled={loading}
-              className="px-4 py-2 bg-gray500 text-gray100 rounded-md hover:bg-gray600 transition-colors disabled:opacity-50"
-            >
+              className="rounded-md bg-gray500 px-4 py-2 text-gray100 transition-colors hover:bg-gray600 disabled:opacity-50">
               {loading ? '불러오는 중...' : '더보기'}
             </button>
           </div>
@@ -196,14 +188,13 @@ const BoardList = ({ boardType, venueId }: BoardListProps) => {
       </div>
 
       {/* 글쓰기 버튼 */}
-      <button 
+      <button
         onClick={handleWriteClick}
-        className="fixed bottom-0 left-0 right-0 w-full py-4 bg-main text-white text-body2-15-bold z-50"
-      >
+        className="fixed bottom-0 left-0 right-0 z-50 w-full bg-main py-4 text-body2-15-bold text-white">
         글쓰기
       </button>
     </div>
   );
 };
 
-export default BoardList; 
+export default BoardList;

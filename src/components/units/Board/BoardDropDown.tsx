@@ -190,13 +190,11 @@ const BoardDropdown = ({
       setShowBlockCompleteModal(true);
     } catch (error) {
       console.error('차단 처리 실패:', error);
-      alert('차단 처리에 실패했습니다. 다시 시도해주세요');
     }
   };
 
   const handleReport = async () => {
     if (!reportReason.trim()) {
-      alert('신고 사유를 입력해주세요');
       return;
     }
 

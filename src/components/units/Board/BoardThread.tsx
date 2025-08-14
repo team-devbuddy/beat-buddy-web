@@ -50,6 +50,7 @@ export function formatRelativeTime(isoString: string): string {
   const now = new Date();
   const time = new Date(isoString);
   const diff = (now.getTime() - time.getTime()) / 1000; // 단위: 초
+  const oneWeekInSeconds = 7 * 24 * 60 * 60; // 7일을 초로 변환
 
   if (diff < 60) {
     return '방금 전';
@@ -59,12 +60,18 @@ export function formatRelativeTime(isoString: string): string {
   } else if (diff < 86400) {
     const hours = Math.floor(diff / 3600);
     return `${hours}시간 전`;
+  } else if (diff < oneWeekInSeconds) {
+    const days = Math.floor(diff / 86400);
+    return `${days}일 전`;
   } else {
-    // yyyy-mm-dd HH:MM 형식을 yyyy.mm.dd HH:MM로 변경
-    const dateStr = time.toISOString().slice(0, 10); // "YYYY-MM-DD"
-    const timeStr = time.toISOString().slice(11, 16); // "HH:MM"
-    const formattedDate = dateStr.replace(/-/g, '.'); // "YYYY.MM.DD"
-    return `${formattedDate} ${timeStr}`; // "YYYY.MM.DD HH:MM"
+    // 일주일 이후: "25/03/01 23:01" 형식
+    const year = time.getFullYear().toString().slice(-2); // "25"
+    const month = String(time.getMonth() + 1).padStart(2, '0'); // "03"
+    const day = String(time.getDate()).padStart(2, '0'); // "01"
+    const hours = String(time.getHours()).padStart(2, '0'); // "23"
+    const minutes = String(time.getMinutes()).padStart(2, '0'); // "01"
+
+    return `${year}/${month}/${day} ${hours}:${minutes}`; // "25/03/01 23:01"
   }
 }
 
@@ -293,14 +300,14 @@ export default function BoardThread({ postId, post }: PostProps) {
           </div>
 
           <div>
-            <p className="text-[0.875rem] font-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
+            <p className="text-body-14-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
           </div>
         </div>
 
         {!post.isAuthor && !post.isAnonymous && (
           <motion.button
             onClick={handleFollow}
-            className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
+            className={`text-body-14-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
             disabled={loadingFollow}
             animate={clickedFollow ? { scale: 0.95 } : {}}
             onAnimationComplete={() => setClickedFollow(false)}>
@@ -309,9 +316,9 @@ export default function BoardThread({ postId, post }: PostProps) {
         )}
       </div>
       <div onClick={goToPost}>
-        <p className="mb-[0.5rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>
+        <p className="mb-[0.5rem] mt-[0.62rem] text-body-14-bold text-white">{post.title}</p>
         <p
-          className="whitespace-pre-wrap text-[0.8125rem] text-gray100"
+          className="whitespace-pre-wrap text-body-13-medium text-gray100"
           style={{
             lineHeight: '1.5',
             // 연속된 빈 줄의 높이 제한
@@ -366,13 +373,13 @@ export default function BoardThread({ postId, post }: PostProps) {
         {post.hashtags.map((tag) => (
           <span
             key={tag}
-            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-body-11-medium text-gray300">
             {tag}
           </span>
         ))}
       </div>
       <div className="flex justify-between">
-        <div className="mt-[0.62rem] flex gap-[0.5rem] text-[0.75rem] text-gray300">
+        <div className="mt-[0.62rem] flex gap-[0.5rem] text-body3-12-medium text-gray300">
           <span className={`flex items-center gap-[0.12rem] ${liked ? 'text-main' : ''}`}>
             <button onClick={handleLike} disabled={isLoadingLike} title="좋아요" className="flex items-center">
               <Image
@@ -410,7 +417,7 @@ export default function BoardThread({ postId, post }: PostProps) {
           </span>
         </div>
         <div className="flex items-end gap-[0.62rem]">
-          <p className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</p>
+          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}

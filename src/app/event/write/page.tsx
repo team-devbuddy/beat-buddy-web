@@ -182,7 +182,6 @@ export default function EventWritePage() {
 
   const handleSubmit = async () => {
     if (!isFormValid) {
-      alert('모든 필수 항목을 입력해주세요');
       return;
     }
 
@@ -258,7 +257,6 @@ export default function EventWritePage() {
       if (Object.keys(updateData).length > 0) {
         formData.append('eventUpdateRequestDTO', new Blob([JSON.stringify(updateData)], { type: 'application/json' }));
       } else {
-        alert('변경된 내용이 없습니다.');
         return;
       }
     } else {
