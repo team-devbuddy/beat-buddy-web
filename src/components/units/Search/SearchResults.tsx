@@ -9,6 +9,7 @@ import MapView from './Map/MapView';
 import DropdownGroup from './DropdownGroup';
 import MapButton from './Map/MapButton';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSearchParams } from 'next/navigation';
 import {
   likedClubsState,
   heartbeatNumsState,
@@ -20,19 +21,19 @@ import {
   searchQueryState,
 } from '@/context/recoil-context';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
-import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
+import { searchHomeDropdown } from '@/lib/actions/search-controller/homeDropdown';
 import SearchListSkeleton from '@/components/common/skeleton/SearchListSkeleton';
 
 const genresMap: { [key: string]: string } = {
-  힙합: 'HIPHOP',
+  HIPHOP: 'HIPHOP',
   'R&B': 'R&B',
-  테크노: 'TECHNO',
+  TECHNO: 'TECHNO',
   EDM: 'EDM',
-  하우스: 'HOUSE',
-  라틴: 'LATIN',
-  '소울&펑크': 'SOUL&FUNK',
+  HOUSE: 'HOUSE',
+  LATIN: 'LATIN',
+  'SOUL&FUNK': 'SOUL&FUNK',
   'K-POP': 'K-POP',
-  락: 'ROCK',
+  ROCK: 'ROCK',
   POP: 'POP',
 };
 
@@ -45,13 +46,14 @@ const locationsMap: { [key: string]: string } = {
 };
 
 const criteriaMap: { [key: string]: string } = {
-  '가까운 순': '거리순',
+  '가까운 순': '가까운 순',
   인기순: '인기순',
 };
 
 export default function SearchResults({
   initialFilteredClubs = [],
 }: SearchResultsProps & { initialFilteredClubs?: Club[] }) {
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
   const [selectedGenre, setSelectedGenre] = useRecoilState(selectedGenreState);
@@ -83,13 +85,37 @@ export default function SearchResults({
   const locations = useMemo(() => ['홍대', '이태원', '강남/신사', '압구정', '기타'], []);
   const criteria = useMemo(() => ['가까운 순', '인기순'], []);
 
+  // 현재 위치 가져오기 함수
+  const getCurrentLocation = useCallback(async () => {
+    return new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported'));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('위치 정보 가져오기 실패:', error);
+          reject(error);
+        },
+        { timeout: 10000, enableHighAccuracy: true },
+      );
+    });
+  }, []);
+
   const performSearch = useCallback(
     async (targetPage: number, append: boolean = false) => {
       if (isLoading) return;
       setIsLoading(true);
 
       try {
-        const filters = {
+        const filters: any = {
           keyword: searchQuery || '',
           genreTag: genresMap[selectedGenre] || '',
           regionTag: locationsMap[selectedLocation] || '',
@@ -98,8 +124,21 @@ export default function SearchResults({
           size: 10,
         };
 
+        // 가까운 순으로 정렬할 때는 위도/경도 추가
+        if (filters.sortCriteria === '가까운 순') {
+          try {
+            const location = await getCurrentLocation();
+            filters.latitude = location.latitude;
+            filters.longitude = location.longitude;
+            console.log('📍 위치 정보 추가:', { latitude: location.latitude, longitude: location.longitude });
+          } catch (error) {
+            console.warn('위치 정보 가져오기 실패, 인기순으로 변경:', error);
+            filters.sortCriteria = '인기순';
+          }
+        }
+
         console.log('검색 실행:', { targetPage, append, filters });
-        const response = await filterDropdown(filters, accessToken);
+        const response = await searchHomeDropdown(filters, accessToken);
         const clubs = response.clubs || response;
         const hasMoreData = response.hasMore ?? clubs.length === 10;
 
@@ -146,6 +185,25 @@ export default function SearchResults({
     },
     [searchQuery, selectedGenre, selectedLocation, selectedOrder, accessToken],
   );
+
+  // URL 파라미터에서 초기 필터 설정
+  useEffect(() => {
+    const genreParam = searchParams.get('genre');
+    const locationParam = searchParams.get('location');
+    const queryParam = searchParams.get('q');
+
+    console.log('SearchResults - URL 파라미터 읽기:', { genreParam, locationParam, queryParam });
+
+    if (genreParam) {
+      setSelectedGenre(genreParam);
+    }
+    if (locationParam) {
+      setSelectedLocation(locationParam);
+    }
+    if (queryParam) {
+      setSearchQuery(queryParam);
+    }
+  }, [searchParams, setSelectedGenre, setSelectedLocation, setSearchQuery]);
 
   // 초기 로딩 시 한 번만 실행
   useEffect(() => {
@@ -210,7 +268,7 @@ export default function SearchResults({
       setIsLoading(true);
 
       try {
-        const filters = {
+        const filters: any = {
           keyword: searchQuery || '',
           genreTag: genresMap[selectedGenre] || '',
           regionTag: locationsMap[selectedLocation] || '',
@@ -219,8 +277,24 @@ export default function SearchResults({
           size: 10,
         };
 
+        // 가까운 순으로 정렬할 때는 위도/경도 추가
+        if (filters.sortCriteria === '가까운 순') {
+          try {
+            const location = await getCurrentLocation();
+            filters.latitude = location.latitude;
+            filters.longitude = location.longitude;
+            console.log('📍 페이지 로드 - 위치 정보 추가:', {
+              latitude: location.latitude,
+              longitude: location.longitude,
+            });
+          } catch (error) {
+            console.warn('페이지 로드 - 위치 정보 가져오기 실패, 인기순으로 변경:', error);
+            filters.sortCriteria = '인기순';
+          }
+        }
+
         console.log('페이지 로드 실행:', { page, filters });
-        const response = await filterDropdown(filters, accessToken);
+        const response = await searchHomeDropdown(filters, accessToken);
         const clubs = response.clubs || response;
         const hasMoreData = response.hasMore ?? clubs.length === 10;
 
@@ -372,7 +446,7 @@ export default function SearchResults({
             setSelectedOrder={setSelectedOrder}
           />
           {filteredClubs.length > 0 ? (
-            <div className="px-[1.25rem] pb-[2.5rem] pt-[1.25rem]">
+            <div className="px-[1.25rem] pb-[2.5rem] pt-[0.88rem]">
               <ClubList
                 clubs={filteredClubs}
                 likedClubs={likedClubs}

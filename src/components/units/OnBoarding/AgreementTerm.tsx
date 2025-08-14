@@ -82,12 +82,54 @@ export default function AgreementTerm() {
   }, [terms]);
 
   const handleCheckboxClick = (id: number) => {
+    // 위치정보 사용 동의 체크박스인 경우
+    if (id === 3) {
+      const term = terms.find((t) => t.id === id);
+      const willBeChecked = !term?.checked;
+
+      if (willBeChecked) {
+        // 위치 권한 요청
+        requestLocationPermission();
+      }
+    }
+
     setTerms((prev) => prev.map((term) => (term.id === id ? { ...term, checked: !term.checked } : term)));
+  };
+
+  const requestLocationPermission = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log('위치 권한 허용됨:', position);
+          // 권한이 허용되면 체크박스 체크 상태 유지
+        },
+        (error) => {
+          console.error('위치 권한 거부됨:', error);
+          // 권한이 거부되면 체크박스 체크 해제
+          setTerms((prev) => prev.map((term) => (term.id === 3 ? { ...term, checked: false } : term)));
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000,
+        },
+      );
+    } else {
+      console.error('Geolocation이 지원되지 않습니다.');
+      // 지원되지 않으면 체크박스 체크 해제
+      setTerms((prev) => prev.map((term) => (term.id === 3 ? { ...term, checked: false } : term)));
+    }
   };
 
   const handleAllCheckboxClick = () => {
     const newState = !allChecked;
     setAllChecked(newState);
+
+    if (newState) {
+      // 모두 동의할 때 위치 권한도 요청
+      requestLocationPermission();
+    }
+
     setTerms((prev) => prev.map((term) => ({ ...term, checked: newState })));
   };
 

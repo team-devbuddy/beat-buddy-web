@@ -13,40 +13,46 @@ export default function AdminLogin() {
   const [access, setAccess] = useRecoilState(accessTokenState);
 
   const onClickSubmit = async () => {
-    const response = await fetch('https://api.beatbuddy.world/admin/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id }),
-      credentials: 'include',
-    });
-    if (response.ok) {
-      const data = await response.json();
-      setAccess(data.access);
-      setIsAuth(true);
-      if (access) {
-        const response2 = await GetOnBoardingStatus(access);
-        if (response2.ok) {
-          const responseJson = await response2.json();
-          if (responseJson.adultCert === false) {
-            router.push('/onBoarding');
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAccess(data.access);
+        setIsAuth(true);
+        if (access) {
+          const response2 = await GetOnBoardingStatus(access);
+          if (response2.ok) {
+            const responseJson = await response2.json();
+            if (responseJson.adultCert === false) {
+              router.push('/onBoarding');
+            }
+            // 성인 인증 X && 장르, 분위기, 지역 선택 X
+            else if (responseJson.genre === false || responseJson.mood === false || responseJson.region === false) {
+              router.push('/onBoarding');
+            }
+            // 성인 인증 O && 장르, 분위기, 지역 선택 O %responseJson.adultCert &&
+            else if (responseJson.genre && responseJson.mood && responseJson.region) {
+              setIsAuth(true);
+              router.push('/');
+            }
+            // 성인 인증 O && 장르, 분위기, 지역 선택 X
+            // else if (responseJson.adultCert && (!responseJson.genre || !responseJson.mood || !responseJson.region)) {
+            //   router.push('/onBoarding');
+            // }
           }
-          // 성인 인증 X && 장르, 분위기, 지역 선택 X
-          else if (responseJson.genre === false || responseJson.mood === false || responseJson.region === false) {
-            router.push('/onBoarding');
-          }
-          // 성인 인증 O && 장르, 분위기, 지역 선택 O %responseJson.adultCert &&
-          else if (responseJson.genre && responseJson.mood && responseJson.region) {
-            setIsAuth(true);
-            router.push('/');
-          }
-          // 성인 인증 O && 장르, 분위기, 지역 선택 X
-          // else if (responseJson.adultCert && (!responseJson.genre || !responseJson.mood || !responseJson.region)) {
-          //   router.push('/onBoarding');
-          // }
         }
       }
+    } catch (error) {
+      console.error('Admin login failed:', error);
+      // 에러 처리 로직 추가 가능
     }
   };
 
@@ -64,13 +70,11 @@ export default function AdminLogin() {
             <h1 className="text-[1.5rem] text-white">어드민 로그인</h1>
           </div>
           <input
-            placeholder='비밀버디'
+            placeholder="비밀버디"
             onChange={onChangeId}
             className="mt-[2.75rem] w-[80%] rounded-sm border-b border-white bg-BG-black px-2 py-4 text-white outline-none"
           />
-          <button
-            onClick={onClickSubmit}
-            className="mt-3 w-[80%] bg-main py-3 text-xs font-semibold">
+          <button onClick={onClickSubmit} className="mt-3 w-[80%] bg-main py-3 text-xs font-semibold">
             로그인
           </button>
         </div>

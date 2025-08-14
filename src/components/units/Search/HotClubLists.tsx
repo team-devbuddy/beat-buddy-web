@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function HotClubsList() {
   const [hotData, setHotData] = useState<{ rankKeyword: string; score: number }[] | null>(null);
@@ -79,26 +80,26 @@ export default function HotClubsList() {
 
   return (
     <div className="bg-BG-black px-[1.25rem] pb-[5rem] pt-[0.62rem] text-gray100">
-      <div className="flex items-center justify-start gap-[0.5rem]">
-        <h2 className="font-paperlogy text-[1.125rem] font-bold tracking-[-0.05rem] text-main">Now Hot</h2>
-        <span className="text-[0.8125rem] text-gray300">{getCurrentDate()} 기준</span>
+      <div className="flex items-end justify-start gap-[0.5rem]">
+        <Image src="/Now Hot.svg" alt="Now Hot" width={79} height={27} className="my-1" />
+        <span className="text-body-13-medium text-gray300">{getCurrentDate()} 기준</span>
       </div>
       <div className="flex justify-between pt-[0.88rem]">
         <ul className="flex w-[10rem] list-none flex-col">
           {hotData.slice(0, 5).map((club, index) => (
             <motion.li
               key={index}
-              className="flex cursor-pointer items-center py-[0.44rem] text-[0.875rem]"
+              className="flex cursor-pointer items-center py-[0.44rem] text-body-14-bold"
               onClick={() => handleKeywordClick(club.rankKeyword)}
               whileTap={{ scale: 0.95 }}>
-              <span className="mr-[0.62rem] w-[1.25rem] text-center text-[0.875rem] font-bold text-main">
+              <span className="mr-[0.62rem] w-[1.25rem] text-center text-body-14-bold text-main">
                 {index + 1}
               </span>
               <span
                 className={`transition-all duration-300 ease-in-out ${index === highlightedIndex ? 'text-white' : ''}`}
                 style={{
                   fontSize: index === highlightedIndex ? '1rem' : '0.8125rem',
-                  fontWeight: index === highlightedIndex ? 700 : 400,
+                  fontWeight: index === highlightedIndex ? 700 : 500,
                 }}>
                 {club.rankKeyword}
               </span>
@@ -109,10 +110,10 @@ export default function HotClubsList() {
           {hotData.slice(5, 10).map((club, index) => (
             <motion.li
               key={index + 5}
-              className="flex cursor-pointer items-center py-[0.44rem] text-[0.875rem]"
+              className="flex cursor-pointer items-center py-[0.44rem] text-body-14-bold"
               onClick={() => handleKeywordClick(club.rankKeyword)}
               whileTap={{ scale: 0.95 }}>
-              <span className="mr-[0.62rem] w-[1.25rem] text-center text-[0.875rem] font-bold text-main">
+              <span className="mr-[0.62rem] w-[1.25rem] text-center text-body-14-bold text-main">
                 {index + 6}
               </span>
               <span

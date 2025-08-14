@@ -23,7 +23,7 @@ import { AnimatePresence } from 'framer-motion';
 import ClickedClubDetails from './ClickedClub';
 import SearchListSkeleton from '@/components/common/skeleton/SearchListSkeleton';
 import NoResults from '../NoResult';
-import { filterDropdown } from '@/lib/actions/search-controller/filterDropdown';
+import { searchMapDropdown } from '@/lib/actions/search-controller/mapDropdown';
 
 export interface BottomSheetProps extends SearchResultsProps {
   isMapSearched?: boolean;
@@ -80,7 +80,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
   };
 
   const criteriaMap: { [key: string]: string } = {
-    '가까운 순': '거리순',
+    '가까운 순': '가까운 순',
     인기순: '인기순',
   };
 
@@ -162,7 +162,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(({ fil
         };
 
         console.log('📤 필터 요청 데이터:', filters);
-        const data = await filterDropdown(filters, accessToken);
+        const data = await searchMapDropdown(filters, accessToken);
         console.log('📥 필터 응답 데이터:', data);
         setCurrentFilteredClubs(data.clubs);
       } catch (error) {
