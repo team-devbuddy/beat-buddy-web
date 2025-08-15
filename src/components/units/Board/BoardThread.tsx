@@ -373,7 +373,7 @@ export default function BoardThread({ postId, post }: PostProps) {
         {post.hashtags.map((tag) => (
           <span
             key={tag}
-            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-body-11-medium text-gray300">
+            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-1 pt-[0.19rem] text-body-11-medium text-gray300">
             {tag}
           </span>
         ))}
@@ -421,11 +421,11 @@ export default function BoardThread({ postId, post }: PostProps) {
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}
-            src="/icons/dot-vertical.svg"
+            src="/icons/dot-vertical-row.svg"
             alt="bookmark"
             width={19}
             height={20}
-            className="z-100 rotate-90 cursor-pointer"
+            className="z-100 cursor-pointer"
           />{' '}
         </div>
       </div>

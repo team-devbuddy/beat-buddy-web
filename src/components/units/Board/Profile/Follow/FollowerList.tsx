@@ -69,8 +69,8 @@ export default function FollowerList({ userId, accessToken }: FollowerListProps)
 
   if (followers.length === 0 && !loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <p className="text-gray300">팔로워가 없습니다.</p>
+      <div className="flex items-center justify-center pt-[15.69rem]">
+        <p className="text-body-14-medium text-gray300">아직 팔로워가 없어요</p>
       </div>
     );
   }

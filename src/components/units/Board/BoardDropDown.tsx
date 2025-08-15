@@ -59,11 +59,12 @@ const BoardDropdown = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
-  const [modalType, setModalType] = useState<'block' | 'report' | null>(null);
+  const [modalType, setModalType] = useState<'block' | 'report' | 'delete' | null>(null);
   const [reportReason, setReportReason] = useState('');
   const [post, setPost] = useState<PostProps>({ nickname: '', isAnonymous: false });
   const [showReportCompleteModal, setShowReportCompleteModal] = useState(false);
   const [showBlockCompleteModal, setShowBlockCompleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ type: 'post' | 'comment' | 'event'; id: number } | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -107,11 +108,7 @@ const BoardDropdown = ({
           {
             label: '삭제하기',
             icon: '/icons/trashcan.svg',
-            onClick: async () => {
-              // 댓글 삭제
-              await deleteComment(postId, commentId!, accessToken);
-              onCommentDelete?.();
-            },
+            onClick: () => showDeleteConfirmModal('comment', commentId!),
           },
         ];
       } else if (type === 'event') {
@@ -125,11 +122,7 @@ const BoardDropdown = ({
           {
             label: '삭제하기',
             icon: '/icons/trashcan.svg',
-            onClick: async () => {
-              await deleteEvent(eventId!, accessToken);
-              onPostDelete?.();
-              router.push('/event');
-            },
+            onClick: () => showDeleteConfirmModal('event', eventId!),
           },
         ];
       } else {
@@ -143,12 +136,7 @@ const BoardDropdown = ({
           {
             label: '삭제하기',
             icon: '/icons/trashcan.svg',
-            onClick: async () => {
-              // 게시글 삭제
-              await deletePost(accessToken, postId);
-              onPostDelete?.();
-              router.push('/board');
-            },
+            onClick: () => showDeleteConfirmModal('post', postId),
           },
         ];
       }
@@ -231,6 +219,38 @@ const BoardDropdown = ({
     }
   };
 
+  // 삭제 확인 모달을 표시하는 함수
+  const showDeleteConfirmModal = (deleteType: 'post' | 'comment' | 'event', id: number) => {
+    setDeleteTarget({ type: deleteType, id });
+    setModalType('delete');
+  };
+
+  // 실제 삭제를 수행하는 함수
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+
+    try {
+      if (deleteTarget.type === 'comment') {
+        await deleteComment(postId, deleteTarget.id, accessToken);
+        onCommentDelete?.();
+      } else if (deleteTarget.type === 'event') {
+        await deleteEvent(deleteTarget.id, accessToken);
+        onPostDelete?.();
+        router.push('/event');
+      } else {
+        await deletePost(accessToken, deleteTarget.id);
+        onPostDelete?.();
+      }
+
+      setModalType(null);
+      setDeleteTarget(null);
+      onClose();
+    } catch (error) {
+      console.error('삭제 처리 실패:', error);
+      alert('삭제에 실패했습니다. 다시 시도해주세요');
+    }
+  };
+
   return createPortal(
     <>
       {/* ✅ 배경 오버레이 - 클릭을 차단하여 뒤의 요소가 클릭되지 않도록 함 */}
@@ -264,7 +284,7 @@ const BoardDropdown = ({
                   index !== items.length - 1 ? '' : ''
                 } py-[0.56rem]`}
                 // 🔥 수정된 클릭 핸들러
-                onClick={async () => {
+                onClick={() => {
                   if (item.modalType) {
                     setModalType(item.modalType);
                     // onClose() 제거 - 모달이 열리도록 유지
@@ -272,11 +292,14 @@ const BoardDropdown = ({
                   }
                   if (item.onClick) {
                     try {
-                      await item.onClick();
+                      item.onClick();
                     } catch (e) {
                       console.error('실행 중 오류 발생:', e);
                     }
-                    onClose();
+                    // 삭제 확인 모달의 경우 onClose() 호출하지 않음
+                    if (!item.label.includes('삭제하기')) {
+                      onClose();
+                    }
                   }
                 }}>
                 {item.label}
@@ -324,6 +347,40 @@ const BoardDropdown = ({
                   onClick={handleBlock}
                   className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-main">
                   차단하기
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ✅ 삭제 확인 모달 */}
+      <AnimatePresence>
+        {modalType === 'delete' && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+              className="mx-5 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
+              onClick={(e) => e.stopPropagation()}>
+              <p className="mb-5 text-subtitle-20-bold text-white">삭제하시겠습니까?</p>
+              <div className="flex justify-between gap-3">
+                <button
+                  onClick={() => {
+                    setModalType(null);
+                    setDeleteTarget(null);
+                    onClose();
+                  }}
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-gray200">
+                  취소
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-main">
+                  확인
                 </button>
               </div>
             </div>

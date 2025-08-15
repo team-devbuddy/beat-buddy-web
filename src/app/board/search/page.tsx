@@ -29,6 +29,10 @@ interface PostType {
   scrapped: boolean;
   isAuthor: boolean;
   writerId: number;
+  postProfileImageUrl?: string;
+  postProfileNickname?: string;
+  postProfileRole?: string;
+  postProfileIsFollowing?: boolean;
 }
 
 const PAGE_SIZE = 10;

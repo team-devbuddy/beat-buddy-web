@@ -8,7 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getPostDetail, editPost } from '@/lib/actions/detail-controller/board/boardWriteUtils';
-import Loading from '@/app/123123loading';
+import Loading from '@/app/loading';
 
 const FIXED_HASHTAGS = [
   '압구정로데오',

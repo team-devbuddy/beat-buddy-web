@@ -303,7 +303,7 @@ export default function BoardPage() {
       onTouchStart={() => {}}
       onTouchMove={() => {}}
       onTouchEnd={() => {}}>
-      <BoardHeader profileImageUrl={userProfile?.profileImageUrl} />
+      <BoardHeader postProfileImageUrl={userProfile?.postProfileImageUrl} />
 
       <BoardHashtag selectedTags={selectedTags} setSelectedTags={setSelectedTags} onUpdatePosts={handleUpdatePosts} />
 

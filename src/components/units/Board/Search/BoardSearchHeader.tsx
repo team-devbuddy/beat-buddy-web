@@ -124,7 +124,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
             />
 
             {/* 🔍 Search icon - 검색창 내부 오른쪽 */}
-            <div className="absolute bottom-[0.56rem] right-[0.88rem] cursor-pointer">
+            <div className="absolute bottom-[0.72rem] right-[0.88rem] cursor-pointer">
               {isEvent ? (
                 <div className="flex items-center gap-1">
                   <Image

@@ -20,6 +20,13 @@ import { motion } from 'framer-motion';
 import ProfileModal from '../../Common/ProfileModal';
 import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 
+// 파일 확장자로 이미지/영상 구분
+const isVideo = (url: string): boolean => {
+  const videoExtensions = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv'];
+  const lowerUrl = url.toLowerCase();
+  return videoExtensions.some((ext) => lowerUrl.includes(ext));
+};
+
 interface PostProps {
   postId: number;
   post: {
@@ -44,6 +51,10 @@ interface PostProps {
     isFollowing?: boolean;
     isAnonymous?: boolean;
     thumbImage?: string[];
+    postProfileImageUrl?: string;
+    postProfileNickname?: string;
+    postProfileRole?: string;
+    postProfileIsFollowing?: boolean;
   };
 }
 
@@ -133,7 +144,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
     handleInteractionWithProfileCheck(() => {
       if (dropdownTriggerRef.current) {
         const rect = dropdownTriggerRef.current.getBoundingClientRect();
-        setDropdownPosition({ top: rect.bottom - 90, left: rect.right - 130 });
+        setDropdownPosition({ top: rect.bottom - 70, left: rect.right - 110 });
         setIsDropdownOpen(true);
       }
     });
@@ -237,7 +248,9 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500">
               <Image
                 src={
-                  post.isAnonymous ? '/icons/default-profile.svg' : post.profileImageUrl || '/icons/default-profile.svg'
+                  post.isAnonymous
+                    ? '/icons/default-profile.svg'
+                    : post.postProfileImageUrl || '/icons/default-profile.svg'
                 }
                 alt="profile"
                 width={32}
@@ -253,13 +266,13 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
                 alt="business-mark"
                 width={9}
                 height={9}
-                className="absolute -right-[-0.5px] -top-[-1px] z-10 safari-icon-fix"
+                className="absolute -right-0 -top-[-1px] z-10 safari-icon-fix"
               />
             )}
           </div>
 
           <div>
-            <p className="text-[0.875rem] font-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
+            <p className="text-body-14-bold text-white">{post.postProfileNickname}</p>
           </div>
         </div>
 
@@ -273,17 +286,18 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         )}
       </div>
       <div onClick={goToPost}>
-        {post.title && <p className="mb-[0.5rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>}
+        {post.title && <p className="mb-[0.5rem] mt-[0.62rem] text-body-14-bold text-white">{post.title}</p>}
         <p
-          className="whitespace-pre-wrap text-[0.8125rem] text-gray100"
+          className="whitespace-pre-wrap text-body-13-medium text-gray100"
           style={{
             lineHeight: '1.5',
+            // 연속된 빈 줄의 높이 제한
             display: 'block',
             whiteSpace: 'pre-line',
           }}>
           {post.content
-            .replace(/\n\s*\n\s*\n/g, '\n\n')
-            .split('\n\n')
+            .replace(/\n\s*\n\s*\n/g, '\n\n') // 3개 이상 줄바꿈을 2개로 제한
+            .split('\n\n') // 빈 줄로 분할
             .map((paragraph, index, array) => (
               <span key={index}>
                 {paragraph}
@@ -294,20 +308,24 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
       </div>
 
       {post.thumbImage && post.thumbImage.length > 0 && (
-        <div className="mt-[0.75rem] flex gap-[0.5rem] overflow-x-auto">
+        <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
           {post.thumbImage.map((url: string, index: number) => (
             <div
               key={index}
               onClick={() => handleImageClick(index)}
               className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
-              <Image
-                src={url}
-                alt={`post-img-${index}`}
-                width={0}
-                height={0}
-                sizes="100vw"
-                style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
-              />
+              {isVideo(url) ? (
+                <video src={url} className="h-[200px] w-auto object-cover" preload="metadata" muted />
+              ) : (
+                <Image
+                  src={url}
+                  alt={`post-img-${index}`}
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
+                />
+              )}
             </div>
           ))}
         </div>
@@ -325,13 +343,13 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
         {post.hashtags.map((tag) => (
           <span
             key={tag}
-            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.25rem] text-[0.6875rem] text-gray300">
+            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-1 pt-[0.19rem] text-body-11-medium text-gray300">
             {tag}
           </span>
         ))}
       </div>
       <div className="flex justify-between">
-        <div className="mt-[0.62rem] flex gap-[0.5rem] text-[0.75rem] text-gray300">
+        <div className="mt-[0.62rem] flex gap-[0.5rem] text-body3-12-medium text-gray300">
           <span className={`flex items-center gap-[0.12rem] ${liked ? 'text-main' : ''}`}>
             <button onClick={handleLike} disabled={isLoadingLike} title="좋아요" className="flex items-center">
               <Image
@@ -341,7 +359,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
                 height={20}
               />
             </button>
-            {likes}
+            <span className="min-w-[0.45rem] text-left">{likes}</span>
           </span>
           <span className={`flex items-center gap-[0.12rem] ${post.hasCommented ? 'text-main' : ''}`}>
             <Image
@@ -350,32 +368,34 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
               width={20}
               height={20}
             />
-            {post.comments}
+            <span className="min-w-[0.45rem] text-left">{post.comments}</span>
           </span>
           <span className={`flex items-center gap-[0.12rem] ${scrapped ? 'text-main' : ''}`}>
-            <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
-              <Image
-                src={
-                  scrapped ? '/icons/material-symbols_bookmark-pink.svg' : '/icons/material-symbols_bookmark-gray.svg'
-                }
-                alt="bookmark"
-                width={20}
-                height={20}
-              />
-            </button>
-            {scraps}
+            <div className="flex max-h-[20px] max-w-[20px] items-center">
+              <button onClick={handleScrap} disabled={isLoadingScrap} title="스크랩" className="flex items-center">
+                <Image
+                  src={
+                    scrapped ? '/icons/material-symbols_bookmark-pink.svg' : '/icons/material-symbols_bookmark-gray.svg'
+                  }
+                  alt="bookmark"
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
+            <span className="min-w-[0.45rem] text-left">{scraps}</span>
           </span>
         </div>
         <div className="flex items-end gap-[0.62rem]">
-          <p className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</p>
+          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}
-            src="/icons/dot-vertical.svg"
+            src="/icons/dot-vertical-row.svg"
             alt="bookmark"
-            width={20}
+            width={19}
             height={20}
-            className="z-100 rotate-90 cursor-pointer"
+            className="z-100 cursor-pointer"
           />
         </div>
       </div>
@@ -385,6 +405,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
           onClose={() => setIsDropdownOpen(false)}
           position={dropdownPosition}
           postId={post.id}
+          type="board"
         />
       )}
 

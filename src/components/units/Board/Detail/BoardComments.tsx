@@ -6,6 +6,7 @@ import { getAllComments } from '@/lib/actions/comment-controller/getAllComments'
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, scrollToCommentState } from '@/context/recoil-context';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 export interface CommentType {
   id: number;
@@ -150,22 +151,30 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
 
   return (
     <div className="bg-transparent pb-[4rem] pt-5">
-      <div className="flex flex-col gap-1">
-        <AnimatePresence>
-          {parentComments.map((comment) => (
-            <motion.div
-              id={`comment-${comment.id}`}
-              key={comment.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}>
-              <BoardReply reply={comment} allComments={comments} setComments={setComments} postId={postId} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      {comments.length === 0 && !isLoading ? (
+        // 댓글이 없을 때 표시할 내용 (부모댓글 + 자식댓글 모두 없음)
+        <div className="flex flex-col items-center justify-center pt-[1.21rem]">
+          <Image src="/icons/maps_ugc-nocomment.svg" alt="댓글 없음" width={50} height={50} className="" />
+          <p className="mt-1 text-body-12-medium text-gray300">첫 댓글을 남겨주세요</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-1">
+          <AnimatePresence>
+            {parentComments.map((comment) => (
+              <motion.div
+                id={`comment-${comment.id}`}
+                key={comment.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}>
+                <BoardReply reply={comment} allComments={comments} setComments={setComments} postId={postId} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
       {!isLoading && !isLastPage && <div ref={loadMoreRef} style={{ height: '1px' }} />}
       <div ref={bottomRef} style={{ height: '1px' }} />
     </div>

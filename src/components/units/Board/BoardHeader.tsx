@@ -12,10 +12,10 @@ import { motion } from 'framer-motion';
 import ProfileModal from '../Common/ProfileModal';
 
 interface BoardHeaderProps {
-  profileImageUrl?: string;
+  postProfileImageUrl?: string;
 }
 
-const BoardHeader = ({ profileImageUrl }: BoardHeaderProps) => {
+const BoardHeader = ({ postProfileImageUrl }: BoardHeaderProps) => {
   const router = useRouter();
   const userProfile = useRecoilValue(userProfileState);
   const accessToken = useRecoilValue(accessTokenState) || '';
@@ -65,7 +65,7 @@ const BoardHeader = ({ profileImageUrl }: BoardHeaderProps) => {
         />
         <div className="relative h-[26px] w-[26px] cursor-pointer" onClick={handleProfileClick}>
           <Image
-            src={profileImageUrl || defaultProfileImage}
+            src={postProfileImageUrl || defaultProfileImage}
             alt="프로필 이미지"
             width={26}
             height={26}
