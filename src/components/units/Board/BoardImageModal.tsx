@@ -5,6 +5,26 @@ import Image from 'next/image';
 import { createPortal } from 'react-dom';
 import { formatRelativeTime } from './BoardThread';
 
+// ================= WebView message types =================
+const WEBVIEW_MESSAGE_TYPE = {
+  IMAGE_DOWNLOAD_SUCCESS: 'IMAGE_DOWNLOAD_SUCCESS',
+  IMAGE_DOWNLOAD_FAILED: 'IMAGE_DOWNLOAD_FAILED',
+  IMAGE_DOWNLOAD_REQUEST: 'IMAGE_DOWNLOAD_REQUEST',
+} as const;
+
+type WebviewMessageTypeKey = keyof typeof WEBVIEW_MESSAGE_TYPE;
+
+interface PostMessageObjectInterface {
+  type: (typeof WEBVIEW_MESSAGE_TYPE)[WebviewMessageTypeKey];
+  data: unknown;
+  [key: string]: unknown;
+}
+
+function getStringPostMessageObject(object: PostMessageObjectInterface) {
+  return JSON.stringify(object);
+}
+
+// ================= Types =================
 interface BoardImageModalProps {
   images: string[];
   initialIndex: number;
@@ -29,6 +49,29 @@ const isVideo = (url: string): boolean => {
   const lowerUrl = url.toLowerCase();
   return videoExtensions.some((ext) => lowerUrl.includes(ext));
 };
+
+// ================= Helpers for web save =================
+const guessExtAndMime = (url: string, blob?: Blob) => {
+  if (blob?.type) return { ext: blob.type.split('/')[1] || 'jpg', mime: blob.type };
+  const m = url.toLowerCase().match(/\.(jpe?g|png|webp|gif|heic|bmp)(\?|#|$)/);
+  const ext = m?.[1] || 'jpg';
+  const mime =
+    ext === 'jpg' || ext === 'jpeg'
+      ? 'image/jpeg'
+      : ext === 'png'
+        ? 'image/png'
+        : ext === 'webp'
+          ? 'image/webp'
+          : ext === 'gif'
+            ? 'image/gif'
+            : ext === 'heic'
+              ? 'image/heic'
+              : 'image/*';
+  return { ext, mime };
+};
+
+const canShareFiles = (files: File[]) =>
+  typeof (navigator as any).canShare === 'function' && (navigator as any).canShare({ files });
 
 export default function BoardImageModal({
   images,
@@ -62,13 +105,10 @@ export default function BoardImageModal({
       } else if (e.key === 'Escape') {
         onClose();
       } else if (e.key === 'm' || e.key === 'M') {
-        // M 키로 음소거 토글
         handleMuteToggle();
       } else if (e.key === 'AudioVolumeMute' || e.key === 'F1' || e.key === 'F10') {
-        // 시스템 음소거 키 (Fn + F1, F10 등)
         handleMuteToggle();
       } else if (e.key === 'F8' && e.ctrlKey) {
-        // Ctrl + F8 (일부 키보드)
         handleMuteToggle();
       }
     },
@@ -93,7 +133,6 @@ export default function BoardImageModal({
     if (touchStartX.current !== null && touchEndX.current !== null) {
       const deltaX = touchStartX.current - touchEndX.current;
       if (Math.abs(deltaX) > 50) {
-        // 좌우 스와이프
         if (deltaX > 50) {
           setCurrentIndex((prev) => (prev + 1) % images.length);
         } else if (deltaX < -50) {
@@ -121,14 +160,12 @@ export default function BoardImageModal({
       const newMutedState = !isMuted;
       videoRef.current.muted = newMutedState;
       setIsMuted(newMutedState);
-      console.log('음소거 상태 변경:', newMutedState); // 디버깅용
     }
   };
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       setCurrentTime(videoRef.current.currentTime);
-      // 실제 영상의 음소거 상태와 앱 상태 동기화
       if (videoRef.current.muted !== isMuted) {
         setIsMuted(videoRef.current.muted);
       }
@@ -138,7 +175,6 @@ export default function BoardImageModal({
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
-      // 기본적으로 음소거 상태로 설정하되, 시스템 볼륨이 0이 아닌 경우 음소거 해제
       const shouldStartMuted = true; // 기본값은 음소거
       videoRef.current.muted = shouldStartMuted;
       setIsMuted(shouldStartMuted);
@@ -153,139 +189,115 @@ export default function BoardImageModal({
     }
   };
 
-  // 영상의 음소거 상태 변경 감지
   const handleVolumeChange = () => {
     if (videoRef.current) {
       const isCurrentlyMuted = videoRef.current.muted || videoRef.current.volume === 0;
       setIsMuted(isCurrentlyMuted);
-      console.log('볼륨 변경 감지:', { muted: videoRef.current.muted, volume: videoRef.current.volume });
     }
   };
 
-  // 사진첩에 다운로드하는 함수
-  const handleDownload = async (url: string) => {
-    // 웹뷰 앱과의 통신 시도
-    const tryWebViewCommunication = (data: string, filename: string) => {
-      // 웹뷰 브릿지가 있는지 확인
-      if ((window as any).ReactNativeWebView) {
-        // React Native WebView와 통신
-        (window as any).ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'image-download',
-            data: data,
-            filename: filename,
-          }),
-        );
-        alert('앱에 이미지 다운로드 요청을 보냈습니다.');
-      } else if ((window as any).webkit && (window as any).webkit.messageHandlers) {
-        // iOS WKWebView와 통신
-        (window as any).webkit.messageHandlers.imageDownload.postMessage({
-          type: 'image-download',
-          data: data,
-          filename: filename,
-        });
-        alert('앱에 이미지 다운로드 요청을 보냈습니다.');
-      } else if ((window as any).Android) {
-        // Android WebView와 통신
-        (window as any).Android.imageDownload(data, filename);
-        alert('앱에 이미지 다운로드 요청을 보냈습니다.');
-      } else {
-        // 웹뷰 통신 실패 시 새 탭에서 이미지 열기
-        const newWindow = window.open(url, '_blank');
-        if (newWindow) {
-          setTimeout(() => {
-            newWindow.close();
-          }, 1000);
-          alert('이미지가 새 탭에서 열렸습니다. 이미지를 길게 눌러 "사진에 저장"을 선택해주세요.');
-        } else {
-          alert('팝업이 차단되었습니다. 이미지를 길게 눌러 "사진에 저장"을 선택해주세요.');
-        }
-      }
-    };
-
+  // =============== Web ↔ WebView bridge (receive) ===============
+  const handleWebViewMessage = useCallback((event: MessageEvent) => {
     try {
-      // 모바일 환경인지 확인
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-      if (isMobile) {
-        // 모바일에서 base64 방식으로 다운로드
-        try {
-          // 1. 이미지를 fetch로 가져와서 blob으로 변환
-          const response = await fetch(url, { cache: 'no-cache' });
-          const blob = await response.blob();
-
-          // 2. FileReader를 사용하여 base64로 변환
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64Data = reader.result as string;
-
-            // 3. Web Share API 시도 (iOS 12.3+, Android Chrome 75+)
-            if ('share' in navigator && navigator.canShare) {
-              const urlParts = url.split('.');
-              const extension = urlParts[urlParts.length - 1]?.split('?')[0] || 'jpg';
-              const filename = `beatbuddy_${Date.now()}.${extension}`;
-
-              // base64를 blob으로 다시 변환하여 File 객체 생성
-              const base64Response = fetch(base64Data);
-              base64Response
-                .then((res) => res.blob())
-                .then((blob) => {
-                  const file = new File([blob], filename, { type: blob.type });
-
-                  if (navigator.canShare({ files: [file] })) {
-                    navigator
-                      .share({
-                        files: [file],
-                        title: 'BeatBuddy 이미지',
-                        text: 'BeatBuddy에서 다운로드한 이미지입니다.',
-                      })
-                      .catch(() => {
-                        // Web Share API 실패 시 웹뷰 앱과 통신 시도
-                        tryWebViewCommunication(base64Data, filename);
-                      });
-                  } else {
-                    // Web Share API 미지원 시 웹뷰 앱과 통신 시도
-                    tryWebViewCommunication(base64Data, filename);
-                  }
-                });
-            } else {
-              // Web Share API 미지원 시 웹뷰 앱과 통신 시도
-              const urlParts = url.split('.');
-              const extension = urlParts[urlParts.length - 1]?.split('?')[0] || 'jpg';
-              const filename = `beatbuddy_${Date.now()}.${extension}`;
-              tryWebViewCommunication(base64Data, filename);
-            }
-          };
-
-          reader.readAsDataURL(blob);
-        } catch (fetchError) {
-          console.error('이미지 fetch 실패:', fetchError);
-          // fetch 실패 시 웹뷰 앱과 통신 시도
-          tryWebViewCommunication(url, `beatbuddy_${Date.now()}.jpg`);
-        }
-      } else {
-        // 데스크톱에서는 기존 방식으로 다운로드
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `beatbuddy_${Date.now()}.jpg`;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      const { type, data } = JSON.parse(event.data as string);
+      switch (type) {
+        case WEBVIEW_MESSAGE_TYPE.IMAGE_DOWNLOAD_SUCCESS:
+          // TODO: 프로젝트의 Toast로 교체
+          // eslint-disable-next-line no-console
+          console.log('이미지 다운로드 성공:', data);
+          break;
+        case WEBVIEW_MESSAGE_TYPE.IMAGE_DOWNLOAD_FAILED:
+          // eslint-disable-next-line no-console
+          console.error('이미지 다운로드 실패:', data);
+          break;
+        default:
+          // eslint-disable-next-line no-console
+          console.log('알 수 없는 웹뷰 메시지 타입:', type);
       }
     } catch (error) {
-      console.error('다운로드 실패:', error);
+      // eslint-disable-next-line no-console
+      console.error('웹뷰 메시지 파싱 실패:', error);
+    }
+  }, []);
 
-      // iOS에서 더 친화적인 에러 메시지
-      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (isIOS) {
-        alert(
-          '이미지 다운로드에 실패했습니다.\n\n이미지를 길게 눌러 "사진에 저장"을 선택하거나, 앱에서 다운로드 기능을 사용해주세요.',
-        );
-      } else {
-        alert('다운로드에 실패했습니다. 다시 시도해주세요.');
+  // =============== 다운로드: 모바일/데스크톱 분기 ===============
+  const handleDownload = async (url: string) => {
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      await downloadImageWhenMobile(url);
+    } else {
+      await downloadImageWhenNotMobile(url);
+    }
+  };
+
+  // 모바일 환경: (1) WebView 브릿지 우선 → (2) 모바일 웹은 Web Share API → (3) 폴백 새 탭
+  const downloadImageWhenMobile = async (url: string) => {
+    // (0) 네이티브 WebView 브릿지가 있다면 네이티브 저장
+    if ((window as any).ReactNativeWebView) {
+      (window as any).ReactNativeWebView.postMessage(
+        getStringPostMessageObject({
+          type: WEBVIEW_MESSAGE_TYPE.IMAGE_DOWNLOAD_REQUEST,
+          data: { imageData: url, filename: `beatbuddy_${Date.now()}`, originalUrl: url },
+        }),
+      );
+      return;
+    }
+
+    // (1) 모바일 웹: Web Share API로 파일 공유 → 사진첩 저장 유도
+    try {
+      const resp = await fetch(url, { cache: 'no-cache' }); // 캐시로 CORS 꼬임 방지
+      const blob = await resp.blob();
+      const { ext, mime } = guessExtAndMime(url, blob);
+      const file = new File([blob], `beatbuddy_${Date.now()}.${ext}`, { type: mime });
+
+      if (canShareFiles([file])) {
+        await (navigator as any).share({
+          files: [file],
+          title: 'BeatBuddy',
+          text: 'BeatBuddy에서 저장한 이미지',
+        });
+        return;
       }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Web Share(파일) 시도 실패:', e);
+    }
+
+    // (2) 폴백: 새 탭으로 열어 길게 눌러 저장하도록 안내
+    fallbackToNewTab(url);
+  };
+
+  // 데스크톱: a[download] 기본 다운로드
+  const downloadImageWhenNotMobile = async (url: string) => {
+    try {
+      const { ext } = guessExtAndMime(url);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `beatbuddy_${Date.now()}.${ext}`;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('데스크톱 다운로드 실패:', error);
+      alert('다운로드에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  // 최종 폴백: 새 탭에서 이미지 열기
+  const fallbackToNewTab = (imageUrl: string) => {
+    const newWindow = window.open(imageUrl, '_blank');
+    if (newWindow) {
+      setTimeout(() => {
+        try {
+          newWindow.close();
+        } catch (_) {
+          // noop
+        }
+      }, 1000);
+    } else {
+      alert('팝업이 차단되었습니다. 이미지를 길게 눌러 "사진에 저장"을 선택해주세요.');
     }
   };
 
@@ -293,12 +305,10 @@ export default function BoardImageModal({
   const handlePlay = () => {
     setIsPlaying(true);
     if (videoRef.current) {
-      // 재생 시작 시 실제 볼륨 상태 확인
       setTimeout(() => {
         if (videoRef.current) {
           const isCurrentlyMuted = videoRef.current.muted || videoRef.current.volume === 0;
           setIsMuted(isCurrentlyMuted);
-          console.log('재생 시작 시 볼륨 상태:', { muted: videoRef.current.muted, volume: videoRef.current.volume });
         }
       }, 100);
     }
@@ -308,14 +318,17 @@ export default function BoardImageModal({
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('mousedown', handleClickOutside);
     document.body.style.overflow = 'hidden';
+
+    window.addEventListener('message', handleWebViewMessage);
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('mousedown', handleClickOutside);
       document.body.style.overflow = 'unset';
+      window.removeEventListener('message', handleWebViewMessage);
     };
-  }, [handleKeyDown, handleClickOutside]);
+  }, [handleKeyDown, handleClickOutside, handleWebViewMessage]);
 
-  // 영상이 변경될 때마다 재생 상태 초기화
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
@@ -323,7 +336,6 @@ export default function BoardImageModal({
     setIsMuted(true);
   }, [currentIndex]);
 
-  // reviewInfo가 변경될 때 로컬 상태 업데이트
   useEffect(() => {
     if (reviewInfo) {
       setLocalLiked(reviewInfo.liked);
@@ -359,22 +371,14 @@ export default function BoardImageModal({
             {isReview && <span className="text-[1.5rem] font-bold text-white">{clubName}</span>}
           </div>
 
-          {isReview ? (
-            // 리뷰용 헤더: 인덱스만 오른쪽에
-            <div className="px-3 py-1 text-[0.8125rem] text-gray200">
-              <span className="text-main">{currentIndex + 1}</span>
-              <span className="text-gray200"> / </span>
-              <span className="text-gray200">{images.length}</span>
-            </div>
-          ) : (
-            // 게시판용 헤더: 사진 인덱스만
-            <div className="px-3 py-1 text-[0.8125rem] text-gray200">
-              <span className="text-main">{currentIndex + 1}</span>
-              <span className="text-gray200"> / </span>
-              <span className="text-gray200">{images.length}</span>
-            </div>
-          )}
+          {/* 인덱스 */}
+          <div className="px-3 py-1 text-[0.8125rem] text-gray200">
+            <span className="text-main">{currentIndex + 1}</span>
+            <span className="text-gray200"> / </span>
+            <span className="text-gray200">{images.length}</span>
+          </div>
 
+          {/* 다운로드 버튼 (리뷰 화면이 아닐 때만) */}
           {!isReview && (
             <button
               onClick={() => handleDownload(currentUrl)}
@@ -433,7 +437,6 @@ export default function BoardImageModal({
                 <div
                   className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4"
                   onClick={(e) => e.stopPropagation()}>
-                  {/* 재생/일시정지 버튼과 진행바 */}
                   <div className="flex items-center gap-3">
                     {/* 재생/일시정지 버튼 */}
                     <button
@@ -500,7 +503,6 @@ export default function BoardImageModal({
           {/* 좌우 화살표 네비게이션 */}
           {images.length > 1 && (
             <>
-              {/* 왼쪽 화살표 */}
               <button
                 onClick={() => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)}
                 className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center justify-center"
@@ -508,7 +510,6 @@ export default function BoardImageModal({
                 <Image src="/icons/line-md_chevron-left.svg" alt="이전" width={24} height={24} className="text-white" />
               </button>
 
-              {/* 오른쪽 화살표 */}
               <button
                 onClick={() => setCurrentIndex((prev) => (prev + 1) % images.length)}
                 className="absolute right-4 top-1/2 flex -translate-y-1/2 rotate-180 items-center justify-center"
@@ -539,18 +540,14 @@ export default function BoardImageModal({
                 </div>
               </div>
               <p className="mt-[0.88rem] text-[0.8125rem] text-gray100">{reviewInfo.content}</p>
-              {/* 좋아요 버튼 - 내용 아래 우측에 배치 */}
               <div className="flex justify-end">
                 <button
                   onClick={() => {
                     if (onLikeToggle && reviewInfo) {
-                      // 낙관적 업데이트
                       const newLiked = !localLiked;
                       const newLikes = newLiked ? localLikes + 1 : localLikes - 1;
                       setLocalLiked(newLiked);
                       setLocalLikes(newLikes);
-
-                      // 실제 API 호출
                       onLikeToggle(reviewInfo.venueReviewId);
                     }
                   }}

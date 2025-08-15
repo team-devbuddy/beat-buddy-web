@@ -8,6 +8,7 @@ import Prev from '@/components/common/Prev';
 import { PostDuplicateCheck } from '@/lib/action';
 import Image from 'next/image';
 import { PostSubmitBusinessSignup } from '@/lib/actions/signup/businessInfo';
+import { motion } from 'framer-motion';
 
 export default function SignUpBusinessNickname() {
   const [signupBusiness, setSignupBusiness] = useRecoilState(signupBusinessState);
@@ -17,25 +18,48 @@ export default function SignUpBusinessNickname() {
   const [checking, setChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState(false);
   const [nicknameChecked, setNicknameChecked] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [nicknameError, setNicknameError] = useState('');
+
+  // 키보드 상태 관리
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
 
-  // 외부 클릭 시 step1 → step2
+  // VisualViewport API를 사용한 키보드 감지
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        step === 1 &&
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node) &&
-        businessName.trim()
-      ) {
-        goToStep2();
+    const handleViewportResize = () => {
+      if ('visualViewport' in window) {
+        const windowHeight = window.innerHeight;
+        const viewportHeight = window.visualViewport?.height || windowHeight;
+        const heightDiff = windowHeight - viewportHeight;
+        const threshold = 50; // 50px 이상 차이나야 키보드로 인식
+
+        if (heightDiff > threshold) {
+          setIsKeyboardVisible(true);
+          setKeyboardHeight(heightDiff);
+        } else {
+          setIsKeyboardVisible(false);
+          setKeyboardHeight(0);
+        }
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [step, businessName]);
+
+    // 초기 상태 설정
+    handleViewportResize();
+
+    // 이벤트 리스너 등록
+    if ('visualViewport' in window) {
+      window.visualViewport?.addEventListener('resize', handleViewportResize);
+    }
+
+    return () => {
+      if ('visualViewport' in window) {
+        window.visualViewport?.removeEventListener('resize', handleViewportResize);
+      }
+    };
+  }, []);
 
   // 엔터로 step1 → step2
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -53,8 +77,48 @@ export default function SignUpBusinessNickname() {
     setStep(1);
   };
 
+  // 닉네임 유효성 검사 함수
+  const validateNickname = (nickname: string): { isValid: boolean; message: string } => {
+    if (!nickname || nickname.trim() === '') {
+      return { isValid: false, message: '닉네임을 입력해주세요' };
+    }
+
+    // 길이 검사 (1-12자)
+    if (nickname.length < 1 || nickname.length > 12) {
+      return { isValid: false, message: '닉네임은 1-12자로 입력해주세요' };
+    }
+
+    // 공백 검사
+    if (nickname.includes(' ')) {
+      return { isValid: false, message: '공백을 포함할 수 없습니다' };
+    }
+
+    // 특수기호 검사 (한글, 영문, 숫자만 허용)
+    const validPattern = /^[가-힣a-zA-Z0-9]+$/;
+    if (!validPattern.test(nickname)) {
+      return { isValid: false, message: '한글, 영문, 숫자만 사용 가능합니다' };
+    }
+
+    // 자음/모음만 있는 경우 검사
+    const onlyConsonants = /^[ㄱ-ㅎ]+$/;
+    const onlyVowels = /^[ㅏ-ㅣ]+$/;
+    if (onlyConsonants.test(nickname) || onlyVowels.test(nickname)) {
+      return { isValid: false, message: '자음이나 모음만으로는 사용할 수 없습니다' };
+    }
+
+    return { isValid: true, message: '' };
+  };
+
   const handleCheckNickname = async () => {
     if (!nickname || !accessToken) return;
+
+    // 유효성 검사 먼저 수행
+    const validation = validateNickname(nickname);
+    if (!validation.isValid) {
+      setIsAvailable(false);
+      setNicknameChecked(true);
+      return;
+    }
 
     setChecking(true);
     setNicknameChecked(false);
@@ -88,6 +152,16 @@ export default function SignUpBusinessNickname() {
     }
   };
 
+  // 현재 단계에서 확인 버튼을 보여줄지 결정
+  const shouldShowConfirmButton = () => {
+    switch (step) {
+      case 1: // 비즈니스명 입력
+        return isKeyboardVisible && businessName.trim();
+      default:
+        return false;
+    }
+  };
+
   const handleGoToHome = () => {
     router.push('/');
   };
@@ -95,12 +169,13 @@ export default function SignUpBusinessNickname() {
   return (
     <>
       {step < 3 && <Prev url="/signup/business/info" onBack={goToStep1} />}
+      {step === 3 && <Prev url="/login" />}
       <div
-        className="min-h-screen bg-BG-black px-5 text-white"
+        className="bg-BG-black px-5 text-white"
         onKeyDown={handleKeyDown}
         tabIndex={0}
         onClick={step === 3 ? handleGoToHome : undefined}>
-        <div ref={containerRef}>
+        <div>
           {step === 1 && (
             <>
               <h1 className="pb-[1.88rem] pt-[0.62rem] text-title-24-bold">비즈니스명을 입력해주세요</h1>
@@ -123,9 +198,18 @@ export default function SignUpBusinessNickname() {
                   maxLength={12}
                   value={nickname}
                   onChange={(e) => {
-                    setNickname(e.target.value);
+                    const value = e.target.value;
+                    setNickname(value);
                     setIsAvailable(false);
                     setNicknameChecked(false);
+
+                    // 실시간 유효성 검사
+                    if (value.trim()) {
+                      const validation = validateNickname(value);
+                      setNicknameError(validation.message);
+                    } else {
+                      setNicknameError('');
+                    }
                   }}
                   placeholder="닉네임을 입력해 주세요"
                   className="w-full border-b border-white bg-transparent px-1 py-3 pr-10 text-body-14-medium text-white placeholder-gray200 outline-none safari-input-fix"
@@ -141,25 +225,28 @@ export default function SignUpBusinessNickname() {
                 ) : (
                   <button
                     onClick={handleCheckNickname}
-                    disabled={checking || !nickname}
-                    className="absolute right-0 top-1/2 mr-[0.5rem] -translate-y-1/2 transform rounded-[0.5rem] bg-gray700 px-[0.75rem] py-[0.38rem] text-body3-12-bold text-main">
+                    disabled={checking || !nickname || !!nicknameError}
+                    className={`absolute right-0 top-1/2 mr-[0.5rem] -translate-y-1/2 transform rounded-[0.5rem] px-[0.75rem] py-[0.38rem] text-body3-12-bold ${
+                      checking || !nickname || !!nicknameError ? 'bg-gray500 text-gray300' : 'bg-gray700 text-main'
+                    }`}>
                     중복 확인
                   </button>
                 )}
               </div>
 
               <div className="mt-[0.63rem]">
-                {!nicknameChecked && (
+                {nicknameError ? (
+                  <p className="text-body3-12-medium text-main">{nicknameError}</p>
+                ) : !nicknameChecked ? (
                   <p className="text-body3-12-medium text-gray300">
                     공백없이 12자 이하로 입력해주세요 특수 기호는 불가능해요
                   </p>
-                )}
-                {nicknameChecked && (
+                ) : (
                   <p className="mt-[0.63rem] text-body-14-medium">
                     {isAvailable ? (
-                      <span className="pl-1 text-main text-body3-12-medium">사용 가능한 닉네임이에요</span>
+                      <span className="pl-1 text-body3-12-medium text-main">사용 가능한 닉네임이에요</span>
                     ) : (
-                      <span className="pl-1 text-main text-body3-12-medium">중복된 닉네임이에요</span>
+                      <span className="pl-1 text-body3-12-medium text-main">중복된 닉네임이에요</span>
                     )}
                   </p>
                 )}
@@ -175,12 +262,12 @@ export default function SignUpBusinessNickname() {
           )}
 
           {step === 3 && (
-            <div className="flex h-screen items-center justify-center text-center">
-              <div className="flex flex-col items-center">
-                <Image src="/icons/MainLogo.svg" alt="check" width={100} height={100} className="mb-6" />
-                <h1 className="mb-1 text-title-24-bold text-main">관리자 심사 요청이 완료되었어요!</h1>
-                <p className="text-body-14-medium text-gray300">
-                  심사 완료까지 비트버디를 둘러보실까요?
+            <div className="flex items-center justify-center text-center">
+              <div className="mt-[15.69rem] flex flex-col items-center">
+                <Image src="/icons/MainLogo.svg" alt="check" width={69} height={64.69} className="mb-2" />
+                <h1 className="mb-[0.06rem] text-body1-16-bold text-main">관리자 심사 요청이 완료되었어요!</h1>
+                <p className="text-body-11-medium text-gray300">
+                  가입이 승인되면 곧바로 알려드릴게요
                   <br />
                 </p>
               </div>
@@ -188,8 +275,33 @@ export default function SignUpBusinessNickname() {
           )}
         </div>
 
-        <div className="fixed bottom-5 left-0 w-full px-4">
-          {step === 2 && (
+        {/* 중앙 확인 버튼 - 키보드 위에 표시 (다음 버튼만) */}
+        {shouldShowConfirmButton() && (
+          <div
+            className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
+            style={{
+              bottom: `${keyboardHeight}px`,
+              transition: 'bottom 0.3s ease-out',
+            }}>
+            <div className="w-full max-w-[600px]">
+              <motion.button
+                onClick={() => {
+                  goToStep2();
+                  // 키보드 숨김
+                  setIsKeyboardVisible(false);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90">
+                다음
+              </motion.button>
+            </div>
+          </div>
+        )}
+
+        {/* 관리자 심사 요청하기 버튼 - 바닥에 고정 */}
+        {step === 2 && (
+          <div className="fixed bottom-5 left-0 w-full px-4">
             <button
               onClick={handleSubmit}
               disabled={!isAvailable}
@@ -198,8 +310,8 @@ export default function SignUpBusinessNickname() {
               }`}>
               관리자 심사 요청하기
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );
