@@ -8,20 +8,7 @@ import Image from 'next/image';
 import { replyingToState } from '@/context/recoil-context';
 import { createReply } from '@/lib/actions/comment-controller/postReply';
 import { commentInputFocusState, scrollToCommentState } from '@/context/recoil-context';
-
-interface CommentType {
-  id: number;
-  content: string;
-  isAnonymous: boolean;
-  replyId: number | null;
-  memberName: string;
-  likes: number;
-  createdAt: string;
-  isAuthor: boolean;
-  userId: string;
-  writerId: number; // writerId 필드 추가
-  isDeleted?: boolean; // 삭제된 댓글인지 여부
-}
+import { CommentType } from './BoardComments';
 
 interface Props {
   postId: number;
@@ -73,12 +60,16 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
           isAnonymous: replyResponse.isAnonymous,
           replyId: replyResponse.replyId,
           memberName: replyResponse.memberName,
+          imageUrl: replyResponse.imageUrl || '',
           likes: replyResponse.likes,
           createdAt: replyResponse.createdAt,
           isAuthor: replyResponse.isAuthor,
-          writerId: replyResponse.writerId, // writerId 필드 사용
+          writerId: replyResponse.writerId,
           userId: replyResponse.member?.memberId?.toString() || '',
+          isFollowing: replyResponse.isFollowing || false,
+          isBlocked: replyResponse.isBlocked || false,
           isDeleted: false,
+          isPostWriter: replyResponse.isPostWriter || false,
         };
         // ✅ 답글 작성 성공 시, 부모 댓글 ID로 스크롤 명령
         setScrollTo(replyingTo.parentId);
@@ -91,23 +82,22 @@ export default function BoardCommentInput({ postId, onCommentAdded }: Props) {
           isAnonymous: commentResponse.isAnonymous,
           replyId: commentResponse.replyId,
           memberName: commentResponse.memberName,
+          imageUrl: commentResponse.imageUrl || '',
           likes: commentResponse.likes,
           createdAt: commentResponse.createdAt,
           isAuthor: commentResponse.isAuthor,
-          writerId: commentResponse.writerId, // writerId 필드 사용
+          writerId: commentResponse.writerId,
           userId: commentResponse.member?.memberId?.toString() || '',
+          isFollowing: commentResponse.isFollowing || false,
+          isBlocked: commentResponse.isBlocked || false,
           isDeleted: false,
+          isPostWriter: commentResponse.isPostWriter || false,
         };
         // ✅ 새 댓글 작성 성공 시, 맨 아래로 스크롤 명령
         setScrollTo('bottom');
       }
 
       console.log('새 댓글 데이터:', newComment);
-
-      // ✅ 댓글 작성 성공 시 BoardDetail의 상태 업데이트 함수 호출
-      if ((window as any).commentHandlers && (window as any).commentHandlers[postId]) {
-        (window as any).commentHandlers[postId].addComment();
-      }
 
       setContent('');
       onCommentAdded(newComment);

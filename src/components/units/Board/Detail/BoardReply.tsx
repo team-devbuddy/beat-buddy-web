@@ -72,9 +72,9 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
     return (
       <div className={containerClass}>
-        <div className="flex items-center gap-[0.37rem] pb-[0.88rem] text-[0.8125rem] text-gray300">
+        <div className="flex items-center gap-1 pb-[0.88rem] pt-[0.62rem] text-body-13-medium text-gray300">
           <Image src="/icons/block.svg" alt="profile" width={20} height={20} className="rounded-full object-cover" />
-          <p className="whitespace-pre-wrap text-[0.8125rem] text-gray300">차단한 사용자의 댓글입니다.</p>
+          <p className="whitespace-pre-wrap text-body-13-medium text-gray300">차단한 사용자의 댓글입니다.</p>
         </div>
       </div>
     );
@@ -224,12 +224,12 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   // 삭제된 댓글 렌더링 함수
   const renderDeletedComment = (isNestedComment: boolean = false) => {
     const containerClass = isNestedComment
-      ? 'flex w-full flex-col gap-[0.5rem] rounded-lg'
-      : 'flex flex-col gap-[0.5rem] rounded-lg';
+      ? 'flex w-full flex-col gap-2'
+      : 'flex flex-col gap-2';
 
     return (
       <div className={containerClass}>
-        <div className="flex items-center gap-[0.37rem] pb-[0.88rem] pt-[0.62rem] text-[0.8125rem] text-gray300">
+        <div className="flex items-center gap-1 pb-[0.88rem] pt-[0.62rem] text-body-13-medium text-gray300">
           <Image
             src="/icons/cancel.svg"
             alt="profile"
@@ -237,7 +237,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
             height={20}
             className="h-[20px] w-[20px] rounded-full object-cover"
           />
-          <p className="whitespace-pre-wrap text-[0.8125rem] text-gray300">삭제된 댓글입니다.</p>
+          <p className="whitespace-pre-wrap text-body-13-medium text-gray300">삭제된 댓글입니다.</p>
         </div>
       </div>
     );
@@ -250,7 +250,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
       <div id={`comment-${reply.id}`} className="w-full">
         {/* ✅ 스크린샷 디자인에 맞춰 회색 배경과 패딩을 적용합니다. */}
         <div
-          className={classNames('flex w-full flex-col gap-[0.5rem] rounded-lg transition-colors', {
+          className={classNames('flex w-full flex-col gap-1 ', {
             'mt-1': reply.isBlocked,
             'bg-gray800': isReplying,
           })}>
@@ -261,7 +261,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <div className="flex items-center justify-center gap-[0.37rem] text-[0.8125rem] text-white">
+                <div className="flex items-center justify-center gap-[0.37rem] text-body-13-medium text-white">
                   <Image
                     src={
                       reply.isAnonymous ? '/icons/default-profile.svg' : reply.imageUrl || '/icons/default-profile.svg'
@@ -272,11 +272,11 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                     className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover"
                     onClick={handleProfileClick}
                   />
-                  {reply.isPostWriter && <span className="font-bold text-main">{reply.memberName} (작성자)</span>}
+                  {reply.isPostWriter && <span className="font-bold text-main">{reply.memberName}(작성자)</span>}
                   {!reply.isPostWriter && (
-                    <span className="text-[0.8125rem] font-bold text-white">{reply.memberName}</span>
+                    <span className="text-body-13-medium font-bold text-white">{reply.memberName}</span>
                   )}
-                  <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
+                  <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
                 </div>
                 <div className="relative">
                   <Image
@@ -290,8 +290,8 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                   />
                 </div>
               </div>
-              <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
-              <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
+              <p className="whitespace-pre-wrap text-body-13-medium text-[#BFBFBF]">{reply.content}</p>
+              <div className="flex items-center gap-4 text-body-13-medium text-gray300">
                 <button
                   onClick={handleLike}
                   disabled={isLoadingLike}
@@ -341,7 +341,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
   // 부모 댓글(최상위 댓글) UI
   return (
-    <div id={`comment-${reply.id}`} className="flex flex-col gap-2 px-5 pb-3">
+    <div id={`comment-${reply.id}`} className="flex flex-col gap-2 px-5 py-1">
       <div
         className={classNames('flex flex-col gap-2 rounded-lg transition-colors', {
           '': isReplying,
@@ -353,7 +353,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
         ) : (
           <>
             <div className="flex items-center justify-between">
-              <div className="flex items-center justify-center gap-[0.37rem] text-[0.8125rem] text-white">
+              <div className="flex items-center justify-center gap-[0.37rem] text-body-13-medium text-white">
                 <Image
                   src={
                     reply.isAnonymous ? '/icons/default-profile.svg' : reply.imageUrl || '/icons/default-profile.svg'
@@ -364,11 +364,11 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                   className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover safari-icon-fix"
                   onClick={handleProfileClick}
                 />
-                {reply.isPostWriter && <span className="font-bold text-main">{reply.memberName} (작성자)</span>}
+                {reply.isPostWriter && <span className="font-bold text-main">{reply.memberName}(작성자)</span>}
                 {!reply.isPostWriter && (
-                  <span className="text-[0.8125rem] font-bold text-white">{reply.memberName}</span>
+                  <span className="text-body-13-medium font-bold text-white">{reply.memberName}</span>
                 )}
-                <span className="text-[0.75rem] text-gray200">· {formattedTime}</span>
+                <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
               </div>
               <div className="relative">
                 <Image
@@ -382,8 +382,8 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
                 />
               </div>
             </div>
-            <p className="whitespace-pre-wrap text-[0.75rem] text-[#BFBFBF]">{reply.content}</p>
-            <div className="flex items-center gap-4 text-[0.75rem] text-gray300">
+            <p className="whitespace-pre-wrap text-body-13-medium text-[#BFBFBF]">{reply.content}</p>
+            <div className="flex items-center gap-4 text-body-13-medium text-gray300">
               <button
                 onClick={handleLike}
                 disabled={isLoadingLike}

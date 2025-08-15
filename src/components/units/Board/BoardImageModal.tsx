@@ -164,45 +164,106 @@ export default function BoardImageModal({
 
   // 사진첩에 다운로드하는 함수
   const handleDownload = async (url: string) => {
+    // 웹뷰 앱과의 통신 시도
+    const tryWebViewCommunication = (data: string, filename: string) => {
+      // 웹뷰 브릿지가 있는지 확인
+      if ((window as any).ReactNativeWebView) {
+        // React Native WebView와 통신
+        (window as any).ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'image-download',
+            data: data,
+            filename: filename,
+          }),
+        );
+        alert('앱에 이미지 다운로드 요청을 보냈습니다.');
+      } else if ((window as any).webkit && (window as any).webkit.messageHandlers) {
+        // iOS WKWebView와 통신
+        (window as any).webkit.messageHandlers.imageDownload.postMessage({
+          type: 'image-download',
+          data: data,
+          filename: filename,
+        });
+        alert('앱에 이미지 다운로드 요청을 보냈습니다.');
+      } else if ((window as any).Android) {
+        // Android WebView와 통신
+        (window as any).Android.imageDownload(data, filename);
+        alert('앱에 이미지 다운로드 요청을 보냈습니다.');
+      } else {
+        // 웹뷰 통신 실패 시 새 탭에서 이미지 열기
+        const newWindow = window.open(url, '_blank');
+        if (newWindow) {
+          setTimeout(() => {
+            newWindow.close();
+          }, 1000);
+          alert('이미지가 새 탭에서 열렸습니다. 이미지를 길게 눌러 "사진에 저장"을 선택해주세요.');
+        } else {
+          alert('팝업이 차단되었습니다. 이미지를 길게 눌러 "사진에 저장"을 선택해주세요.');
+        }
+      }
+    };
+
     try {
       // 모바일 환경인지 확인
       const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
       if (isMobile) {
-        // 모바일에서만 사진첩에 저장 시도
-        const urlParts = url.split('.');
-        const extension = urlParts[urlParts.length - 1]?.split('?')[0] || 'jpg';
-        const filename = `beatbuddy_${Date.now()}.${extension}`;
+        // 모바일에서 base64 방식으로 다운로드
+        try {
+          // 1. 이미지를 fetch로 가져와서 blob으로 변환
+          const response = await fetch(url, { cache: 'no-cache' });
+          const blob = await response.blob();
 
-        // fetch로 이미지 데이터 가져오기
-        const response = await fetch(url);
-        const blob = await response.blob();
+          // 2. FileReader를 사용하여 base64로 변환
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64Data = reader.result as string;
 
-        // Web Share API 사용 (iOS 12.3+, Android Chrome 75+)
-        if ('share' in navigator && navigator.canShare) {
-          const file = new File([blob], filename, { type: blob.type });
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: 'BeatBuddy 이미지',
-              text: 'BeatBuddy에서 다운로드한 이미지입니다.',
-            });
-            return;
-          }
+            // 3. Web Share API 시도 (iOS 12.3+, Android Chrome 75+)
+            if ('share' in navigator && navigator.canShare) {
+              const urlParts = url.split('.');
+              const extension = urlParts[urlParts.length - 1]?.split('?')[0] || 'jpg';
+              const filename = `beatbuddy_${Date.now()}.${extension}`;
+
+              // base64를 blob으로 다시 변환하여 File 객체 생성
+              const base64Response = fetch(base64Data);
+              base64Response
+                .then((res) => res.blob())
+                .then((blob) => {
+                  const file = new File([blob], filename, { type: blob.type });
+
+                  if (navigator.canShare({ files: [file] })) {
+                    navigator
+                      .share({
+                        files: [file],
+                        title: 'BeatBuddy 이미지',
+                        text: 'BeatBuddy에서 다운로드한 이미지입니다.',
+                      })
+                      .catch(() => {
+                        // Web Share API 실패 시 웹뷰 앱과 통신 시도
+                        tryWebViewCommunication(base64Data, filename);
+                      });
+                  } else {
+                    // Web Share API 미지원 시 웹뷰 앱과 통신 시도
+                    tryWebViewCommunication(base64Data, filename);
+                  }
+                });
+            } else {
+              // Web Share API 미지원 시 웹뷰 앱과 통신 시도
+              const urlParts = url.split('.');
+              const extension = urlParts[urlParts.length - 1]?.split('?')[0] || 'jpg';
+              const filename = `beatbuddy_${Date.now()}.${extension}`;
+              tryWebViewCommunication(base64Data, filename);
+            }
+          };
+
+          reader.readAsDataURL(blob);
+        } catch (fetchError) {
+          console.error('이미지 fetch 실패:', fetchError);
+          // fetch 실패 시 웹뷰 앱과 통신 시도
+          tryWebViewCommunication(url, `beatbuddy_${Date.now()}.jpg`);
         }
-
-        // Web Share API를 지원하지 않는 경우 Blob URL로 다운로드
-        const blobUrl = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = filename;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(blobUrl);
-
-        alert('다운로드가 완료되었습니다. 사진첩을 확인해주세요.');
       } else {
         // 데스크톱에서는 기존 방식으로 다운로드
         const link = document.createElement('a');
@@ -215,7 +276,16 @@ export default function BoardImageModal({
       }
     } catch (error) {
       console.error('다운로드 실패:', error);
-      alert('다운로드에 실패했습니다. 다시 시도해주세요.');
+
+      // iOS에서 더 친화적인 에러 메시지
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isIOS) {
+        alert(
+          '이미지 다운로드에 실패했습니다.\n\n이미지를 길게 눌러 "사진에 저장"을 선택하거나, 앱에서 다운로드 기능을 사용해주세요.',
+        );
+      } else {
+        alert('다운로드에 실패했습니다. 다시 시도해주세요.');
+      }
     }
   };
 

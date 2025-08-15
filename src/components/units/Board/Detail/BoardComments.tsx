@@ -20,6 +20,7 @@ export interface CommentType {
   createdAt: string;
   isAuthor: boolean;
   userId: string;
+  isFollowing?: boolean; // 팔로우 상태
   isBlocked?: boolean; // 차단된 사용자인지 여부
   isDeleted?: boolean; // 삭제된 댓글인지 여부
   isPostWriter?: boolean; // 게시글 작성자인지 여부
@@ -100,6 +101,7 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
             isAuthor: comment.isAuthor,
             writerId: comment.writerId, // writerId 필드 사용
             userId: comment.member?.memberId?.toString() || '', // 기존 userId도 유지
+            isFollowing: comment.isFollowing || false,
             isBlocked: comment.isBlocked,
             isDeleted: comment.isDeleted,
             isPostWriter: comment.isPostWriter,
@@ -148,20 +150,22 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
 
   return (
     <div className="bg-transparent pb-[4rem] pt-5">
-      <AnimatePresence>
-        {parentComments.map((comment) => (
-          <motion.div
-            id={`comment-${comment.id}`}
-            key={comment.id}
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}>
-            <BoardReply reply={comment} allComments={comments} setComments={setComments} postId={postId} />
-          </motion.div>
-        ))}
-      </AnimatePresence>
+      <div className="flex flex-col gap-1">
+        <AnimatePresence>
+          {parentComments.map((comment) => (
+            <motion.div
+              id={`comment-${comment.id}`}
+              key={comment.id}
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}>
+              <BoardReply reply={comment} allComments={comments} setComments={setComments} postId={postId} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
       {!isLoading && !isLastPage && <div ref={loadMoreRef} style={{ height: '1px' }} />}
       <div ref={bottomRef} style={{ height: '1px' }} />
     </div>
