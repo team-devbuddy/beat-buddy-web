@@ -67,7 +67,7 @@ export function formatRelativeTime(isoString: string): string {
     const days = Math.floor(diff / 86400);
     return `${days}일 전`;
   } else {
-    // 일주일을 넘으면 "YY/MM/DD HH:MM" 형식
+    // 일주일을 넘으면 "25/02/24 23:23" 형식
     const year = time.getFullYear().toString().slice(-2); // 뒤 2자리만
     const month = String(time.getMonth() + 1).padStart(2, '0');
     const day = String(time.getDate()).padStart(2, '0');
@@ -321,27 +321,30 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
               </span>
             ))}
         </p>
-      </div>
 
-      {post.imageUrls && post.imageUrls.length > 0 && (
-        <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
-          {post.imageUrls.map((url, index) => (
-            <div
-              key={index}
-              onClick={() => handleImageClick(index)}
-              className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
-              <Image
-                src={url}
-                alt={`post-img-${index}`}
-                width={0}
-                height={0}
-                sizes="100vw"
-                style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+        {post.imageUrls && post.imageUrls.length > 0 && (
+          <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
+            {post.imageUrls.map((url, index) => (
+              <div
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleImageClick(index);
+                }}
+                className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                <Image
+                  src={url}
+                  alt={`post-img-${index}`}
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {isModalOpen && post.imageUrls && (
         <BoardImageModal

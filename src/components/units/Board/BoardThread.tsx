@@ -335,31 +335,34 @@ export default function BoardThread({ postId, post }: PostProps) {
               </span>
             ))}
         </p>
-      </div>
 
-      {post.thumbImage && post.thumbImage.length > 0 && (
-        <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
-          {post.thumbImage.map((url, index) => (
-            <div
-              key={index}
-              onClick={() => handleImageClick(index)}
-              className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
-              {isVideo(url) ? (
-                <video src={url} className="h-[200px] w-auto object-cover" preload="metadata" muted />
-              ) : (
-                <Image
-                  src={url}
-                  alt={`post-img-${index}`}
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+        {post.thumbImage && post.thumbImage.length > 0 && (
+          <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
+            {post.thumbImage.map((url, index) => (
+              <div
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleImageClick(index);
+                }}
+                className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                {isVideo(url) ? (
+                  <video src={url} className="h-[200px] w-auto object-cover" preload="metadata" muted />
+                ) : (
+                  <Image
+                    src={url}
+                    alt={`post-img-${index}`}
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {isModalOpen && post.thumbImage && (
         <BoardImageModal

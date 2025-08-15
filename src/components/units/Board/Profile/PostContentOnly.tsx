@@ -43,6 +43,7 @@ export function formatRelativeTime(isoString: string): string {
   const now = new Date();
   const time = new Date(isoString);
   const diff = (now.getTime() - time.getTime()) / 1000; // 단위: 초
+  const oneWeek = 7 * 24 * 60 * 60; // 7일을 초 단위로
 
   if (diff < 60) {
     return '방금 전';
@@ -52,8 +53,18 @@ export function formatRelativeTime(isoString: string): string {
   } else if (diff < 86400) {
     const hours = Math.floor(diff / 3600);
     return `${hours}시간 전`;
+  } else if (diff < oneWeek) {
+    const days = Math.floor(diff / 86400);
+    return `${days}일 전`;
   } else {
-    return time.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    // 일주일을 넘으면 "25/02/24 23:23" 형식
+    const year = time.getFullYear().toString().slice(-2); // 뒤 2자리만
+    const month = String(time.getMonth() + 1).padStart(2, '0');
+    const day = String(time.getDate()).padStart(2, '0');
+    const hours = String(time.getHours()).padStart(2, '0');
+    const minutes = String(time.getMinutes()).padStart(2, '0');
+
+    return `${year}/${month}/${day} ${hours}:${minutes}`;
   }
 }
 
@@ -178,27 +189,30 @@ export default function PostContentOnly({ postId, post }: PostProps) {
               </span>
             ))}
         </p>
-      </div>
 
-      {post.imageUrls && post.imageUrls.length > 0 && (
-        <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
-          {post.imageUrls.map((url, index) => (
-            <div
-              key={index}
-              onClick={() => handleImageClick(index)}
-              className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
-              <Image
-                src={url}
-                alt={`post-img-${index}`}
-                width={0}
-                height={0}
-                sizes="100vw"
-                style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+        {post.imageUrls && post.imageUrls.length > 0 && (
+          <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
+            {post.imageUrls.map((url, index) => (
+              <div
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleImageClick(index);
+                }}
+                className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                <Image
+                  src={url}
+                  alt={`post-img-${index}`}
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {isModalOpen && post.thumbImage && (
         <BoardImageModal

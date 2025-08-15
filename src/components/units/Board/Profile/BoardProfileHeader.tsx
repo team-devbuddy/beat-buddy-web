@@ -147,11 +147,6 @@ export default function BoardProfileHeader({
             <div className="flex flex-col items-start">
               <div className="flex items-center gap-[0.25rem]">
                 <span className="text-body-13-bold text-white">{postProfileNickname}</span>
-                {role === 'BUSINESS' && (
-                  <span className="rounded-[0.25rem] bg-sub2 px-2 pb-1 pt-[0.19rem] text-body-11-medium text-main">
-                    비즈니스
-                  </span>
-                )}
               </div>
               <div className="mt-[-0.12rem] flex items-center gap-[0.25rem]">
                 <span className="text-body-11-medium text-gray300">게시글 {postCount}개</span>
