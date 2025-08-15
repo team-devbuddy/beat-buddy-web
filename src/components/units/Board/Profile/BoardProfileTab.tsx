@@ -5,10 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
+import { useRouter } from 'next/navigation';
 import MyPosts from './BoardProfilePosts';
 import ScrapPosts from './BoardProfileScrapPosts';
 import { getMyPosts } from '@/lib/actions/boardprofile-controller/getMyPosts';
 import { getMyScraps } from '@/lib/actions/boardprofile-controller/getMyScraps';
+import Image from 'next/image';
 
 export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
   const [activeTab, setActiveTab] = useState<'my' | 'scrap'>('my');
@@ -16,7 +18,10 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [showButton, setShowButton] = useState(true);
+  const lastScrollYRef = useRef(0);
   const accessToken = useRecoilValue(accessTokenState) || '';
+  const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [isReady, setIsReady] = useState(false);
   const isInitializedRef = useRef(false);
@@ -57,6 +62,22 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
     setIsSwiping(false);
   };
 
+  const handleWritePost = () => {
+    router.push('/board/write');
+  };
+
+  // 스크롤에 따른 투명도 계산
+  const getOpacity = () => {
+    const maxOpacity = 1;
+    const minOpacity = 0.3;
+
+    if (showButton) {
+      return maxOpacity;
+    } else {
+      return minOpacity;
+    }
+  };
+
   const lastPostElementRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (observerRef.current) observerRef.current.disconnect();
@@ -69,6 +90,57 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
     },
     [hasMore, loading],
   );
+
+  // 직접 스크롤 감지
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollContainer = document.querySelector('.overflow-y-auto');
+      let scrollTop = 0;
+
+      if (scrollContainer) {
+        scrollTop = scrollContainer.scrollTop;
+      } else {
+        scrollTop = window.scrollY || window.pageYOffset || 0;
+      }
+
+      const currentScrollY = scrollTop;
+      const previousScrollY = lastScrollYRef.current;
+
+      // 스크롤 방향 감지
+      const isScrollingDown = currentScrollY > previousScrollY;
+      const isScrollingUp = currentScrollY < previousScrollY;
+
+      // 아래로 스크롤하면 숨김
+      if (isScrollingDown) {
+        setShowButton(false);
+      }
+      // 위로 스크롤하면 보임
+      else if (isScrollingUp) {
+        setShowButton(true);
+      }
+
+      lastScrollYRef.current = currentScrollY;
+    };
+
+    // 스크롤 컨테이너를 찾아서 이벤트 리스너 추가
+    const scrollContainer = document.querySelector('.overflow-y-auto');
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    // window 스크롤도 추가
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // 초기 스크롤 위치 설정
+    setTimeout(handleScroll, 100);
+
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll);
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // 통합된 useEffect - 탭 변경과 페이지 변경을 모두 처리
   useEffect(() => {
@@ -137,7 +209,7 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
     <div>
       {/* 탭 바 */}
       <div
-        className="relative flex justify-around  text-[0.9375rem] text-gray300"
+        className="relative flex justify-around text-[0.9375rem] text-gray300"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -189,6 +261,21 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
           )}
         </AnimatePresence>
       </div>
+
+      {/* 글쓰기 버튼 (내가 쓴 글 탭에서만 표시) */}
+      {isAuthor && activeTab === 'my' && (
+        <div className="fixed bottom-[60px] right-6 z-50">
+          <button
+            onClick={handleWritePost}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-main shadow-lg transition-all duration-300 active:scale-90"
+            style={{
+              opacity: getOpacity(),
+              transform: showButton ? 'translateY(0)' : 'translateY(40px)',
+            }}>
+            <Image src="/icons/ic_baseline-plus.svg" alt="글쓰기" width={28} height={28} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

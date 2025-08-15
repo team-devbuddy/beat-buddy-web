@@ -4,10 +4,10 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface FollowHeaderProps {
-  nickname: string;
+  postProfileNickname: string;
 }
 
-export default function FollowHeader({ nickname }: FollowHeaderProps) {
+export default function FollowHeader({ postProfileNickname }: FollowHeaderProps) {
   const router = useRouter();
 
   const handleBack = () => {
@@ -19,7 +19,7 @@ export default function FollowHeader({ nickname }: FollowHeaderProps) {
       <button onClick={handleBack} className="flex items-center justify-center" title="뒤로가기">
         <Image src="/icons/arrow_back_ios.svg" alt="back" width={24} height={24} />
       </button>
-      <h1 className="text-[1rem] font-bold text-white">{nickname}</h1>
+      <h1 className="text-button-bold text-white">{postProfileNickname}</h1>
       <div className="w-6"></div> {/* 균형을 위한 빈 공간 */}
     </div>
   );

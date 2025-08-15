@@ -21,6 +21,10 @@ interface BoardProfileHeaderProps {
   postCount?: number;
   followerCount?: number;
   followingCount?: number;
+  postProfileNickname?: string;
+  postProfileImageUrl?: string;
+  isPostProfileCreated?: boolean;
+  businessName?: string;
 }
 
 export default function BoardProfileHeader({
@@ -34,6 +38,10 @@ export default function BoardProfileHeader({
   postCount = 0,
   followerCount = 0,
   followingCount = 0,
+  postProfileNickname = '',
+  postProfileImageUrl = '',
+  isPostProfileCreated = false,
+  businessName = '',
 }: BoardProfileHeaderProps) {
   const router = useRouter();
   const [accessToken] = useRecoilState(accessTokenState) || '';
@@ -138,7 +146,7 @@ export default function BoardProfileHeader({
 
             <div className="flex flex-col items-start">
               <div className="flex items-center gap-[0.25rem]">
-                <span className="text-body-13-bold text-white">{nickname}</span>
+                <span className="text-body-13-bold text-white">{postProfileNickname}</span>
                 {role === 'BUSINESS' && (
                   <span className="rounded-[0.25rem] bg-sub2 px-2 pb-1 pt-[0.19rem] text-body-11-medium text-main">
                     비즈니스

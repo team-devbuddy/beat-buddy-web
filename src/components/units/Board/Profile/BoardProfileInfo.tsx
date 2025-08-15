@@ -196,8 +196,8 @@ export default function BoardProfileInfo({
     try {
       if (navigator.share) {
         await navigator.share({
-          title: `${nickname}님의 프로필`,
-          text: `${nickname}님의 프로필을 확인해보세요!`,
+          title: `${postProfileNickname}님의 프로필`,
+          text: `${postProfileNickname}님의 프로필을 확인해보세요!`,
           url: window.location.href,
         });
       } else {
@@ -211,11 +211,13 @@ export default function BoardProfileInfo({
   };
 
   const handleFollowerClick = () => {
-    router.push(`/board/profile/follow?userId=${memberId}&nickname=${encodeURIComponent(nickname)}&tab=followers`);
+    router.push(`/board/profile/follow?userId=${memberId}&postProfileNickname=${encodeURIComponent(postProfileNickname)}&tab=followers`);
   };
 
   const handleFollowingClick = () => {
-    router.push(`/board/profile/follow?userId=${memberId}&nickname=${encodeURIComponent(nickname)}&tab=following`);
+    router.push(
+      `/board/profile/follow?userId=${memberId}&postProfileNickname=${encodeURIComponent(postProfileNickname)}&tab=following`,
+    );
   };
 
   return (

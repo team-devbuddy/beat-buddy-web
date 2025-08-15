@@ -118,6 +118,10 @@ export default function BoardProfilePage() {
           postCount={userData.postCount}
           followerCount={userData.followerCount}
           followingCount={userData.followingCount}
+          postProfileNickname={userData.postProfileNickname}
+          postProfileImageUrl={userData.postProfileImageUrl}
+          isPostProfileCreated={userData.isPostProfileCreated}
+          businessName={userData.businessName}
         />
       </div>
 

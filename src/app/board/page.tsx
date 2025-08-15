@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 import { createPortal } from 'react-dom';
 import ProfileModal from '@/components/units/Common/ProfileModal';
+import Image from 'next/image';
 
 interface PostType {
   profileImageUrl: string;
@@ -353,7 +354,7 @@ export default function BoardPage() {
               opacity: getOpacity(),
               transform: showButton ? 'translateY(0)' : 'translateY(40px)',
             }}>
-            <img src="/icons/ic_baseline-plus.svg" alt="글쓰기" className="h-7 w-7" />
+            <Image src="/icons/ic_baseline-plus.svg" alt="글쓰기" width={28} height={28} />
           </button>
         </div>
       </div>

@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getPostDetail, editPost } from '@/lib/actions/detail-controller/board/boardWriteUtils';
+import Loading from '@/app/123123loading';
 
 const FIXED_HASHTAGS = [
   '압구정로데오',
@@ -264,6 +265,8 @@ export default function BoardWrite() {
       console.log('업로드 상태 해제');
     }
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className="flex flex-col bg-BG-black pb-[140px] text-white">

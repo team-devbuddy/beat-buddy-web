@@ -1,19 +1,31 @@
-export async function patchPostProfile(accessToken: string, postProfileRequestDTO: FormData) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/post-profile`, {
-      method: 'PATCH',
-      headers: {
-        accept: 'application/json',
-        access: `Bearer ${accessToken}`,
-        // Content-Type은 FormData를 사용할 때 자동으로 설정되므로 제거
-      },
-      body: postProfileRequestDTO,
-    });
-  
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || '프로필 변경 실패');
-    }
-  
-    return await res.json();
+export const patchPostProfile = async (accessToken: string, nickname?: string, image?: File): Promise<void> => {
+  const formData = new FormData();
+
+  // 게시판 프로필 닉네임 처리
+  if (nickname && nickname.trim() !== '') {
+    const postProfileRequestDTO = {
+      postProfileNickname: nickname,
+    };
+    formData.append('postProfileRequestDTO', JSON.stringify(postProfileRequestDTO));
   }
-  
+
+  // 게시판 프로필 이미지 처리
+  if (image) {
+    formData.append('postProfileImage', image);
+  }
+
+  // PATCH /members/post-profile API 호출
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/members/post-profile`, {
+    method: 'PATCH',
+    headers: {
+      Access: `Bearer ${accessToken}`,
+      accept: 'application/json',
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || '프로필 수정에 실패했습니다.');
+  }
+};

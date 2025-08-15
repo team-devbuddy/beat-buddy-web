@@ -109,7 +109,8 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     pathname.includes('free') ||
     pathname.includes('piece') ||
     pathname.includes('search/results') || // search 대신 search/results로 더 구체적으로 변경
-    pathname.includes('profile') ||
+    pathname.includes('profile/edit') ||
+    pathname.includes('profile/create') ||
     pathname.includes('bbp-list') ||
     pathname.includes('alert') ||
     pathname.includes('magazine') ||

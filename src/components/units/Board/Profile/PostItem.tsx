@@ -135,7 +135,24 @@ export default function PostItem({ post }: PostItemProps) {
     <Link href={`/board/free/${post.id}`} className="block border-b border-gray700 bg-BG-black px-5 py-[0.88rem]">
       {post.title && <p className="mb-2 text-body-14-bold text-white">{post.title}</p>}
 
-      <p className="line-clamp-2 text-body-13-medium text-gray100">{post.content}</p>
+      <p
+        className="text-body-13-medium text-gray100"
+        style={{
+          lineHeight: '1.5',
+          // 연속된 빈 줄의 높이 제한
+          display: 'block',
+          whiteSpace: 'pre-line',
+        }}>
+        {post.content
+          .replace(/\n\s*\n\s*\n/g, '\n\n') // 3개 이상 줄바꿈을 2개로 제한
+          .split('\n\n') // 빈 줄로 분할
+          .map((paragraph, index, array) => (
+            <span key={index}>
+              {paragraph}
+              {index < array.length - 1 && <span style={{ display: 'block', height: '0.5rem' }}></span>}
+            </span>
+          ))}
+      </p>
 
       {/* 이미지 표시 */}
       {post.thumbImage && post.thumbImage.length > 0 && (
@@ -161,7 +178,7 @@ export default function PostItem({ post }: PostItemProps) {
           {post.hashtags.map((tag) => (
             <span
               key={tag}
-              className="rounded-[0.5rem] bg-gray700 px-[0.5rem] pt-[0.19rem] pb-1 text-body-11-medium text-gray300">
+              className="rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-1 pt-[0.19rem] text-body-11-medium text-gray300">
               {tag}
             </span>
           ))}
