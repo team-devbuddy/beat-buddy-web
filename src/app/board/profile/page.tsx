@@ -21,6 +21,10 @@ interface UserData {
   followingCount: number;
   isFollowing: boolean;
   memberId: number;
+  postProfileNickname: string;
+  postProfileImageUrl: string;
+  isPostProfileCreated: boolean;
+  businessName?: string;
 }
 
 export default function BoardProfilePage() {
@@ -130,6 +134,10 @@ export default function BoardProfilePage() {
             isFollowing={userData.isFollowing}
             isAuthor={isAuthor}
             memberId={userData.memberId}
+            postProfileNickname={userData.postProfileNickname}
+            postProfileImageUrl={userData.postProfileImageUrl}
+            isPostProfileCreated={userData.isPostProfileCreated}
+            businessName={userData.businessName}
           />
         </div>
 

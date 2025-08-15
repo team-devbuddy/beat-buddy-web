@@ -138,15 +138,15 @@ export default function BoardProfileHeader({
 
             <div className="flex flex-col items-start">
               <div className="flex items-center gap-[0.25rem]">
-                <span className="text-body-14-bold text-white">{nickname}</span>
+                <span className="text-body-13-bold text-white">{nickname}</span>
                 {role === 'BUSINESS' && (
                   <span className="rounded-[0.25rem] bg-sub2 px-2 pb-1 pt-[0.19rem] text-body-11-medium text-main">
                     비즈니스
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-[0.25rem]">
-                <span className="text-[0.6875rem] text-gray300">게시글 {postCount}개</span>
+              <div className="mt-[-0.12rem] flex items-center gap-[0.25rem]">
+                <span className="text-body-11-medium text-gray300">게시글 {postCount}개</span>
               </div>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function BoardProfileHeader({
             {!isAuthor && !isProfileEdit && (
               <button
                 onClick={handleFollow}
-                className={`rounded-[0.375rem] px-[0.81rem] py-[0.25rem] text-[0.75rem] font-bold transition-colors ${
+                className={`rounded-[0.5rem] px-[0.81rem] py-[0.25rem] text-body-13-bold transition-colors ${
                   currentFollowState ? 'bg-gray500 text-main' : 'bg-main text-white'
                 } disabled:opacity-50`}
                 disabled={loadingFollow}>

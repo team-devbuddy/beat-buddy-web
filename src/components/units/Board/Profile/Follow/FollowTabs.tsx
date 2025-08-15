@@ -7,6 +7,8 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import FollowerList from '@/components/units/Board/Profile/Follow/FollowerList';
 import FollowingList from '@/components/units/Board/Profile/Follow/FollowingList';
+import { getFollowers } from '@/lib/actions/follow-controller/getFollowers';
+import { getFollowing } from '@/lib/actions/follow-controller/getFollowing';
 
 interface FollowTabsProps {
   userId: number;
@@ -15,12 +17,35 @@ interface FollowTabsProps {
 
 export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
   const [activeTab, setActiveTab] = useState<'followers' | 'following'>(initialTab);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const accessToken = useRecoilValue(accessTokenState) || '';
 
   // 스와이프 관련 상태
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isSwiping, setIsSwiping] = useState(false);
+
+  // 팔로워/팔로잉 수 조회
+  useEffect(() => {
+    const fetchCounts = async () => {
+      if (!accessToken) return;
+
+      try {
+        // 팔로워 수 조회 (더 큰 size로 가져와서 총 개수 파악)
+        const followers = await getFollowers(userId, accessToken, 1, 100);
+        setFollowersCount(followers.length);
+
+        // 팔로잉 수 조회 (더 큰 size로 가져와서 총 개수 파악)
+        const following = await getFollowing(userId, accessToken, 1, 100);
+        setFollowingCount(following.length);
+      } catch (error) {
+        console.error('팔로워/팔로잉 수 조회 실패:', error);
+      }
+    };
+
+    fetchCounts();
+  }, [userId, accessToken]);
 
   // 스와이프 감지 함수들
   const onTouchStart = (e: React.TouchEvent) => {
@@ -62,19 +87,19 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
         style={{ touchAction: isSwiping ? 'none' : 'auto' }}>
         <button
           className={classNames(
-            'flex-1 py-[0.62rem] text-[0.9375rem] transition-colors duration-200',
+            'flex-1 py-[0.62rem] text-body-15-medium transition-colors duration-200',
             activeTab === 'followers' ? 'font-bold text-main' : 'text-gray300',
           )}
           onClick={() => setActiveTab('followers')}>
-          팔로워
+          {followersCount} 팔로워
         </button>
         <button
           className={classNames(
-            'flex-1 py-[0.62rem] text-[0.9375rem] transition-colors duration-200',
+            'flex-1 py-[0.62rem] text-body-15-medium transition-colors duration-200',
             activeTab === 'following' ? 'font-bold text-main' : 'text-gray300',
           )}
           onClick={() => setActiveTab('following')}>
-          팔로잉
+          {followingCount} 팔로잉
         </button>
 
         {/* 활성 탭 인디케이터 */}

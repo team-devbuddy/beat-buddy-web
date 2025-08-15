@@ -132,7 +132,12 @@ export interface UserProfile {
   postCount: number;
   followerCount: number;
   followingCount: number;
+  businessName?: string;
+  isPostProfileCreated: boolean;
+  postProfileNickname: string;
+  postProfileImageUrl: string;
 }
+
 
 export interface EventDetail {
   eventId: number;

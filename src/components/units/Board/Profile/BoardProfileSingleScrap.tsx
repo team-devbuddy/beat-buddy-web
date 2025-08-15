@@ -5,7 +5,14 @@ import BoardImageModal from '@/components/units/Board/BoardImageModal';
 import { useState, useEffect } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
-import { accessTokenState, postLikeState, postScrapState, followMapState } from '@/context/recoil-context';
+import {
+  accessTokenState,
+  postLikeState,
+  postScrapState,
+  followMapState,
+  otherFollowCountState,
+  myFollowCountState,
+} from '@/context/recoil-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
 import { deletePostLike } from '@/lib/actions/post-interaction-controller/deleteLike';
@@ -46,6 +53,7 @@ export function formatRelativeTime(isoString: string): string {
   const now = new Date();
   const time = new Date(isoString);
   const diff = (now.getTime() - time.getTime()) / 1000; // 단위: 초
+  const oneWeek = 7 * 24 * 60 * 60; // 7일을 초 단위로
 
   if (diff < 60) {
     return '방금 전';
@@ -55,8 +63,18 @@ export function formatRelativeTime(isoString: string): string {
   } else if (diff < 86400) {
     const hours = Math.floor(diff / 3600);
     return `${hours}시간 전`;
+  } else if (diff < oneWeek) {
+    const days = Math.floor(diff / 86400);
+    return `${days}일 전`;
   } else {
-    return time.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    // 일주일을 넘으면 "YY/MM/DD HH:MM" 형식
+    const year = time.getFullYear().toString().slice(-2); // 뒤 2자리만
+    const month = String(time.getMonth() + 1).padStart(2, '0');
+    const day = String(time.getDate()).padStart(2, '0');
+    const hours = String(time.getHours()).padStart(2, '0');
+    const minutes = String(time.getMinutes()).padStart(2, '0');
+
+    return `${year}/${month}/${day} ${hours}:${minutes}`;
   }
 }
 
@@ -74,6 +92,8 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
   const [likeMap, setLikeMap] = useRecoilState(postLikeState);
   const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
   const [followMap, setFollowMap] = useRecoilState(followMapState);
+  const [otherFollowCount, setOtherFollowCount] = useRecoilState(otherFollowCountState);
+  const [myFollowCount, setMyFollowCount] = useRecoilState(myFollowCountState);
 
   const liked = likeMap[post.id] ?? false;
   const scrapped = scrapMap[post.id] ?? false;
@@ -102,9 +122,61 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
       if (!isFollowing) {
         await postFollow(post.writerId, accessToken);
         setFollowMap((prev) => ({ ...prev, [post.writerId]: true }));
+
+        // 팔로워 수 +1, 팔로잉 수 +1 (BoardProfileInfo와 실시간 동기화)
+        if (post.isAuthor) {
+          // 내 프로필: myFollowCountState 업데이트
+          setMyFollowCount((prev) => ({
+            ...prev,
+            followerCount: prev.followerCount + 1,
+            followingCount: prev.followingCount + 1,
+          }));
+        } else {
+          // 남의 프로필: otherFollowCountState 업데이트
+          setOtherFollowCount((prev) => ({
+            ...prev,
+            [post.writerId]: {
+              ...prev[post.writerId],
+              followerCount: (prev[post.writerId]?.followerCount || 0) + 1,
+              followingCount: (prev[post.writerId]?.followingCount || 0) + 1,
+            },
+          }));
+        }
+
+        // 현재 로그인한 사용자의 팔로잉 수도 +1 (내가 팔로우하는 수 증가)
+        setMyFollowCount((prev) => ({
+          ...prev,
+          followingCount: prev.followingCount + 1,
+        }));
       } else {
         await deleteFollow(post.writerId, accessToken);
         setFollowMap((prev) => ({ ...prev, [post.writerId]: false }));
+
+        // 팔로워 수 -1, 팔로잉 수 -1 (BoardProfileInfo와 실시간 동기화)
+        if (post.isAuthor) {
+          // 내 프로필: myFollowCountState 업데이트
+          setMyFollowCount((prev) => ({
+            ...prev,
+            followerCount: Math.max(0, prev.followerCount - 1),
+            followingCount: Math.max(0, prev.followingCount - 1),
+          }));
+        } else {
+          // 남의 프로필: otherFollowCountState 업데이트
+          setOtherFollowCount((prev) => ({
+            ...prev,
+            [post.writerId]: {
+              ...prev[post.writerId],
+              followerCount: Math.max(0, (prev[post.writerId]?.followerCount || 0) - 1),
+              followingCount: Math.max(0, (prev[post.writerId]?.followingCount || 0) - 1),
+            },
+          }));
+        }
+
+        // 현재 로그인한 사용자의 팔로잉 수도 -1 (내가 팔로우하는 수 감소)
+        setMyFollowCount((prev) => ({
+          ...prev,
+          followingCount: Math.max(0, prev.followingCount - 1),
+        }));
       }
     } catch (err: any) {
       alert(err.message ?? '요청 실패');
@@ -174,6 +246,14 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
     }
   }, [post.writerId]);
 
+  // myFollowCountState 초기화 (내 프로필인 경우)
+  useEffect(() => {
+    if (post.isAuthor && myFollowCount) {
+      // 이미 초기화되어 있으면 건너뛰기
+      return;
+    }
+  }, [post.isAuthor, myFollowCount]);
+
   return (
     <div className="border-b border-gray700 bg-BG-black px-[1.25rem] py-[0.88rem]">
       <div className="flex items-center justify-between">
@@ -207,14 +287,14 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
           </div>
 
           <div>
-            <p className="text-[0.875rem] font-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
+            <p className="text-body-14-bold text-white">{post.nickname}</p>
           </div>
         </div>
 
         {!post.isAuthor && !post.isAnonymous && (
           <button
             onClick={handleFollow}
-            className={`text-[0.875rem] font-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
+            className={`text-body-14-bold ${isFollowing ? 'text-gray200' : 'text-main'} disabled:opacity-50`}
             disabled={loadingFollow}>
             {isFollowing ? '팔로잉' : '팔로우'}
           </button>
@@ -222,9 +302,9 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
       </div>
 
       <div onClick={() => router.push(`/board/free/${post.id}`)}>
-        <p className="mb-[0.62rem] mt-[0.62rem] text-[0.875rem] font-bold text-gray100">{post.title}</p>
+        <p className="mb-[0.5rem] mt-[0.62rem] text-body-14-bold text-white">{post.title}</p>
         <p
-          className="whitespace-pre-wrap text-[0.8125rem] text-gray100"
+          className="whitespace-pre-wrap text-body-13-medium text-gray100"
           style={{
             lineHeight: '1.5',
             // 연속된 빈 줄의 높이 제한
@@ -275,13 +355,13 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
         {post.hashtags.map((tag) => (
           <span
             key={tag}
-            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.25rem] text-[0.6875rem] text-gray300">
+            className="rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-1 pt-[0.19rem] text-body-11-medium text-gray300">
             {tag}
           </span>
         ))}
       </div>
       <div className="flex justify-between">
-        <div className="mt-[0.62rem] flex gap-[0.5rem] text-[0.75rem] text-gray300">
+        <div className="mt-[0.62rem] flex gap-[0.5rem] text-body3-12-medium text-gray300">
           <span className={`flex items-center gap-[0.12rem] ${liked ? 'text-main' : ''}`}>
             <button
               onClick={(e) => {
@@ -331,7 +411,7 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
           </span>
         </div>
         <div className="flex items-end gap-[0.62rem]">
-          <p className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</p>
+          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={(e) => {

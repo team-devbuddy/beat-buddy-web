@@ -133,9 +133,9 @@ export default function PostItem({ post }: PostItemProps) {
 
   return (
     <Link href={`/board/free/${post.id}`} className="block border-b border-gray700 bg-BG-black px-5 py-[0.88rem]">
-      {post.title && <p className="mb-2 text-[0.875rem] font-bold text-white">{post.title}</p>}
+      {post.title && <p className="mb-2 text-body-14-bold text-white">{post.title}</p>}
 
-      <p className="line-clamp-2 text-[0.8125rem] text-gray100">{post.content}</p>
+      <p className="line-clamp-2 text-body-13-medium text-gray100">{post.content}</p>
 
       {/* 이미지 표시 */}
       {post.thumbImage && post.thumbImage.length > 0 && (
@@ -161,14 +161,14 @@ export default function PostItem({ post }: PostItemProps) {
           {post.hashtags.map((tag) => (
             <span
               key={tag}
-              className="rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-gray300">
+              className="rounded-[0.5rem] bg-gray700 px-[0.5rem] pt-[0.19rem] pb-1 text-body-11-medium text-gray300">
               {tag}
             </span>
           ))}
         </div>
       )}
 
-      <div className="mt-[0.62rem] flex items-center justify-between text-[0.75rem] text-gray300">
+      <div className="mt-[0.62rem] flex items-center justify-between text-body3-12-medium text-gray300">
         <div className="flex gap-2">
           <div className={`flex items-center ${liked ? 'text-main' : 'text-gray300'} gap-[0.12rem]`}>
             <button onClick={handleLike} disabled={isLoadingLike} title="좋아요" className="flex items-center">
@@ -209,7 +209,7 @@ export default function PostItem({ post }: PostItemProps) {
 
         {/* 우측: 시간과 드롭다운 점 */}
         <div className="flex items-center gap-2">
-          <span className="text-[0.75rem] text-gray200">{formatRelativeTime(post.createAt)}</span>
+          <span className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</span>
           <div className="relative">
             <button onClick={showDropdown} className="flex items-center justify-center" title="더보기">
               <Image src="/icons/dot-vertical.svg" alt="more" width={16} height={16} className="rotate-90" />

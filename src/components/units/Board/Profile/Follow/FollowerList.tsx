@@ -10,6 +10,8 @@ interface User {
   profileImageUrl: string;
   role: string;
   isFollowing: boolean;
+  postProfileImageUrl: string;
+  postProfileNickname: string;
 }
 
 interface FollowerListProps {
@@ -74,14 +76,15 @@ export default function FollowerList({ userId, accessToken }: FollowerListProps)
   }
 
   return (
-    <div className="bg-BG-black">
-      {followers.map((follower, index) => (
-        <div key={follower.memberId} ref={index === followers.length - 1 ? lastFollowerElementRef : null}>
-          <div className="px-4 py-[0.88rem]">
+    <div className="bg-BG-black px-4 py-[0.88rem]">
+      <div className="space-y-[2rem]">
+        {followers.map((follower, index) => (
+          <div key={follower.memberId} ref={index === followers.length - 1 ? lastFollowerElementRef : null}>
             <FollowItem user={follower} isFollower={true} />
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
+  

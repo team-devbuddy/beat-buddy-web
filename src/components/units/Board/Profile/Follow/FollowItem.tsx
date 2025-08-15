@@ -14,6 +14,8 @@ interface User {
   profileImageUrl: string;
   role: string;
   isFollowing: boolean;
+  postProfileImageUrl: string;
+  postProfileNickname: string;
 }
 
 interface FollowItemProps {
@@ -65,12 +67,12 @@ export default function FollowItem({ user, isFollower = false }: FollowItemProps
 
   return (
     <div className="bg-BG-black">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between ">
         <div className="flex items-center gap-[0.62rem]" onClick={goToUserProfile}>
           <div className="relative flex cursor-pointer items-center justify-center">
-            <div className="h-full w-full overflow-hidden rounded-full">
+            <div className="h-[2.125rem] w-[2.125rem] overflow-hidden rounded-full">
               <Image
-                src={user.profileImageUrl || '/icons/default-profile.svg'}
+                src={user.postProfileImageUrl || '/icons/default-profile.svg'}
                 alt="profile"
                 width={34}
                 height={34}
@@ -90,16 +92,16 @@ export default function FollowItem({ user, isFollower = false }: FollowItemProps
           </div>
 
           <div className="cursor-pointer">
-            <p className="text-[0.875rem] font-bold text-white">{user.nickname}</p>
-            {user.role === 'BUSINESS' && <p className="text-[0.625rem] text-gray300">비즈니스</p>}
+            <p className="text-body-13-bold text-white">{user.postProfileNickname}</p>
+            {user.role === 'BUSINESS' && <p className="text-body-11-medium text-gray300">비즈니스</p>}
           </div>
         </div>
 
         <button
           onClick={handleFollow}
-          className={`rounded-[0.5rem] px-[0.5rem] py-[0.25rem] text-[0.8125rem] font-bold transition-colors ${
+          className={`rounded-[0.5rem] px-[0.81rem] py-[0.25rem] text-body-13-bold ${
             isFollowing ? 'bg-gray500 text-main' : 'bg-main text-white'
-          } disabled:opacity-50`}
+          } `}
           disabled={loadingFollow}>
           {isMutualFollow ? '맞팔로우' : isFollowing ? '팔로잉' : '팔로우'}
         </button>

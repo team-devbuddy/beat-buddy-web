@@ -156,7 +156,6 @@ export const postCommentCountState = atom<{ [postId: number]: number }>({
   default: {},
 });
 
-  
 export const boardRecentSearchState = atom<string[]>({
   key: 'boardRecentSearchState',
   default: [],
@@ -192,6 +191,20 @@ export interface FollowCountInfo {
   followingCount: number;
 }
 
+// 자신의 팔로우 정보 (persist 유지)
+export const myFollowCountState = atom<FollowCountInfo>({
+  key: 'myFollowCountState',
+  default: { followerCount: 0, followingCount: 0 },
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 남의 팔로우 정보 (persist 없음, 임시 저장)
+export const otherFollowCountState = atom<Record<number, FollowCountInfo>>({
+  key: 'otherFollowCountState',
+  default: {},
+});
+
+// 기존 상태는 남의 정보용으로 사용
 export const followCountState = atom<Record<number, FollowCountInfo>>({
   key: 'followCountState',
   default: {},
