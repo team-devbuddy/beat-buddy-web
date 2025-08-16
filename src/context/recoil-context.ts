@@ -403,3 +403,38 @@ export const unreadAlarmState = atom<boolean>({
   default: false,
   effects_UNSTABLE: [persistAtom],
 });
+
+// 리뷰 수정 상태 관리
+export const reviewEditState = atom<{
+  isEditMode: boolean;
+  reviewId: string;
+  content: string;
+  imageUrls: string[];
+  venueId: string;
+  venueName: string;
+} | null>({
+  key: 'reviewEditState',
+  default: null,
+  effects_UNSTABLE: [
+    ({ onSet, setSelf }) => {
+      // localStorage에서 초기값 로드
+      const saved = localStorage.getItem('reviewEditState');
+      if (saved) {
+        try {
+          setSelf(JSON.parse(saved));
+        } catch (error) {
+          console.error('Failed to parse reviewEditState from localStorage:', error);
+        }
+      }
+
+      // 상태 변경 시 localStorage에 저장
+      onSet((newValue) => {
+        if (newValue) {
+          localStorage.setItem('reviewEditState', JSON.stringify(newValue));
+        } else {
+          localStorage.removeItem('reviewEditState');
+        }
+      });
+    },
+  ],
+});

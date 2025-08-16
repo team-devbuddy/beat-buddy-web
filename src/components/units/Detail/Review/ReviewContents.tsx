@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { formatRelativeTime } from '../../Board/BoardThread';
 import { postReviewLike } from '@/lib/actions/venue-controller/postReviewLike';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { accessTokenState, likedReviewsState, reviewLikeCountState } from '@/context/recoil-context';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { accessTokenState, likedReviewsState, reviewLikeCountState, reviewEditState } from '@/context/recoil-context';
 import Image from 'next/image';
 import { deleteReviewLike } from '@/lib/actions/venue-controller/deleteReviewLike';
 import { deleteReview } from '@/lib/actions/venue-controller/deleteReview';
@@ -26,7 +27,7 @@ interface Review {
   liked: boolean;
   role: string;
   writerId: string;
-  thumbImages?: string[]; // 썸네일 이미지 배열 추가
+  thumbImageUrls?: string[]; // 썸네일 이미지 배열 추가
 }
 
 interface ReviewContentsProps {
@@ -34,18 +35,19 @@ interface ReviewContentsProps {
   isPhotoOnly: boolean; // 포토 리뷰만 보기 여부
   onReviewDeleted?: (reviewId: string) => void; // 리뷰 삭제 콜백
   clubName: string;
+  venueId: string; // venue ID 추가
 }
 
 const EmptyReview = () => {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <img src="/icons/grayLogo.svg" alt="BeatBuddy Logo" className="mb-6 h-16 w-16" />
-      <p className="text-body2-15-medium text-gray300">아직 등록된 리뷰가 없습니다.</p>
+      <Image src="/icons/blackLogo.svg" alt="BeatBuddy Logo" width={50} height={47} className="mb-2" />
+      <p className="text-body-14-bold text-gray300">첫 리뷰를 남겨주세요</p>
     </div>
   );
 };
 
-const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }: ReviewContentsProps) => {
+const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName, venueId }: ReviewContentsProps) => {
   const [likedReviews, setLikedReviews] = useRecoilState(likedReviewsState); // 좋아요 상태 저장
   const [reviewLikeCount, setReviewLikeCount] = useRecoilState(reviewLikeCountState); // 좋아요 개수 저장
   const [visibleReviews, setVisibleReviews] = useState(10); // 초기 표시되는 리뷰 개수
@@ -57,6 +59,8 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
   const [isSubmitting, setIsSubmitting] = useState(false); // 제출 중 상태
   const [deletedReviews, setDeletedReviews] = useState<Set<string>>(new Set()); // 삭제된 리뷰 ID들
   const accessToken = useRecoilValue(accessTokenState) || '';
+  const router = useRouter();
+  const setReviewEdit = useSetRecoilState(reviewEditState);
 
   // 이미지/동영상 모달 상태 (게시판과 동일한 로직)
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -139,6 +143,23 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
       });
       alert('리뷰 삭제 중 오류가 발생했습니다.');
     }
+  };
+
+  // 수정하기 핸들러
+  const handleEdit = (review: Review) => {
+    // Recoil state에 수정할 리뷰 정보 저장
+    setReviewEdit({
+      isEditMode: true,
+      reviewId: review.venueReviewId,
+      content: review.content,
+      imageUrls: review.imageUrls || [],
+      venueId: venueId,
+      venueName: clubName,
+    });
+
+    // 리뷰 수정 페이지로 라우팅
+    router.push('/review/write');
+    setOpenDropdown(null);
   };
 
   // 신고 모달 열기
@@ -338,7 +359,7 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                         <>
                           {/* 배경 어둡게 처리 */}
                           <motion.div
-                            className="fixed inset-0 z-10 bg-black bg-opacity-50"
+                            className="fixed inset-0 z-10 bg-black/50"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -350,19 +371,26 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute right-0 z-20 mt-2 whitespace-nowrap rounded-[0.5rem] bg-gray700 px-[1.12rem] shadow-lg">
+                            className="absolute right-0 z-20 whitespace-nowrap rounded-[0.5rem] bg-gray500 px-[1.19rem] shadow-lg">
                             {review.isAuthor ? (
-                              // 작성자인 경우 삭제 옵션
-                              <button
-                                onClick={() => handleDelete(review.venueReviewId)}
-                                className="w-full rounded-b-[0.5rem] rounded-t-[0.5rem] py-2 text-center text-[0.8125rem] text-gray200 hover:bg-gray500">
-                                삭제하기
-                              </button>
+                              // 작성자인 경우 수정하기, 삭제하기 옵션 (두 칸 세로 배치)
+                              <div className="grid grid-rows-2 gap-0">
+                                <button
+                                  onClick={() => handleEdit(review)}
+                                  className="w-full rounded-t-[0.5rem] py-[0.56rem] text-center text-body-13-medium text-gray100 hover:text-main">
+                                  수정하기
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(review.venueReviewId)}
+                                  className="w-full rounded-b-[0.5rem] py-[0.56rem] text-center text-body-13-medium text-gray100 hover:text-main">
+                                  삭제하기
+                                </button>
+                              </div>
                             ) : (
                               // 다른 사용자인 경우 신고 옵션
                               <button
                                 onClick={() => handleReport(review.venueReviewId)}
-                                className="w-full rounded-b-[0.5rem] rounded-t-[0.5rem] py-2 text-center text-[0.8125rem] text-gray200 hover:bg-gray500">
+                                className="w-full rounded-[0.5rem] py-[0.56rem] text-center text-body-13-medium text-gray100 hover:text-main">
                                 신고하기
                               </button>
                             )}
@@ -390,11 +418,11 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                         <div key={index} className="mt-[0.88rem] flex-shrink-0">
                           {isVideo ? (
                             <div
-                              className="relative h-[150px] w-auto cursor-pointer overflow-hidden rounded-xs"
+                              className="relative h-[150px] w-auto cursor-pointer overflow-hidden rounded-[0.25rem]"
                               onClick={() => handleMediaClick(review.imageUrls!, index, review)}>
                               {/* 영상 썸네일 - 서버에서 제공하는 thumbnail 사용 */}
                               <Image
-                                src={review.thumbImages?.[index] || '/images/defaultImage.png'}
+                                src={review.thumbImageUrls?.[index] || '/images/defaultImage.png'}
                                 alt="video thumbnail"
                                 className="h-full w-full object-cover"
                                 width={120}
@@ -414,7 +442,7 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                             <Image
                               src={media}
                               alt={`리뷰 미디어 ${index + 1}`}
-                              className="h-[150px] w-auto cursor-pointer rounded-xs object-cover"
+                              className="h-[150px] w-auto cursor-pointer rounded-[0.25rem] object-cover"
                               width={120}
                               height={120}
                               onClick={() => handleMediaClick(review.imageUrls!, index, review)}
@@ -427,23 +455,22 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                 )}
 
                 {/* 리뷰 내용 */}
-                <p className="mt-[0.88rem] text-[0.8125rem] text-gray100">{review.content}</p>
+                <p className="mt-[0.88rem] text-body-13-medium text-gray100">{review.content}</p>
 
                 {/* 좋아요 버튼 */}
                 <div className="flex justify-end">
                   <button
                     onClick={() => handleLikeToggle(review.venueReviewId)}
-                    className={`flex items-end space-x-[0.12rem] rounded-xs px-[0.38rem] text-[0.75rem] font-medium text-gray300`}>
-                    <div className="flex items-center space-x-1 text-[0.75rem] text-gray300">
-                      {isLiked ? (
-                        <Image src="/icons/thumb-up-pink.svg" alt="좋아요 아이콘" width={20} height={20} />
-                      ) : (
-                        <Image src="/icons/thumb-up.svg" alt="좋아요 아이콘" width={20} height={20} />
-                      )}
-                      <span className={`min-w-[0.5rem] text-center ${isLiked ? 'text-main' : 'text-gray300'}`}>
-                        {likeCount}
-                      </span>
-                    </div>
+                    className="flex items-end space-x-1 rounded-[0.25rem] px-[0.38rem] py-1 text-body3-12-medium text-gray300">
+                    {isLiked ? (
+                      <Image src="/icons/thumb-up-pink.svg" alt="좋아요 아이콘" width={20} height={20} />
+                    ) : (
+                      <Image src="/icons/thumb-up.svg" alt="좋아요 아이콘" width={20} height={20} />
+                    )}
+                    <span
+                      className={`min-w-[0.5rem] text-center text-body3-12-medium ${isLiked ? 'text-main' : 'text-gray300'}`}>
+                      {likeCount}
+                    </span>
                   </button>
                 </div>
               </motion.div>
@@ -455,19 +482,24 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
       {/* 신고 모달 - BoardDropdown 스타일 활용 */}
       {showReportModal &&
         createPortal(
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className="rounded-[0.75rem] bg-BG-black p-5 text-center"
+              className="mx-5 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-5 text-center"
               onClick={(e) => e.stopPropagation()}>
               <textarea
                 value={reportReason}
                 onChange={(e) => setReportReason(e.target.value)}
-                placeholder="신고 사유를 작성해 주세요 (예: 부적절한 콘텐츠, 스팸, 욕설 등)"
-                className="mb-3 min-h-[7.5rem] w-full min-w-[18rem] resize-none rounded-[0.75rem] bg-gray700 px-4 py-3 text-[0.875rem] text-gray200 placeholder:text-gray300 focus:outline-none"
+                placeholder="신고 사유를 작성해 주세요"
+                className="mb-4 min-h-[7.5rem] w-full resize-none rounded-[0.5rem] bg-gray700 px-4 py-3 text-body-14-medium text-gray200 placeholder:text-gray200 focus:outline-none"
+                style={{
+                  marginBottom: '1rem',
+                  display: 'block',
+                  verticalAlign: 'top',
+                }}
               />
               <div className="flex justify-between gap-2">
                 <button
@@ -476,13 +508,13 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
                     setReportReason('');
                     setReportingReviewId(null);
                   }}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-gray200">
                   취소
                 </button>
                 <button
                   onClick={handleSubmitReport}
                   disabled={isSubmitting || !reportReason.trim()}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-main">
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-main">
                   신고하기
                 </button>
               </div>
@@ -494,22 +526,22 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName }
       {/* 신고 완료 모달 */}
       {showReportCompleteModal &&
         createPortal(
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className="rounded-[0.75rem] bg-BG-black p-5 text-center"
+              className="mx-5 w-full rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
               onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-[0.38rem] text-[1.25rem] font-bold text-white">신고가 완료되었어요</h3>
-              <p className="text-[0.875rem] text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요</p>
-              <p className="mb-5 text-[0.875rem] text-gray300">허위 신고 시 제재가 있을 수 있습니다.</p>
+              <h3 className="mb-[0.38rem] text-subtitle-20-bold text-white">신고가 완료되었어요</h3>
+              <p className="text-body-14-medium text-gray300">신고해주신 내용은 담당자가 검토할 예정이에요</p>
+              <p className="mb-5 text-body-14-medium text-gray300">허위 신고 시 제재가 있을 수 있습니다.</p>
               <button
                 onClick={() => {
                   setShowReportCompleteModal(false);
                 }}
-                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.62rem] font-bold text-gray200">
+                className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 text-button-16-semibold text-gray200">
                 닫기
               </button>
             </motion.div>

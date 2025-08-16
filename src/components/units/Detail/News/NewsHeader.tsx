@@ -41,10 +41,10 @@ const NewsHeader = ({ venueName, onSortChange, currentSort }: NewsHeaderProps) =
       <div className="relative flex items-center space-x-4">
         {/* 드롭다운 */}
         <div className="relative">
-          <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-[0.8125rem]">
-            <span className="text-main">{getSortOptionText(currentSort)}</span>
+          <button onClick={handleDropdownToggle} className="flex items-center text-body-13-medium">
+            <span className={`${currentSort ? 'text-gray300' : 'text-gray300'}`}>{getSortOptionText(currentSort)}</span>
             <img
-              src="/icons/chevron-down.svg"
+              src="/icons/keyboard_arrow_down-gray.svg"
               alt="드롭다운 화살표"
               className={`h-4 w-4 transform ${isDropdownOpen ? 'rotate-180' : ''}`}
             />
@@ -67,12 +67,12 @@ const NewsHeader = ({ venueName, onSortChange, currentSort }: NewsHeaderProps) =
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 z-20 mt-2 w-[6rem] rounded-[0.5rem] bg-gray700 shadow-lg">
+                  className="absolute right-0 z-20 mt-2 rounded-[0.5rem] bg-gray500 shadow-lg">
                   {sortOptions.map((option, index) => (
                     <button
                       key={option}
                       onClick={() => handleSortOptionClick(option)}
-                      className={`w-full px-4 py-2 text-center text-[0.8125rem] hover:bg-gray500 ${
+                      className={`w-full whitespace-nowrap px-[1.53rem] py-[0.56rem] text-center text-body-13-medium ${
                         getSortType(option) === currentSort ? 'font-bold text-main' : 'text-gray100'
                       } ${
                         index === 0

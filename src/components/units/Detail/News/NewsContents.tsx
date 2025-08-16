@@ -87,22 +87,28 @@ const SafeImage = ({ src, alt, className }: { src: string; alt: string; classNam
 };
 
 const calculateDday = (startDate: string, endDate: string) => {
-  const today = dayjs();
-  const endDateObj = dayjs(endDate);
+  const today = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
 
-  if (!endDateObj.isValid()) {
-    return 'END';
+  // 날짜만 비교하기 위해 시간을 00:00:00으로 설정
+  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const startDateOnly = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const endDateOnly = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+  // 이벤트가 이미 종료된 경우
+  if (todayDate > endDateOnly) {
+    return null;
   }
 
-  const diff = endDateObj.diff(today, 'day');
-
-  if (diff < 0) {
-    return 'END';
-  } else if (diff === 0) {
-    return 'D-DAY';
-  } else {
-    return `D-${diff}`;
+  // 이벤트가 진행 중인 경우 (오늘이 시작일과 종료일 사이)
+  if (todayDate >= startDateOnly && todayDate <= endDateOnly) {
+    return 0; // D-0 (진행중)
   }
+
+  // 이벤트 시작까지 남은 일수 계산
+  const diff = Math.ceil((startDateOnly.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24));
+  return diff >= 0 ? diff : null;
 };
 
 const formatDateRange = (startDate: string, endDate: string) => {
@@ -116,15 +122,20 @@ const sortNewsByDday = (newsList: NewsItem[]) => {
     const aDday = calculateDday(a.startDate, a.endDate);
     const bDday = calculateDday(b.startDate, b.endDate);
 
-    // END(끝난 이벤트)와 진행중인 이벤트 구분
-    const aIsEnded = aDday === 'END';
-    const bIsEnded = bDday === 'END';
+    // null(끝난 이벤트)과 진행중인 이벤트 구분
+    const aIsEnded = aDday === null;
+    const bIsEnded = bDday === null;
 
-    // 끝난 이벤트는 항상 뒤로
+    // 진행중인 이벤트를 먼저, 끝난 이벤트를 뒤로
     if (aIsEnded && !bIsEnded) return 1;
     if (!aIsEnded && bIsEnded) return -1;
 
-    // 둘 다 끝났거나 둘 다 진행중인 경우 좋아요 수로 정렬
+    // 둘 다 진행중인 경우: 좋아요 수로 정렬 (높은 순)
+    if (!aIsEnded && !bIsEnded) {
+      return (b.likes || 0) - (a.likes || 0);
+    }
+
+    // 둘 다 끝난 경우: 좋아요 수로 정렬 (높은 순)
     return (b.likes || 0) - (a.likes || 0);
   });
 };
@@ -132,8 +143,8 @@ const sortNewsByDday = (newsList: NewsItem[]) => {
 const EmptyNews = () => {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <img src="/icons/grayLogo.svg" alt="BeatBuddy Logo" className="mb-6 h-16 w-16" />
-      <p className="text-body2-15-medium text-gray300">아직 등록된 이벤트가 없습니다.</p>
+      <Image src="/icons/blackLogo.svg" alt="BeatBuddy Logo" width={50} height={47} className="mb-2" />
+      <p className="text-body-14-bold text-gray300">아직 등록된 이벤트가 없어요</p>
     </div>
   );
 };
@@ -288,18 +299,14 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
   const sortedEvents = sortNewsByDday(events);
   const visibleEvents = sortedEvents.slice(0, visibleCount);
 
-  const getDdayStyle = (dDay: string) => {
-    if (dDay === 'END') {
+  const getDdayStyle = (dDay: number | null) => {
+    if (dDay === null) {
       return 'bg-gray500 text-gray200';
     }
-    if (dDay === 'D-DAY') {
+    if (dDay === 0) {
       return 'bg-main text-white';
     }
-    if (dDay.startsWith('D-')) {
-      const dayNumber = parseInt(dDay.split('-')[1], 10);
-      return dayNumber <= 7 ? 'bg-main text-white' : 'bg-gray500 text-gray200';
-    }
-    return 'bg-gray500 text-gray200';
+    return dDay <= 7 ? 'bg-main text-white' : 'bg-gray500 text-gray200';
   };
 
   return (
@@ -317,7 +324,7 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
                   className="object-cover object-top"
                 />
                 {/* 지난 이벤트 오버레이 */}
-                {calculateDday(news.startDate, news.endDate) === 'END' && (
+                {calculateDday(news.startDate, news.endDate) === null && (
                   <div
                     className="absolute inset-0 bg-black/30"
                     style={{
@@ -326,22 +333,24 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
                     }}
                   />
                 )}
-                {/* 디데이 - 이미지 위에 좌측 상단 */}
-                <div className="absolute left-[0.62rem] top-[0.62rem]">
-                  <span
-                    className={`rounded-[0.5rem] ${
-                      calculateDday(news.startDate, news.endDate) === 'END'
-                        ? 'bg-gray500/70 text-gray300'
-                        : 'bg-main text-white'
-                    } px-[0.38rem] py-[0.25rem] text-center text-[0.75rem] leading-[160%] ${getDdayStyle(
-                      calculateDday(news.startDate, news.endDate),
-                    )}`}
-                    style={{
-                      whiteSpace: 'nowrap',
-                    }}>
-                    {calculateDday(news.startDate, news.endDate)}
-                  </span>
-                </div>
+                {/* 디데이 - 이미지 위에 좌측 상단 (끝난 이벤트는 표시하지 않음) */}
+                {calculateDday(news.startDate, news.endDate) !== null && (
+                  <div className="absolute left-[0.62rem] top-[0.62rem]">
+                    <span
+                      className={`rounded-[0.5rem] px-[0.38rem] py-[0.25rem] text-center text-[0.75rem] leading-[160%] ${getDdayStyle(
+                        calculateDday(news.startDate, news.endDate),
+                      )}`}
+                      style={{
+                        whiteSpace: 'nowrap',
+                      }}>
+                      {(() => {
+                        const dday = calculateDday(news.startDate, news.endDate);
+                        if (dday === 0) return 'D-DAY';
+                        return `D-${dday}`;
+                      })()}
+                    </span>
+                  </div>
+                )}
 
                 {/* 좋아요 개수 - 이미지 위에 좌측 하단 */}
                 <div className="absolute bottom-[0.62rem] left-[0.62rem] flex items-center space-x-[0.25rem]">

@@ -19,7 +19,7 @@ const ReviewWriteHeader = ({ title, currentStep, totalSteps }: ReviewWriteHeader
 
   return (
     <>
-      <div className="relative mx-auto flex max-w-[600px] items-center justify-between py-[0.53rem] pr-5 pl-[0.62rem]">
+      <div className="relative mx-auto flex max-w-[600px] items-center justify-between py-[0.53rem] pl-[0.62rem] pr-5">
         <Image
           src="/icons/line-md_chevron-left.svg"
           alt="뒤로가기"
@@ -30,7 +30,7 @@ const ReviewWriteHeader = ({ title, currentStep, totalSteps }: ReviewWriteHeader
         />
       </div>
       {/* 제목 */}
-      <h1 className="flex-grow px-5 pt-[0.88rem] my-2 text-left text-[1.25rem] font-bold text-white">
+      <h1 className="my-2 flex-grow px-5 pt-[0.88rem] text-left text-[1.25rem] font-bold text-white">
         {title}에서의
         <br />
         경험을 공유해주세요!

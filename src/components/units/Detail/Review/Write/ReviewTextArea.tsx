@@ -21,10 +21,17 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
       onChange(newValue);
     }
 
-    // 높이 조정
+    // 높이 조정 (4줄 제한)
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'; // 기존 높이를 초기화
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 내용에 맞는 높이로 설정
+      const scrollHeight = textareaRef.current.scrollHeight;
+      const maxHeight = 6 * 16; // 6rem = 96px (4줄 제한)
+
+      if (scrollHeight <= maxHeight) {
+        textareaRef.current.style.height = `${scrollHeight}px`; // 내용에 맞는 높이로 설정
+      } else {
+        textareaRef.current.style.height = `${maxHeight}px`; // 최대 높이로 제한
+      }
     }
   };
 
@@ -40,30 +47,28 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
           ref={textareaRef}
           value={value}
           onChange={handleChange}
-          className="w-full overflow-hidden whitespace-pre-wrap border-none bg-transparent px-4 pb-4 pt-[0.88rem] text-[0.8125rem] text-gray200 placeholder:font-bold placeholder:text-gray200 focus:outline-none"
-          style={{ minHeight: '2rem', resize: 'none' }}
+          className="w-full whitespace-pre-wrap border-none bg-transparent px-4 pb-4 pt-[0.88rem] text-body-13-medium text-gray100 placeholder:text-body-13-bold placeholder:text-gray100 focus:outline-none"
+          style={{
+            minHeight: '2rem',
+            maxHeight: '6rem', // 4줄 제한 (1.5rem * 4)
+            resize: 'none',
+            overflowY: 'auto', // 4줄 이상일 때 스크롤
+          }}
           placeholder="즐거웠던 경험을 공유해 주세요!"
           maxLength={MAX_LENGTH}
         />
 
         {/* 글자 수 표시 */}
-        <div className="absolute bottom-[0.88rem] right-4 flex text-[0.75rem] text-gray400">
-          <p className={`${value.length > 0 ? 'text-gray100' : 'text-gray300'}`}>{value.length}</p>
-          <p className="text-gray300">/{MAX_LENGTH}</p>
+        <div className="absolute bottom-[0.88rem] right-4 flex text-body-13-medium text-gray100">
+          <p className={`${value.length > 0 ? 'text-body-13-bold text-gray100' : 'text-body-13-bold text-gray300'}`}>
+            {value.length}
+          </p>
+          <p className="text-body-13-bold text-gray300">/{MAX_LENGTH}</p>
         </div>
 
         {!value && (
-          <div className="mt-[-2.55rem] rounded-[0.5rem] pb-8 pl-4 pr-5 text-[0.8125rem] text-gray300">
-            광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요 자세한 내용은{' '}
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                toggleBottomSheet();
-              }}
-              className="text-gray300 underline">
-              리뷰 작성 규칙
-            </button>
-            을 참고해주세요
+          <div className="mt-[-2.55rem] rounded-[0.5rem] pb-8 pl-4 pr-5 text-body-13-medium text-gray200">
+            광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요
           </div>
         )}
       </div>

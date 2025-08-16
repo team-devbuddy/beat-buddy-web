@@ -54,8 +54,8 @@ const ReviewHeader = ({
         {/* 포토 리뷰만 보기 */}
         <div
           onClick={handlePhotoToggle}
-          className={`flex cursor-pointer items-center space-x-[0.12rem] text-[0.8125rem] ${
-            isPhotoOnly ? 'text-main' : 'text-gray200'
+          className={`flex cursor-pointer items-center space-x-[0.12rem] text-body-13-medium ${
+            isPhotoOnly ? 'text-main' : 'text-gray300'
           }`}>
           <img
             src={isPhotoOnly ? '/icons/check-square-contained.svg' : '/icons/check-square-blanked.svg'}
@@ -63,14 +63,14 @@ const ReviewHeader = ({
             className="h-4 w-4"
           />
           <span>포토 리뷰만 보기</span>
-        </div>
+        </div>  
 
         {/* 드롭다운 */}
         <div className="relative">
-          <button onClick={handleDropdownToggle} className="flex items-center text-[0.8125rem]">
-            <span className={`${sortOption ? 'text-main' : 'text-gray200'}`}>{getSortOptionText(sortOption)}</span>
+          <button onClick={handleDropdownToggle} className="flex items-center text-body-13-medium">
+            <span className={`${sortOption ? 'text-gray300' : 'text-gray300'}`}>{getSortOptionText(sortOption)}</span>
             <img
-              src="/icons/chevron-down.svg"
+              src="/icons/keyboard_arrow_down-gray.svg"
               alt="드롭다운 화살표"
               className={`h-4 w-4 transform ${isDropdownOpen ? 'rotate-180' : ''}`}
             />
@@ -93,12 +93,12 @@ const ReviewHeader = ({
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 z-20 mt-2  rounded-[0.5rem] bg-gray700 px-[1.12rem] shadow-lg">
+                  className="absolute right-0 z-20 mt-2  rounded-[0.5rem] bg-gray500 px-[1.53rem] shadow-lg">
                   {sortOptions.map((option, index) => (
                     <button
                       key={option}
                       onClick={() => handleSortOptionClick(option)}
-                      className={`w-full py-[0.56rem] text-center whitespace-nowrap text-[0.8125rem] ${
+                      className={`w-full py-[0.56rem] text-center whitespace-nowrap text-body-13-medium ${
                         option === getSortOptionText(sortOption) ? 'font-bold text-main' : 'text-gray100'
                       } ${
                         index === 0

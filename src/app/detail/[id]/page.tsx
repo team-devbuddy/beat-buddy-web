@@ -21,16 +21,12 @@ import { Club } from '@/lib/types';
 import Loading from '@/components/common/skeleton/LoadingLottie';
 import Coupon from '@/components/units/Detail/Coupon';
 import DetailCategoryBar from '@/components/units/Detail/DetailCategoryBar';
-import DetailFooter from '@/components/units/Detail/DetailFooter';
 import VenueIntro from '@/components/units/Detail/VenueIntro';
 import ReviewHeader from '@/components/units/Detail/Review/ReviewHeader';
 import ReviewContents from '@/components/units/Detail/Review/ReviewContents';
 import NewsHeader from '@/components/units/Detail/News/NewsHeader';
 import NewsContents from '@/components/units/Detail/News/NewsContents';
-import BoardContents from '@/components/units/Detail/Board/BoardContents';
-import { mockReviews } from '@/lib/dummyData';
-import { mockNewsList } from '@/lib/dummyData';
-import { mockBoardData } from '@/lib/dummyData';
+
 import VenueDescription from '@/components/units/Detail/VenueDescription';
 import ReviewWriteButton from '@/components/units/Detail/Review/ReviewWriteButton';
 import EventWriteButton from '@/components/units/Detail/News/EventWriteButton';
@@ -275,7 +271,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
               </div>
               <div className="flex items-center gap-3">
                 <button className="text-white" aria-label="공유하기" onClick={handleShareClick}>
-                  <Image src="/icons/share.svg" alt="share icon" width={32} height={32} />
+                  <Image src="/icons/share.svg" alt="share icon" width={26} height={26} />
                 </button>
                 <motion.div
                   onClick={async (e) => {
@@ -294,8 +290,8 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
                   <Image
                     src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
                     alt="heart icon"
-                    width={28}
-                    height={28}
+                    width={26}
+                    height={26}
                   />
                 </motion.div>
               </div>
@@ -350,7 +346,12 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
                     onPhotoFilterChange={handlePhotoFilterChange}
                   />
                   <div className="flex-grow overflow-y-auto" style={{ touchAction: 'pan-y' }}>
-                    <ReviewContents reviews={reviews} isPhotoOnly={isPhotoOnly} clubName={venue.englishName || ''} />
+                    <ReviewContents
+                      reviews={reviews}
+                      isPhotoOnly={isPhotoOnly}
+                      clubName={venue.englishName || ''}
+                      venueId={params.id}
+                    />
                   </div>
                 </div>
               )}
@@ -368,13 +369,12 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
                   <div className="flex-grow" style={{ touchAction: 'pan-y' }}>
                     <NewsContents newsList={[]} venueId={params.id} sortType={eventSortType} />
                   </div>
-                  <CustomerService />
                 </div>
               )}
             </div>
           </motion.div>
         </motion.div>
-        {activeTab === 'review' && venue && (
+        {activeTab === 'review' && venue && isBusiness && (
           <ReviewWriteButton
             venueEngName={venue.englishName}
             venueId={params.id}

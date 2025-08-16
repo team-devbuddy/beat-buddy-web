@@ -3,6 +3,9 @@
 import { Club } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 
+import { useRecoilValue } from 'recoil';
+import { isBusinessState } from '@/context/recoil-context';
+
 interface EventWriteButtonProps {
   venueEngName: string;
   venueId: string;
@@ -12,10 +15,16 @@ interface EventWriteButtonProps {
 
 const EventWriteButton = ({ venueEngName, venueId, onClick, isDisabled }: EventWriteButtonProps) => {
   const router = useRouter();
+  const isBusiness = useRecoilValue(isBusinessState);
 
   const handleClick = () => {
     router.push(`/event/write?venue=${venueEngName}&venueId=${venueId}`);
   };
+
+  // 비즈니스 회원이 아닌 경우 버튼을 렌더링하지 않음
+  if (!isBusiness) {
+    return null;
+  }
 
   return (
     <div className="px-5">

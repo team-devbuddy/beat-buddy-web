@@ -39,9 +39,10 @@ export const postReview = async (venueId: string, content: string, images: (File
     }
 
     const result = await res.json();
-    // 성공 시 이벤트 목록 페이지로 이동
+    return result; // 성공 시 결과 반환
   } catch (error) {
     console.error('리뷰 작성 에러:', error);
-    alert(`리뷰 작성 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+    // 에러를 다시 throw해서 상위로 전파
+    throw error;
   }
 };

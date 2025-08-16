@@ -32,10 +32,10 @@ const NewsHeader: React.FC<NewsHeaderProps> = ({ onSortChange }) => {
 
         {/* 드롭다운 */}
         <div className="relative">
-          <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body2-15-medium">
-            <span className={`${selectedSort ? 'text-main' : 'text-gray-200'}`}>{selectedSort}</span>
+          <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body-13-medium">
+            <span className={`${selectedSort ? 'text-gray300' : 'text-gray300'}`}>{selectedSort}</span>
             <img
-              src="/icons/chevron-down.svg"
+              src="/icons/keyboard_arrow_down-gray.svg"
               alt="드롭다운 화살표"
               className={`h-4 w-4 transform ${isDropdownOpen ? 'rotate-180' : ''}`}
             />
@@ -64,7 +64,7 @@ const NewsHeader: React.FC<NewsHeaderProps> = ({ onSortChange }) => {
                     <button
                       key={option}
                       onClick={() => handleSortOptionClick(option)}
-                      className={`w-full px-4 py-2 text-center text-body2-15-medium hover:bg-gray500 ${
+                      className={`w-full px-4 py-2 text-center text-body-13-medium hover:bg-gray400 ${
                         option === selectedSort ? 'text-main' : 'text-gray100'
                       } ${
                         index === 0
