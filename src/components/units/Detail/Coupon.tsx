@@ -106,19 +106,39 @@ export default function CouponCard({ venueId }: { venueId: number }) {
     }
   };
 
-  // 쿠폰 상태에 따른 배경 이미지 결정
+  // 쿠폰 상태에 따른 배경 이미지 결정 (좌우 짝꿍 SVG)
   const getCouponBackground = () => {
-    if (isExpired) {
-      return '/coupon_expired.svg'; // 만료된 쿠폰 (고정 크기)
-    } else if (isUsed) {
-      return '/coupon_used.svg'; // 사용된 쿠폰 (고정 크기)
+    if (isExpired || isUsed || isSoldOut) {
+      // 만료/사용/품절된 쿠폰
+      return {
+        left: '/coupon-disavailable-left.svg',
+        right: '/coupon-disavailable-right.svg',
+      };
     } else if (isReceived) {
-      return '/coupon.svg'; // 받은 쿠폰 (사용 가능)
-    } else if (isSoldOut) {
-      return '/coupon_expired.svg'; // 품절된 쿠폰 (고정 크기)
+      // 받은 쿠폰 (사용 가능)
+      return {
+        left: '/coupon-use-available-left.svg',
+        right: '/coupon-use-available-right.svg',
+      };
     } else {
-      return '/coupon_download.svg'; // 다운로드 가능한 쿠폰
+      // 다운로드 가능한 쿠폰
+      return {
+        left: '/coupon-download-available-left.svg',
+        right: '/coupon-download-available-right.svg',
+      };
     }
+  };
+  // 파일 상단 근처에 상수/상태 추가
+  const COUPON_HEIGHT = 68; // 디자인 고정 높이
+  const DEFAULT_RIGHT_WIDTH = 112; // 초기값(대략치)
+  const [rightWidth, setRightWidth] = useState<number>(DEFAULT_RIGHT_WIDTH);
+
+  const sprites = getCouponBackground(); // { left, right }
+
+  // 이미지 로드 후 오른쪽 실제 px 폭 계산
+  const handleRightLoaded = ({ naturalWidth, naturalHeight }: { naturalWidth: number; naturalHeight: number }) => {
+    const w = Math.round((COUPON_HEIGHT * naturalWidth) / naturalHeight);
+    if (Number.isFinite(w) && w > 0) setRightWidth(w);
   };
 
   // 우측 버튼 영역 내용 결정
@@ -188,29 +208,53 @@ export default function CouponCard({ venueId }: { venueId: number }) {
   if (!coupon) return null;
 
   return (
-    <div className="flex w-full justify-center">
+    <div className="w-full">
       <div className="px-5 pb-[0.88rem]">
+        {/* ⬇️ 여기부터 기존 grid 블록 전체를 이 블록으로 교체 */}
         <div className={`relative ${isReceived && !isExpired ? 'cursor-pointer' : ''}`} onClick={handleCouponClick}>
-          <Image
-            src={getCouponBackground()}
-            alt="coupon"
-            width={335}
-            height={68}
-            className="h-[68px] w-full object-cover"
-          />
-
-          {/* 쿠폰 내용 오버레이 */}
-          <div className="absolute inset-0 flex items-center justify-between px-4">
-            {/* 왼쪽 텍스트 영역 */}
-            <div className="flex flex-col">
-              <span className="text-[0.75rem] font-medium leading-tight text-main">{coupon.couponName}</span>
-              <span className="mt-[-0.12rem] text-[1rem] font-bold leading-[160%] text-gray100">
-                {coupon.couponDescription}
-              </span>
+          {/* 쿠폰 컨테이너 */}
+          <div className="relative w-full" style={{ height: COUPON_HEIGHT }}>
+            {/* 왼쪽(가변) 레이어: 오른쪽 폭만큼 비워두고 전부 채움 */}
+            <div
+              className="absolute inset-y-0 left-0"
+              style={{
+                right: rightWidth, // ← 핵심
+              }}
+              aria-hidden>
+              <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                <image href={sprites.left} width="100%" height="100%" preserveAspectRatio="none" />
+              </svg>
             </div>
 
-            {/* 우측 버튼 영역 */}
-            <div className="flex items-center">{getRightContent()}</div>
+            {/* 오른쪽(고정) 레이어: 실제 비율대로 폭 고정 */}
+            <div className="absolute inset-y-0 right-0" style={{ width: rightWidth }} aria-hidden>
+              <Image
+                src={sprites.right}
+                alt="coupon-right"
+                fill
+                style={{ objectFit: 'contain' }}
+                priority
+                onLoadingComplete={({ naturalWidth, naturalHeight }) =>
+                  handleRightLoaded({ naturalWidth, naturalHeight })
+                }
+              />
+            </div>
+
+            {/* 내용 오버레이: 오른쪽 폭만큼 패딩 확보 */}
+            <div
+              className="absolute inset-0 flex items-center justify-between px-4"
+              style={{ paddingRight: Math.max(12, rightWidth + 8) }}>
+              {/* 왼쪽 텍스트 */}
+              <div className="flex flex-col">
+                <span className="text-[0.75rem] font-medium leading-tight text-main">{coupon.couponName}</span>
+                <span className="mt-[-0.12rem] text-[1rem] font-bold leading-[160%] text-gray100">
+                  {coupon.couponDescription}
+                </span>
+              </div>
+
+              {/* 오른쪽 액션 */}
+              <div className="flex items-center">{getRightContent()}</div>
+            </div>
           </div>
         </div>
       </div>

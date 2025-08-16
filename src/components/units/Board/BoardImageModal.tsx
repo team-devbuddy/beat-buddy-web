@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { createPortal } from 'react-dom';
 import { formatRelativeTime } from './BoardThread';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ================= WebView message types =================
 const WEBVIEW_MESSAGE_TYPE = {
@@ -83,6 +84,8 @@ export default function BoardImageModal({
   onLikeToggle,
 }: BoardImageModalProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right');
+  const [showArrows, setShowArrows] = useState(true);
   const modalRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const touchStartX = useRef<number | null>(null);
@@ -99,14 +102,18 @@ export default function BoardImageModal({
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
+        setSlideDirection('right');
+        setShowArrows(true);
         setCurrentIndex((prev) => (prev + 1) % images.length);
       } else if (e.key === 'ArrowLeft') {
+        setSlideDirection('left');
+        setShowArrows(true);
         setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
       } else if (e.key === 'Escape') {
         onClose();
       } else if (e.key === 'm' || e.key === 'M') {
         handleMuteToggle();
-      } else if (e.key === 'AudioVolumeMute' || e.key === 'F1' || e.key === 'F10') {
+      } else if (e.key === 'AudioVolumeMute' || e.key === 'F10') {
         handleMuteToggle();
       } else if (e.key === 'F8' && e.ctrlKey) {
         handleMuteToggle();
@@ -134,8 +141,12 @@ export default function BoardImageModal({
       const deltaX = touchStartX.current - touchEndX.current;
       if (Math.abs(deltaX) > 50) {
         if (deltaX > 50) {
+          setSlideDirection('right');
+          setShowArrows(true);
           setCurrentIndex((prev) => (prev + 1) % images.length);
         } else if (deltaX < -50) {
+          setSlideDirection('left');
+          setShowArrows(true);
           setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
         }
       }
@@ -194,6 +205,10 @@ export default function BoardImageModal({
       const isCurrentlyMuted = videoRef.current.muted || videoRef.current.volume === 0;
       setIsMuted(isCurrentlyMuted);
     }
+  };
+
+  const handleImageClick = () => {
+    setShowArrows(!showArrows);
   };
 
   // =============== Web ↔ WebView bridge (receive) ===============
@@ -349,12 +364,13 @@ export default function BoardImageModal({
   const isCurrentVideo = isVideo(currentUrl);
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-BG-black">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-BG-black" onClick={onClose}>
       <div
         className="relative flex h-full w-full flex-col items-center justify-center"
         ref={modalRef}
         onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}>
+        onTouchEnd={handleTouchEnd}
+        onClick={(e) => e.stopPropagation()}>
         {/* 상단 헤더 */}
         <div className="absolute left-0 right-0 top-0 z-10 flex w-full items-center justify-between py-[0.53rem] pl-[0.62rem] pr-4">
           <div className="flex items-center gap-3">
@@ -368,11 +384,11 @@ export default function BoardImageModal({
               />
             </button>
 
-            {isReview && <span className="text-[1.5rem] font-bold text-white">{clubName}</span>}
+            {isReview && <span className="text-title-24-bold text-white">{clubName}</span>}
           </div>
 
           {/* 인덱스 */}
-          <div className="px-3 py-1 text-[0.8125rem] text-gray200">
+          <div className="px-3 py-1 text-body-13-medium text-gray200">
             <span className="text-main">{currentIndex + 1}</span>
             <span className="text-gray200"> / </span>
             <span className="text-gray200">{images.length}</span>
@@ -390,132 +406,180 @@ export default function BoardImageModal({
         </div>
 
         {/* 이미지 또는 영상 */}
-        <div className="relative flex h-full w-full items-center justify-center">
-          {isCurrentVideo ? (
-            <div className="relative flex h-full w-full items-center justify-center">
-              <video
-                ref={videoRef}
-                src={currentUrl}
-                className="h-auto w-full object-cover [&::-webkit-media-controls-current-time-display]:!hidden [&::-webkit-media-controls-fullscreen-button]:!hidden [&::-webkit-media-controls-mute-button]:!hidden [&::-webkit-media-controls-panel]:!hidden [&::-webkit-media-controls-play-button]:!hidden [&::-webkit-media-controls-return-to-realtime-button]:!hidden [&::-webkit-media-controls-rewind-button]:!hidden [&::-webkit-media-controls-seek-back-button]:!hidden [&::-webkit-media-controls-seek-forward-button]:!hidden [&::-webkit-media-controls-start-playback-button]:!hidden [&::-webkit-media-controls-time-remaining-display]:!hidden [&::-webkit-media-controls-timeline]:!hidden [&::-webkit-media-controls-volume-slider]:!hidden [&::-webkit-media-controls]:!hidden"
-                preload="metadata"
-                muted={isMuted}
-                playsInline
-                webkit-playsinline="true"
-                x5-playsinline="true"
-                x5-video-player-type="h5"
-                x5-video-player-fullscreen="false"
-                controls={false}
-                disablePictureInPicture
-                disableRemotePlayback
-                onTimeUpdate={handleTimeUpdate}
-                onLoadedMetadata={handleLoadedMetadata}
-                onPlay={handlePlay}
-                onPause={() => setIsPlaying(false)}
-                onEnded={() => setIsPlaying(false)}
-                onVolumeChange={handleVolumeChange}
-                style={{
-                  pointerEvents: 'none',
-                  WebkitUserSelect: 'none',
-                  userSelect: 'none',
-                  WebkitTouchCallout: 'none',
-                  WebkitTapHighlightColor: 'transparent',
-                }}
-              />
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+          <motion.div
+            key={`${currentIndex}-${slideDirection}`}
+            initial={{
+              opacity: 0,
+              x: slideDirection === 'right' ? 100 : -100,
+            }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{
+              duration: 0.4,
+              ease: 'easeOut',
+              type: 'tween',
+            }}
+            className="relative flex h-full w-full items-center justify-center">
+            {isCurrentVideo ? (
+              <div className="relative flex h-full w-full items-center justify-center" onClick={handleImageClick}>
+                <video
+                  ref={videoRef}
+                  src={currentUrl}
+                  className="h-auto w-full object-cover [&::-webkit-media-controls-current-time-display]:!hidden [&::-webkit-media-controls-fullscreen-button]:!hidden [&::-webkit-media-controls-mute-button]:!hidden [&::-webkit-media-controls-panel]:!hidden [&::-webkit-media-controls-play-button]:!hidden [&::-webkit-media-controls-return-to-realtime-button]:!hidden [&::-webkit-media-controls-rewind-button]:!hidden [&::-webkit-media-controls-seek-back-button]:!hidden [&::-webkit-media-controls-seek-forward-button]:!hidden [&::-webkit-media-controls-start-playback-button]:!hidden [&::-webkit-media-controls-time-remaining-display]:!hidden [&::-webkit-media-controls-timeline]:!hidden [&::-webkit-media-controls-volume-slider]:!hidden [&::-webkit-media-controls]:!hidden"
+                  preload="metadata"
+                  muted={isMuted}
+                  playsInline
+                  webkit-playsinline="true"
+                  x5-playsinline="true"
+                  x5-video-player-type="h5"
+                  x5-video-player-fullscreen="false"
+                  controls={false}
+                  disablePictureInPicture
+                  disableRemotePlayback
+                  onTimeUpdate={handleTimeUpdate}
+                  onLoadedMetadata={handleLoadedMetadata}
+                  onPlay={handlePlay}
+                  onPause={() => setIsPlaying(false)}
+                  onEnded={() => setIsPlaying(false)}
+                  onVolumeChange={handleVolumeChange}
+                  style={{
+                    pointerEvents: 'none',
+                    WebkitUserSelect: 'none',
+                    userSelect: 'none',
+                    WebkitTouchCallout: 'none',
+                    WebkitTapHighlightColor: 'transparent',
+                  }}
+                />
 
-              {/* 커스텀 재생/일시정지 버튼 */}
-              {!isPlaying && (
-                <button
-                  onClick={handlePlayPause}
-                  className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
-                  title="재생">
-                  <Image src="/icons/play.svg" alt="재생" width={80} height={80} className="opacity-80" />
-                </button>
-              )}
+                {/* 커스텀 재생/일시정지 버튼 */}
+                {!isPlaying && (
+                  <button
+                    onClick={handlePlayPause}
+                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
+                    title="재생">
+                    <Image src="/icons/play.svg" alt="재생" width={80} height={80} className="opacity-80" />
+                  </button>
+                )}
 
-              {/* 커스텀 컨트롤 */}
-              {(!isReview || !reviewInfo || isPlaying) && (
-                <div
-                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4"
-                  onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-3">
-                    {/* 재생/일시정지 버튼 */}
-                    <button
-                      onClick={handlePlayPause}
-                      className="flex items-center justify-center rounded-full"
-                      title={isPlaying ? '일시정지' : '재생'}>
-                      <Image
-                        src={isPlaying ? '/icons/pause.svg' : '/icons/play.svg'}
-                        alt={isPlaying ? '일시정지' : '재생'}
-                        width={24}
-                        height={24}
-                        className="text-white"
-                      />
-                    </button>
+                {/* 커스텀 컨트롤 */}
+                {(!isReview || !reviewInfo || isPlaying) && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4"
+                    onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-3">
+                      {/* 재생/일시정지 버튼 */}
+                      <button
+                        onClick={handlePlayPause}
+                        className="flex items-center justify-center rounded-full"
+                        title={isPlaying ? '일시정지' : '재생'}>
+                        <Image
+                          src={isPlaying ? '/icons/pause.svg' : '/icons/play.svg'}
+                          alt={isPlaying ? '일시정지' : '재생'}
+                          width={24}
+                          height={24}
+                          className="text-white"
+                        />
+                      </button>
 
-                    {/* 진행바 */}
-                    <div className="flex flex-1 items-center gap-2">
-                      <span className="text-xs text-white">
-                        {Math.floor(currentTime / 60)}:{(currentTime % 60).toFixed(0).padStart(2, '0')}
-                      </span>
-                      <input
-                        type="range"
-                        min="0"
-                        max={duration || 0}
-                        value={currentTime}
-                        onChange={handleSeek}
-                        className="h-1 flex-1 cursor-pointer appearance-none rounded-full bg-white/25"
-                        style={{
-                          background: `linear-gradient(to right, #EE1171 0%, #EE1171 ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) 100%)`,
-                        }}
-                      />
-                      <span className="text-xs text-white">
-                        {Math.floor(duration / 60)}:{(duration % 60).toFixed(0).padStart(2, '0')}
-                      </span>
+                      {/* 진행바 */}
+                      <div className="flex flex-1 items-center gap-2">
+                        <span className="text-body-10-medium text-white">
+                          {Math.floor(currentTime / 60)}:{(currentTime % 60).toFixed(0).padStart(2, '0')}
+                        </span>
+                        <input
+                          type="range"
+                          min="0"
+                          max={duration || 0}
+                          value={currentTime}
+                          onChange={handleSeek}
+                          className="h-1 flex-1 cursor-pointer appearance-none rounded-full bg-white/25"
+                          style={{
+                            background: `linear-gradient(to right, #EE1171 0%, #EE1171 ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.25) 100%)`,
+                          }}
+                        />
+                        <span className="text-body-10-medium text-white">
+                          {Math.floor(duration / 60)}:{(duration % 60).toFixed(0).padStart(2, '0')}
+                        </span>
+                      </div>
+
+                      {/* 음소거/음소거해제 버튼 */}
+                      <button
+                        onClick={handleMuteToggle}
+                        className="flex items-center justify-center p-2 transition-all hover:bg-opacity-30"
+                        title={isMuted ? '음소거 해제' : '음소거'}>
+                        <Image
+                          src={isMuted ? '/icons/speaker-muted.svg' : '/icons/speaker.svg'}
+                          alt={isMuted ? '음소거 해제' : '음소거'}
+                          width={24}
+                          height={24}
+                          className="text-white"
+                        />
+                      </button>
                     </div>
-
-                    {/* 음소거/음소거해제 버튼 */}
-                    <button
-                      onClick={handleMuteToggle}
-                      className="flex items-center justify-center p-2 transition-all hover:bg-opacity-30"
-                      title={isMuted ? '음소거 해제' : '음소거'}>
-                      <Image
-                        src={isMuted ? '/icons/speaker-muted.svg' : '/icons/speaker.svg'}
-                        alt={isMuted ? '음소거 해제' : '음소거'}
-                        width={24}
-                        height={24}
-                        className="text-white"
-                      />
-                    </button>
                   </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Image
-              src={currentUrl}
-              alt={`modal-img-${currentIndex}`}
-              width={1000}
-              height={1000}
-              className="h-auto max-h-[31.25rem] w-full object-cover"
-            />
-          )}
+                )}
+              </div>
+            ) : (
+              <div onClick={handleImageClick} className="cursor-pointer">
+                <Image
+                  src={currentUrl}
+                  alt={`modal-img-${currentIndex}`}
+                  width={1000}
+                  height={1000}
+                  className="h-auto max-h-[31.25rem] w-full object-cover"
+                />
+              </div>
+            )}
+          </motion.div>
 
           {/* 좌우 화살표 네비게이션 */}
-          {images.length > 1 && (
+          {images.length > 1 && showArrows && (
             <>
-              <button
-                onClick={() => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)}
-                className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center justify-center"
-                title="이전">
-                <Image src="/icons/line-md_chevron-left.svg" alt="이전" width={24} height={24} className="text-white" />
-              </button>
+              <AnimatePresence mode="wait">
+                <motion.button
+                  key={`left-${currentIndex}`}
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  onClick={() => {
+                    setSlideDirection('left');
+                    setShowArrows(true);
+                    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+                  }}
+                  className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center justify-center"
+                  title="이전">
+                  <Image
+                    src="/icons/line-md_chevron-left.svg"
+                    alt="이전"
+                    width={24}
+                    height={24}
+                    className="text-white"
+                  />
+                </motion.button>
 
-              <button
-                onClick={() => setCurrentIndex((prev) => (prev + 1) % images.length)}
-                className="absolute right-4 top-1/2 flex -translate-y-1/2 rotate-180 items-center justify-center"
-                title="다음">
-                <Image src="/icons/line-md_chevron-left.svg" alt="다음" width={24} height={24} className="text-white" />
-              </button>
+                <motion.button
+                  key={`right-${currentIndex}`}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  onClick={() => {
+                    setSlideDirection('right');
+                    setShowArrows(true);
+                    setCurrentIndex((prev) => (prev + 1) % images.length);
+                  }}
+                  className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center"
+                  title="다음">
+                  <Image
+                    src="/사진/line-md_chevron-left.svg"
+                    alt="다음"
+                    width={24}
+                    height={24}
+                    className="text-white"
+                  />
+                </motion.button>
+              </AnimatePresence>
             </>
           )}
         </div>
@@ -534,12 +598,12 @@ export default function BoardImageModal({
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="text-[0.875rem] font-bold text-white">{reviewInfo.nickname}</p>
+                    <p className="text-body-14-bold text-white">{reviewInfo.nickname}</p>
                   </div>
-                  <p className="text-[0.75rem] text-gray200">{formatRelativeTime(reviewInfo.createdAt)}</p>
+                  <p className="text-body3-12-medium text-gray200">{formatRelativeTime(reviewInfo.createdAt)}</p>
                 </div>
               </div>
-              <p className="mt-[0.88rem] text-[0.8125rem] text-gray100">{reviewInfo.content}</p>
+              <p className="mt-[0.88rem] text-body-13-medium text-gray100">{reviewInfo.content}</p>
               <div className="flex justify-end">
                 <button
                   onClick={() => {
@@ -558,7 +622,7 @@ export default function BoardImageModal({
                     width={17}
                     height={17}
                   />
-                  <span className="text-[0.75rem]">{localLikes}</span>
+                  <span className="text-body3-12-medium">{localLikes}</span>
                 </button>
               </div>
             </div>

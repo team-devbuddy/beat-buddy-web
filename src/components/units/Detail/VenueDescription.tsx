@@ -15,9 +15,9 @@ export default function VenueDescription({ venue }: VenueDescriptionProps) {
 
   return (
     <div className="px-5 pt-[0.88rem]">
-      <p className="mb-2 text-[1rem] font-bold">About</p>
+      <p className="mb-2 text-body1-16-bold">About</p>
       <div className="flex flex-col gap-2 rounded-[0.75rem] bg-gray700 px-4 py-5 text-gray100">
-        <p className="text-[0.875rem]">{description}</p>
+        <p className="text-body-14-medium">{description}</p>
       </div>
     </div>
   );

@@ -34,7 +34,8 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
   };
 
   const isPhoneAvailable = !!venue.phoneNum;
-
+  const isSNSAvailable = !!venue.instaUrl;
+  const isSmokingAvailable = !!venue.smokingAllowed;
   return (
     <div className="bg-BG-black py-5">
       <div className="flex justify-around">
@@ -45,10 +46,10 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
             <Image
               src={isPhoneAvailable ? '/icons/phone.fill.svg' : '/icons/grayPhone.svg'}
               alt="phone icon"
-              width={24}
-              height={24}
+              width={20}
+              height={20}
             />
-            <p className={`mt-[0.5rem] text-[0.875rem] ${isPhoneAvailable ? 'text-gray200' : 'text-gray500'}`}>
+            <p className={`mt-[0.5rem] text-body-14-medium ${isPhoneAvailable ? 'text-gray200' : 'text-gray400'}`}>
               전화
             </p>
           </div>
@@ -57,8 +58,8 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
           className="flex flex-1 cursor-pointer flex-col items-center border border-y-0 border-l-gray600 border-r-gray600"
           onClick={handleInstagramClick}>
           <div className="flex flex-col items-center">
-            <Image src="/icons/insta.fill.svg" alt="instagram icon" width={24} height={24} />
-            <p className="mt-[0.5rem] text-[0.875rem] text-gray200">SNS</p>
+            <Image src="/icons/insta.fill.svg" alt="instagram icon" width={20} height={20} />
+            <p className={`mt-[0.5rem] text-body-14-medium ${isSNSAvailable ? 'text-gray200' : 'text-gray400'}`}>SNS</p>
           </div>
         </div>
         <div className="flex flex-1 flex-col items-center">
@@ -66,10 +67,10 @@ const Info = ({ venue, isHeartbeat }: ClubProps) => {
             <Image
               src={venue.smokingAllowed ? '/icons/smoke.fill.svg' : '/icons/icon-smoking.svg'}
               alt="smoking icon"
-              width={24}
-              height={24}
+              width={20}
+              height={20}
             />
-            <p className="mt-[0.5rem] text-[0.875rem] text-gray200">
+            <p className={`mt-[0.5rem] text-body-14-medium ${isSmokingAvailable ? 'text-gray200' : 'text-gray400'}`}>
               {venue.smokingAllowed ? '흡연 가능' : '흡연 불가'}
             </p>
           </div>
