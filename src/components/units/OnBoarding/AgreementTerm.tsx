@@ -101,11 +101,11 @@ export default function AgreementTerm() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           console.log('위치 권한 허용됨:', position);
-          // 권한이 허용되면 체크박스 체크 상태 유지
+          // 권한이 허용되면 위치정보 약관 체크 유지 (이미 체크되어 있음)
         },
         (error) => {
           console.error('위치 권한 거부됨:', error);
-          // 권한이 거부되면 체크박스 체크 해제
+          // 권한이 거부되면 위치정보 약관만 체크 해제
           setTerms((prev) => prev.map((term) => (term.id === 3 ? { ...term, checked: false } : term)));
         },
         {
@@ -116,7 +116,7 @@ export default function AgreementTerm() {
       );
     } else {
       console.error('Geolocation이 지원되지 않습니다.');
-      // 지원되지 않으면 체크박스 체크 해제
+      // 지원되지 않으면 위치정보 약관만 체크 해제
       setTerms((prev) => prev.map((term) => (term.id === 3 ? { ...term, checked: false } : term)));
     }
   };
@@ -126,11 +126,14 @@ export default function AgreementTerm() {
     setAllChecked(newState);
 
     if (newState) {
-      // 모두 동의할 때 위치 권한도 요청
+      // 모두 동의할 때는 위치 권한 요청 없이 바로 체크
+      setTerms((prev) => prev.map((term) => ({ ...term, checked: true })));
+      // 위치정보가 체크되었으므로 실제 위치 권한 요청
       requestLocationPermission();
+    } else {
+      // 모두 해제할 때는 바로 상태 변경
+      setTerms((prev) => prev.map((term) => ({ ...term, checked: false })));
     }
-
-    setTerms((prev) => prev.map((term) => ({ ...term, checked: newState })));
   };
 
   // 약관 상세 페이지로 이동하는 함수
