@@ -22,7 +22,7 @@ const MyEventHeader = ({ type = 'upcoming' }: { type?: 'upcoming' | 'past' | 'my
       case 'past':
         return '과거 이벤트';
       case 'my-event':
-        return '주최 이벤트 관리하기';
+        return 'My Events';
       default:
         return 'My Events';
     }

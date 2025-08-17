@@ -5,14 +5,21 @@ import { Club } from '@/lib/types';
 
 // 이벤트 카드용 확장된 Club 타입
 interface EventClub extends Club {
-  startDate?: string;
-  endDate?: string;
-  eventId?: number;
-  liked?: boolean;
-  views?: number;
-  isAttending?: boolean;
-  isAuthor?: boolean;
-  isFreeEntrance?: boolean;
+  eventId: number;
+  title: string;
+  content: string;
+  thumbImage: string;
+  liked: boolean;
+  location: string;
+  likes: number;
+  views: number;
+  startDate: string;
+  endDate: string;
+  receiveAccompany: boolean;
+  region: string;
+  isFreeEntrance: boolean;
+  isAttending: boolean;
+  isAuthor: boolean;
 }
 
 interface MyEventVenuesProps {
@@ -25,11 +32,11 @@ interface MyEventVenuesProps {
   loading?: boolean;
 }
 
-// 디데이 계산 함수
-function getDdayLabel(endDate: string) {
+// 디데이 계산 함수 (시작날짜 기준)
+function calculateDday(startDate: string, endDate: string) {
   const today = new Date();
-  const end = new Date(endDate);
-  const diff = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const start = new Date(startDate);
+  const diff = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   return diff >= 0 ? diff : null;
 }
 
@@ -96,14 +103,15 @@ const MyEventVenues = ({
   return (
     <div className="grid grid-cols-2 gap-4 p-5">
       {clubs.map((club) => {
-        const dday = getDdayLabel(club.endDate || '');
+        const dday = calculateDday(club.startDate, club.endDate);
+        const isEnded = dday === null;
 
         return (
           <Link key={club.id} href={`/event/${club.id}`}>
             <div className="overflow-hidden rounded-[0.5rem]">
               <div className="relative aspect-square w-full">
                 <Image
-                  src={club.logoUrl || '/images/DefaultImage.png'}
+                  src={club.thumbImage || '/images/DefaultImage.png'}
                   alt={club.koreanName}
                   fill
                   sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
@@ -111,12 +119,15 @@ const MyEventVenues = ({
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/80 to-transparent" />
 
+                {/* 끝난 이벤트 그라디언트 오버레이 */}
+                {isEnded && <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-black/60 to-black/40" />}
+
                 {/* 좋아요 버튼 */}
                 <div
-                  onClick={(e) => handleHeartClickWrapper(e, club.id)}
-                  className="absolute bottom-3 right-3 z-10 cursor-pointer">
+                  onClick={(e) => handleHeartClickWrapper(e, club.eventId)}
+                  className="absolute bottom-[0.62rem] right-[0.62rem] z-10 cursor-pointer">
                   <Image
-                    src={likedClubs[club.id] ? '/icons/FilledHeart.svg' : '/icons/grayHeart.svg'}
+                    src={likedClubs[club.eventId] ? '/icons/FilledHeart.svg' : '/icons/grayHeart.svg'}
                     alt="heart"
                     width={27}
                     height={24}
@@ -126,28 +137,32 @@ const MyEventVenues = ({
                 {/* 디데이 */}
                 {typeof dday === 'number' && (
                   <div
-                    className={`absolute left-3 top-3 z-10 rounded-[0.5rem] px-[0.38rem] py-[0.13rem] text-[0.75rem] ${
-                      dday <= 7 ? 'bg-main text-white' : 'bg-gray500 text-main2'
+                    className={`absolute left-[0.62rem] top-[0.62rem] z-10 rounded-[0.5rem] px-[0.38rem] pb-[0.16rem] pt-[0.09rem] text-body3-12-medium ${
+                      dday <= 7 && dday > 0
+                        ? 'bg-main text-white'
+                        : dday === 0
+                          ? 'bg-FooterBlack text-main'
+                          : 'bg-gray500 text-main2'
                     }`}>
-                    D-{dday}
+                    {dday === 0 ? 'D-DAY' : `D-${dday}`}
                   </div>
                 )}
 
                 {/* 좋아요 수 */}
-                <div className="absolute bottom-3 left-3 z-10 flex items-center space-x-1">
-                  <Image src="/icons/PinkHeart.svg" alt="pink-heart" width={15} height={13} />
-                  <span className="text-[0.75rem] font-medium text-gray300">
-                    {String(heartbeatNums[club.id] || 0).padStart(3, '0')}
+                <div className="absolute bottom-[0.62rem] left-[0.62rem] z-10 flex items-center space-x-1">
+                  <Image src="/icons/HeatBeatNumber.svg" alt="pink-heart" width={20} height={20} />
+                  <span className="text-body3-12-medium text-gray300">
+                    {String(heartbeatNums[club.eventId] || 0).padStart(3, '0')}
                   </span>
                 </div>
               </div>
 
               <div className="relative pb-5 pt-3 text-white">
-                <h3 className="truncate text-[0.875rem] font-bold">{club.koreanName}</h3>
-                <p className="text-[0.625rem] text-gray100">
+                <h3 className="truncate text-body-14-bold">{club.title}</h3>
+                <p className="text-body-10-medium text-gray100">
                   {club.startDate && club.endDate ? formatDateRange(club.startDate, club.endDate) : ''}
                 </p>
-                <div className="mt-[0.12rem] inline-block rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.13rem] text-[0.75rem] text-gray300">
+                <div className="mt-[0.38rem] inline-block rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-gray300">
                   {club.region ? formatRegion(club.region) : ''}
                 </div>
               </div>

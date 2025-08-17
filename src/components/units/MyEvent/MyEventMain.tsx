@@ -1,67 +1,113 @@
 'use client';
-import dynamic from 'next/dynamic';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
-import { getMyEvents } from '@/lib/actions/event-controller/getMyEvents';
+import { getMyPageEvents } from '@/lib/actions/event-controller/getMyPageEvents';
+import { getMyLikedEvents } from '@/lib/actions/event-controller/getMyLikedEvents';
 import { postEventLike } from '@/lib/actions/venue-controller/postEventLike';
 import { deleteEventLike } from '@/lib/actions/venue-controller/deleteEventLike';
 import { Club } from '@/lib/types';
 import MyEventVenues from './MyEventVenues';
-import MyHeartBeatSkeleton from '@/components/common/skeleton/MyHeartBeatSkeleton';
 import NoResults from '../Search/NoResult';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { userProfileState } from '@/context/recoil-context';
-const MyEventHeader = dynamic(() => import('./MyEventHeader'), { ssr: false });
+import { useRouter } from 'next/navigation';
+import Loading from '@/app/loading';
 
 type TabType = 'attending' | 'liked';
 
 // 이벤트 카드용 확장된 Club 타입
 interface EventClub extends Club {
-  startDate?: string;
-  endDate?: string;
-  eventId?: number;
-  liked?: boolean;
-  views?: number;
-  isAttending?: boolean;
-  isAuthor?: boolean;
-  isFreeEntrance?: boolean;
+  eventId: number;
+  title: string;
+  content: string;
+  thumbImage: string;
+  liked: boolean;
+  location: string;
+  likes: number;
+  views: number;
+  startDate: string;
+  endDate: string;
+  receiveAccompany: boolean;
+  region: string;
+  isFreeEntrance: boolean;
+  isAttending: boolean;
+  isAuthor: boolean;
 }
 
 // 지역 필터링 관련 상수
 const regionMap = {
   이태원: '이태원',
   홍대: '홍대',
-  '압구정 로데오': '압구정.로데오',
-  '강남 신사': '강남.신사',
+  압구정로데오: '압구정_로데오',
+  '강남 · 신사': '강남_신사',
   기타: '기타',
 };
 const regionLabels = Object.keys(regionMap);
 
-// 디데이 계산 함수
-function getDdayLabel(endDate: string) {
+// 디데이 계산 함수 (시작날짜 기준)
+function calculateDday(startDate: string, endDate: string) {
   const today = new Date();
-  const end = new Date(endDate);
-  const diff = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const start = new Date(startDate);
+  const diff = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   return diff >= 0 ? diff : null;
 }
 
-export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' | 'past' | 'my-event' }) {
+// 이벤트 정렬 함수 (D-DAY 우선, 가까운 순)
+const sortEventsByDday = (events: EventClub[]) => {
+  return [...events].sort((a, b) => {
+    const aDday = calculateDday(a.startDate, a.endDate);
+    const bDday = calculateDday(b.startDate, b.endDate);
+
+    // null(끝난 이벤트)과 진행중인 이벤트 구분
+    const aIsEnded = aDday === null;
+    const bIsEnded = bDday === null;
+
+    // 진행중인 이벤트를 먼저, 끝난 이벤트를 뒤로
+    if (aIsEnded && !bIsEnded) return 1;
+    if (!aIsEnded && bIsEnded) return -1;
+
+    // 둘 다 진행중인 경우: D-DAY 우선, 그 다음 가까운 순
+    if (!aIsEnded && !bIsEnded) {
+      // D-DAY(0)가 가장 먼저
+      if (aDday === 0 && bDday !== 0) return -1;
+      if (bDday === 0 && aDday !== 0) return 1;
+
+      // 그 다음 가까운 순 (낮은 숫자가 먼저)
+      if (aDday !== bDday) {
+        return aDday - bDday;
+      }
+
+      // D-day가 같으면 좋아요 수로 정렬 (높은 순)
+      return (b.likes || 0) - (a.likes || 0);
+    }
+
+    // 둘 다 끝난 경우: 좋아요 수로 정렬 (높은 순)
+    return (b.likes || 0) - (a.likes || 0);
+  });
+};
+
+export default function MyEventMain() {
   // --- Recoil State ---
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const userProfile = useRecoilValue(userProfileState);
+  const router = useRouter();
   // --- Component State ---
-  const [allMyEvents, setAllMyEvents] = useState<EventClub[]>([]);
+  const [attendingEvents, setAttendingEvents] = useState<EventClub[]>([]);
+  const [likedEvents, setLikedEvents] = useState<EventClub[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('attending');
 
   // --- 무한스크롤 상태 ---
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [attendingPage, setAttendingPage] = useState(1);
+  const [likedPage, setLikedPage] = useState(1);
+  const [attendingHasMore, setAttendingHasMore] = useState(true);
+  const [likedHasMore, setLikedHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const observerRef = useRef<HTMLDivElement>(null);
 
   // --- 필터링 상태 ---
   const [showFilter, setShowFilter] = useState(false);
@@ -115,153 +161,71 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
     setIsSwiping(false);
   };
 
-  // ❗ 1. 데이터 가져오기 로직 단순화
-  useEffect(() => {
-    const fetchMyEvents = async () => {
-      if (!accessToken) {
-        setLoading(false);
-        console.error('Access token is not available');
-        return;
-      }
-
-      setLoading(true);
-      setPage(1);
-      setHasMore(true);
-      try {
-        // type prop에 따라 다른 API 호출
-        const response = await getMyEvents(accessToken, type, 1, 10);
-        const eventData = response.eventResponseDTOS || [];
-
-        // API 응답을 Club 타입으로 한번만 매핑합니다.
-        const allClubs: EventClub[] = eventData.map((event: any) => ({
-          id: event.eventId,
-          venueId: event.eventId,
-          englishName: event.title,
-          koreanName: event.title,
-          address: event.location,
-          isHeartbeat: event.liked,
-          heartbeatNum: event.likes,
-          logoUrl: event.thumbImage,
-          backgroundUrl: event.thumbImage ? [event.thumbImage] : [],
-          // --- 아래는 API에 없는 기본값 ---
-          region: event.region || '',
-          description: event.content || '',
-          entranceFee: 0,
-          entranceNotice: '',
-          tagList: [],
-          createdAt: '',
-          updatedAt: '',
-          instaId: '',
-          instaUrl: '',
-          operationHours: {},
-          smokingAllowed: false,
-          // --- 이벤트 전용 필드 추가 ---
-          startDate: event.startDate,
-          endDate: event.endDate,
-          eventId: event.eventId,
-          liked: event.liked,
-          views: event.views,
-          isAttending: event.isAttending,
-          isAuthor: event.isAuthor,
-          isFreeEntrance: event.isFreeEntrance,
-        }));
-
-        setAllMyEvents(allClubs);
-
-        // 더 불러올 데이터가 있는지 확인
-        setHasMore(eventData.length === 10);
-
-        // Recoil 상태를 업데이트합니다.
-        const likedStatuses = allClubs.reduce(
-          (acc, club) => {
-            acc[club.id] = club.isHeartbeat;
-            return acc;
-          },
-          {} as { [key: number]: boolean },
-        );
-        setLikedClubs(likedStatuses);
-
-        const heartbeatNumbers = allClubs.reduce(
-          (acc, club) => {
-            acc[club.id] = club.heartbeatNum;
-            return acc;
-          },
-          {} as { [key: number]: number },
-        );
-        setHeartbeatNums(heartbeatNumbers);
-      } catch (error) {
-        console.error('Error fetching my events:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyEvents();
-  }, [accessToken, setLikedClubs, setHeartbeatNums, type]);
-
   // ❗ 무한스크롤 로드 더 많은 데이터
-  const loadMore = async () => {
-    if (!hasMore || isLoadingMore || !accessToken) return;
+  const loadMore = useCallback(async () => {
+    const currentHasMore = activeTab === 'attending' ? attendingHasMore : likedHasMore;
+    const currentPage = activeTab === 'attending' ? attendingPage : likedPage;
+
+    if (!currentHasMore || isLoadingMore || !accessToken) return;
 
     setIsLoadingMore(true);
     try {
-      const nextPage = page + 1;
-      const response = await getMyEvents(accessToken, type, nextPage, 10);
-      const eventData = response.eventResponseDTOS || [];
+      const nextPage = currentPage + 1;
+      let response;
+      let eventData;
+      if (activeTab === 'attending') {
+        response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10);
+        eventData = response.eventResponseDTOS || [];
+      } else {
+        response = await getMyLikedEvents(accessToken, nextPage, 10);
+        eventData = response?.data?.eventResponseDTOS || response || []; // getMyLikedEvents 응답 구조 확인
+      }
+      console.log('loadMore API 응답:', eventData);
 
       if (eventData.length === 0) {
-        setHasMore(false);
+        if (activeTab === 'attending') {
+          setAttendingHasMore(false);
+        } else {
+          setLikedHasMore(false);
+        }
         return;
       }
 
-      const newClubs: EventClub[] = eventData.map((event: any) => ({
-        id: event.eventId,
-        venueId: event.eventId,
-        englishName: event.title,
-        koreanName: event.title,
-        address: event.location,
-        isHeartbeat: event.liked,
-        heartbeatNum: event.likes,
-        logoUrl: event.thumbImage,
-        backgroundUrl: event.thumbImage ? [event.thumbImage] : [],
-        region: event.region || '',
-        description: event.content || '',
-        entranceFee: 0,
-        entranceNotice: '',
-        tagList: [],
-        createdAt: '',
-        updatedAt: '',
-        instaId: '',
-        instaUrl: '',
-        operationHours: {},
-        smokingAllowed: false,
-        startDate: event.startDate,
-        endDate: event.endDate,
-        eventId: event.eventId,
-        liked: event.liked,
-        views: event.views,
-        isAttending: event.isAttending,
-        isAuthor: event.isAuthor,
-        isFreeEntrance: event.isFreeEntrance,
-      }));
-
-      setAllMyEvents((prev) => [...prev, ...newClubs]);
-      setPage(nextPage);
-      setHasMore(eventData.length === 10);
+      if (activeTab === 'attending') {
+        setAttendingEvents((prev) =>
+          Array.isArray(prev) && Array.isArray(eventData)
+            ? [...prev, ...eventData]
+            : Array.isArray(eventData)
+              ? eventData
+              : [],
+        );
+        setAttendingPage(nextPage);
+        setAttendingHasMore(Array.isArray(eventData) ? eventData.length === 10 : false);
+      } else {
+        setLikedEvents((prev) =>
+          Array.isArray(prev) && Array.isArray(eventData)
+            ? [...prev, ...eventData]
+            : Array.isArray(eventData)
+              ? eventData
+              : [],
+        );
+        setLikedPage(nextPage);
+        setLikedHasMore(Array.isArray(eventData) ? eventData.length === 10 : false);
+      }
 
       // Recoil 상태 업데이트
-      const newLikedStatuses = newClubs.reduce(
-        (acc, club) => {
-          acc[club.id] = club.isHeartbeat;
+      const newLikedStatuses = eventData.reduce(
+        (acc: { [key: number]: boolean }, club: EventClub) => {
+          acc[club.eventId] = club.liked;
           return acc;
         },
         {} as { [key: number]: boolean },
       );
       setLikedClubs((prev) => ({ ...prev, ...newLikedStatuses }));
 
-      const newHeartbeatNumbers = newClubs.reduce(
-        (acc, club) => {
-          acc[club.id] = club.heartbeatNum;
+      const newHeartbeatNumbers = eventData.reduce(
+        (acc: { [key: number]: number }, club: EventClub) => {
+          acc[club.eventId] = club.likes;
           return acc;
         },
         {} as { [key: number]: number },
@@ -272,40 +236,152 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
     } finally {
       setIsLoadingMore(false);
     }
-  };
+  }, [
+    activeTab,
+    attendingHasMore,
+    likedHasMore,
+    attendingPage,
+    likedPage,
+    isLoadingMore,
+    accessToken,
+    setLikedClubs,
+    setHeartbeatNums,
+  ]);
 
-  // ❗ 2. '참석'과 '좋아요' 목록을 useMemo로 계산 (성능 최적화)
-  const attendingClubs = useMemo(() => allMyEvents, [allMyEvents]);
-
-  const likedClubsList = useMemo(() => {
-    // 좋아요 상태는 실시간으로 변할 수 있으므로, Recoil의 likedClubs 상태를 기준으로 필터링
-    return allMyEvents.filter((club) => likedClubs[club.id]);
-  }, [allMyEvents, likedClubs]);
-
-  // ❗ 3. 지역 필터링 로직
-  const filteredClubs = useMemo(() => {
-    // past 타입이나 my-event 타입일 때는 모든 이벤트를 표시
-    const currentClubs =
-      type === 'past' || type === 'my-event'
-        ? allMyEvents
-        : activeTab === 'attending'
-          ? attendingClubs
-          : likedClubsList;
-
-    if (selectedRegions.length === 0) {
-      return currentClubs;
+  // ❗ 1. 데이터 가져오기 로직 단순화
+  const fetchMyEvents = useCallback(async () => {
+    if (!accessToken) {
+      setLoading(false);
+      return;
     }
 
-    return currentClubs.filter((club) => {
-      const clubRegion = club.region;
-      return selectedRegions.some((selectedRegion) => {
-        const serverRegion = regionMap[selectedRegion as keyof typeof regionMap];
-        return clubRegion === serverRegion;
-      });
-    });
-  }, [type, activeTab, attendingClubs, likedClubsList, allMyEvents, selectedRegions]);
+    setLoading(true);
+    if (activeTab === 'attending') {
+      setAttendingPage(1);
+      setAttendingHasMore(true);
+      setAttendingEvents([]);
+    } else {
+      setLikedPage(1);
+      setLikedHasMore(true);
+      setLikedEvents([]);
+    }
+    try {
+      // 일반회원용 이벤트 데이터 가져오기
+      let response;
+      let eventData;
+      if (activeTab === 'attending') {
+        response = await getMyPageEvents(
+          accessToken,
+          'attendance',
+          1,
+          10,
+          selectedRegions.length > 0 ? selectedRegions[0] : undefined,
+        );
+        eventData = response.eventResponseDTOS || [];
+      } else {
+        response = await getMyLikedEvents(
+          accessToken,
+          1,
+          10,
+          selectedRegions.length > 0 ? selectedRegions[0] : undefined,
+        );
+        eventData = response?.data?.eventResponseDTOS || response || []; // getMyLikedEvents 응답 구조 확인
+      }
 
-  // ❗ 이벤트 좋아요 클릭 핸들러
+      if (activeTab === 'attending') {
+        setAttendingEvents(Array.isArray(eventData) ? eventData : []);
+        setAttendingHasMore(Array.isArray(eventData) ? eventData.length === 10 : false);
+      } else {
+        setLikedEvents(Array.isArray(eventData) ? eventData : []);
+        setLikedHasMore(Array.isArray(eventData) ? eventData.length === 10 : false);
+      }
+
+      // Recoil 상태를 업데이트합니다.
+      const likedStatuses = eventData.reduce(
+        (acc: { [key: number]: boolean }, club: EventClub) => {
+          acc[club.eventId] = club.liked;
+          return acc;
+        },
+        {} as { [key: number]: boolean },
+      );
+      setLikedClubs(likedStatuses);
+
+      const heartbeatNumbers = eventData.reduce(
+        (acc: { [key: number]: number }, club: EventClub) => {
+          acc[club.eventId] = club.likes;
+          return acc;
+        },
+        {} as { [key: number]: number },
+      );
+      setHeartbeatNums(heartbeatNumbers);
+    } catch (error) {
+      console.error('Error fetching my events:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [accessToken, setLikedClubs, setHeartbeatNums, activeTab]);
+
+  useEffect(() => {
+    fetchMyEvents();
+  }, [fetchMyEvents]);
+
+  // IntersectionObserver를 사용한 무한스크롤
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const currentHasMore = activeTab === 'attending' ? attendingHasMore : likedHasMore;
+        if (entries[0].isIntersecting && currentHasMore && !isLoadingMore) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [loadMore, activeTab, attendingHasMore, likedHasMore, isLoadingMore]);
+
+  // ❗ 2. '참석'과 '좋아요' 목록을 useMemo로 계산 (성능 최적화)
+  const attendingClubs = useMemo(() => {
+    return Array.isArray(attendingEvents) ? attendingEvents : [];
+  }, [attendingEvents]);
+
+  const likedClubsList = useMemo(() => {
+    // getMyLikedEvents를 사용하므로 모든 데이터가 이미 좋아요한 이벤트
+    console.log('likedEvents:', likedEvents);
+    return Array.isArray(likedEvents) ? likedEvents : [];
+  }, [likedEvents]);
+
+  // ❗ 3. 지역 필터링 및 정렬 로직
+  const filteredClubs = useMemo(() => {
+    // 일반회원용: 탭에 따라 이벤트 필터링
+    const currentClubs = activeTab === 'attending' ? attendingClubs : likedClubsList;
+
+    let filtered = currentClubs;
+
+    // 지역 필터링
+    if (selectedRegions.length > 0) {
+      filtered = currentClubs.filter((club) => {
+        const clubRegion = club.region;
+        return selectedRegions.some((selectedRegion) => {
+          const serverRegion = regionMap[selectedRegion as keyof typeof regionMap];
+          return clubRegion === serverRegion;
+        });
+      });
+    }
+
+    // 디데이 기준으로 정렬 (NewsContents와 동일)
+    return sortEventsByDday(filtered);
+  }, [activeTab, attendingClubs, likedClubsList, selectedRegions, attendingEvents, likedEvents]);
+
+  // ❗ 이벤트 좋아요 클릭 핸들러 (낙관적 업데이트)
   const handleEventClick = async (
     e: React.MouseEvent,
     eventId: number,
@@ -322,28 +398,51 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
       return;
     }
 
-    try {
-      const isCurrentlyLiked = likedClubs[eventId];
+    const isCurrentlyLiked = likedClubs[eventId];
+    const currentLikes = heartbeatNums[eventId] || 0;
 
+    // 낙관적 업데이트: 즉시 UI 반영
+    if (isCurrentlyLiked) {
+      // 좋아요 취소
+      setLikedClubs({ ...likedClubs, [eventId]: false });
+      setHeartbeatNums((prev) => ({
+        ...prev,
+        [eventId]: Math.max(0, currentLikes - 1),
+      }));
+    } else {
+      // 좋아요 추가
+      setLikedClubs({ ...likedClubs, [eventId]: true });
+      setHeartbeatNums((prev) => ({
+        ...prev,
+        [eventId]: currentLikes + 1,
+      }));
+    }
+
+    try {
       if (isCurrentlyLiked) {
-        // 좋아요 취소
+        // 좋아요 취소 API 호출
         await deleteEventLike(eventId, accessToken);
-        setLikedClubs({ ...likedClubs, [eventId]: false });
-        setHeartbeatNums((prev) => ({
-          ...prev,
-          [eventId]: Math.max(0, (prev[eventId] || 0) - 1),
-        }));
       } else {
-        // 좋아요 추가
+        // 좋아요 추가 API 호출
         await postEventLike(eventId, accessToken);
-        setLikedClubs({ ...likedClubs, [eventId]: true });
-        setHeartbeatNums((prev) => ({
-          ...prev,
-          [eventId]: (prev[eventId] || 0) + 1,
-        }));
       }
     } catch (error) {
       console.error('Error toggling event like:', error);
+
+      // API 실패 시 원래 상태로 롤백
+      if (isCurrentlyLiked) {
+        setLikedClubs({ ...likedClubs, [eventId]: true });
+        setHeartbeatNums((prev) => ({
+          ...prev,
+          [eventId]: currentLikes,
+        }));
+      } else {
+        setLikedClubs({ ...likedClubs, [eventId]: false });
+        setHeartbeatNums((prev) => ({
+          ...prev,
+          [eventId]: currentLikes,
+        }));
+      }
     }
   };
 
@@ -351,60 +450,63 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
     await handleEventClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
-  // ❗ 4. 렌더링할 목록을 결정하는 로직
-  const clubsToRender = filteredClubs;
-
   if (loading) {
-    return <MyHeartBeatSkeleton />;
+    return <Loading />;
   }
 
   return (
     <div className="flex w-full flex-col">
       <div className="flex-grow bg-BG-black">
-        <MyEventHeader type={type} />
-
-        {/* 탭바 - upcoming 타입일 때만 표시 */}
-        {userProfile?.role !== 'BUSINESS' && userProfile?.role !== 'ADMIN' && (
-          <div
-            className="relative flex border-b border-gray700"
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-            style={{ touchAction: isSwiping ? 'none' : 'auto' }}>
-            <button
-              onClick={() => setActiveTab('attending')}
-              className={`flex-1 py-4 text-center text-[0.875rem] font-medium transition-colors ${
-                activeTab === 'attending' ? 'font-bold text-main' : 'text-gray300'
-              }`}>
-              참석 명단 작성한
-            </button>
-            <button
-              onClick={() => setActiveTab('liked')}
-              className={`flex-1 py-4 text-center text-[0.875rem] font-medium transition-colors ${
-                activeTab === 'liked' ? 'font-bold text-main' : 'text-gray300'
-              }`}>
-              마음에 들어한
-            </button>
-
-            {/* 밑줄 애니메이션 */}
-            <motion.div
-              layout
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="absolute bottom-0 h-[2px] w-1/2 bg-main"
-              style={{
-                left: activeTab === 'attending' ? '0%' : '50%',
-              }}
-            />
+        <header className="flex flex-col bg-BG-black px-[1.25rem]">
+          <div className="flex w-full items-center py-[0.62rem]">
+            <div onClick={() => router.push('/mypage')} className="flex items-start">
+              <Image src="/icons/arrow_back_ios.svg" alt="뒤로가기" width={24} height={24} />
+            </div>
+            <div className="flex w-full items-center justify-between">
+              <span className="text-subtitle-20-bold text-white">My Events</span>
+            </div>
           </div>
-        )}
+        </header>
+        {/* 탭바 */}
+        <div
+          className="relative flex border-b border-gray700"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          style={{ touchAction: isSwiping ? 'none' : 'auto' }}>
+          <button
+            onClick={() => setActiveTab('attending')}
+            className={`flex-1 py-4 text-center text-[0.875rem] font-medium transition-colors ${
+              activeTab === 'attending' ? 'font-bold text-main' : 'text-gray300'
+            }`}>
+            참석 명단 작성한
+          </button>
+          <button
+            onClick={() => setActiveTab('liked')}
+            className={`flex-1 py-4 text-center text-[0.875rem] font-medium transition-colors ${
+              activeTab === 'liked' ? 'font-bold text-main' : 'text-gray300'
+            }`}>
+            마음에 들어한
+          </button>
+
+          {/* 밑줄 애니메이션 */}
+          <motion.div
+            layout
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="absolute bottom-0 h-[2px] w-1/2 bg-main"
+            style={{
+              left: activeTab === 'attending' ? '0%' : '50%',
+            }}
+          />
+        </div>
 
         {/* 지역 필터 */}
         <div className="w-full px-5 pt-5">
           {/* 상단 필터 헤더 */}
           <div className="flex items-center justify-between">
             <button
-              className={`rounded-[0.5rem] px-[0.62rem] py-[0.25rem] text-[0.875rem] focus:outline-none ${
-                selectedRegions.length > 0 ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
+              className={`rounded-[0.5rem] px-[0.62rem] py-[0.25rem] text-[0.875rem] transition-colors focus:outline-none ${
+                selectedRegions.length > 0 ? 'bg-sub2 font-medium text-main' : 'bg-gray700 text-gray300'
               }`}
               onClick={() => setShowFilter(!showFilter)}>
               지역
@@ -428,13 +530,33 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
                     <motion.button
                       key={label}
                       onClick={() => {
-                        setSelectedRegions((prev) =>
-                          prev.includes(label) ? prev.filter((r) => r !== label) : [...prev, label],
-                        );
+                        setSelectedRegions((prev) => {
+                          if (!Array.isArray(prev)) {
+                            return [label];
+                          }
+
+                          let newRegions;
+                          if (prev.includes(label)) {
+                            // 이미 선택된 지역이면 해제
+                            newRegions = prev.filter((r) => r !== label);
+                          } else {
+                            // 선택되지 않은 지역이면 추가
+                            newRegions = [...prev, label];
+                          }
+
+                          // 지역 필터 변경 시에만 서버 API 호출 (불필요한 호출 방지)
+                          if (newRegions.length !== prev.length) {
+                            setTimeout(() => {
+                              fetchMyEvents();
+                            }, 100);
+                          }
+
+                          return newRegions;
+                        });
                       }}
                       whileTap={{ scale: 1.1 }}
-                      className={`rounded-[0.38rem] px-[0.63rem] py-[0.25rem] text-[0.875rem] focus:outline-none ${
-                        isSelected ? 'bg-sub2 text-main' : 'bg-gray700 text-gray400'
+                      className={`rounded-[0.38rem] px-[0.63rem] py-[0.25rem] text-[0.875rem] transition-colors focus:outline-none ${
+                        isSelected ? 'bg-sub2 font-medium text-main' : 'bg-gray700 text-gray400'
                       }`}
                       transition={{ type: 'spring', stiffness: 300 }}>
                       {label}
@@ -452,28 +574,39 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
           style={{ touchAction: isSwiping ? 'none' : 'auto' }}>
-          {clubsToRender.length > 0 ? (
-            <MyEventVenues
-              clubs={clubsToRender}
-              likedClubs={likedClubs}
-              heartbeatNums={heartbeatNums}
-              handleHeartClickWrapper={handleEventClickWrapper}
-              onLoadMore={loadMore}
-              hasMore={hasMore}
-              loading={isLoadingMore}
-            />
-          ) : (
-            <NoResults
-              text={
-                type === 'past'
-                  ? '과거 이벤트가 없어요!'
-                  : type === 'my-event'
-                    ? '내가 작성한 이벤트가 없어요!'
-                    : activeTab === 'attending'
-                      ? '아직 참석 등록한 이벤트가 없어요'
-                      : '마음에 들어한 이벤트가 없어요'
-              }
-            />
+          <div className="relative min-h-[300px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${activeTab}-${selectedRegions.join(',')}`}
+                initial={{ opacity: 0, x: 0 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="w-full">
+                {filteredClubs.length > 0 ? (
+                  <MyEventVenues
+                    clubs={filteredClubs}
+                    likedClubs={likedClubs}
+                    heartbeatNums={heartbeatNums}
+                    handleHeartClickWrapper={handleEventClickWrapper}
+                    onLoadMore={loadMore}
+                    hasMore={activeTab === 'attending' ? attendingHasMore : likedHasMore}
+                    loading={isLoadingMore}
+                  />
+                ) : (
+                  <NoResults
+                    text={
+                      activeTab === 'attending' ? '아직 참석 등록한 이벤트가 없어요' : '마음에 들어한 이벤트가 없어요'
+                    }
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* 무한스크롤 감지 요소 */}
+          {(activeTab === 'attending' ? attendingHasMore : likedHasMore) && (
+            <div ref={observerRef} className="h-4 w-full" style={{ minHeight: '1rem' }} />
           )}
         </div>
       </div>

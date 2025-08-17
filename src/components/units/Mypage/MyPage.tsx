@@ -2,40 +2,26 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
-import History from './History/History';
 import { useEffect, useState } from 'react';
-import { GetHistory, GetMyHeartbeat, GetNickname, PutArchive } from '@/lib/action';
-import { useRecoilValue } from 'recoil';
+import { GetNickname } from '@/lib/action';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { accessTokenState, userProfileState } from '@/context/recoil-context';
-import { HeartBeat } from '@/lib/types';
-import RecommendationModal from './RecommendationModal';
-import { toast } from '@/components/common/toast/CustomToastContainer';
-import { CustomToast, CustomToastContainer } from '@/components/common/toast/CustomToastContainer';
 import BusinessMyPage from './BusinessMyPage';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import { GetPreference } from '@/lib/actions/user-controller/getPreference';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-export interface HistoryData {
-  archiveId: number;
-  preferenceList: string[];
-  updatedAt: string;
-}
-
 export default function MyPageComponent() {
   const access = useRecoilValue(accessTokenState) || '';
   const userProfile = useRecoilValue(userProfileState);
+  const setUserProfile = useSetRecoilState(userProfileState);
   const [nickname, setNickname] = useState('');
-  const [heartBeat, setHeartBeat] = useState<HeartBeat[]>([]);
-  const [history, setHistory] = useState<HistoryData[]>([]); // 타입 지정
-  const [showModal, setShowModal] = useState(false);
-  const [selectedArchiveId, setSelectedArchiveId] = useState<number | null>(null);
-  const [memberGenre, setMemberGenre] = useState<any[]>([]);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [preference, setPreference] = useState<any>(null);
 
   // ▼ 쿠폰 카드 레이아웃 상수/상태 (오른쪽 조각 실제 폭 계산)
@@ -111,6 +97,24 @@ export default function MyPageComponent() {
     setShowInquiryModal(false);
   };
 
+  // URL 쿼리 파라미터에서 닉네임 변경 감지 및 userProfileState 업데이트
+  useEffect(() => {
+    const updatedNickname = searchParams.get('nickname');
+    if (updatedNickname && userProfile) {
+      setUserProfile({
+        ...userProfile,
+        nickname: updatedNickname,
+      });
+    }
+  }, [searchParams, userProfile, setUserProfile]);
+
+  // userProfileState가 변경될 때마다 닉네임 동기화
+  useEffect(() => {
+    if (userProfile?.nickname && userProfile.nickname !== nickname) {
+      setNickname(userProfile.nickname);
+    }
+  }, [userProfile?.nickname, nickname]);
+
   // 사용자 닉네임 조회 & 나의 하트비트 조회
   useEffect(() => {
     const fetchData = async () => {
@@ -132,17 +136,11 @@ export default function MyPageComponent() {
 
         // 다른 API들 호출
         const response = await GetNickname(access);
-        const heartBeatResponse = await GetMyHeartbeat(access);
-        const historyResponse = await GetHistory(access);
 
-        if (response.ok && heartBeatResponse.ok && historyResponse.ok) {
+        if (response.ok) {
           const responseJson = await response.json();
-          const heartBeatResponseJson = await heartBeatResponse.json();
-          const historyResponseJson = await historyResponse.json();
 
           setNickname(responseJson.nickname);
-          setHeartBeat(heartBeatResponseJson);
-          setHistory(historyResponseJson);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -150,34 +148,6 @@ export default function MyPageComponent() {
     };
     fetchData();
   }, [access]);
-
-  const onClickHistory = (archiveId: number) => {
-    setSelectedArchiveId(archiveId);
-    setShowModal(true);
-  };
-
-  const getDefaultImageIfInvalid = (url: string) => {
-    const imagePattern = /\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i;
-    return imagePattern.test(url) ? url : '/images/DefaultImage.png';
-  };
-
-  const handleConfirm = async () => {
-    if (selectedArchiveId !== null) {
-      try {
-        const response = await PutArchive(access, selectedArchiveId);
-        if (response.ok) {
-          toast(<CustomToast>변경되었습니다!</CustomToast>);
-        } else {
-          toast(<CustomToast>다시 시도해주세요</CustomToast>);
-        }
-      } catch (error) {
-        console.error('Error putting archive:', error);
-        toast(<CustomToast>추천 요청 중 오류가 발생했습니다.</CustomToast>);
-      } finally {
-        setShowModal(false);
-      }
-    }
-  };
 
   return (
     <>
@@ -204,7 +174,7 @@ export default function MyPageComponent() {
                   background:
                     userProfile?.role === 'BUSINESS'
                       ? `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(210, 30, 30, 0.50) 0%, rgba(210, 30, 30, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(255, 0, 68, 0.50) 0%, rgba(255, 0, 68, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(255, 0, 17, 0.50) 0%, rgba(255, 0, 17, 0.00) 100%), rgba(40, 41, 42, 1)`
-                      : `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(238, 17, 113, 0.50) 0%, rgba(34, 0, 255, 0.06) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.00) 100%), rgba(40, 41, 42, 1)`,
+                      : `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(238, 17, 113, 0.50) 0%, rgba(34, 0, 255, 0) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.00) 100%), rgba(40, 41, 42, 1)`,
                 }}>
                 <div className="flex h-full flex-col justify-between">
                   {/* 프로필 정보 */}
@@ -280,7 +250,7 @@ export default function MyPageComponent() {
                             : null}
                         </div>
                         <button
-                          onClick={() => router.push('/bbp-list')}
+                          onClick={() => router.push('/onBoarding/custom')}
                           className="flex items-center gap-1 rounded-[0.5rem] bg-white/10 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white">
                           내 취향 수정하기
                           <Image src="/icons/Frame 60.svg" alt="편집" width={10} height={10} />
@@ -297,7 +267,9 @@ export default function MyPageComponent() {
               <div
                 className="mb-[0.62rem] ml-1 mr-5 mt-5 rounded-[0.63rem] p-5"
                 style={{
-                  background: `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(117, 67, 255, 0.50) 0%, rgba(117, 67, 255, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(80, 67, 255, 0.50) 0%, rgba(80, 67, 255, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(142, 130, 255, 0.30) 0%, rgba(142, 130, 255, 0.00) 100%), #28292A`,
+                  background: userProfile?.isPostProfileCreated
+                    ? `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(117, 67, 255, 0.50) 0%, rgba(117, 67, 255, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(80, 67, 255, 0.50) 0%, rgba(80, 67, 255, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(142, 130, 255, 0.30) 0%, rgba(142, 130, 255, 0.00) 100%), #28292A`
+                    : `radial-gradient(127.07% 71.54% at 0% 82.92%, #333 0%, rgba(128, 128, 128, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(60, 60, 60, 0.50) 0%, rgba(60, 60, 60, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(211, 211, 211, 0.30) 0%, rgba(211, 211, 211, 0.00) 100%), #28292A`,
                 }}>
                 <div className="flex h-full flex-col justify-between">
                   {/* 프로필 정보 */}
@@ -305,7 +277,11 @@ export default function MyPageComponent() {
                     <div className="flex items-center gap-3">
                       <div className="h-12 w-12 rounded-full bg-gray700">
                         <Image
-                          src={userProfile?.postProfileImageUrl || '/icons/mypage-profile.svg'}
+                          src={
+                            userProfile?.isPostProfileCreated
+                              ? userProfile?.postProfileImageUrl || '/icons/mypage-profile.svg'
+                              : '/icons/mypage-profile.svg'
+                          }
                           alt="프로필"
                           width={50}
                           height={50}
@@ -315,23 +291,32 @@ export default function MyPageComponent() {
                       </div>
                       <div className="flex flex-col items-start justify-center">
                         <div className="flex items-center gap-2">
-                          <span className="text-button-bold text-white">{userProfile?.postProfileNickname}</span>
+                          <span
+                            className={`text-button-bold ${userProfile?.isPostProfileCreated ? 'text-white' : 'text-gray100'}`}>
+                            {userProfile?.isPostProfileCreated
+                              ? userProfile?.postProfileNickname
+                              : '프로필을 설정해주세요'}
+                          </span>
                         </div>
                         <span className="text-body3-12-medium text-white/70">게시판</span>
                       </div>
                     </div>
-                    <button className="rounded-[0.5rem] bg-white/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white/80">
-                      메인 프로필
-                    </button>
+                    {userProfile?.isPostProfileCreated && (
+                      <button className="rounded-[0.5rem] bg-white/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white/80">
+                        게시판 프로필
+                      </button>
+                    )}
                   </div>
 
                   {/* 게시판 관련 정보 */}
                   <div className="">
                     <div className="flex items-center gap-[0.31rem]">
                       <div
-                        onClick={() => router.push(`/board/profile`)}
+                        onClick={() =>
+                          router.push(userProfile?.isPostProfileCreated ? `/board/profile` : `/board/profile/create`)
+                        }
                         className="w-full rounded-[0.5rem] bg-[#17181C]/50 px-2 pb-[0.81rem] pt-[0.81rem] text-center text-body-13-bold text-white">
-                        게시판 프로필 바로가기
+                        {userProfile?.isPostProfileCreated ? '게시판 프로필 바로가기' : '게시판 프로필 만들기'}
                       </div>
                     </div>
                   </div>
