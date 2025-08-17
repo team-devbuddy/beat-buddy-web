@@ -20,7 +20,7 @@ const MHBHeader = () => {
         <div onClick={() => router.back()} className="flex items-start">
           <Image src="/icons/arrow_back_ios.svg" alt="뒤로가기" width={24} height={24} />
         </div>
-        <span className="text-[1.25rem] font-bold text-white">My Heart Beat</span>
+        <span className="text-subtitle-20-bold text-white">My Heart Beat</span>
       </div>
     </header>
   );

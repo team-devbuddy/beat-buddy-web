@@ -12,6 +12,7 @@ import MyHeartBeatSkeleton from '@/components/common/skeleton/MyHeartBeatSkeleto
 import NoResults from '../Search/NoResult';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { userProfileState } from '@/context/recoil-context';
 const MyEventHeader = dynamic(() => import('./MyEventHeader'), { ssr: false });
 
 type TabType = 'attending' | 'liked';
@@ -51,7 +52,7 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
-
+  const userProfile = useRecoilValue(userProfileState);
   // --- Component State ---
   const [allMyEvents, setAllMyEvents] = useState<EventClub[]>([]);
   const [loading, setLoading] = useState(true);
@@ -363,7 +364,7 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
         <MyEventHeader type={type} />
 
         {/* 탭바 - upcoming 타입일 때만 표시 */}
-        {type === 'upcoming' && (
+        {userProfile?.role !== 'BUSINESS' && userProfile?.role !== 'ADMIN' && (
           <div
             className="relative flex border-b border-gray700"
             onTouchStart={onTouchStart}
@@ -469,8 +470,8 @@ export default function MyEventMain({ type = 'upcoming' }: { type?: 'upcoming' |
                   : type === 'my-event'
                     ? '내가 작성한 이벤트가 없어요!'
                     : activeTab === 'attending'
-                      ? '아직 참석한 이벤트가 없어요!\n이벤트에 참석해보세요'
-                      : '아직 좋아한 이벤트가 없어요!\n마음에 드는 이벤트를 찾아보세요'
+                      ? '아직 참석 등록한 이벤트가 없어요'
+                      : '마음에 들어한 이벤트가 없어요'
               }
             />
           )}

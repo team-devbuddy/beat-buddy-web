@@ -12,8 +12,12 @@ interface VenueForProps {
 export default function VenueFor({ userName }: VenueForProps) {
   const accessToken = useRecoilValue(accessTokenState);
   const isBusiness = useRecoilValue(isBusinessState);
+
+  // 비즈니스 회원인 경우 이벤트 작성 페이지로, 일반 회원인 경우 BBP 리스트로
+  const targetHref = isBusiness ? '/event/write' : '/bbp-list';
+
   return (
-    <Link href="/bbp-list" passHref>
+    <Link href={targetHref} passHref>
       {/* 그라디언트 테두리 */}
       <div
         className="cursor-pointer rounded-[0.5rem] p-[0.8px]"

@@ -90,13 +90,6 @@ const config: Config = {
         xs: '0.13rem',
       },
       fontSize: {
-        'subtitle-20-medium': [
-          '20px',
-          {
-            fontWeight: '500',
-            lineHeight: '150%',
-          },
-        ],
         'subtitle-20-bold': [
           '20px',
           {
@@ -142,11 +135,10 @@ const config: Config = {
           },
         ],
         'button-bold': [
-          '1.0625rem',
+          '1.125rem',
           {
-            fontWeight: '600',
-            lineHeight: '145%',
-            letterSpacing: '-0.02656rem',
+            fontWeight: '700',
+            lineHeight: '150%',
           },
         ],
         'body1-16-bold': [
@@ -344,6 +336,14 @@ const config: Config = {
             fontWeight: '600',
             lineHeight: '150%',
             letterSpacing: '-0.0225rem',
+          },
+        ],
+        'subtitle-2': [
+          '1.375rem',
+          {
+            fontWeight: '700',
+            lineHeight: '140%',
+            letterSpacing: '-0.0275rem',
           },
         ],
       },

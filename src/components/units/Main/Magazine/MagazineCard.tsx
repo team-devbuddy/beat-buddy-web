@@ -42,15 +42,14 @@ export default function MagazineCard({
 
   return (
     <div
-      className="relative mx-auto w-full cursor-pointer overflow-hidden rounded-[0.63rem] shadow-md"
+      className="relative mx-auto aspect-square w-full cursor-pointer overflow-hidden rounded-[0.63rem] shadow-md"
       onClick={() => router.push(`/magazine/${magazineId}`)}>
       {/* 배경 이미지 */}
       <Image
         src={thumbImageUrl}
         alt={title}
-        width={335}
-        height={343}
-        className="min-h-[21.4375rem] w-full object-cover"
+        fill
+        className="object-cover"
         onError={(e) => {
           e.currentTarget.src = '/images/DefaultImage.png';
         }}
@@ -74,19 +73,19 @@ export default function MagazineCard({
       {/* 콘텐츠 */}
       <div className="absolute bottom-0 left-0 right-0 z-10 px-[1.5rem] pb-[1.75rem] text-white">
         {picked ? (
-          <span className="mb-2 inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.56rem] py-[0.25rem] text-[0.75rem] font-medium">
+          <span className="mb-2 inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.56rem] pb-[0.12rem] pt-[0.19rem] text-body-11-medium">
             BeatBuddy Pick!
           </span>
         ) : (
-          <span className="mb-2 inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.56rem] py-[0.25rem] text-[0.75rem] font-medium">
+          <span className="mb-2 inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.56rem] py-[0.25rem] text-body-11-medium">
             Magazine
           </span>
         )}
 
-        <h2 className="text-[1.5rem] font-semibold leading-snug drop-shadow-md">{title}</h2>
+        <h2 className="text-subtitle-2 drop-shadow-md">{title}</h2>
         <div className="my-[0.75rem] h-px w-full bg-gray200" />
 
-        <p className="text-xs font-light text-gray200 drop-shadow-md">{content}</p>
+        <p className="text-body-13-medium text-gray200 drop-shadow-md">{content}</p>
       </div>
     </div>
   );

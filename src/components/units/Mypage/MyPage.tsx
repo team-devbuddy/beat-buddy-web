@@ -15,7 +15,7 @@ import BusinessMyPage from './BusinessMyPage';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
-import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
+import { GetPreference } from '@/lib/actions/user-controller/getPreference';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -34,11 +34,54 @@ export default function MyPageComponent() {
   const [showModal, setShowModal] = useState(false);
   const [selectedArchiveId, setSelectedArchiveId] = useState<number | null>(null);
   const [memberGenre, setMemberGenre] = useState<any[]>([]);
-  const [profileInfo, setProfileInfo] = useState<any>(null);
-  const [boardProfile, setBoardProfile] = useState<any>(null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const router = useRouter();
+  const [preference, setPreference] = useState<any>(null);
 
+  // ▼ 쿠폰 카드 레이아웃 상수/상태 (오른쪽 조각 실제 폭 계산)
+  const COUPON_HEIGHT = 68; // 디자인 고정 높이
+  const DEFAULT_RIGHT_WIDTH = 112; // 초기 대략치(SSR 안정화)
+  const [rightWidth, setRightWidth] = useState<number>(DEFAULT_RIGHT_WIDTH);
+
+  // 사용 중인 스킨(필요 시 상태에 따라 교체 가능)
+  const leftSprite = '/coupon-disavailable-left.svg';
+  const rightSprite = '/coupon-disavailable-right.svg';
+
+  const handleRightLoaded = ({ naturalWidth, naturalHeight }: { naturalWidth: number; naturalHeight: number }) => {
+    const w = Math.round((COUPON_HEIGHT * naturalWidth) / naturalHeight);
+    if (Number.isFinite(w) && w > 0) setRightWidth(w);
+  };
+
+  // 영어 태그를 한글로 변환하는 함수
+  const translateTag = (tag: string): string => {
+    const tagMap: { [key: string]: string } = {
+      ROCK: '락',
+      ROOFTOP: '루프탑',
+      ITAEWON: '이태원',
+      HONGDAE: '홍대',
+      'GANGNAM/SINSA': '강남/신사',
+      APGUJEONG: '압구정로데오',
+      OTHERS: '기타',
+      CLUB: '클럽',
+      PUB: '펍',
+      HIPHOP: '힙합',
+      EDM: 'EDM',
+      LATIN: '라틴',
+      'K-POP': 'K-POP',
+      POP: 'POP',
+      DEEP: '딥한',
+      COMMERCIAL: '커머셜한',
+      CHILL: '칠한',
+      EXOTIC: '이국적인',
+      HUNTING: '헌팅',
+      'BAR&CAFE': 'BAR&CAFE',
+      'SOUL&FUNK': 'SOUL&FUNK',
+      'R&B': 'R&B',
+      TECHNO: '테크노',
+      HOUSE: '하우스',
+    };
+    return tagMap[tag] || tag;
+  };
   // 사용자 타입 확인
   const isBusiness = userProfile?.role === 'BUSINESS';
 
@@ -70,11 +113,28 @@ export default function MyPageComponent() {
 
   // 사용자 닉네임 조회 & 나의 하트비트 조회
   useEffect(() => {
-    const fetchNickname = async () => {
+    const fetchData = async () => {
       try {
+        // GetPreference API 호출 (독립적으로)
+        console.log('Calling GetPreference API...');
+        try {
+          const preferenceResponse = await GetPreference(access);
+          console.log('GetPreference response:', preferenceResponse);
+          if (preferenceResponse && Array.isArray(preferenceResponse)) {
+            console.log('Setting preference state:', preferenceResponse);
+            setPreference(preferenceResponse);
+          } else {
+            console.log('Preference response is invalid:', preferenceResponse);
+          }
+        } catch (error) {
+          console.error('Error fetching preference:', error);
+        }
+
+        // 다른 API들 호출
         const response = await GetNickname(access);
         const heartBeatResponse = await GetMyHeartbeat(access);
         const historyResponse = await GetHistory(access);
+
         if (response.ok && heartBeatResponse.ok && historyResponse.ok) {
           const responseJson = await response.json();
           const heartBeatResponseJson = await heartBeatResponse.json();
@@ -83,14 +143,12 @@ export default function MyPageComponent() {
           setNickname(responseJson.nickname);
           setHeartBeat(heartBeatResponseJson);
           setHistory(historyResponseJson);
-          const profileInfoResponse = await getProfileinfo(access, responseJson.boardProfile.memberId);
-          setProfileInfo(profileInfoResponse);
         }
       } catch (error) {
-        console.error('Error fetching nickname:', error);
+        console.error('Error fetching data:', error);
       }
     };
-    fetchNickname();
+    fetchData();
   }, [access]);
 
   const onClickHistory = (archiveId: number) => {
@@ -141,27 +199,35 @@ export default function MyPageComponent() {
             {/* 첫 번째 프로필 카드 - 마이페이지 프로필 */}
             <SwiperSlide>
               <div
-                className="mb-[0.62rem] ml-5 mr-1 mt-5 rounded-[0.63rem] p-5"
+                className="mb-[0.62rem] ml-5 mr-1 mt-5 rounded-[0.625rem] p-5"
                 style={{
-                  background: `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(238, 17, 113, 0.50) 0%, rgba(34, 0, 255, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.00) 100%), #28292A`,
+                  background:
+                    userProfile?.role === 'BUSINESS'
+                      ? `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(210, 30, 30, 0.50) 0%, rgba(210, 30, 30, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(255, 0, 68, 0.50) 0%, rgba(255, 0, 68, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(255, 0, 17, 0.50) 0%, rgba(255, 0, 17, 0.00) 100%), rgba(40, 41, 42, 1)`
+                      : `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(238, 17, 113, 0.50) 0%, rgba(34, 0, 255, 0.06) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.00) 100%), rgba(40, 41, 42, 1)`,
                 }}>
                 <div className="flex h-full flex-col justify-between">
                   {/* 프로필 정보 */}
-                  <div className="mb-[1.12rem] flex items-start justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className="h-16 w-16 rounded-full bg-gray700">
+                  <div
+                    className={`${userProfile?.role === 'BUSINESS' ? 'mb-[1.56rem]' : 'mb-[1.12rem]'} flex items-start justify-between`}>
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 rounded-full bg-gray700">
                         <Image
                           src={userProfile?.profileImageUrl || '/icons/mypage-profile.svg'}
                           alt="프로필"
-                          width={64}
-                          height={64}
+                          width={50}
+                          height={50}
                           className="rounded-full object-cover"
                           style={{ aspectRatio: '1/1' }}
                         />
                       </div>
                       <div className="flex flex-col items-start justify-center">
                         <div className="flex items-center gap-2">
-                          <span className="text-[1.125rem] font-bold text-white">{nickname}버디</span>
+                          <span className="text-button-bold text-white">
+                            {userProfile?.role === 'BUSINESS'
+                              ? userProfile?.businessName
+                              : userProfile?.nickname || nickname}
+                          </span>
                           <Image
                             onClick={() => router.push(`/mypage/manage`)}
                             src="/icons/Frame 60.svg"
@@ -170,40 +236,58 @@ export default function MyPageComponent() {
                             height={14}
                           />
                         </div>
-                        <span className="text-[0.75rem] text-white/70">일반 회원</span>
+                        <span className="text-body3-12-medium text-white/70">
+                          {userProfile?.role === 'BUSINESS' ? '비즈니스 회원' : '일반 회원'}
+                        </span>
                       </div>
                     </div>
-                    <button className="rounded-[0.5rem] bg-white/20 px-2 py-[0.19rem] text-[0.6875rem] text-white/80">
+                    <button className="rounded-[0.5rem] bg-white/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white/80">
                       메인 프로필
                     </button>
                   </div>
 
-                  {/* 내 취향 태그 */}
-                  <div className="">
-                    <div className="mb-[0.62rem] flex items-center gap-[0.31rem]">
-                      <Image src="/icons/Headers/Headers/Symbol.svg" alt="태그" width={20} height={20} />
-                      <span className="text-[0.875rem] font-bold text-white">내 취향 태그</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-1">
-                        <span className="rounded-[0.5rem] bg-[#131415]/30 px-2 py-[0.19rem] text-[0.6875rem] text-white">
-                          시끄러운
-                        </span>
-                        <span className="rounded-[0.5rem] bg-[#131415]/30 px-2 py-[0.19rem] text-[0.6875rem] text-white">
-                          분위기 있는
-                        </span>
-                        <span className="rounded-[0.5rem] bg-[#131415]/30 px-2 py-[0.19rem] text-[0.6875rem] text-white">
-                          홍대
-                        </span>
+                  {/* 내 취향 태그 또는 주최이벤트 관리 */}
+                  {userProfile?.role === 'BUSINESS' ? (
+                    <div className="">
+                      <div className="flex items-center gap-[0.31rem]">
+                        <div
+                          onClick={() => router.push('/myevent/host')}
+                          className="w-full rounded-[0.5rem] bg-[#17181C]/50 px-2 pb-[0.81rem] pt-[0.81rem] text-center text-body-13-bold text-white">
+                          주최이벤트 관리하기
+                        </div>
                       </div>
-                      <button
-                        onClick={() => router.push('/bbp-list')}
-                        className="flex items-center gap-1 rounded-[0.5rem] bg-white/10 px-2 py-[0.19rem] text-[0.6875rem] text-white">
-                        내 취향 확인하기
-                        <Image src="/icons/Frame 60.svg" alt="편집" width={10} height={10} />
-                      </button>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="">
+                      <div className="mb-[0.5rem] flex items-center gap-[0.31rem]">
+                        <Image src="/icons/Headers/Headers/Symbol.svg" alt="태그" width={17} height={16} />
+                        <span className="text-body-14-bold text-white">내 취향 태그</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-1">
+                          {preference && preference.length > 0
+                            ? // preference에서 랜덤으로 3개 선택
+                              preference
+                                .sort(() => Math.random() - 0.5) // 랜덤 셔플
+                                .slice(0, 3) // 처음 3개만 선택
+                                .map((tag: string, index: number) => (
+                                  <span
+                                    key={index}
+                                    className="rounded-[0.5rem] bg-[#131415]/30 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white">
+                                    {translateTag(tag)}
+                                  </span>
+                                ))
+                            : null}
+                        </div>
+                        <button
+                          onClick={() => router.push('/bbp-list')}
+                          className="flex items-center gap-1 rounded-[0.5rem] bg-white/10 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white">
+                          내 취향 수정하기
+                          <Image src="/icons/Frame 60.svg" alt="편집" width={10} height={10} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </SwiperSlide>
@@ -218,28 +302,26 @@ export default function MyPageComponent() {
                 <div className="flex h-full flex-col justify-between">
                   {/* 프로필 정보 */}
                   <div className="mb-[1.56rem] flex items-start justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className="h-16 w-16 rounded-full bg-gray700">
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 rounded-full bg-gray700">
                         <Image
-                          src={profileInfo?.data?.profileImageUrl || '/icons/mypage-profile.svg'}
+                          src={userProfile?.postProfileImageUrl || '/icons/mypage-profile.svg'}
                           alt="프로필"
-                          width={64}
-                          height={64}
+                          width={50}
+                          height={50}
                           className="rounded-full object-cover"
                           style={{ aspectRatio: '1/1' }}
                         />
                       </div>
                       <div className="flex flex-col items-start justify-center">
                         <div className="flex items-center gap-2">
-                          <span className="text-[1.125rem] font-bold text-white">
-                            {profileInfo?.data?.nickname || nickname}버디
-                          </span>
+                          <span className="text-button-bold text-white">{userProfile?.postProfileNickname}</span>
                         </div>
-                        <span className="text-[0.75rem] text-white/70">게시판</span>
+                        <span className="text-body3-12-medium text-white/70">게시판</span>
                       </div>
                     </div>
-                    <button className="rounded-[0.5rem] bg-white/20 px-2 py-[0.19rem] text-[0.6875rem] text-white/80">
-                      커뮤니티 프로필
+                    <button className="rounded-[0.5rem] bg-white/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white/80">
+                      메인 프로필
                     </button>
                   </div>
 
@@ -248,8 +330,8 @@ export default function MyPageComponent() {
                     <div className="flex items-center gap-[0.31rem]">
                       <div
                         onClick={() => router.push(`/board/profile`)}
-                        className="w-full rounded-[0.5rem] bg-[#17181C]/50 px-2 py-[0.88rem] text-center text-[0.8125rem] font-bold text-white">
-                        커뮤니티 프로필 바로가기
+                        className="w-full rounded-[0.5rem] bg-[#17181C]/50 px-2 pb-[0.81rem] pt-[0.81rem] text-center text-body-13-bold text-white">
+                        게시판 프로필 바로가기
                       </div>
                     </div>
                   </div>
@@ -259,29 +341,68 @@ export default function MyPageComponent() {
           </Swiper>
         </div>
 
-        {/* My Coupon */}
-        <div className="mx-5 mb-[0.62rem] rounded-lg bg-[#28292A] p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-[0.9375rem] font-bold text-white">My Coupon</h3>
-              <p className="text-[0.6875rem] text-gray-300">다운로드한 쿠폰을 확인할 수 있어요!</p>
+        {/* My Coupon (왼쪽 가변, 오른쪽 고정) */}
+        <div className="mx-5 mb-[0.62rem] rounded-[0.63rem]" onClick={() => router.push('/mypage/coupon')}>
+          <div className="relative w-full" style={{ height: COUPON_HEIGHT }}>
+            {/* 왼쪽(가변) 레이어: 오른쪽 폭만큼 비워두고 나머지 전부 채움 */}
+            <div
+              className="absolute inset-y-0 left-0"
+              style={{
+                right: rightWidth,
+              }}
+              aria-hidden>
+              <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                <image href={leftSprite} width="100%" height="100%" preserveAspectRatio="none" />
+              </svg>
+            </div>
+
+            {/* 오른쪽(고정) 레이어: 실제 비율대로 폭 고정 */}
+            <div className="absolute inset-y-0 right-0" style={{ width: rightWidth }} aria-hidden>
+              <div className="relative h-full w-full">
+                <Image
+                  key={rightSprite} // 소스 바뀌면 재측정 유도
+                  src={rightSprite}
+                  alt=""
+                  fill
+                  style={{ objectFit: 'contain' }}
+                  priority
+                  onLoadingComplete={({ naturalWidth, naturalHeight }) =>
+                    handleRightLoaded({ naturalWidth, naturalHeight })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* 내용 오버레이: 오른쪽 폭만큼 패딩 확보 */}
+            <div
+              className="absolute inset-0 flex items-center justify-between px-4"
+              style={{ paddingRight: Math.max(12, rightWidth + 8) }}>
+              <div className="flex flex-col">
+                <h3 className="text-body-15-bold text-white">My Coupon</h3>
+                <p className="text-body-11-medium text-gray200">다운로드한 쿠폰을 확인할 수 있어요!</p>
+              </div>
+              <div className="flex items-center">{/* 우측 액션 자리 */}</div>
             </div>
           </div>
         </div>
 
         {/* My Event & My Heart Beat */}
-        <div className="mx-5 mb-[0.62rem] flex gap-4">
-          <div onClick={() => router.push('/myevent')} className="flex-1 rounded-lg bg-[#28292A] p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <h3 className="text-[0.9375rem] font-bold text-white">My Event</h3>
+        <div className="mx-5 mb-[0.62rem] flex gap-[0.62rem]">
+          <div
+            onClick={() => router.push('/myevent')}
+            className="flex-1 rounded-[0.63rem] bg-[#28292A] px-4 pb-[0.88rem] pt-3">
+            <div className="flex cursor-pointer items-center gap-[0.13rem]">
+              <h3 className="text-body-15-bold text-white">My Event</h3>
+              <Image src="/icons/local_bar.svg" alt="이동" width={18} height={18} />
             </div>
-            <p className="text-[0.6875rem] text-gray-300">참석 예정 이벤트예요!</p>
+            <p className="text-body-11-medium text-gray200">참석 예정 이벤트예요!</p>
           </div>
-          <div className="flex-1 rounded-lg bg-[#28292A] p-4">
-            <div onClick={() => router.push('/myheartbeat')} className="mb-2 flex items-center gap-2">
-              <h3 className="text-[0.9375rem] font-bold text-white">My Heart Beat</h3>
+          <div className="flex-1 rounded-[0.63rem] bg-[#28292A] px-4 pb-[0.88rem] pt-3">
+            <div onClick={() => router.push('/myheartbeat')} className="flex cursor-pointer items-center gap-[0.13rem]">
+              <h3 className="text-body-15-bold text-white">My Heart Beat</h3>
+              <Image src="/icons/mode_heat.svg" alt="이동" width={18} height={18} />
             </div>
-            <p className="text-[0.6875rem] text-gray-300">내가 저장한 베뉴들이에요!</p>
+            <p className="text-body-11-medium text-gray200">내가 저장한 베뉴들이에요!</p>
           </div>
         </div>
 
@@ -289,11 +410,11 @@ export default function MyPageComponent() {
         <div className="">
           <div
             onClick={handleInquiryClick}
-            className="flex cursor-pointer items-center justify-between px-5 py-4 font-bold">
+            className="flex cursor-pointer items-center justify-between px-5 py-4 text-body-15-bold">
             <span className="text-white">문의 사항</span>
             <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={20} height={20} />
           </div>
-          <Link href="/terms" className="flex items-center justify-between px-5 py-4 font-bold">
+          <Link href="/terms" className="flex items-center justify-between px-5 py-4 text-body-15-bold">
             <span className="text-white">이용 약관 및 개인 정보 활용</span>
             <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={20} height={20} />
           </Link>
@@ -310,7 +431,7 @@ export default function MyPageComponent() {
               className="mx-4 w-full max-w-sm rounded-[0.75rem] bg-BG-black px-4 pb-5 pt-7"
               onClick={(e) => e.stopPropagation()}>
               <div className="flex flex-col items-center space-y-2">
-                <h3 className="mb-[1rem] text-[1.25rem] font-bold text-white">문의 방법을 선택해주세요</h3>
+                <h3 className="mb-[1rem] text-subtitle-20-bold text-white">문의 방법을 선택해주세요</h3>
 
                 {/* 카카오톡 */}
                 <div
@@ -320,8 +441,8 @@ export default function MyPageComponent() {
                     <Image src="/icons/kakaoLogo.svg" alt="카카오톡" width={42} height={42} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[0.8125rem] font-bold text-gray100">카카오톡</p>
-                    <p className="text-[0.8125rem] text-gray300">@BeatBuddy</p>
+                    <p className="text-body-15-bold text-gray100">카카오톡</p>
+                    <p className="text-body-13-medium text-gray100">@BeatBuddy</p>
                   </div>
                   <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={16} height={16} />
                 </div>
@@ -334,8 +455,8 @@ export default function MyPageComponent() {
                     <Image src="/icons/instaLogo.svg" alt="인스타그램" width={42} height={42} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[0.8125rem] font-bold text-gray100">인스타그램</p>
-                    <p className="text-[0.8125rem] text-gray300">@beatbuddy.kr</p>
+                    <p className="text-body-15-bold text-gray100">인스타그램</p>
+                    <p className="text-body-13-medium text-gray100">@beatbuddy.kr</p>
                   </div>
                   <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={16} height={16} />
                 </div>
@@ -348,8 +469,8 @@ export default function MyPageComponent() {
                     <Image src="/icons/icons8-구글-로고.svg" alt="이메일" width={24} height={24} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[0.8125rem] font-bold text-gray100">이메일</p>
-                    <p className="text-[0.8125rem] text-gray300">beatbuddykr@gmail.com</p>
+                    <p className="text-body-15-bold text-gray100">이메일</p>
+                    <p className="text-body-13-medium text-gray100">beatbuddykr@gmail.com</p>
                   </div>
                   <Image src="/icons/Headers/Frame60Gray.svg" alt="이동" width={16} height={16} />
                 </div>
@@ -357,7 +478,7 @@ export default function MyPageComponent() {
                 {/* 확인 버튼 */}
                 <button
                   onClick={() => setShowInquiryModal(false)}
-                  className="text-4 w-full rounded-[0.5rem] pt-2 font-bold text-gray200">
+                  className="w-full rounded-[0.5rem] pt-2 text-body1-16-bold text-gray200">
                   확인
                 </button>
               </div>

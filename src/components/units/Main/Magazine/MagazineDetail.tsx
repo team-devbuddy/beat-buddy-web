@@ -76,11 +76,11 @@ export default function MagazineDetail() {
             alt={magazine.title}
             width={800}
             height={800}
-            className="h-auto min-h-[31.25rem] w-full rounded-md object-cover"
+            className="h-auto min-h-[31.25rem] w-full object-cover"
           />
 
           {/* 그라디언트 오버레이 */}
-          <div className="absolute inset-0 rounded-md bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
           {/* Prev 컴포넌트 - 맨 위 */}
           <div className="z-100 absolute left-0 top-0 px-[0.63rem] py-[0.53rem]">
@@ -89,19 +89,19 @@ export default function MagazineDetail() {
             </button>
           </div>
 
-          {/* 하단 콘텐츠 */}
+          {/* 하단 콘텐츠 
           <div className="absolute bottom-0 left-0 right-0 z-10 p-[1.5rem] text-white">
             {magazine.picked ? (
-              <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-white">
+              <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] pt-[0.19rem] pb-[0.12rem] text-body-11-medium text-white">
                 BeatBuddy Pick!
               </span>
             ) : (
-              <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] py-[0.19rem] text-[0.6875rem] text-white">
+              <span className="inline-block rounded-[0.5rem] bg-[#F93A7B] px-[0.5rem] pt-[0.19rem] pb-[0.12rem] text-body-11-medium text-white">
                 Magazine
               </span>
             )}
 
-            <h2 className="line-height-[140%] py-2 text-[1.375rem] font-bold tracking-[-0.0275rem] drop-shadow-md">
+            <h2 className="text-subtitle-2 drop-shadow-md">
               {magazine.title.split('\n').map((line, index, array) => (
                 <span key={index}>
                   {line}
@@ -109,7 +109,7 @@ export default function MagazineDetail() {
                 </span>
               ))}
             </h2>
-          </div>
+          </div>*/}
         </div>
       )}
 
@@ -124,7 +124,7 @@ export default function MagazineDetail() {
                   alt={`매거진 이미지 ${index + 1}`}
                   width={800}
                   height={600}
-                  className="h-auto w-full rounded-md object-cover"
+                  className="h-auto w-full object-cover"
                 />
               </div>
             ))}
