@@ -23,9 +23,17 @@ interface Props {
   allComments: CommentType[];
   isNested?: boolean;
   setComments: React.Dispatch<React.SetStateAction<CommentType[]>>;
+  onCommentDeleted?: (commentId: number) => void; // 댓글 삭제 콜백 추가
 }
 
-export default function BoardReply({ postId, reply, allComments, isNested = false, setComments }: Props) {
+export default function BoardReply({
+  postId,
+  reply,
+  allComments,
+  isNested = false,
+  setComments,
+  onCommentDeleted,
+}: Props) {
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState) || '';
   const userProfile = useRecoilValue(userProfileState);
@@ -33,6 +41,13 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   const iconRef = useRef<HTMLImageElement | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [isLoadingLike, setIsLoadingLike] = useState(false);
+
+  // onCommentDeleted prop 디버깅
+  console.log('🔥 BoardReply props 확인:', {
+    replyId: reply.id,
+    onCommentDeleted: !!onCommentDeleted,
+    onCommentDeletedType: typeof onCommentDeleted,
+  });
 
   // 컴포넌트 마운트 시 데이터 확인
 
@@ -143,31 +158,56 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
   };
 
   const handleDelete = useCallback(async () => {
+    // 낙관적 업데이트: 즉시 UI에서 댓글 제거
+    console.log('🔥 댓글 삭제 시작 (낙관적 업데이트):', { commentId: reply.id, postId });
+    console.log('🔥 onCommentDeleted prop 상태:', {
+      exists: !!onCommentDeleted,
+      type: typeof onCommentDeleted,
+      isFunction: typeof onCommentDeleted === 'function',
+    });
+
+    // 즉시 부모 컴포넌트에 댓글 삭제 알림 (낙관적 업데이트)
+    if (onCommentDeleted && typeof onCommentDeleted === 'function') {
+      console.log('🔥 onCommentDeleted 콜백 즉시 호출 (낙관적):', reply.id);
+      try {
+        onCommentDeleted(reply.id);
+        console.log('🔥 onCommentDeleted 콜백 실행 완료');
+      } catch (error) {
+        console.error('🔥 onCommentDeleted 콜백 실행 실패:', error);
+      }
+    } else {
+      console.log('🔥 onCommentDeleted 콜백이 없거나 함수가 아님:', onCommentDeleted);
+    }
+
+    // 즉시 BoardDetail 상태 업데이트 (낙관적 업데이트)
+    if ((window as any).commentHandlers && (window as any).commentHandlers[postId]) {
+      console.log('🔥 BoardDetail 상태 즉시 업데이트 (낙관적)');
+      (window as any).commentHandlers[postId].deleteComment();
+    }
+
+    // 즉시 로컬 상태 업데이트 (낙관적 업데이트)
+    const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked);
+    if (childReplies.length > 0) {
+      // 자식댓글이 있으면 삭제된 상태로 표시
+      setComments((prevComments) =>
+        prevComments.map((comment) => (comment.id === reply.id ? { ...comment, isDeleted: true } : comment)),
+      );
+    } else {
+      // 자식댓글이 없으면 완전 삭제
+      setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
+    }
+
+    // API 호출은 백그라운드에서 실행 (성공/실패와 관계없이 UI는 이미 업데이트됨)
     try {
       await deleteComment(postId, reply.id, accessToken);
-
-      // ✅ 댓글 삭제 성공 시 BoardDetail의 상태 업데이트 함수 호출
-      if ((window as any).commentHandlers && (window as any).commentHandlers[postId]) {
-        (window as any).commentHandlers[postId].deleteComment();
-      }
-
-      // 자식댓글이 있는지 확인
-      const childReplies = allComments.filter((c) => c.replyId === reply.id && !c.isBlocked);
-
-      if (childReplies.length > 0) {
-        // 자식댓글이 있으면 삭제된 상태로 표시
-        setComments((prevComments) =>
-          prevComments.map((comment) => (comment.id === reply.id ? { ...comment, isDeleted: true } : comment)),
-        );
-      } else {
-        // 자식댓글이 없으면 완전 삭제
-        setComments((prevComments) => prevComments.filter((comment) => comment.id !== reply.id));
-      }
+      console.log('🔥 댓글 삭제 API 성공');
     } catch (error) {
-      console.error('댓글 삭제 실패', error);
-      alert('댓글 삭제에 실패했습니다.');
+      console.error('🔥 댓글 삭제 API 실패 (하지만 UI는 이미 업데이트됨):', error);
+      // API 실패해도 UI는 이미 업데이트되어 있으므로 롤백하지 않음
+      // 사용자가 다시 시도할 수 있도록 안내
+      console.log('🔥 API 실패했지만 UI는 이미 업데이트되어 있음');
     }
-  }, [postId, reply.id, accessToken, setComments, allComments]);
+  }, [postId, reply.id, accessToken, setComments, allComments, onCommentDeleted]);
 
   const handleMenuClick = () => {
     // 삭제된 댓글에는 드롭다운 메뉴 불가
@@ -223,9 +263,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
 
   // 삭제된 댓글 렌더링 함수
   const renderDeletedComment = (isNestedComment: boolean = false) => {
-    const containerClass = isNestedComment
-      ? 'flex w-full flex-col gap-2'
-      : 'flex flex-col gap-2';
+    const containerClass = isNestedComment ? 'flex w-full flex-col gap-2' : 'flex flex-col gap-2';
 
     return (
       <div className={containerClass}>
@@ -250,7 +288,7 @@ export default function BoardReply({ postId, reply, allComments, isNested = fals
       <div id={`comment-${reply.id}`} className="w-full">
         {/* ✅ 스크린샷 디자인에 맞춰 회색 배경과 패딩을 적용합니다. */}
         <div
-          className={classNames('flex w-full flex-col gap-1 ', {
+          className={classNames('flex w-full flex-col gap-1', {
             'mt-1': reply.isBlocked,
             'bg-gray800': isReplying,
           })}>

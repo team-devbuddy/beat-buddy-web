@@ -113,6 +113,19 @@ export default function BoardDetail({ postId, post }: PostProps) {
     setHasCommented(post.hasCommented);
   }, [post.comments, post.hasCommented]);
 
+  // 댓글 개수 변경 모니터링
+  useEffect(() => {
+    console.log('🔥 BoardDetail - 댓글 개수 변경됨:', post.comments);
+  }, [post.comments]);
+
+  // 댓글 상태 변경 모니터링
+  useEffect(() => {
+    console.log('🔥 BoardDetail - 댓글 상태 변경됨:', {
+      hasCommented: post.hasCommented,
+      commentCount: post.comments,
+    });
+  }, [post.hasCommented, post.comments]);
+
   // 댓글 관련 함수들을 외부로 노출 (부모 컴포넌트에서 사용)
   useEffect(() => {
     // 전역 객체에 함수 등록

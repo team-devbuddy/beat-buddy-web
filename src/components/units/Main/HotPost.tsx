@@ -38,7 +38,7 @@ const HotPost = ({ posts }: HotPostProps) => {
     try {
       if (!accessToken) return false;
       const profileInfo = await getProfileinfo(accessToken);
-      return profileInfo && profileInfo.boardProfile;
+      return profileInfo && profileInfo.isPostProfileCreated;
     } catch (error) {
       console.error('Error checking board profile:', error);
       return false;

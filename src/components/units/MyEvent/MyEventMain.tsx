@@ -4,6 +4,8 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import { getMyPageEvents } from '@/lib/actions/event-controller/getMyPageEvents';
 import { getMyLikedEvents } from '@/lib/actions/event-controller/getMyLikedEvents';
+import { getMyEventUpcoming } from '@/lib/actions/event-controller/getMyEventUpcoming';
+import { getMyEventPast } from '@/lib/actions/event-controller/getMyEventPast';
 import { postEventLike } from '@/lib/actions/venue-controller/postEventLike';
 import { deleteEventLike } from '@/lib/actions/venue-controller/deleteEventLike';
 import { Club } from '@/lib/types';
@@ -16,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import Loading from '@/app/loading';
 
 type TabType = 'attending' | 'liked';
+type EventType = 'upcoming' | 'past' | 'my-event';
 
 // 이벤트 카드용 확장된 Club 타입
 interface EventClub extends Club {
@@ -88,7 +91,11 @@ const sortEventsByDday = (events: EventClub[]) => {
   });
 };
 
-export default function MyEventMain() {
+interface MyEventMainProps {
+  type?: EventType;
+}
+
+export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
   // --- Recoil State ---
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
@@ -173,22 +180,27 @@ export default function MyEventMain() {
       const nextPage = currentPage + 1;
       let response;
       let eventData;
+      
       if (activeTab === 'attending') {
-        response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10);
-        eventData = response.eventResponseDTOS || [];
-      } else {
-        response = await getMyLikedEvents(accessToken, nextPage, 10);
-        eventData = response?.data?.eventResponseDTOS || response || []; // getMyLikedEvents 응답 구조 확인
-      }
-      console.log('loadMore API 응답:', eventData);
-
-      if (eventData.length === 0) {
-        if (activeTab === 'attending') {
-          setAttendingHasMore(false);
+        // 타입에 따라 다른 API 호출
+        if (type === 'upcoming') {
+          response = await getMyEventUpcoming(accessToken, nextPage, 10, selectedRegions.length > 0 ? selectedRegions[0] : undefined);
+        } else if (type === 'past') {
+          response = await getMyEventPast(accessToken, nextPage, 10, selectedRegions.length > 0 ? selectedRegions[0] : undefined);
+        } else if (type === 'my-event') {
+          response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10, selectedRegions.length > 0 ? selectedRegions[0] : undefined);
         } else {
-          setLikedHasMore(false);
+          response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10, selectedRegions.length > 0 ? selectedRegions[0] : undefined);
         }
-        return;
+        eventData = response.eventResponseDTOS || response.data?.eventResponseDTOS || [];
+      } else {
+        response = await getMyLikedEvents(
+          accessToken,
+          nextPage,
+          10,
+          selectedRegions.length > 0 ? selectedRegions[0] : undefined,
+        );
+        eventData = response?.data?.eventResponseDTOS || response || [];
       }
 
       if (activeTab === 'attending') {
@@ -246,6 +258,8 @@ export default function MyEventMain() {
     accessToken,
     setLikedClubs,
     setHeartbeatNums,
+    type,
+    selectedRegions,
   ]);
 
   // ❗ 1. 데이터 가져오기 로직 단순화
@@ -266,18 +280,43 @@ export default function MyEventMain() {
       setLikedEvents([]);
     }
     try {
-      // 일반회원용 이벤트 데이터 가져오기
+      // 타입에 따라 다른 API 호출
       let response;
       let eventData;
+      
       if (activeTab === 'attending') {
-        response = await getMyPageEvents(
-          accessToken,
-          'attendance',
-          1,
-          10,
-          selectedRegions.length > 0 ? selectedRegions[0] : undefined,
-        );
-        eventData = response.eventResponseDTOS || [];
+        if (type === 'upcoming') {
+          response = await getMyEventUpcoming(
+            accessToken,
+            1,
+            10,
+            selectedRegions.length > 0 ? selectedRegions[0] : undefined,
+          );
+        } else if (type === 'past') {
+          response = await getMyEventPast(
+            accessToken,
+            1,
+            10,
+            selectedRegions.length > 0 ? selectedRegions[0] : undefined,
+          );
+        } else if (type === 'my-event') {
+          response = await getMyPageEvents(
+            accessToken,
+            'attendance',
+            1,
+            10,
+            selectedRegions.length > 0 ? selectedRegions[0] : undefined,
+          );
+        } else {
+          response = await getMyPageEvents(
+            accessToken,
+            'attendance',
+            1,
+            10,
+            selectedRegions.length > 0 ? selectedRegions[0] : undefined,
+          );
+        }
+        eventData = response.eventResponseDTOS || response.data?.eventResponseDTOS || [];
       } else {
         response = await getMyLikedEvents(
           accessToken,
@@ -285,7 +324,7 @@ export default function MyEventMain() {
           10,
           selectedRegions.length > 0 ? selectedRegions[0] : undefined,
         );
-        eventData = response?.data?.eventResponseDTOS || response || []; // getMyLikedEvents 응답 구조 확인
+        eventData = response?.data?.eventResponseDTOS || response || [];
       }
 
       if (activeTab === 'attending') {
@@ -319,7 +358,7 @@ export default function MyEventMain() {
     } finally {
       setLoading(false);
     }
-  }, [accessToken, setLikedClubs, setHeartbeatNums, activeTab]);
+  }, [accessToken, setLikedClubs, setHeartbeatNums, activeTab, type, selectedRegions]);
 
   useEffect(() => {
     fetchMyEvents();
@@ -463,7 +502,9 @@ export default function MyEventMain() {
               <Image src="/icons/arrow_back_ios.svg" alt="뒤로가기" width={24} height={24} />
             </div>
             <div className="flex w-full items-center justify-between">
-              <span className="text-subtitle-20-bold text-white">My Events</span>
+              <span className="text-subtitle-20-bold text-white">
+                {type === 'upcoming' ? '예정된 이벤트' : type === 'past' ? '지난 이벤트' : '내 이벤트'}
+              </span>
             </div>
           </div>
         </header>
@@ -479,7 +520,7 @@ export default function MyEventMain() {
             className={`flex-1 py-4 text-center text-[0.875rem] font-medium transition-colors ${
               activeTab === 'attending' ? 'font-bold text-main' : 'text-gray300'
             }`}>
-            참석 명단 작성한
+            {type === 'upcoming' ? '예정된' : type === 'past' ? '지난' : '참석 명단 작성한'}
           </button>
           <button
             onClick={() => setActiveTab('liked')}
@@ -596,7 +637,13 @@ export default function MyEventMain() {
                 ) : (
                   <NoResults
                     text={
-                      activeTab === 'attending' ? '아직 참석 등록한 이벤트가 없어요' : '마음에 들어한 이벤트가 없어요'
+                      activeTab === 'attending' 
+                        ? type === 'upcoming' 
+                          ? '예정된 이벤트가 없어요'
+                          : type === 'past'
+                          ? '지난 이벤트가 없어요'
+                          : '아직 참석 등록한 이벤트가 없어요'
+                        : '마음에 들어한 이벤트가 없어요'
                     }
                   />
                 )}

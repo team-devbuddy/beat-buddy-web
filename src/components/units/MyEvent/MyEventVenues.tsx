@@ -56,9 +56,36 @@ function formatDateRange(startDate: string, endDate: string) {
   return `${formattedStart} ~ ${formattedEnd}`;
 }
 
-// region의 언더스코어를 띄어쓰기로 변환하는 함수
+// region의 언더스코어를 띄어쓰기로 변환하고 클라이언트 친화적으로 포맷팅하는 함수
 function formatRegion(region: string) {
-  return region.replace(/_/g, ' ');
+  // 기본적으로 언더스코어를 띄어쓰기로 변환
+  let formatted = region.replace(/_/g, ' ');
+
+  // 특정 지역명에 대한 클라이언트 친화적 포맷팅
+  const regionMappings: { [key: string]: string } = {
+    압구정로데오: '압구정로데오',
+    '강남.신사': '강남 · 신사',
+    '강남 신사': '강남 · 신사',
+    홍대: '홍대',
+    이태원: '이태원',
+    뮤직: '뮤직',
+    자유: '자유',
+    '번개 모임': '번개 모임',
+    International: 'International',
+    '19+': '19+',
+    LGBTQ: 'LGBTQ',
+    '짤.밈': '짤 · 밈',
+  };
+
+  // 매핑된 지역명이 있으면 해당 포맷 사용
+  for (const [key, value] of Object.entries(regionMappings)) {
+    if (formatted.includes(key)) {
+      formatted = formatted.replace(key, value);
+      break;
+    }
+  }
+
+  return formatted;
 }
 
 const MyEventVenues = ({
