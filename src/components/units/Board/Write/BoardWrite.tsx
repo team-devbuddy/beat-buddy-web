@@ -40,6 +40,7 @@ export default function BoardWrite() {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const searchParams = useSearchParams();
   const postId = Number(searchParams.get('postId'));
+  const returnUrl = searchParams.get('returnUrl');
 
   const orderedTags = [...selectedTags, ...FIXED_HASHTAGS.filter((tag) => !selectedTags.includes(tag))];
 
@@ -254,7 +255,13 @@ export default function BoardWrite() {
       } else {
         // 새 글쓰기 모드
         await createNewPost(accessToken, dto, newImageFiles);
-        router.push('/board');
+
+        // returnUrl이 있으면 해당 URL로, 없으면 기본적으로 /board로 이동
+        if (returnUrl) {
+          router.push(returnUrl);
+        } else {
+          router.push('/board');
+        }
       }
     } catch (e) {
       console.error('업로드 실패:', e);

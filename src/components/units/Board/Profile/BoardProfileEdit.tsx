@@ -29,22 +29,60 @@ export default function BoardProfileEdit() {
   console.log('memberId', memberId);
 
   useEffect(() => {
-    // userProfileState에서 프로필 정보 가져오기
-    if (userProfile) {
-      console.log('userProfile 정보:', userProfile);
+    const initializeProfile = async () => {
+      try {
+        // userProfileState에서 프로필 정보 가져오기
+        if (userProfile) {
+          console.log('userProfile 정보:', userProfile);
 
-      // 게시판 프로필 정보로 초기화
-      setNickname(userProfile.postProfileNickname || '');
-      setOriginalNickname(userProfile.postProfileNickname || '');
-      setProfileImage(userProfile.postProfileImageUrl || '/icons/gray-profile.svg');
-    } else {
-      console.log('userProfile이 없음 - 기본값 사용');
-      // userProfile이 없는 경우 기본값 설정
-      setNickname('사용자');
-      setOriginalNickname('사용자');
-      setProfileImage('/icons/gray-profile.svg');
-    }
-  }, [userProfile]);
+          // 게시판 프로필 정보로 초기화
+          setNickname(userProfile.postProfileNickname || '');
+          setOriginalNickname(userProfile.postProfileNickname || '');
+          setProfileImage(userProfile.postProfileImageUrl || '/icons/gray-profile.svg');
+        } else {
+          console.log('userProfile이 없음 - API로 프로필 정보 가져오기');
+
+          // userProfile이 없는 경우 API로 프로필 정보 가져오기
+          if (accessToken) {
+            const profileData = await getUserProfile(accessToken);
+            if (profileData) {
+              console.log('API로 가져온 프로필 정보:', profileData);
+
+              // 게시판 프로필 정보로 초기화
+              const postNickname = profileData.postProfileNickname || profileData.nickname || '';
+              const postImage =
+                profileData.postProfileImageUrl || profileData.profileImageUrl || '/icons/gray-profile.svg';
+
+              setNickname(postNickname);
+              setOriginalNickname(postNickname);
+              setProfileImage(postImage);
+
+              // userProfileState도 업데이트
+              setUserProfile(profileData);
+            } else {
+              // API 응답이 없는 경우 기본값 설정
+              setNickname('사용자');
+              setOriginalNickname('사용자');
+              setProfileImage('/icons/gray-profile.svg');
+            }
+          } else {
+            // accessToken이 없는 경우 기본값 설정
+            setNickname('사용자');
+            setOriginalNickname('사용자');
+            setProfileImage('/icons/gray-profile.svg');
+          }
+        }
+      } catch (error) {
+        console.error('프로필 정보 초기화 실패:', error);
+        // 에러 발생 시 기본값 설정
+        setNickname('사용자');
+        setOriginalNickname('사용자');
+        setProfileImage('/icons/gray-profile.svg');
+      }
+    };
+
+    initializeProfile();
+  }, [userProfile, accessToken, setUserProfile]);
 
   const handleProfileChange = async (newNickname?: string, newImage?: File) => {
     setErrorMessage('');
@@ -58,6 +96,14 @@ export default function BoardProfileEdit() {
         // 닉네임 변경 성공 시 모달 표시
         setSuccessMessage('닉네임이 변경되었어요!');
         setShowSuccessModal(true);
+
+        // userProfileState도 업데이트 (닉네임 변경 반영)
+        if (userProfile) {
+          setUserProfile({
+            ...userProfile,
+            postProfileNickname: newNickname,
+          });
+        }
       }
       if (newImage) {
         const imageUrl = URL.createObjectURL(newImage);

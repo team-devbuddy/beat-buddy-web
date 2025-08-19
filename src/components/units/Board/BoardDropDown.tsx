@@ -12,12 +12,18 @@ import { getPostDetail } from '@/lib/actions/detail-controller/board/boardWriteU
 import { deleteComment } from '@/lib/actions/comment-controller/deleteComment';
 import { submitReport } from '@/lib/actions/report-controller/submitReport';
 import { deleteEvent } from '@/lib/actions/event-controller/deleteEvent';
+import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 
 interface PostProps {
   nickname: string;
   isAnonymous: boolean;
   memberId?: number; // 게시글 작성자 ID 추가
   writerId?: number; // 게시글 작성자 ID 추가
+  postProfileNickname?: string;
+  postProfileImageUrl?: string;
+  isPostProfileCreated?: boolean;
+  businessName?: string;
+  role: string;
 }
 
 interface DropdownItem {
@@ -34,7 +40,7 @@ interface DropdownProps {
   postId: number;
   commentId?: number | null;
   eventId?: number;
-  type?: 'event' | 'board' | 'comment';
+  type?: 'event' | 'board' | 'comment' | 'profile';
   commentAuthorName?: string; // 댓글 작성자명 추가
   onCommentDelete?: () => void; // 댓글 삭제 후 콜백 추가
   writerId?: number; // 댓글 작성자의 writerId 추가
@@ -61,7 +67,7 @@ const BoardDropdown = ({
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [modalType, setModalType] = useState<'block' | 'report' | 'delete' | null>(null);
   const [reportReason, setReportReason] = useState('');
-  const [post, setPost] = useState<PostProps>({ nickname: '', isAnonymous: false });
+  const [post, setPost] = useState<PostProps>({ nickname: '', isAnonymous: false, role: '' });
   const [showReportCompleteModal, setShowReportCompleteModal] = useState(false);
   const [showBlockCompleteModal, setShowBlockCompleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'post' | 'comment' | 'event'; id: number } | null>(null);
@@ -89,8 +95,8 @@ const BoardDropdown = ({
     if (modalType === 'block') {
       const fetchPost = async () => {
         try {
-          const postDetail = await getPostDetail('free', postId, accessToken);
-          setPost(postDetail);
+          const profileInfo = await getProfileinfo(accessToken, postId.toString());
+          setPost(profileInfo);
         } catch (error) {
           console.error('게시물 정보 가져오기 실패:', error);
         }
@@ -324,6 +330,7 @@ const BoardDropdown = ({
               <p className="mb-[0.38rem] text-subtitle-20-bold text-white">
                 {type === 'comment' && `${commentAuthorName}님을 차단하시겠어요?`}
                 {type === 'board' && `${post.isAnonymous ? '익명' : post.nickname}님을 차단하시겠어요?`}
+                {type === 'profile' && `${post.postProfileNickname}님을 차단하시겠어요?`}
               </p>
               <p className="mb-5 text-center text-body-14-medium text-gray300">
                 해당 작성자의 게시글과 댓글이

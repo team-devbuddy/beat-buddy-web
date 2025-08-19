@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useRecoilValue } from 'recoil';
+import { userProfileState } from '@/context/recoil-context';
 import FollowItem from './FollowItem';
 import { getFollowers } from '@/lib/actions/follow-controller/getFollowers';
 
@@ -25,6 +27,7 @@ export default function FollowerList({ userId, accessToken }: FollowerListProps)
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const userProfile = useRecoilValue(userProfileState);
 
   const lastFollowerElementRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -75,11 +78,27 @@ export default function FollowerList({ userId, accessToken }: FollowerListProps)
     );
   }
 
+  // 팔로워 정렬 우선순위 계산 함수
+  const getFollowerSortPriority = (follower: User) => {
+    // 나 자신은 맨 위
+    if (userProfile?.memberId === follower.memberId) return 0;
+    // isFollower가 true이므로 상대방이 나를 팔로우하고 있음
+    if (follower.isFollowing) return 1; // 팔로잉 (맞팔로우)
+    return 2; // 팔로우 (상대방만 나를 팔로우)
+  };
+
+  // 팔로워 목록을 정렬 (팔로잉 -> 맞팔로우 -> 팔로우 순서)
+  const sortedFollowers = [...followers].sort((a, b) => {
+    const aPriority = getFollowerSortPriority(a);
+    const bPriority = getFollowerSortPriority(b);
+    return aPriority - bPriority;
+  });
+
   return (
     <div className="bg-BG-black px-4 py-[0.88rem]">
       <div className="space-y-[2rem]">
-        {followers.map((follower, index) => (
-          <div key={follower.memberId} ref={index === followers.length - 1 ? lastFollowerElementRef : null}>
+        {sortedFollowers.map((follower, index) => (
+          <div key={follower.memberId} ref={index === sortedFollowers.length - 1 ? lastFollowerElementRef : null}>
             <FollowItem user={follower} isFollower={true} />
           </div>
         ))}
@@ -87,4 +106,3 @@ export default function FollowerList({ userId, accessToken }: FollowerListProps)
     </div>
   );
 }
-  

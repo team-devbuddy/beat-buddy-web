@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useRecoilValue } from 'recoil';
+import { userProfileState } from '@/context/recoil-context';
 import FollowItem from './FollowItem';
 import { getFollowing } from '@/lib/actions/follow-controller/getFollowing';
 
@@ -25,6 +27,7 @@ export default function FollowingList({ userId, accessToken }: FollowingListProp
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const userProfile = useRecoilValue(userProfileState);
 
   const lastFollowingElementRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -75,11 +78,26 @@ export default function FollowingList({ userId, accessToken }: FollowingListProp
     );
   }
 
+  // 팔로잉 정렬 우선순위 계산 함수
+  const getFollowingSortPriority = (user: User) => {
+    // 나 자신은 맨 위
+    if (userProfile?.memberId === user.memberId) return 0;
+    if (user.isFollowing) return 1; // 팔로잉
+    return 2; // 팔로우 (상대방이 나를 팔로우하지 않음)
+  };
+
+  // 팔로잉 목록을 정렬 (팔로잉 -> 맞팔로우 -> 팔로우 순서)
+  const sortedFollowing = [...following].sort((a, b) => {
+    const aPriority = getFollowingSortPriority(a);
+    const bPriority = getFollowingSortPriority(b);
+    return aPriority - bPriority;
+  });
+
   return (
     <div className="bg-BG-black px-4 py-[0.88rem]">
       <div className="space-y-[2rem]">
-        {following.map((user, index) => (
-          <div key={user.memberId} ref={index === following.length - 1 ? lastFollowingElementRef : null}>
+        {sortedFollowing.map((user, index) => (
+          <div key={user.memberId} ref={index === sortedFollowing.length - 1 ? lastFollowingElementRef : null}>
             <FollowItem user={user} />
           </div>
         ))}

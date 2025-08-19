@@ -190,6 +190,7 @@ export default function BoardProfileHeader({
             postId={memberId} // memberId를 postId 대신 사용
             onClose={() => setIsDropdownOpen(false)}
             position={dropdownPosition}
+            type="profile"
           />
         )}
       </header>

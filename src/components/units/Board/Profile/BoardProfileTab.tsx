@@ -63,7 +63,9 @@ export default function BoardProfileTab({ isAuthor }: { isAuthor: boolean }) {
   };
 
   const handleWritePost = () => {
-    router.push('/board/write');
+    // 현재 프로필 페이지 URL을 returnUrl로 전달
+    const currentUrl = window.location.pathname + window.location.search;
+    router.push(`/board/write?returnUrl=${encodeURIComponent(currentUrl)}`);
   };
 
   // 스크롤에 따른 투명도 계산
