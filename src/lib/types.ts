@@ -8,14 +8,14 @@ export interface Term {
 
 // src/lib/types.ts
 export interface Club {
-  venueId: number;
+  id: number;
+  venueId?: number; // 하트비트 상태와 매핑을 위한 필드 추가
   entranceFee: number;
   entranceNotice: string;
-  isHeartbeat: boolean;
+  isHeartbeat?: boolean; // optional로 변경
   tagList: any;
   createdAt: string;
   updatedAt: string;
-  id: number;
   englishName: string;
   koreanName: string;
   region: string;
@@ -33,6 +33,7 @@ export interface Club {
   backgroundUrl: string[];
   heartbeatNum: number;
   smokingAllowed: boolean;
+  freeEntrance?: boolean; // API 응답에 있는 필드 추가
 }
 
 export interface ClubProps {
@@ -106,10 +107,11 @@ export interface HeartBeat {
   isHeartbeat: boolean;
 }
 export interface MapClub {
+  id: number;
   address: string;
   englishName: string;
   tagList?: string[];
-  isHeartbeat: boolean;
+  isHeartbeat?: boolean;
 }
 
 export interface MagazineProps {
@@ -137,7 +139,6 @@ export interface UserProfile {
   postProfileNickname: string;
   postProfileImageUrl: string;
 }
-
 
 export interface EventDetail {
   eventId: number;

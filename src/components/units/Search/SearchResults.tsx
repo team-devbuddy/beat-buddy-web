@@ -5,7 +5,7 @@ import { SearchResultsProps, Club } from '@/lib/types';
 import ClubList from '../Main/ClubList';
 import SearchHeader from './SearchHeader';
 import NoResults from './NoResult';
-import MapView from './Map/MapView';
+import MapView from '../Map/MapView';
 import DropdownGroup from './DropdownGroup';
 import MapButton from './Map/MapButton';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -64,7 +64,13 @@ export default function SearchResults({
   const accessToken = useRecoilValue(accessTokenState);
   const initialLoadRef = useRef(true);
 
-  const [filteredClubs, setFilteredClubs] = useState(initialFilteredClubs);
+  // venueId가 없는 경우 id로 설정
+  const processedInitialClubs = initialFilteredClubs.map((club) => ({
+    ...club,
+    venueId: club.venueId ?? club.id,
+  }));
+
+  const [filteredClubs, setFilteredClubs] = useState(processedInitialClubs);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -153,7 +159,7 @@ export default function SearchResults({
         if (append) {
           setFilteredClubs((prev) => {
             const existingIds = new Set(prev.map((c) => c.venueId));
-            const newClubs = clubs.filter((c: Club) => !existingIds.has(c.venueId));
+            const newClubs = clubs.filter((c: Club) => !existingIds.has(c.venueId ?? c.id));
             const result = [...prev, ...newClubs];
             console.log('🔄 무한스크롤 결과:', {
               기존: prev.length,
@@ -307,7 +313,7 @@ export default function SearchResults({
 
         setFilteredClubs((prev) => {
           const existingIds = new Set(prev.map((c) => c.venueId));
-          const newClubs = clubs.filter((c: Club) => !existingIds.has(c.venueId));
+          const newClubs = clubs.filter((c: Club) => !existingIds.has(c.venueId ?? c.id));
           const result = [...prev, ...newClubs];
           console.log('페이지 로드 결과:', {
             기존: prev.length,
@@ -368,11 +374,13 @@ export default function SearchResults({
   useEffect(() => {
     if (filteredClubs.length > 0) {
       const likedStatuses = filteredClubs.reduce((acc: { [key: number]: boolean }, club: Club) => {
-        acc[club.venueId] = club.isHeartbeat || false;
+        const key = club.venueId ?? club.id;
+        acc[key] = club.isHeartbeat || false;
         return acc;
       }, {});
       const heartbeatNumbers = filteredClubs.reduce((acc: { [key: number]: number }, club: Club) => {
-        acc[club.venueId] = club.heartbeatNum || 0;
+        const key = club.venueId ?? club.id;
+        acc[key] = club.heartbeatNum || 0;
         return acc;
       }, {});
       setLikedClubs((prev) => ({ ...prev, ...likedStatuses }));

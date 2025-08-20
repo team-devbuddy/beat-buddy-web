@@ -26,11 +26,85 @@ const getCurrentLocation = (): Promise<{ latitude: number; longitude: number }> 
   });
 };
 
+// 모든 베뉴 정보를 가져오는 함수 (초기 렌더링용)
+export const getAllVenues = async (accessToken: string | null) => {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/venue-info`;
+
+    console.log('🏢 모든 베뉴 정보 API 호출:', url);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Access: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('모든 베뉴 정보 API 에러 응답:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorText,
+        url,
+      });
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log('🏢 모든 베뉴 정보 API 응답:', data);
+
+    // API 응답의 상세 구조 확인
+    if (data.content && Array.isArray(data.content) && data.content.length > 0) {
+      console.log('🏢 첫 번째 클럽 데이터 상세:', {
+        firstClub: data.content[0],
+        allKeys: Object.keys(data.content[0]),
+        hasTagList: 'tagList' in data.content[0],
+        tagListValue: data.content[0].tagList,
+      });
+    }
+
+    // API 응답 구조에 따라 클럽 배열과 페이지 정보 분리
+    if (data.content && Array.isArray(data.content)) {
+      // Spring Boot Page 형태의 응답
+      return {
+        clubs: data.content,
+        hasMore: !data.last,
+        totalElements: data.totalElements,
+        totalPages: data.totalPages,
+        currentPage: data.number + 1,
+      };
+    } else if (Array.isArray(data)) {
+      // 단순 배열 형태의 응답
+      return {
+        clubs: data,
+        hasMore: false,
+        totalElements: data.length,
+        totalPages: 1,
+        currentPage: 1,
+      };
+    } else {
+      // 기타 형태의 응답
+      return {
+        clubs: data,
+        hasMore: false,
+        totalElements: 0,
+        totalPages: 1,
+        currentPage: 1,
+      };
+    }
+  } catch (error) {
+    console.error('모든 베뉴 정보 API 호출 실패:', error);
+    throw error;
+  }
+};
+
 // 통합된 검색 함수 (fetchVenues + filterDropdown)
 export const searchVenues = async (filters: any, accessToken: string | null) => {
   try {
     // 통합된 API 엔드포인트 사용
-    let url = `${process.env.NEXT_PUBLIC_SERVER_URL}/search/home/drop-down`;
+    let url = `${process.env.NEXT_PUBLIC_SERVER_URL}/search/map/drop-down`;
     const params = new URLSearchParams();
 
     if (filters.sortCriteria === '가까운 순') {
@@ -56,14 +130,8 @@ export const searchVenues = async (filters: any, accessToken: string | null) => 
       url += `?${params.toString()}`;
     }
 
-    console.log('검색 API 호출:', {
-      url,
-      filters,
-      hasLocation: params.has('latitude'),
-    });
-
     const requestBody: any = {
-      sortCriteria: filters.sortCriteria || '가까운 순', // 거리순을 기본값으로
+      sortCriteria: filters.sortCriteria || '인기순', // 기본값을 인기순으로 변경
     };
 
     // 빈 값이 아닌 경우에만 추가
@@ -77,7 +145,18 @@ export const searchVenues = async (filters: any, accessToken: string | null) => 
       requestBody.regionTag = filters.regionTag.trim();
     }
 
-    console.log('검색 API 요청 본문:', requestBody);
+    // 가까운 순 정렬일 때 위도/경도 정보를 requestBody에도 포함
+    if (filters.sortCriteria === '가까운 순' && params.has('latitude') && params.has('longitude')) {
+      requestBody.latitude = parseFloat(params.get('latitude')!);
+      requestBody.longitude = parseFloat(params.get('longitude')!);
+    }
+
+    console.log('검색 API 호출:', {
+      url,
+      filters,
+      hasLocation: params.has('latitude'),
+      requestBody,
+    });
 
     const response = await fetch(url, {
       method: 'POST',
@@ -156,12 +235,12 @@ export const fetchVenues = (query: string[], accessToken: string | null) => {
     keyword = '',
     genreTag = '',
     regionTag = '',
-    sortCriteria = '가까운 순',
+    sortCriteria = '인기순',
     page = 1,
     size = 10,
   } = {
     keyword: query.join(' '),
-    sortCriteria: '가까운 순', // 거리순을 기본값으로
+    sortCriteria: '인기순', // 기본값을 인기순으로 변경
   };
   return searchVenues(
     {

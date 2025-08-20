@@ -1,5 +1,5 @@
-import { HeartbeatProps } from '@/lib/types';
-export async function getMyHearts(accessToken: string): Promise<HeartbeatProps[]> {
+import { HeartBeat } from '@/lib/types';
+export async function getMyHearts(accessToken: string): Promise<HeartBeat[]> {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/heartbeat/all`, {
     method: 'GET',
     headers: {

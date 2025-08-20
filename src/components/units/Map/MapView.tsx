@@ -3,183 +3,173 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Club, SearchResultsProps } from '@/lib/types';
 import BottomSheetComponent, { BottomSheetRef } from '@/components/units/Search/Map/BottomSheet';
-import GoogleMap from '@/components/common/GoogleMap';
 import 'react-spring-bottom-sheet/dist/style.css';
 import MapSearchButton from '@/components/units/Search/Map/MapSearchButton';
 import SearchHeader from '@/components/units/Search/SearchHeader';
 import { fetchVenues } from '@/lib/actions/search-controller/filterDropdown';
-import { fetchVenuesByLocation } from '@/lib/actions/search-controller/fetchVenuesByLocation';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, clickedClubState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
-import NaverMap from '@/components/common/NaverMap';
+import NaverMap, { NaverMapHandle } from '@/components/common/NaverMap';
 import { getMyHearts } from '@/lib/actions/hearbeat-controller/getMyHearts';
+import CurrentLocationButton from '@/components/units/Search/Map/CurrentLocationButton';
 
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
-  const mapRef = useRef<{ filterAddressesInView: () => Promise<Club[]> } | null>(null);
-  const [currentFilteredClubs, setCurrentFilteredClubs] = useState<Club[]>(filteredClubs);
-  const [allClubs, setAllClubs] = useState<Club[]>([]);
+  const mapRef = useRef<NaverMapHandle | null>(null);
+
+  const processedFilteredClubs =
+    filteredClubs?.map((club: Club) => ({
+      ...club,
+      venueId: club.id,
+      tagList: club.tagList || [],
+    })) || [];
+
+  const [currentFilteredClubs, setCurrentFilteredClubs] = useState<Club[]>(processedFilteredClubs);
+  const [allClubs, setAllClubs] = useState<Club[]>(processedFilteredClubs);
   const [loading, setLoading] = useState(false);
   const accessToken = useRecoilValue(accessTokenState);
   const [clickedClub, setClickedClub] = useRecoilState(clickedClubState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
-  const isEmpty = (filteredClubs?.length ?? 0) === 0;
   const [isMapSearched, setIsMapSearched] = useState(false);
-  const [clubsInView, setClubsInView] = useState<Club[]>([]);
-  const isFirstSearch = useRef(true);
 
-  // 좋아요 상태 초기화
-  useEffect(() => {
-    const fetchLikedStatuses = async () => {
-      if (accessToken) {
-        try {
-          const heartbeats = await getMyHearts(accessToken);
-          const likedStatuses = heartbeats.reduce(
-            (acc, heartbeat) => {
-              acc[heartbeat.venueId] = heartbeat.isHeartbeat;
-              return acc;
-            },
-            {} as { [key: number]: boolean },
-          );
-          setLikedClubs((prev) => ({ ...prev, ...likedStatuses }));
+  const hasLoadedClubs = useRef(false);
+  const clubsCache = useRef<Club[]>([]);
 
-          const heartbeatNumbers = heartbeats.reduce(
-            (acc, heartbeat) => {
-              acc[heartbeat.venueId] = heartbeat.heartbeatNum;
-              return acc;
-            },
-            {} as { [key: number]: number },
-          );
-          setHeartbeatNums((prev) => ({ ...prev, ...heartbeatNumbers }));
-        } catch (error) {
-          console.error('Error fetching liked statuses:', error);
-        }
-      }
-    };
-
-    fetchLikedStatuses();
-  }, [accessToken, setLikedClubs, setHeartbeatNums]);
-
-  // 모든 클럽 데이터 가져오기
+  // ✅ 초기 로딩에서 전체 clubs 불러오기
   useEffect(() => {
     const getAllClubs = async () => {
-      if (isEmpty && allClubs.length === 0) {
-        setLoading(true);
-        try {
-          const response = await fetchVenues([], accessToken);
-          const clubs = response.clubs || response;
-          console.log('🔍 모든 클럽 데이터 가져오기:', {
-            '총 클럽 수': clubs.length,
-            '클럽 목록': clubs.map((club: Club) => ({
-              id: club.id,
-              name: club.englishName || club.koreanName,
-              address: club.address,
-            })),
-          });
-          setAllClubs(clubs);
-          // 초기 로드 시에만 currentFilteredClubs 설정
-          if (currentFilteredClubs.length === 0) {
-            setCurrentFilteredClubs(clubs);
-          }
-        } catch (error) {
-          console.error('Failed to fetch all clubs:', error);
-        } finally {
-          setLoading(false);
+      if (hasLoadedClubs.current) return;
+      setLoading(true);
+      try {
+        const response = await fetchVenues([], accessToken);
+        const clubs = response.clubs || response;
+        const clubsWithVenueId = clubs.map((club: Club) => ({
+          ...club,
+          venueId: club.id,
+        }));
+
+        clubsCache.current = clubsWithVenueId;
+        hasLoadedClubs.current = true;
+        setAllClubs(clubsWithVenueId);
+
+        if (currentFilteredClubs.length === 0) {
+          setCurrentFilteredClubs(clubsWithVenueId);
         }
+      } catch (error) {
+        console.error('Failed to fetch all clubs:', error);
+      } finally {
+        setLoading(false);
       }
     };
+    if (allClubs.length === 0) getAllClubs();
+  }, [accessToken, allClubs.length, currentFilteredClubs.length]);
 
-    getAllClubs();
-  }, [isEmpty, allClubs.length, accessToken]);
+  // ✅ 지도에 표시할 목록은 무조건 currentFilteredClubs
+  const clubsToDisplay = currentFilteredClubs;
 
-  useEffect(() => {
-    if (sheetRef.current) {
-      console.log('BottomSheet is ready:', sheetRef.current);
-    } else {
-      console.error('BottomSheet ref is not assigned');
-    }
-  }, [sheetRef]);
+  // 디버깅: clubsToDisplay 업데이트 확인
+  console.log('🗺️ clubsToDisplay 상태:', {
+    'currentFilteredClubs.length': currentFilteredClubs.length,
+    'clubsToDisplay.length': clubsToDisplay.length,
+    isMapSearched: isMapSearched,
+    '필터링 결과': currentFilteredClubs.length === 0 ? '빈배열' : `${currentFilteredClubs.length}개 클럽`,
+  });
 
-  // 클릭된 클럽이 변경될 때 바텀시트의 위치를 조정
-  useEffect(() => {
-    if (clickedClub && sheetRef.current) {
-      // 클럽이 클릭되었을 때 바텀시트를 중간 위치로 올림
-      sheetRef.current.openWithSnap(1); // 중간 위치(스냅 포인트 인덱스 1)로 설정
-    }
-  }, [clickedClub]);
-
-  // 지도에 표시된 클럽들 업데이트
-  const handleSearch = (filteredClubsInView: Club[]) => {
-    if (isMapSearched) {
-      setCurrentFilteredClubs(filteredClubsInView);
-    }
-  };
-
-  // 지도 검색 버튼 클릭 핸들러
+  // 🔍 지도 검색 버튼 클릭
   const handleMapSearchClick = async () => {
-    // 클릭된 클럽 상태 초기화
+    console.log('🔍 지도 검색 버튼 클릭됨');
     setClickedClub(null);
-
-    // 지도 검색 모드 활성화
     setIsMapSearched(true);
 
-    // 현재 보이는 클럽들로 업데이트 (비동기 처리 대기)
     if (mapRef.current) {
-      // 바텀시트를 먼저 초기화
-      if (sheetRef.current) {
-        sheetRef.current.openWithSnap(2);
-      }
+      try {
+        const bounds = await mapRef.current.getBounds();
+        if (!bounds) {
+          console.log('🗺️ bounds를 가져올 수 없음');
+          setCurrentFilteredClubs([]);
+          return;
+        }
 
-      // 필터링 작업 수행 및 결과 직접 사용
-      const filteredClubs = await mapRef.current.filterAddressesInView();
-      setCurrentFilteredClubs(filteredClubs);
+        console.log('🗺️ 현재 지도 bounds:', bounds);
 
-      // 바텀시트 애니메이션
-      if (sheetRef.current) {
-        setTimeout(() => {
-          sheetRef.current?.openWithSnap(1);
-        }, 10);
+        const clubsInBounds = allClubs.filter((club) => {
+          if (club.latitude == null || club.longitude == null) {
+            console.log('❌ 좌표 없음:', club.englishName);
+            return false;
+          }
+          const inside =
+            club.latitude >= bounds.south &&
+            club.latitude <= bounds.north &&
+            club.longitude >= bounds.west &&
+            club.longitude <= bounds.east;
+
+          console.log(`📍 ${club.englishName} (${club.latitude}, ${club.longitude}) inside?`, inside);
+          return inside;
+        });
+
+        console.log('🗺️ bounds 내 클럽 수:', clubsInBounds.length);
+        console.log('🗺️ 이전 currentFilteredClubs 길이:', currentFilteredClubs.length);
+
+        // 필터링 결과로 currentFilteredClubs 업데이트 (빈배열이어도 그대로)
+        const updatedClubs = clubsInBounds.map((club) => ({
+          ...club,
+          venueId: club.id,
+          tagList: club.tagList || [],
+        }));
+
+        setCurrentFilteredClubs(updatedClubs);
+        console.log('🗺️ currentFilteredClubs 업데이트 완료:', updatedClubs.length, '개');
+
+        // 빈배열인지 확인
+        if (updatedClubs.length === 0) {
+          console.log('🗺️ 필터링 결과: 빈배열 - 빈배열 그대로 설정됨');
+        }
+      } catch (err) {
+        console.error('🗺️ 지도 검색 중 오류:', err);
+        setCurrentFilteredClubs([]);
       }
     }
   };
 
-  // 통합된 useEffect: 외부 검색 결과 및 클릭된 클럽 변경 처리
-  useEffect(() => {
-    // 클릭된 클럽이 있는 경우
-    if (clickedClub && clickedClub.venue) {
-      setIsMapSearched(false);
-      // 클릭된 클럽이 있으면 원래 리스트로 복원
-      const clubsToShow = isEmpty ? allClubs : filteredClubs;
-      setCurrentFilteredClubs(clubsToShow);
-      return;
+  // 📍 현재 위치 버튼 클릭
+  const handleCurrentLocationClick = async () => {
+    try {
+      if (mapRef.current) {
+        const currentLocation = await mapRef.current.moveToCurrentLocation();
+        console.log('📍 현재 위치 이동 완료:', currentLocation);
+
+        const bounds = await mapRef.current.getBounds();
+        if (!bounds) {
+          setCurrentFilteredClubs([]);
+          return;
+        }
+
+        const clubsInBounds = allClubs.filter((club) => {
+          if (club.latitude == null || club.longitude == null) return false;
+          return (
+            club.latitude >= bounds.south &&
+            club.latitude <= bounds.north &&
+            club.longitude >= bounds.west &&
+            club.longitude <= bounds.east
+          );
+        });
+
+        setCurrentFilteredClubs(
+          clubsInBounds.map((club) => ({
+            ...club,
+            venueId: club.id,
+            tagList: club.tagList || [],
+          })),
+        );
+        setIsMapSearched(false);
+        setClickedClub(null);
+      }
+    } catch (error) {
+      console.error('📍 현재위치 처리 중 오류:', error);
+      setCurrentFilteredClubs([]);
     }
-
-    // 외부 검색 결과가 있는 경우
-    if (!isEmpty) {
-      setCurrentFilteredClubs(filteredClubs);
-      setIsMapSearched(false);
-      setClickedClub(null);
-    } else if (allClubs.length > 0 && currentFilteredClubs.length === 0) {
-      // 검색 결과가 없고 allClubs가 있지만 currentFilteredClubs가 비어있는 경우에만 설정
-      setCurrentFilteredClubs(allClubs);
-    }
-  }, [filteredClubs, isEmpty, allClubs, clickedClub, currentFilteredClubs.length]);
-
-  // 지도에 표시할 클럽 목록
-  const clubsToDisplay = isEmpty ? allClubs : filteredClubs;
-
-  console.log('🗺️ 지도에 전달되는 클럽 데이터:', {
-    isEmpty: isEmpty,
-    'allClubs.length': allClubs.length,
-    'filteredClubs.length': filteredClubs?.length || 0,
-    'clubsToDisplay.length': clubsToDisplay.length,
-    clubsToDisplay: clubsToDisplay.map((club) => ({
-      id: club.id,
-      name: club.englishName || club.koreanName,
-      address: club.address,
-    })),
-  });
+  };
 
   return (
     <>
@@ -187,25 +177,35 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
       <div
         style={{
           position: 'absolute',
-          top: '60px', // SearchHeader 높이에 맞춰 조정
+          top: '60px',
           left: 0,
           right: 0,
           height: '50px',
-          background: 'linear-gradient(180deg, #131415 15%, rgba(19, 20, 21, 0.00) 70%)',
+          background: 'linear-gradient(180deg, #17181C 20%, rgba(19, 20, 21, 0.00) 70%)',
           zIndex: 10,
           pointerEvents: 'none',
         }}
       />
-      <NaverMap
-        clubs={clubsToDisplay}
-        minHeight="48.5rem"
-        onAddressesInBounds={handleSearch}
-        ref={mapRef}
-        bottomSheetRef={sheetRef}
-        zoom={isEmpty ? 10 : undefined}
-      />
+      <div style={{ height: 'calc(100vh - 100px)', overflow: 'hidden' }}>
+        <NaverMap
+          clubs={clubsToDisplay}
+          minHeight="48.5rem"
+          ref={mapRef}
+          bottomSheetRef={sheetRef}
+          showLocationButton={false}
+        />
+      </div>
       <MapSearchButton onClick={handleMapSearchClick} />
+      <CurrentLocationButton onClick={handleCurrentLocationClick} />
       <BottomSheetComponent ref={sheetRef} filteredClubs={currentFilteredClubs} isMapSearched={isMapSearched} />
+
+      {/* 디버깅: BottomSheet에 전달되는 데이터 확인 */}
+      {console.log('🗺️ BottomSheet에 전달되는 데이터:', {
+        'currentFilteredClubs.length': currentFilteredClubs.length,
+        isMapSearched: isMapSearched,
+        '전달되는 filteredClubs':
+          currentFilteredClubs.length === 0 ? '빈배열' : `${currentFilteredClubs.length}개 클럽`,
+      })}
     </>
   );
 }

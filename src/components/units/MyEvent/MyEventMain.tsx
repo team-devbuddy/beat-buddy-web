@@ -503,7 +503,7 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
             </div>
             <div className="flex w-full items-center justify-between">
               <span className="text-subtitle-20-bold text-white">
-                {type === 'upcoming' ? '예정된 이벤트' : type === 'past' ? '지난 이벤트' : '내 이벤트'}
+                {type === 'upcoming' ? 'My Events' : type === 'past' ? '지난 이벤트' : '내 이벤트'}
               </span>
             </div>
           </div>

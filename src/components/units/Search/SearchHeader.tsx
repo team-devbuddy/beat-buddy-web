@@ -6,12 +6,12 @@ import { useRecoilState } from 'recoil';
 import { generateLink } from '@/lib/utils/searchUtils';
 import { recentSearchState, isMapViewState, searchQueryState } from '@/context/recoil-context';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
-
+import { usePathname } from 'next/navigation';
 const SearchHeader = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
@@ -19,7 +19,7 @@ const SearchHeader = () => {
   const [inputValue, setInputValue] = useState(''); // 입력 필드 값 별도 관리
 
   const hasQuery = !!searchParams.get('q');
-
+const isVenue = pathname.includes('venue');
   useEffect(() => {
     const query = searchParams.get('q');
     if (query) {
@@ -72,11 +72,14 @@ const SearchHeader = () => {
     }
   };
 
+ 
+
   return (
     <header className="bg-BG-black px-5 pb-[0.88rem] pt-[0.63rem]">
       <div className="relative w-full">
         {/* 
         {hasQuery && (🔙 Back icon */}
+        {isVenue ? null : (
         <div className="absolute left-[0.88rem] top-1/2 z-10 -translate-y-1/2">
           <Image
             src="/icons/arrow_back_ios.svg"
@@ -87,7 +90,7 @@ const SearchHeader = () => {
             className="cursor-pointer"
           />
         </div>
-        {/* )} */}
+        )}
 
         {/* 🔍 Search icon */}
 
@@ -95,7 +98,7 @@ const SearchHeader = () => {
         <div className="relative w-full rounded-[0.5rem] bg-gray700">
           <input
             ref={inputRef}
-            className={`w-full cursor-pointer bg-transparent  pl-[2.37rem] pr-[3rem] text-white safari-input-fix placeholder:text-gray300 focus:outline-none ${inputValue ? 'text-body-15-bold py-[0.72rem]' : 'text-body-13-medium py-[0.81rem]'}`}
+            className={`w-full cursor-pointer bg-transparent ${isVenue ? 'pl-[0.88rem] pr-[3rem]' : 'pl-[2.37rem] pr-[3rem]'} text-white safari-input-fix placeholder:text-gray300 focus:outline-none ${inputValue ? 'text-body-15-bold py-[0.72rem]' : 'text-body-13-medium py-[0.81rem]'}`}
             placeholder="지금 인기 있는 베뉴를 검색해보세요"
             value={inputValue}
             onChange={handleInputChange}

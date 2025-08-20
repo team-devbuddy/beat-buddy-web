@@ -8,7 +8,7 @@ interface CurrentLocationButtonProps {
 }
 
 const CurrentLocationButton = ({ onClick }: CurrentLocationButtonProps) => {
-  const CURRENT_LOCATION_BUTTON_URL = '/icons/currentLocation.png';
+  const CURRENT_LOCATION_BUTTON_URL = '/icons/mapMenow.svg';
   const CURRENT_LOCATION_BUTTON_HOVER_URL = '/icons/pressed.png';
   const [buttonIcon, setButtonIcon] = useState<string>(CURRENT_LOCATION_BUTTON_URL);
 
@@ -28,11 +28,13 @@ const CurrentLocationButton = ({ onClick }: CurrentLocationButtonProps) => {
 
   return (
     <div
-      className="absolute right-6 top-[9.3rem] z-40 cursor-pointer"
+      className="absolute bottom-20 right-5 z-10 cursor-pointer"
       onClick={onClick}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}>
-      <Image src={buttonIcon} alt="Current Location" width={40} height={40} className="current-location-button" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-full border border-main bg-sub2">
+        <Image src={buttonIcon} alt="Current Location" width={24} height={24} className="current-location-button" />
+      </div>
     </div>
   );
 };
