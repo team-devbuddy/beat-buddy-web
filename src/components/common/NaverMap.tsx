@@ -100,7 +100,6 @@ function fitMarkersUpperArea(map: naver.maps.Map, markers: naver.maps.Marker[]) 
   map.setZoom(z);
 }
 
-
 const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
   {
     clubs,
@@ -139,14 +138,35 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
       zoomControl: false,
     });
 
-    if ((window as any).MarkerClustering) {
-      const clustererInstance = new (window as any).MarkerClustering({
+    if (window.MarkerClustering) {
+      const clustererInstance = new window.MarkerClustering({
         minClusterSize: 2,
         maxZoom: 30,
         map: mapInstance,
         markers: [],
         disableClickZoom: false,
         gridSize: 100,
+        // 🎨 클러스터 아이콘 추가
+        icons: [
+          {
+            content: `
+              <div class="custom-cluster" style="position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="/icons/Headers/markerCluster.svg" style="width: 32px; height: 44px;" alt="cluster" />
+                <span class="cluster-count" style="position: absolute; color: #480522; font-weight: 600; font-size: 0.8125rem; margin-top: -2px;"></span>
+              </div>
+            `,
+            size: new window.naver.maps.Size(40, 40),
+            anchor: new window.naver.maps.Point(20, 20),
+          },
+        ],
+        // 🎨 클러스터 스타일링 함수
+        stylingFunction: (clusterMarker: any, count: number) => {
+          const el = clusterMarker.getElement();
+          if (el) {
+            const span = el.querySelector('span');
+            if (span) span.textContent = String(count);
+          }
+        },
       });
       setClusterer(clustererInstance);
     }

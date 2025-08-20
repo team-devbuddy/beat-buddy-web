@@ -85,10 +85,10 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
             <div
               className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
               onClick={(e) => {
-                handleHeartClickWrapper(e, clickedClub.venue.venueId);
+                handleHeartClickWrapper(e, clickedClub.venue.venueId!);
               }}>
               <Image
-                src={likedClubs[clickedClub.venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                src={likedClubs[clickedClub.venue.venueId!] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
                 alt="pink-heart icon"
                 width={32}
                 height={32}
@@ -116,7 +116,9 @@ const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper
               <div className="flex items-center space-x-[0.25rem] text-gray300">
                 <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
                 <span className="text-body3-12-medium">
-                  {heartbeatNums[clickedClub.venue.venueId] !== undefined ? heartbeatNums[clickedClub.venue.venueId] : 0}
+                  {heartbeatNums[clickedClub.venue.venueId!] !== undefined
+                    ? heartbeatNums[clickedClub.venue.venueId!]
+                    : 0}
                 </span>
               </div>
             </div>
