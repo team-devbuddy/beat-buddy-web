@@ -29,7 +29,7 @@ export default function MyHeartbeatMain() {
             venueId: club.venueId,
             entranceFee: 0,
             entranceNotice: '',
-            isHeartbeat: club.isHeartbeat,
+            isHeartbeat: club.isHeartbeat || false,
             tagList: club.tagList,
             createdAt: '',
             updatedAt: '',

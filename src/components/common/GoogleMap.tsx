@@ -119,7 +119,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, G
         // 클릭된 클럽 상태 업데이트 (Recoil)
         setClickedClub({
           venue: club,
-          isHeartbeat: club.isHeartbeat,
+          isHeartbeat: club.isHeartbeat || false,
           tagList: club.tagList || [],
         });
 
@@ -267,8 +267,7 @@ const GoogleMap = forwardRef<{ filterAddressesInView: () => Promise<Club[]> }, G
               title: 'Current Location',
             });
           },
-          () => {
-          },
+          () => {},
         );
       } else {
         console.error('Geolocation is not supported by this browser.');

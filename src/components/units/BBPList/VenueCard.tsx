@@ -124,13 +124,15 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                     className="absolute right-5 top-5 cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleHeartClick(e, venue.venueId);
+                      if (venue.venueId !== undefined) {
+                        handleHeartClick(e, venue.venueId);
+                      }
                     }}
                     variants={heartAnimation}
                     initial="initial"
-                    animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
+                    animate={clickedHeart[venue.venueId!] ? 'clicked' : 'initial'}>
                     <Image
-                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
+                      src={likedClubs[venue.venueId!] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
                       alt="heart icon"
                       width={27}
                       height={27}
@@ -141,8 +143,8 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
                   <div className="absolute bottom-5 left-7 flex items-center space-x-[0.25rem] text-gray100">
                     <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15} height={13} />
                     <span className="text-body-14-medium">
-                      {heartbeatNums[venue.venueId] !== undefined
-                        ? heartbeatNums[venue.venueId].toString().padStart(3, '0')
+                      {heartbeatNums[venue.venueId!] !== undefined
+                        ? heartbeatNums[venue.venueId!].toString().padStart(3, '0')
                         : '000'}
                     </span>
                   </div>

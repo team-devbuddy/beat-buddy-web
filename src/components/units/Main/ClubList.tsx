@@ -137,8 +137,8 @@ export default function ClubList({
                     animate="initial">
                     <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15.6} height={13.7} />
                     <span className="text-body3-12-medium text-gray300">
-                      {heartbeatNums[venue.venueId] !== undefined
-                        ? String(heartbeatNums[venue.venueId]).padStart(3, '0')
+                      {heartbeatNums[venue.venueId!] !== undefined
+                        ? String(heartbeatNums[venue.venueId!]).padStart(3, '0')
                         : '000'}
                     </span>
                   </motion.div>
@@ -147,13 +147,15 @@ export default function ClubList({
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleHeartClick(e, venue.venueId);
+                      if (venue.venueId !== undefined) {
+                        handleHeartClick(e, venue.venueId);
+                      }
                     }}
                     variants={heartAnimation}
                     initial="initial"
-                    animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
+                    animate={clickedHeart[venue.venueId!] ? 'clicked' : 'initial'}>
                     <Image
-                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
+                      src={likedClubs[venue.venueId!] ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
                       alt="heart icon"
                       width={27}
                       height={24}
