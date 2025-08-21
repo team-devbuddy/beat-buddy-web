@@ -393,7 +393,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             </div>
           </motion.div>
         </motion.div>
-        {activeTab === 'review' && venue && isBusiness && (
+        {activeTab === 'review' && venue && (
           <ReviewWriteButton
             venueEngName={venue.englishName}
             venueId={params.id}
