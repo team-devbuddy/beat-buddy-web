@@ -87,7 +87,7 @@ export default function BoardReply({
 
     return (
       <div className={containerClass}>
-        <div className="flex items-center gap-1 pb-[0.88rem] pt-[0.62rem] text-body-13-medium text-gray300">
+        <div className="flex items-center gap-1 pb-[0.88rem]  text-body-13-medium text-gray300">
           <Image src="/icons/block.svg" alt="profile" width={20} height={20} className="rounded-full object-cover" />
           <p className="whitespace-pre-wrap text-body-13-medium text-gray300">차단한 사용자의 댓글입니다.</p>
         </div>
