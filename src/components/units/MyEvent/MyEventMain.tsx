@@ -178,16 +178,19 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
       const nextPage = currentPage + 1;
       const region = selectedRegions.length > 0 ? selectedRegions[0] : undefined;
 
+      // UI label을 serverRegion으로 변환
+      const serverRegion = region ? regionMap[region as keyof typeof regionMap] : undefined;
+
       let response;
       let eventData;
 
       if (activeTab === 'attending') {
         // 참석 이벤트는 getMyPageEvents 사용
-        response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10, region);
+        response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10, serverRegion);
         eventData = response.data?.eventResponseDTOS || [];
       } else {
         // 좋아요 이벤트는 getMyLikedEvents 사용
-        response = await getMyLikedEvents(accessToken, nextPage, 10, region);
+        response = await getMyLikedEvents(accessToken, nextPage, 10, serverRegion);
         eventData = response?.data?.eventResponseDTOS || response || [];
       }
 
@@ -256,6 +259,12 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
       return;
     }
 
+    console.log('🔍 fetchMyEvents 호출:', {
+      activeTab,
+      selectedRegions,
+      selectedRegionsLength: selectedRegions.length,
+    });
+
     setLoading(true);
     if (activeTab === 'attending') {
       setAttendingPage(1);
@@ -268,19 +277,37 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
     }
 
     try {
+      // 지역 필터가 없으면 undefined, 있으면 첫 번째 지역 사용
       const region = selectedRegions.length > 0 ? selectedRegions[0] : undefined;
+
+      // UI label을 serverRegion으로 변환
+      const serverRegion = region ? regionMap[region as keyof typeof regionMap] : undefined;
+
+      console.log('🔍 API 호출 파라미터:', {
+        region,
+        serverRegion,
+        selectedRegions,
+        activeTab,
+      });
+
       let response;
       let eventData;
 
       if (activeTab === 'attending') {
         // 참석 이벤트는 getMyPageEvents 사용
-        response = await getMyPageEvents(accessToken, 'attendance', 1, 10, region);
+        response = await getMyPageEvents(accessToken, 'attendance', 1, 10, serverRegion);
         eventData = response.data?.eventResponseDTOS || [];
       } else {
         // 좋아요 이벤트는 getMyLikedEvents 사용
-        response = await getMyLikedEvents(accessToken, 1, 10, region);
+        response = await getMyLikedEvents(accessToken, 1, 10, serverRegion);
         eventData = response?.data?.eventResponseDTOS || response || [];
       }
+
+      console.log('🔍 API 응답:', {
+        response,
+        eventData,
+        eventDataLength: Array.isArray(eventData) ? eventData.length : 'not array',
+      });
 
       if (activeTab === 'attending') {
         setAttendingEvents(Array.isArray(eventData) ? eventData : []);
@@ -318,6 +345,22 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
   useEffect(() => {
     fetchMyEvents();
   }, [fetchMyEvents]);
+
+  // selectedRegions 변경 감지용 useEffect 추가
+  useEffect(() => {
+    console.log('🔍 selectedRegions 변경 감지:', {
+      selectedRegions,
+      length: selectedRegions.length,
+      willCallAPI: true,
+    });
+
+    // selectedRegions가 변경될 때마다 API 호출
+    if (accessToken) {
+      console.log('🔍 selectedRegions 변경으로 인한 API 호출');
+      // fetchMyEvents를 직접 호출 (중복 방지)
+      fetchMyEvents();
+    }
+  }, [selectedRegions, accessToken, fetchMyEvents]);
 
   // IntersectionObserver를 사용한 무한스크롤
   useEffect(() => {
@@ -465,22 +508,22 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
         </header>
         {/* 탭바 */}
         <div
-          className="relative flex border-b border-gray700"
+          className="relative flex"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
           style={{ touchAction: isSwiping ? 'none' : 'auto' }}>
           <button
             onClick={() => setActiveTab('attending')}
-            className={`flex-1 py-4 text-center text-[0.875rem] font-medium transition-colors ${
-              activeTab === 'attending' ? 'font-bold text-main' : 'text-gray300'
+            className={`flex-1 py-3 text-center text-body-14-medium font-medium transition-colors ${
+              activeTab === 'attending' ? 'font-bold text-main' : 'text-gray100'
             }`}>
             {type === 'upcoming' ? '참석 명단 작성한' : type === 'past' ? '지난' : '참석 명단 작성한'}
           </button>
           <button
             onClick={() => setActiveTab('liked')}
-            className={`flex-1 py-4 text-center text-[0.875rem] font-medium transition-colors ${
-              activeTab === 'liked' ? 'font-bold text-main' : 'text-gray300'
+            className={`flex-1 py-3 text-center text-body-14-medium font-medium transition-colors ${
+              activeTab === 'liked' ? 'font-bold text-main' : 'text-gray100'
             }`}>
             마음에 들어한
           </button>
@@ -501,7 +544,7 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
           {/* 상단 필터 헤더 */}
           <div className="flex items-center justify-between">
             <button
-              className={`rounded-[0.5rem] px-[0.62rem] py-[0.25rem] text-[0.875rem] transition-colors focus:outline-none ${
+              className={`rounded-[0.5rem] px-[0.62rem] py-[0.25rem] text-body-14-medium transition-colors focus:outline-none ${
                 selectedRegions.length > 0 ? 'bg-sub2 font-medium text-main' : 'bg-gray700 text-gray300'
               }`}
               onClick={() => setShowFilter(!showFilter)}>
@@ -526,8 +569,18 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
                     <motion.button
                       key={label}
                       onClick={() => {
+                        console.log('🔍 지역 필터 클릭 전 상태:', {
+                          label,
+                          currentSelected: selectedRegions,
+                          isSelected,
+                          selectedRegionsLength: selectedRegions.length,
+                        });
+
                         setSelectedRegions((prev) => {
+                          console.log('🔍 setSelectedRegions 내부 - prev:', prev);
+
                           if (!Array.isArray(prev)) {
+                            console.log('🔍 prev가 배열이 아님, 새로 생성');
                             return [label];
                           }
 
@@ -535,22 +588,27 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
                           if (prev.includes(label)) {
                             // 이미 선택된 지역이면 해제
                             newRegions = prev.filter((r) => r !== label);
+                            console.log('🔍 지역 해제:', { label, prev, newRegions });
                           } else {
                             // 선택되지 않은 지역이면 추가
                             newRegions = [...prev, label];
+                            console.log('🔍 지역 추가:', { label, prev, newRegions });
                           }
 
-                          // 지역 필터 변경 시에만 서버 API 호출 (추가/해제 모두)
-                          setTimeout(() => {
-                            fetchMyEvents();
-                          }, 100);
+                          console.log('🔍 지역 필터 변경 완료:', {
+                            prev,
+                            newRegions,
+                            label,
+                            action: prev.includes(label) ? '해제' : '추가',
+                            newRegionsLength: newRegions.length,
+                          });
 
                           return newRegions;
                         });
                       }}
                       whileTap={{ scale: 1.1 }}
-                      className={`rounded-[0.38rem] px-[0.63rem] py-[0.25rem] text-[0.875rem] transition-colors focus:outline-none ${
-                        isSelected ? 'bg-sub2 font-medium text-main' : 'bg-gray700 text-gray400'
+                      className={`rounded-[0.38rem] px-[0.63rem] py-[0.25rem] text-body-14-medium transition-colors focus:outline-none ${
+                        isSelected ? 'bg-sub2 font-medium text-main' : 'bg-gray700 text-gray300'
                       }`}
                       transition={{ type: 'spring', stiffness: 300 }}>
                       {label}
@@ -592,7 +650,7 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
                     text={
                       activeTab === 'attending'
                         ? type === 'upcoming'
-                          ? '예정된 이벤트가 없어요'
+                          ? '아직 참석 등록한 이벤트가 없어요'
                           : type === 'past'
                             ? '지난 이벤트가 없어요'
                             : '아직 참석 등록한 이벤트가 없어요'
