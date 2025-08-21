@@ -34,6 +34,8 @@ export interface Club {
   heartbeatNum: number;
   smokingAllowed: boolean;
   freeEntrance?: boolean; // API 응답에 있는 필드 추가
+  endTime?: string;
+  startTime?: string;
 }
 
 export interface ClubProps {

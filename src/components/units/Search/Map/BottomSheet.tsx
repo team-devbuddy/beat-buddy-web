@@ -112,7 +112,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(
     };
 
     // 바텀시트 높이 설정
-    const snapPoints = clickedClub ? [height - 10, 260, 70] : [height - 10, 470, 70];
+    const snapPoints = clickedClub ? [height - 10, 400, 70] : [height - 10, 470, 70];
 
     useImperativeHandle(ref, () => ({
       close: () => setOpen(false),
