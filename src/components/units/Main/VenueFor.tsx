@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 import { isBusinessState } from '@/context/recoil-context';
+import { useEffect } from 'react';
+
 interface VenueForProps {
   userName: string | null;
 }
@@ -12,6 +14,23 @@ interface VenueForProps {
 export default function VenueFor({ userName }: VenueForProps) {
   const accessToken = useRecoilValue(accessTokenState);
   const isBusiness = useRecoilValue(isBusinessState);
+
+  // 디버깅 로그 추가
+  console.log('🔍 VenueFor 컴포넌트:', {
+    userName,
+    accessToken: accessToken ? '있음' : '없음',
+    isBusiness,
+    targetHref: isBusiness ? '/event/write' : '/bbp-list',
+  });
+
+  // isBusinessState 변경 감지
+  useEffect(() => {
+    console.log('🔍 VenueFor - isBusinessState 변경 감지:', {
+      isBusiness,
+      userName,
+      timestamp: new Date().toISOString(),
+    });
+  }, [isBusiness, userName]);
 
   // 비즈니스 회원인 경우 이벤트 작성 페이지로, 일반 회원인 경우 BBP 리스트로
   const targetHref = isBusiness ? '/event/write' : '/bbp-list';
