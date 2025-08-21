@@ -7,7 +7,10 @@ import { getMyParticipate } from '@/lib/actions/event-controller/participate-con
 import toast from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
+
+type StepKey = 'name' | 'gender' | 'phone' | 'sns' | 'people' | 'deposit';
 
 export default function ParticipationFormUnified({ eventId, mode }: { eventId: string; mode?: string | null }) {
   const accessToken = useRecoilValue(accessTokenState) || '';
@@ -16,32 +19,50 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
   const router = useRouter();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
-  // 키보드 상태 관리 (SignupBusiness와 동일)
+  // 키보드 상태
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  // localStorage에서 currentStep 복원 또는 초기값 설정
-  const [currentStep, setCurrentStep] = useState(() => {
+  // 서버 응답으로 steps 구성 (순서 고정)
+  const steps = useMemo<StepKey[]>(() => {
+    if (!event) return [];
+    const arr: StepKey[] = [];
+    if (event.receiveName) arr.push('name');
+    if (event.receiveGender) arr.push('gender');
+    if (event.receivePhoneNumber) arr.push('phone');
+    if (event.receiveSNSId) arr.push('sns');
+    if (event.receiveAccompany) arr.push('people');
+    if (event.receiveMoney) arr.push('deposit'); // 조건부로 실제 진입/스킵 결정
+    return arr;
+  }, [event]);
+
+  // 저장된 인덱스 복원 (없으면 0)
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(`participate-step-${eventId}`);
-      const initialStep = saved ? parseInt(saved) : 1;
-      return initialStep;
+      const saved = localStorage.getItem(`participate-step-index-${eventId}`);
+      const n = saved ? Number(saved) : 0;
+      return isNaN(n) ? 0 : n;
     }
-    return 1;
+    return 0;
   });
 
-  // currentStep이 변경될 때마다 localStorage에 저장
+  // 현재 스텝 키
+  const currentStep = steps[currentStepIndex];
+
+  // 로컬 스토리지 저장
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(`participate-step-${eventId}`, currentStep.toString());
+      localStorage.setItem(`participate-step-index-${eventId}`, String(currentStepIndex));
     }
-  }, [currentStep, eventId]);
+  }, [currentStepIndex, eventId]);
 
+  // 폼 업데이트
   const updateForm = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const resetForm = () => {
+  // 초기화
+  useEffect(() => {
     setForm({
       name: '',
       gender: '',
@@ -51,76 +72,146 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
       totalNumber: 1,
       isPaid: false,
     });
-    setCurrentStep(1);
-  };
+    setCurrentStepIndex(0);
+  }, [eventId, setForm]);
 
+  // 수정 모드 → 기존 데이터 로딩 후 마지막 단계로
   useEffect(() => {
-    resetForm();
-  }, [eventId]);
-
-  // 수정 모드일 때 기존 참석 정보 불러오기
-  useEffect(() => {
-    if (mode === 'edit') {
-      const fetchMyParticipate = async () => {
+    if (mode === 'edit' && event) {
+      (async () => {
         try {
-          const myParticipate = await getMyParticipate(eventId, accessToken);
-          if (myParticipate) {
+          const my = await getMyParticipate(eventId, accessToken);
+          if (my) {
             setForm({
-              name: myParticipate.name || '',
-              gender: myParticipate.gender || '',
-              phoneNumber: myParticipate.phoneNumber || '',
-              snsType: myParticipate.snsType || '',
-              snsId: myParticipate.snsId || '',
-              totalNumber: myParticipate.totalMember || 1,
-              isPaid: myParticipate.isPaid || false,
+              name: my.name || '',
+              gender: my.gender === 'MALE' ? '남성 (M)' : my.gender === 'FEMALE' ? '여성 (F)' : 'None',
+              phoneNumber: my.phoneNumber || '',
+              snsType: my.snsType === 'INSTAGRAM' ? 'Instagram' : my.snsType === 'FACEBOOK' ? 'Facebook' : 'None',
+              snsId: my.snsId || '',
+              totalNumber: my.totalMember || 1,
+              isPaid: my.isPaid || false,
             });
-            setCurrentStep(5);
+            // 모든 스텝 오픈
+            setCurrentStepIndex(Math.max(0, (steps?.length || 1) - 1));
           }
-        } catch (error) {
-          console.error('Failed to fetch my participate info:', error);
+        } catch (e) {
+          console.error(e);
         }
-      };
-      fetchMyParticipate();
+      })();
     }
-  }, [mode, eventId, accessToken]);
+  }, [mode, eventId, accessToken, event, steps, setForm]);
 
-  // VisualViewport API를 사용한 키보드 감지 (SignupBusiness와 동일)
+  // 키보드 감지
   useEffect(() => {
     const handleViewportResize = () => {
       if ('visualViewport' in window) {
         const windowHeight = window.innerHeight;
         const viewportHeight = window.visualViewport?.height || windowHeight;
         const heightDiff = windowHeight - viewportHeight;
-        const threshold = 50; // 50px 이상 차이나야 키보드로 인식
-
-        if (heightDiff > threshold) {
-          setIsKeyboardVisible(true);
-          setKeyboardHeight(heightDiff);
-        } else {
-          setIsKeyboardVisible(false);
-          setKeyboardHeight(0);
-        }
+        const threshold = 50;
+        setIsKeyboardVisible(heightDiff > threshold);
+        setKeyboardHeight(heightDiff > threshold ? heightDiff : 0);
       }
     };
-
-    // 초기 상태 설정
     handleViewportResize();
-
-    // 이벤트 리스너 등록
-    if ('visualViewport' in window) {
-      window.visualViewport?.addEventListener('resize', handleViewportResize);
-    }
-
-    return () => {
-      if ('visualViewport' in window) {
-        window.visualViewport?.removeEventListener('resize', handleViewportResize);
-      }
-    };
+    window.visualViewport?.addEventListener('resize', handleViewportResize);
+    return () => window.visualViewport?.removeEventListener('resize', handleViewportResize);
   }, []);
+
+  // 사전예약금 필요 여부(동적)
+  const depositRequired = !!(event?.receiveMoney && form.totalNumber >= 5);
+  const hasDepositStep = steps.includes('deposit');
+  const depositIndex = steps.indexOf('deposit');
+
+  // 다음 스텝 인덱스 계산(사전예약 스킵 고려)
+  const getNextIndex = (idx: number) => {
+    let next = idx + 1;
+    if (next >= steps.length) return null;
+    if (steps[next] === 'deposit' && !depositRequired) {
+      // deposit 필요 없으면 스킵
+      next = next + 1;
+    }
+    return next < steps.length ? next : null;
+  };
+
+  const advance = () => {
+    const next = getNextIndex(currentStepIndex);
+    if (next !== null) setCurrentStepIndex(next);
+  };
+
+  // people 단계에서 동행 인원 변경 시, 보증금 필요해지면 deposit 단계로 자동 진입
+  useEffect(() => {
+    if (!hasDepositStep) return;
+    if (!depositRequired) return;
+    if (currentStepIndex < 0) return;
+    const idxDeposit = depositIndex;
+    if (idxDeposit !== -1 && currentStepIndex < idxDeposit) {
+      setCurrentStepIndex(idxDeposit);
+    }
+  }, [depositRequired, hasDepositStep, depositIndex, currentStepIndex]);
+
+  // 누적 렌더링: 해당 스텝이 현재 인덱스 이하이면 보이기
+  const showBlock = (k: StepKey) => {
+    const idx = steps.indexOf(k);
+    return idx !== -1 && idx <= currentStepIndex;
+  };
+
+  // 제출 가능 여부(보이는 마지막 단계까지 완료)
+  const lastVisibleIndex = useMemo(() => {
+    if (!hasDepositStep) return steps.length - 1;
+    // deposit 스텝이 있지만 조건 미충족이면 people이 마지막
+    if (!depositRequired) {
+      const iPeople = steps.indexOf('people');
+      return iPeople === -1 ? steps.length - 1 : iPeople;
+    }
+    return steps.length - 1;
+  }, [steps, hasDepositStep, depositRequired]);
+
+  const isOnFinalVisibleStep = currentStepIndex >= lastVisibleIndex;
+
+  const canSubmit =
+    isOnFinalVisibleStep &&
+    (event?.receiveName !== true || form.name.trim().length > 0) &&
+    (event?.receiveGender !== true || form.gender !== '') &&
+    (event?.receivePhoneNumber !== true || form.phoneNumber.length >= 10) &&
+    (event?.receiveSNSId !== true ||
+      form.snsType === 'None' ||
+      (form.snsType === 'Instagram' && form.snsId.trim().length > 0) ||
+      (form.snsType === 'Facebook' && form.snsId.trim().length > 0)) &&
+    (event?.receiveAccompany !== true || form.totalNumber > 0) &&
+    (!depositRequired || form.isPaid);
+
+  // 중앙 확인 버튼 노출 (키보드 입력형만)
+  const shouldShowConfirmButton = () => {
+    switch (currentStep) {
+      case 'name':
+        return isKeyboardVisible && form.name.trim().length > 0;
+      case 'phone':
+        return isKeyboardVisible && form.phoneNumber.length >= 10;
+      case 'sns':
+        return (
+          isKeyboardVisible &&
+          (form.snsType === 'None' ||
+            (form.snsType === 'Instagram' && form.snsId.trim().length > 0) ||
+            (form.snsType === 'Facebook' && form.snsId.trim().length > 0))
+        );
+      default:
+        return false;
+    }
+  };
 
   const handleSubmit = async () => {
     try {
-      const response = await postParticipate(accessToken, eventId, form);
+      const transformedForm = {
+        name: form.name,
+        gender: form.gender === '남성 (M)' ? 'MALE' : form.gender === '여성 (F)' ? 'FEMALE' : 'NONE',
+        phoneNumber: form.phoneNumber,
+        totalNumber: form.totalNumber,
+        isPaid: form.isPaid,
+        snsType: form.snsType === 'Instagram' ? 'INSTAGRAM' : form.snsType === 'Facebook' ? 'FACEBOOK' : 'NONE',
+        snsId: form.snsType === 'None' ? '' : form.snsId,
+      };
+      await postParticipate(accessToken, eventId, transformedForm);
       if (typeof window !== 'undefined') {
         localStorage.setItem('participation-completed', 'true');
         localStorage.setItem('participation-event-id', eventId);
@@ -137,83 +228,6 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
     router.back();
   };
 
-  // 현재 단계에서 확인 버튼을 보여줄지 결정 (SignupBusiness와 동일)
-  const shouldShowConfirmButton = () => {
-    switch (currentStep) {
-      case 1: // 이름 입력
-        return isKeyboardVisible && form.name.trim().length > 0;
-      case 2: // 성별 선택
-        return isKeyboardVisible && form.gender !== '';
-      case 3: // 전화번호 입력
-        return isKeyboardVisible && form.phoneNumber.length >= 10;
-      case 4: // SNS 입력
-        return (
-          isKeyboardVisible &&
-          (form.snsType === 'None' ||
-            (form.snsType === 'Instagram' && form.snsId.trim().length > 0) ||
-            (form.snsType === 'Facebook' && form.snsId.trim().length > 0))
-        ); // 키보드가 보이고 SNS 타입이 선택되고 아이디가 입력된 경우에만 표시
-      default:
-        return false;
-    }
-  };
-
-  // 중앙 확인 버튼 클릭 핸들러
-  const handleConfirmButtonClick = () => {
-    switch (currentStep) {
-      case 1:
-        setCurrentStep(2);
-        break;
-      case 2:
-        setCurrentStep(3);
-        break;
-      case 3:
-        setCurrentStep(4);
-        break;
-      case 4:
-        setCurrentStep(5);
-        break;
-      default:
-        break;
-    }
-
-    // 키보드 숨김
-    setIsKeyboardVisible(false);
-  };
-
-  // 조건별 렌더링 플래그 설정 (단계별로 변경)
-  const showName = event?.receiveName === true && currentStep >= 1;
-  const showGender = event?.receiveGender === true && currentStep >= 2;
-  const showPhone = event?.receivePhoneNumber === true && currentStep >= 3;
-  const showSNS = event?.receiveSNSId === true && currentStep >= 4;
-  const showPeople = event?.receiveAccompany === true && currentStep >= 5;
-  // 사전예약금이 필요한 이벤트이고, 동행인원이 선택되었을 때만 표시
-  const showDeposit = event?.receiveMoney === true && form.totalNumber >= 5;
-
-  // 마지막 단계 정의 - 현재 스텝에서 다음에 보여줄 항목이 있는지 확인
-  const isLastStep = () => {
-    if (currentStep === 1) return !showGender;
-    if (currentStep === 2) return !showPhone;
-    if (currentStep === 3) return !showSNS;
-    if (currentStep === 4) return !showPeople;
-    if (currentStep === 5) return !showDeposit;
-    return true; // 6단계 이상이면 항상 마지막
-  };
-
-  // 신청 버튼 표시 조건 - 현재 스텝에서 필요한 항목들이 모두 완료되면 활성화
-  const canSubmit =
-    isLastStep() &&
-    (event?.receiveName !== true || form.name.trim().length > 0) &&
-    (event?.receiveGender !== true || form.gender !== '') &&
-    (event?.receivePhoneNumber !== true || form.phoneNumber.length >= 10) &&
-    (event?.receiveSNSId !== true ||
-      form.snsType === 'None' ||
-      (form.snsType === 'Instagram' && form.snsId.trim().length > 0) ||
-      (form.snsType === 'Facebook' && form.snsId.trim().length > 0)) &&
-    (event?.receiveAccompany !== true || form.totalNumber > 0) &&
-    (event?.receiveMoney !== true || form.isPaid);
-
-  // 전화번호 포맷팅 함수
   const formatPhoneNumber = (value: string) => {
     const numbers = value.replace(/[^0-9]/g, '');
     if (numbers.length <= 3) return numbers;
@@ -221,9 +235,11 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
     return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
   };
 
+  const disabled = mode === 'edit';
+
   return (
     <>
-      {/* 참석 완료 모달 */}
+      {/* 완료 모달 */}
       <AnimatePresence>
         {showCompletionModal && (
           <>
@@ -239,14 +255,17 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-5">
+              className="fixed inset-0 z-50 flex items-center justify-center p-5"
+            >
               <div
                 className="w-full max-w-[600px] rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-6 text-center"
-                onClick={(e) => e.stopPropagation()}>
+                onClick={(e) => e.stopPropagation()}
+              >
                 <h3 className="mb-6 text-subtitle-20-bold text-white">참석 명단 작성이 완료되었어요!</h3>
                 <button
                   onClick={handleCloseModal}
-                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 font-bold text-gray200">
+                  className="w-full rounded-[0.5rem] bg-gray700 px-[0.5rem] py-3 font-bold text-gray200"
+                >
                   닫기
                 </button>
               </div>
@@ -256,13 +275,9 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
       </AnimatePresence>
 
       <div className="flex flex-col gap-5 px-5 pb-6 text-white">
-        {/* 이름 입력 */}
-        {showName && (
-          <motion.div
-            key="name"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            transition={{ duration: 0.3 }}>
+        {/* 이름 */}
+        {showBlock('name') && (
+          <motion.div key="name" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
             <div className="mb-[0.62rem] flex items-end justify-start gap-[0.38rem]">
               <label className="block text-body1-16-bold">이름</label>
               <label className="block text-body-14-medium text-gray300">Name</label>
@@ -274,57 +289,49 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
               value={form.name}
               onChange={(e) => updateForm('name', e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && form.name.trim().length > 0) {
-                  setCurrentStep(2);
+                if (e.key === 'Enter' && form.name.trim().length > 0 && currentStep === 'name') {
+                  advance();
                 }
               }}
-              disabled={mode === 'edit'}
+              disabled={disabled}
             />
           </motion.div>
         )}
 
         {/* 성별 */}
-        <AnimatePresence mode="wait">
-          {showGender && (
-            <motion.div
-              key="gender"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}>
+        {showBlock('gender') && (
+          <AnimatePresence mode="wait">
+            <motion.div key="gender" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
               <div className="mb-[0.62rem] flex items-end justify-start gap-[0.38rem]">
                 <label className="block text-body1-16-bold">성별</label>
                 <label className="block text-body-14-medium text-gray300">Gender</label>
               </div>
               <div className="grid grid-cols-3 gap-2">
-                {['남성 (M)', '여성 (F)', 'None'].map((gender) => (
+                {['남성 (M)', '여성 (F)', 'None'].map((g) => (
                   <button
-                    key={gender}
+                    key={g}
                     onClick={() => {
-                      updateForm('gender', gender);
-                      setCurrentStep(3);
+                      if (disabled) return;
+                      updateForm('gender', g);
+                      if (currentStep === 'gender') advance();
                     }}
-                    disabled={mode === 'edit'}
-                    className={`text-body-14-semibold rounded-[0.38rem] py-3 transition-colors ${
-                      form.gender === gender
-                        ? 'border border-main bg-sub1 text-white'
-                        : 'text-body-14-semibold border border-gray500 bg-gray500 text-gray300'
-                    }`}>
-                    {gender}
+                    disabled={disabled}
+                    className={`rounded-[0.38rem] py-3 text-body-14-semibold transition-colors ${
+                      form.gender === g ? 'border border-main bg-sub1 text-white' : 'border border-gray500 bg-gray500 text-gray300'
+                    }`}
+                  >
+                    {g}
                   </button>
                 ))}
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
 
-        {/* 연락처 */}
-        <AnimatePresence mode="wait">
-          {showPhone && (
-            <motion.div
-              key="phone"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}>
+        {/* 전화번호 */}
+        {showBlock('phone') && (
+          <AnimatePresence mode="wait">
+            <motion.div key="phone" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
               <div className="mb-[0.62rem] flex items-end justify-start gap-[0.38rem]">
                 <label className="block text-body1-16-bold">전화번호</label>
                 <label className="block text-body-14-medium text-gray300">Contact</label>
@@ -339,33 +346,27 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
                   updateForm('phoneNumber', numbers);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && form.phoneNumber.length >= 10) {
-                    setCurrentStep(4);
+                  if (e.key === 'Enter' && form.phoneNumber.length >= 10 && currentStep === 'phone') {
+                    advance();
                   }
                 }}
                 maxLength={13}
                 inputMode="numeric"
                 pattern="[0-9]*"
-                disabled={mode === 'edit'}
+                disabled={disabled}
               />
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
 
         {/* SNS */}
-        <AnimatePresence mode="wait">
-          {showSNS && (
-            <motion.div
-              key="sns"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}>
+        {showBlock('sns') && (
+          <AnimatePresence mode="wait">
+            <motion.div key="sns" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
               <div className="mb-[0.62rem] flex items-end justify-start gap-[0.38rem]">
                 <label className="block text-body1-16-bold">SNS 아이디</label>
-                <label className="block text-body-14-medium text-gray300">SNS ID</label>
               </div>
 
-              {/* SNS 타입 선택 */}
               <div className="mb-4 grid grid-cols-3 gap-2">
                 {[
                   { display: '인스타그램', value: 'Instagram' },
@@ -375,26 +376,22 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
                   <button
                     key={value}
                     onClick={() => {
+                      if (disabled) return;
                       updateForm('snsType', value);
-                      if (value === 'None') {
-                        // '없음' 선택 시 다음 단계로 진행
-                        if (showPeople) {
-                          setCurrentStep(5); // 동행 인원 단계로
-                        }
+                      if (value === 'None' && currentStep === 'sns') {
+                        advance(); // None이면 즉시 다음
                       }
                     }}
-                    disabled={mode === 'edit'}
-                    className={`text-body-14-semibold rounded-[0.38rem] py-3 transition-colors ${
-                      form.snsType === value
-                        ? 'border border-main bg-sub1 text-white'
-                        : 'text-body-14-semibold border border-gray500 bg-gray500 text-gray300'
-                    }`}>
+                    disabled={disabled}
+                    className={`rounded-[0.38rem] py-3 text-body-14-semibold transition-colors ${
+                      form.snsType === value ? 'border border-main bg-sub1 text-white' : 'border border-gray500 bg-gray500 text-gray300'
+                    }`}
+                  >
                     {display}
                   </button>
                 ))}
               </div>
 
-              {/* SNS ID 입력 (선택된 경우에만) */}
               {form.snsType !== '' && form.snsType !== 'None' && (
                 <input
                   type="text"
@@ -403,62 +400,74 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
                   value={form.snsId}
                   onChange={(e) => updateForm('snsId', e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && form.snsId.trim().length > 0) {
-                      // SNS ID 입력 완료 후 다음 단계로 진행
-                      if (showPeople) {
-                        setCurrentStep(5); // 동행 인원 단계로
-                      }
+                    if (e.key === 'Enter' && form.snsId.trim().length > 0 && currentStep === 'sns') {
+                      advance();
                     }
                   }}
-                  disabled={mode === 'edit'}
+                  disabled={disabled}
                 />
               )}
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
 
         {/* 동행 인원 */}
-        <AnimatePresence mode="wait">
-          {showPeople && (
-            <motion.div
-              key="people"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}>
-              <div className="mb-[0.62rem] flex items-end justify-start gap-[0.38rem]">
+        {showBlock('people') && (
+          <AnimatePresence mode="wait">
+            <motion.div key="people" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
+              <div className="mb-[0.62rem] flex items	end justify-start gap-[0.38rem]">
                 <label className="block text-body1-16-bold">동행 인원</label>
                 <label className="block text-body-14-medium text-gray300">Accompany</label>
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3, 4, 5, 6].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => {
-                      updateForm('totalNumber', num);
-                      setCurrentStep(6);
-                    }}
-                    disabled={mode === 'edit'}
-                    className={`text-body-14-semibold rounded-[0.38rem] py-3 transition-colors ${
-                      form.totalNumber === num
-                        ? 'border border-main bg-sub1 text-white'
-                        : 'text-body-14-semibold border border-gray500 bg-gray500 text-gray300'
-                    }`}>
-                    {num}명
-                  </button>
-                ))}
+              <p className="mb-[0.62rem] text-body-14-medium text-gray300">본인 포함, 총 입장 인원 수를 입력해주세요 (ex. 3)</p>
+              <div className="flex items-end justify-center gap-5">
+                <motion.button
+                  type="button"
+                  title="minus"
+                  onClick={() => {
+                    if (disabled) return;
+                    if (form.totalNumber > 1) updateForm('totalNumber', form.totalNumber - 1);
+                  }}
+                  className={`rounded p-2 text-body-14-medium ${disabled ? 'cursor-not-allowed bg-gray500' : 'bg-gray500'}`}
+                  whileHover={disabled ? {} : { scale: 1.02 }}
+                  whileTap={disabled ? {} : { scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  disabled={disabled}
+                >
+                  <Image src="/icons/check_indeterminate_small.svg" alt="minus" width={20} height={20} />
+                </motion.button>
+                <div className="flex items-center gap-1 border-b border-gray300 px-8 py-3">
+                  <span className="min-w-[0.5rem] text-center text-body-14-bold">{form.totalNumber}</span>
+                  <span className="text-body-14-medium text-gray300">명</span>
+                </div>
+                <motion.button
+                  type="button"
+                  title="plus"
+                  onClick={() => {
+                    if (disabled) return;
+                    updateForm('totalNumber', form.totalNumber + 1);
+                    // 증가 후 deposit 필요해지면 다음으로 넘어가도록(people → deposit 자동 진입)
+                    if (hasDepositStep && currentStep === 'people') {
+                      // depositRequired는 effect에서 감지되어 이동하므로 여기선 생략 가능
+                    }
+                  }}
+                  className={`rounded border p-2 ${disabled ? 'cursor-not-allowed border-main bg-sub1' : 'border-main bg-sub1'}`}
+                  whileHover={disabled ? {} : { scale: 1.02 }}
+                  whileTap={disabled ? {} : { scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  disabled={disabled}
+                >
+                  <Image src="/icons/add.svg" alt="plus" width={20} height={20} />
+                </motion.button>
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
 
-        {/* 사전 예약금 */}
-        <AnimatePresence mode="wait">
-          {showDeposit && (
-            <motion.div
-              key="deposit"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}>
+        {/* 사전 예약금 (조건부 노출) */}
+        {showBlock('deposit') && depositRequired && (
+          <AnimatePresence mode="wait">
+            <motion.div key="deposit" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
               <div className="mb-[0.62rem] flex items-end justify-start gap-[0.38rem]">
                 <label className="block text-body1-16-bold">사전 예약금</label>
                 <label className="block text-body-14-medium text-gray300">Deposit</label>
@@ -468,61 +477,61 @@ export default function ParticipationFormUnified({ eventId, mode }: { eventId: s
                   <button
                     key={status}
                     onClick={() => {
+                      if (disabled) return;
                       updateForm('isPaid', status === '입금 완료');
-                      // 사전 예약금 선택 완료 시 신청 버튼이 나타남
                     }}
-                    disabled={mode === 'edit'}
-                    className={`text-body-14-semibold rounded-[0.38rem] py-3 transition-colors ${
+                    disabled={disabled}
+                    className={`rounded-[0.38rem] py-3 text-body-14-semibold transition-colors ${
                       form.isPaid === (status === '입금 완료')
                         ? 'border border-main bg-sub1 text-white'
-                        : 'text-body-14-semibold border border-gray500 bg-gray500 text-gray300'
-                    }`}>
+                        : 'border border-gray500 bg-gray500 text-gray300'
+                    }`}
+                  >
                     {status}
                   </button>
                 ))}
               </div>
+
+              {/* 제출 버튼 (edit 아닐 때만) */}
               {mode !== 'edit' && (
                 <button
                   onClick={handleSubmit}
-                  className="mt-6 w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90">
+                  className="mt-6 w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90"
+                >
                   신청하기
                 </button>
               )}
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
 
-        {/* 신청 버튼 (사전예약금이 필요하지 않은 경우) */}
-        <AnimatePresence mode="wait">
-          {canSubmit && !showDeposit && mode !== 'edit' && (
-            <motion.div
-              key="submit"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}>
+        {/* 제출 버튼 (보이는 마지막 단계가 deposit이 아니거나, deposit 불필요한 경우) */}
+        {canSubmit && (!hasDepositStep || !depositRequired) && mode !== 'edit' && (
+          <AnimatePresence mode="wait">
+            <motion.div key="submit" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
               <button
                 onClick={handleSubmit}
-                className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90">
+                className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90"
+              >
                 신청하기
               </button>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
       </div>
 
-      {/* 중앙 확인 버튼 - 키보드 위에 표시 (SignupBusiness와 동일) */}
+      {/* 중앙 확인 버튼(키보드 위) */}
       {shouldShowConfirmButton() && (
         <div
           className="fixed left-0 right-0 z-50 flex justify-center bg-BG-black p-4 shadow-lg"
-          style={{
-            bottom: `${keyboardHeight}px`,
-            transition: 'bottom 0.3s ease-out',
-          }}>
+          style={{ bottom: `${keyboardHeight}px`, transition: 'bottom 0.3s ease-out' }}
+        >
           <div className="w-full max-w-[600px]">
             <button
-              onClick={handleConfirmButtonClick}
+              onClick={advance}
               disabled={mode === 'edit'}
-              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50">
+              className="w-full rounded-lg bg-main py-4 text-button-16-semibold text-sub2 transition-colors hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               확인
             </button>
           </div>
