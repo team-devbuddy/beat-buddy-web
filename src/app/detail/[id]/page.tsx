@@ -8,7 +8,6 @@ import Info from '@/components/units/Detail/Info';
 import VenueHours from '@/components/units/Detail/VenueHours';
 import CustomerService from '@/components/units/Detail/CustomerService';
 import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail';
-import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 import {
   accessTokenState,
@@ -77,29 +76,9 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   // recoil-persist로 저장된 detailTabState를 강제로 'info'로 초기화
+
   const setDetailTabState = useSetRecoilState(detailTabState);
-  const setIsBusiness = useSetRecoilState(isBusinessState);
   const router = useRouter();
-
-  // 사용자 프로필에서 role을 확인하여 isBusinessState 업데이트
-  const updateBusinessState = async () => {
-    if (!accessToken) return;
-
-    try {
-      const profileData = await getProfileinfo(accessToken);
-
-      // role이 ADMIN 또는 BUSINESS인지 확인
-      const isBusinessUser = profileData?.role === 'ADMIN' || profileData?.role === 'BUSINESS';
-
-      // isBusinessState 업데이트
-      setIsBusiness(isBusinessUser);
-    } catch (error) {
-    }
-  };
-
-  // 디버깅을 위한 로그
-  console.log('DetailPage params:', params);
-  console.log('params.id:', params.id);
 
   // 슬라이드 관련 상태
   const [dragDirection, setDragDirection] = useState<'left' | 'right' | null>(null);
@@ -270,9 +249,6 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     };
 
     getClubDetail();
-
-    // 사용자 프로필에서 role을 확인하여 isBusinessState 업데이트
-    updateBusinessState();
   }, [params.id, accessToken]);
 
   // 리뷰 탭으로 전환될 때 리뷰 데이터 조회
