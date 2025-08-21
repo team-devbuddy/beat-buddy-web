@@ -302,7 +302,7 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName, 
 
   return (
     <>
-      <div className="pb-[5rem]">
+      <div className="pb-[7rem]">
         <AnimatePresence>
           {reviewsToDisplay.map((review) => {
             // 현재 리뷰의 좋아요 상태와 개수를 안전하게 가져오기
@@ -327,7 +327,7 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName, 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-[0.62rem]">
                     <Image
-                      src={review.profileImageUrl || getRandomProfileImage(review.venueReviewId)}
+                      src={getRandomProfileImage(review.venueReviewId)}
                       alt={`${review.nickname}의 프로필 사진`}
                       className="rounded-full object-cover"
                       width={37}

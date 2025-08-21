@@ -11,6 +11,7 @@ import { accessTokenState, likedEventsState, likeCountState } from '@/context/re
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { heartAnimation } from '@/lib/animation';
+import Loading from '@/app/loading';
 
 interface NewsItem {
   eventId: number;
@@ -142,7 +143,7 @@ const sortNewsByDday = (newsList: NewsItem[]) => {
 
 const EmptyNews = () => {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
+    <div className="flex flex-col items-center justify-center pb-[7rem] pt-20 text-center">
       <Image src="/icons/blackLogo.svg" alt="BeatBuddy Logo" width={50} height={47} className="mb-2" />
       <p className="text-body-14-bold text-gray300">아직 등록된 이벤트가 없어요</p>
     </div>
@@ -275,17 +276,12 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
   }, [handleIntersection, events.length]);
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="mb-6 h-16 w-16 animate-spin rounded-full border-4 border-gray300 border-t-main"></div>
-        <p className="text-body2-15-medium text-gray300">이벤트를 불러오는 중...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="flex flex-col items-center justify-center pb-[7rem] pt-20 text-center">
         <Image src="/icons/grayLogo.svg" alt="BeatBuddy Logo" className="mb-6 h-16 w-16" />
         <p className="text-body2-15-medium text-gray300">{error}</p>
       </div>
@@ -304,13 +300,13 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
       return 'bg-gray500 text-gray200';
     }
     if (dDay === 0) {
-      return 'bg-main text-white';
+      return 'bg-FooterBlack text-main';
     }
     return dDay <= 7 ? 'bg-main text-white' : 'bg-gray500 text-gray200';
   };
 
   return (
-    <div className="px-5 pt-[0.88rem]">
+    <div className="px-5 pb-[7rem] pt-[0.88rem]">
       {/* 뉴스 목록 */}
       <div className="grid grid-cols-2 gap-4">
         {visibleEvents.map((news) => (
@@ -356,7 +352,10 @@ const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
                 <div className="absolute bottom-[0.62rem] left-[0.62rem] flex items-center space-x-[0.25rem]">
                   <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15} height={13} />
                   <span className="text-[0.75rem] text-gray300">
-                    {likeCounts[news.eventId] !== undefined ? likeCounts[news.eventId] : news.likes}
+                    {String(likeCounts[news.eventId] !== undefined ? likeCounts[news.eventId] : news.likes).padStart(
+                      3,
+                      '0',
+                    )}
                   </span>
                 </div>
 

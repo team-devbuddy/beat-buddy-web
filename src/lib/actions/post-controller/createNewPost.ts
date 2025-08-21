@@ -13,8 +13,11 @@ export async function createNewPost(accessToken: string, data: PostCreateRequest
   const timeoutId = setTimeout(() => controller.abort(), 30000); // 30초 타임아웃
 
   try {
+    // 새 게시글 생성 시에는 deleteImageUrls 필드 제거
+    const { deleteImageUrls, ...postData } = data as any;
+
     const formData = new FormData();
-    formData.append('postCreateRequestDTO', JSON.stringify(data));
+    formData.append('postCreateRequestDTO', JSON.stringify(postData));
 
     images.forEach((file, index) => {
       if (file instanceof File) {
@@ -26,7 +29,7 @@ export async function createNewPost(accessToken: string, data: PostCreateRequest
 
     console.log('게시글 생성 요청 시작');
 
-    const res = await fetch('https://api.beatbuddy.world/post/new/free', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/post/new/free`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',

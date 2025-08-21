@@ -134,7 +134,7 @@ const MyEventVenues = ({
         const isEnded = dday === null;
 
         return (
-          <Link key={club.id} href={`/event/${club.id}`}>
+          <Link key={club.eventId} href={`/event/${club.eventId}`}>
             <div className="overflow-hidden rounded-[0.5rem]">
               <div className="relative aspect-square w-full">
                 <Image

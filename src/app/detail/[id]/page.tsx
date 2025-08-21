@@ -88,6 +88,8 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
 
   const handleModalClose = () => {
     setReviewCompleteModal(false);
+    // 리뷰 작성 완료 후 review 탭으로 이동
+    setActiveTab('review');
   };
 
   // 공유 기능
@@ -281,12 +283,12 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             exit={{ opacity: 0, y: -100 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="fixed top-0 z-50 w-full max-w-[600px] bg-BG-black/95 backdrop-blur-sm">
-            <div className="flex items-center justify-between px-5 pb-[0.88rem] pt-[0.62rem]">
+            <div className="flex items-center justify-between px-5 pb-[0.87rem] pt-[0.88rem]">
               <div className="flex items-center">
                 <button onClick={() => router.back()} className="text-white" aria-label="뒤로가기">
                   <Image src="/icons/arrow_back_ios.svg" alt="back icon" width={24} height={24} />
                 </button>
-                <h1 className="truncate text-title-24-bold text-white">{venue.englishName}</h1>
+                <h1 className="truncate text-button-bold text-white">{venue.englishName}</h1>
               </div>
               <div className="flex items-center gap-3">
                 <button className="text-white" aria-label="공유하기" onClick={handleShareClick}>
@@ -399,6 +401,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             venueId={params.id}
             onClick={() => {}}
             isDisabled={false}
+            setActiveTab={setActiveTab}
           />
         )}
         {activeTab === 'event' && venue && isBusiness && (

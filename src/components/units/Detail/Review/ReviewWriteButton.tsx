@@ -8,13 +8,15 @@ interface ReviewWriteButtonProps {
   venueId: string;
   onClick: () => void;
   isDisabled: boolean;
+  setActiveTab: (tab: 'info' | 'review' | 'event') => void;
 }
 
-const ReviewWriteButton = ({ venueEngName, venueId, onClick, isDisabled }: ReviewWriteButtonProps) => {
+const ReviewWriteButton = ({ venueEngName, venueId, onClick, isDisabled, setActiveTab }: ReviewWriteButtonProps) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/review/write?venue=${venueEngName}&venueId=${venueId}`);
+    // 리뷰 작성 페이지로 이동 (tab=review 파라미터 추가)
+    router.push(`/review/write?venue=${venueEngName}&venueId=${venueId}&tab=review`);
   };
 
   return (

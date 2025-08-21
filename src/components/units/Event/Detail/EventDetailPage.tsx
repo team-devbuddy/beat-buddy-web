@@ -215,7 +215,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
     <div className="relative min-h-screen bg-BG-black">
       {/* 기본 헤더 */}
       <div className="absolute left-0 top-0 z-30 w-full">
-        <EventDetailHeader handleBackClick={() => router.push('/event')} />
+        <EventDetailHeader handleBackClick={() => router.back()} />
       </div>
 
       {/* 스크롤 시 나타나는 요약 헤더 */}
@@ -239,8 +239,8 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
                   className="cursor-pointer"
                 />
                 <div className="flex flex-col">
-                  <h1 className="max-w-[200px] truncate text-[1.25rem] font-bold text-white">{eventDetail.title}</h1>
-                </div>
+                  <h1 className="max-w-[200px] text-button-bold text-white">{eventDetail.title}</h1>
+                </div>  
               </div>
 
               {/* 오른쪽: 좋아요와 메뉴 버튼 */}

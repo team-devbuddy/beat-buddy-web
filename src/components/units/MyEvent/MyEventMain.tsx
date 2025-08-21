@@ -4,8 +4,6 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
 import { getMyPageEvents } from '@/lib/actions/event-controller/getMyPageEvents';
 import { getMyLikedEvents } from '@/lib/actions/event-controller/getMyLikedEvents';
-import { getMyEventUpcoming } from '@/lib/actions/event-controller/getMyEventUpcoming';
-import { getMyEventPast } from '@/lib/actions/event-controller/getMyEventPast';
 import { postEventLike } from '@/lib/actions/venue-controller/postEventLike';
 import { deleteEventLike } from '@/lib/actions/venue-controller/deleteEventLike';
 import { Club } from '@/lib/types';
@@ -178,28 +176,18 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
     setIsLoadingMore(true);
     try {
       const nextPage = currentPage + 1;
+      const region = selectedRegions.length > 0 ? selectedRegions[0] : undefined;
+
       let response;
       let eventData;
-      
+
       if (activeTab === 'attending') {
-        // 타입에 따라 다른 API 호출
-        if (type === 'upcoming') {
-          response = await getMyEventUpcoming(accessToken, nextPage, 10, selectedRegions.length > 0 ? selectedRegions[0] : undefined);
-        } else if (type === 'past') {
-          response = await getMyEventPast(accessToken, nextPage, 10, selectedRegions.length > 0 ? selectedRegions[0] : undefined);
-        } else if (type === 'my-event') {
-          response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10, selectedRegions.length > 0 ? selectedRegions[0] : undefined);
-        } else {
-          response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10, selectedRegions.length > 0 ? selectedRegions[0] : undefined);
-        }
-        eventData = response.eventResponseDTOS || response.data?.eventResponseDTOS || [];
+        // 참석 이벤트는 getMyPageEvents 사용
+        response = await getMyPageEvents(accessToken, 'attendance', nextPage, 10, region);
+        eventData = response.data?.eventResponseDTOS || [];
       } else {
-        response = await getMyLikedEvents(
-          accessToken,
-          nextPage,
-          10,
-          selectedRegions.length > 0 ? selectedRegions[0] : undefined,
-        );
+        // 좋아요 이벤트는 getMyLikedEvents 사용
+        response = await getMyLikedEvents(accessToken, nextPage, 10, region);
         eventData = response?.data?.eventResponseDTOS || response || [];
       }
 
@@ -258,7 +246,6 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
     accessToken,
     setLikedClubs,
     setHeartbeatNums,
-    type,
     selectedRegions,
   ]);
 
@@ -279,51 +266,19 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
       setLikedHasMore(true);
       setLikedEvents([]);
     }
+
     try {
-      // 타입에 따라 다른 API 호출
+      const region = selectedRegions.length > 0 ? selectedRegions[0] : undefined;
       let response;
       let eventData;
-      
+
       if (activeTab === 'attending') {
-        if (type === 'upcoming') {
-          response = await getMyEventUpcoming(
-            accessToken,
-            1,
-            10,
-            selectedRegions.length > 0 ? selectedRegions[0] : undefined,
-          );
-        } else if (type === 'past') {
-          response = await getMyEventPast(
-            accessToken,
-            1,
-            10,
-            selectedRegions.length > 0 ? selectedRegions[0] : undefined,
-          );
-        } else if (type === 'my-event') {
-          response = await getMyPageEvents(
-            accessToken,
-            'attendance',
-            1,
-            10,
-            selectedRegions.length > 0 ? selectedRegions[0] : undefined,
-          );
-        } else {
-          response = await getMyPageEvents(
-            accessToken,
-            'attendance',
-            1,
-            10,
-            selectedRegions.length > 0 ? selectedRegions[0] : undefined,
-          );
-        }
-        eventData = response.eventResponseDTOS || response.data?.eventResponseDTOS || [];
+        // 참석 이벤트는 getMyPageEvents 사용
+        response = await getMyPageEvents(accessToken, 'attendance', 1, 10, region);
+        eventData = response.data?.eventResponseDTOS || [];
       } else {
-        response = await getMyLikedEvents(
-          accessToken,
-          1,
-          10,
-          selectedRegions.length > 0 ? selectedRegions[0] : undefined,
-        );
+        // 좋아요 이벤트는 getMyLikedEvents 사용
+        response = await getMyLikedEvents(accessToken, 1, 10, region);
         eventData = response?.data?.eventResponseDTOS || response || [];
       }
 
@@ -358,7 +313,7 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
     } finally {
       setLoading(false);
     }
-  }, [accessToken, setLikedClubs, setHeartbeatNums, activeTab, type, selectedRegions]);
+  }, [accessToken, setLikedClubs, setHeartbeatNums, activeTab, selectedRegions]);
 
   useEffect(() => {
     fetchMyEvents();
@@ -520,7 +475,7 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
             className={`flex-1 py-4 text-center text-[0.875rem] font-medium transition-colors ${
               activeTab === 'attending' ? 'font-bold text-main' : 'text-gray300'
             }`}>
-            {type === 'upcoming' ? '예정된' : type === 'past' ? '지난' : '참석 명단 작성한'}
+            {type === 'upcoming' ? '참석 명단 작성한' : type === 'past' ? '지난' : '참석 명단 작성한'}
           </button>
           <button
             onClick={() => setActiveTab('liked')}
@@ -585,12 +540,10 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
                             newRegions = [...prev, label];
                           }
 
-                          // 지역 필터 변경 시에만 서버 API 호출 (불필요한 호출 방지)
-                          if (newRegions.length !== prev.length) {
-                            setTimeout(() => {
-                              fetchMyEvents();
-                            }, 100);
-                          }
+                          // 지역 필터 변경 시에만 서버 API 호출 (추가/해제 모두)
+                          setTimeout(() => {
+                            fetchMyEvents();
+                          }, 100);
 
                           return newRegions;
                         });
@@ -637,12 +590,12 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
                 ) : (
                   <NoResults
                     text={
-                      activeTab === 'attending' 
-                        ? type === 'upcoming' 
+                      activeTab === 'attending'
+                        ? type === 'upcoming'
                           ? '예정된 이벤트가 없어요'
                           : type === 'past'
-                          ? '지난 이벤트가 없어요'
-                          : '아직 참석 등록한 이벤트가 없어요'
+                            ? '지난 이벤트가 없어요'
+                            : '아직 참석 등록한 이벤트가 없어요'
                         : '마음에 들어한 이벤트가 없어요'
                     }
                   />

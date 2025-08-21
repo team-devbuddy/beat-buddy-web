@@ -143,9 +143,9 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
     <div className="relative flex h-[21.875rem] w-full flex-col justify-between">
       <CustomToastContainer />
       {/* 상단 헤더 (overlay) */}
-      <div className="pointer-events-none absolute z-20 flex w-full items-start justify-between py-[0.53rem] pl-[0.62rem] pr-4">
+      <div className="pointer-events-none absolute z-20 flex w-full items-start justify-between pt-[0.88rem] pb-[0.87rem] pl-5 pr-4">
         <button onClick={() => router.back()} aria-label="뒤로가기" className="pointer-events-auto text-white">
-          <Image src="/icons/line-md_chevron-left.svg" alt="back icon" width={35} height={35} />
+          <Image src="/icons/arrow_back_ios.svg" alt="back icon" width={24} height={24} />
         </button>
         <div className="flex items-center space-x-3">
           <div onClick={handleShareClick} className="pointer-events-auto cursor-pointer">
