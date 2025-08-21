@@ -294,7 +294,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
                 position: ll,
                 map,
                 icon: {
-                  content: '<img src="/icons/MeNow.svg" style="width:36px;height:36px;" />',
+                  content: '<img src="/icons/menow.svg" style="width:36px;height:36px;" />',
                   size: new window.naver.maps.Size(36, 36),
                   anchor: new window.naver.maps.Point(18, 18),
                 },

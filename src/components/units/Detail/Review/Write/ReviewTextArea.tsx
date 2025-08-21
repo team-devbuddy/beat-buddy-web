@@ -47,10 +47,10 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
           ref={textareaRef}
           value={value}
           onChange={handleChange}
-          className="w-full whitespace-pre-wrap border-none bg-transparent px-4 pb-4 pt-[0.88rem] text-body-13-medium text-gray100 placeholder:text-body-13-bold placeholder:text-gray100 focus:outline-none"
+          className="w-full whitespace-pre-wrap border-none bg-transparent px-4 pb-[0.88rem] pt-[0.88rem] text-body-13-medium text-gray100 placeholder:text-body-13-bold placeholder:text-gray100 focus:outline-none"
           style={{
             minHeight: '2rem',
-            maxHeight: '6rem', // 4줄 제한 (1.5rem * 4)
+            maxHeight: '7rem', // 4줄 제한 (1.5rem * 4)
             resize: 'none',
             overflowY: 'auto', // 4줄 이상일 때 스크롤
           }}
@@ -75,10 +75,9 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
       {/* 배경 (고정) */}
       {isBottomSheetOpen && <div className="fixed inset-0 z-40 bg-black/60" onClick={toggleBottomSheet}></div>}
 
-      {/* 바텀시트 */}
+      {/* 바텀
       <CSSTransition in={isBottomSheetOpen} timeout={300} classNames="bottom-sheet" unmountOnExit>
         <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-lg bg-BG-black text-white">
-          {/* 헤더 */}
           <div className="flex justify-center pt-[0.88rem]">
             <div className="h-1 w-16 rounded bg-gray600"></div>
           </div>
@@ -98,10 +97,10 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
           {/* 닫기 
           <button className="mt-6 w-full bg-main py-4 text-sm font-bold text-white" onClick={toggleBottomSheet}>
             닫기
-          </button>버튼 */}
+          </button>
         </div>
       </CSSTransition>
-
+       */}
       {/* 애니메이션 스타일 */}
       <style jsx global>{`
         .bottom-sheet-enter {

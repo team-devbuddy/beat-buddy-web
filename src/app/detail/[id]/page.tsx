@@ -8,6 +8,7 @@ import Info from '@/components/units/Detail/Info';
 import VenueHours from '@/components/units/Detail/VenueHours';
 import CustomerService from '@/components/units/Detail/CustomerService';
 import { fetchClubDetail } from '@/lib/actions/detail-controller/fetchClubDetail';
+import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 import {
   accessTokenState,
@@ -69,13 +70,32 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [clickedHeart, setClickedHeart] = useState(false);
   const isBusiness = useRecoilValue(isBusinessState);
   const accessToken = useRecoilValue(accessTokenState);
-  const activeTab = useRecoilValue(detailTabState);
-  const setActiveTab = useSetRecoilState(detailTabState);
+  // activeTab을 항상 'info'로 초기화 (이전 방문 탭 기억하지 않음)
+  const [activeTab, setActiveTab] = useState<'info' | 'review' | 'event'>('info');
   const isModalOpen = useRecoilValue(reviewCompleteModalState);
   const setReviewCompleteModal = useSetRecoilState(reviewCompleteModalState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
+  // recoil-persist로 저장된 detailTabState를 강제로 'info'로 초기화
+  const setDetailTabState = useSetRecoilState(detailTabState);
+  const setIsBusiness = useSetRecoilState(isBusinessState);
   const router = useRouter();
+
+  // 사용자 프로필에서 role을 확인하여 isBusinessState 업데이트
+  const updateBusinessState = async () => {
+    if (!accessToken) return;
+
+    try {
+      const profileData = await getProfileinfo(accessToken);
+
+      // role이 ADMIN 또는 BUSINESS인지 확인
+      const isBusinessUser = profileData?.role === 'ADMIN' || profileData?.role === 'BUSINESS';
+
+      // isBusinessState 업데이트
+      setIsBusiness(isBusinessUser);
+    } catch (error) {
+    }
+  };
 
   // 디버깅을 위한 로그
   console.log('DetailPage params:', params);
@@ -210,6 +230,26 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     fetchReviews(sortOption, photoOnly);
   };
 
+  // 컴포넌트 마운트 시 activeTab 초기화 및 URL 파라미터 확인
+  useEffect(() => {
+    // recoil-persist로 저장된 detailTabState를 강제로 'info'로 초기화
+    setDetailTabState('info');
+
+    // 기본적으로 'info' 탭으로 설정 (이전 상태 무시)
+    setActiveTab('info');
+
+    // URL 파라미터 확인하여 리뷰 작성 후 돌아온 경우에만 'review' 탭으로 이동
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab === 'review') {
+      setDetailTabState('review');
+      setActiveTab('review');
+      // URL에서 tab 파라미터 제거 (브라우저 히스토리 정리)
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [setDetailTabState]); // setDetailTabState 의존성 추가
+
   useEffect(() => {
     const getClubDetail = async () => {
       try {
@@ -230,6 +270,9 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     };
 
     getClubDetail();
+
+    // 사용자 프로필에서 role을 확인하여 isBusinessState 업데이트
+    updateBusinessState();
   }, [params.id, accessToken]);
 
   // 리뷰 탭으로 전환될 때 리뷰 데이터 조회
@@ -267,7 +310,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
                 <button onClick={() => router.back()} className="text-white" aria-label="뒤로가기">
                   <Image src="/icons/arrow_back_ios.svg" alt="back icon" width={24} height={24} />
                 </button>
-                <h1 className="truncate text-[1.25rem] font-bold text-white">{venue.englishName}</h1>
+                <h1 className="truncate text-title-24-bold text-white">{venue.englishName}</h1>
               </div>
               <div className="flex items-center gap-3">
                 <button className="text-white" aria-label="공유하기" onClick={handleShareClick}>

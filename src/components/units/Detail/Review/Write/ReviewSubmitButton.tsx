@@ -16,7 +16,7 @@ const ReviewSubmitButton = ({ venueId, onClick, isDisabled, isEditMode = false }
           disabled={isDisabled}
           className={`w-full rounded-[0.5rem] border-none ${
             isDisabled ? 'bg-gray500 text-gray300' : 'bg-main text-sub2'
-          } py-[0.87rem] text-button-bold`}>
+          } py-[0.87rem] text-button-16-semibold`}>
           {isEditMode ? '리뷰 수정하기' : '리뷰 등록하기'}
         </button>
       </div>

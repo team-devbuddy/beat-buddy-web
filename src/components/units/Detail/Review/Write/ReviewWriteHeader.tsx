@@ -19,18 +19,18 @@ const ReviewWriteHeader = ({ title, currentStep, totalSteps }: ReviewWriteHeader
 
   return (
     <>
-      <div className="relative mx-auto flex max-w-[600px] items-center justify-between py-[0.53rem] pl-[0.62rem] pr-5">
+      <div className="relative mx-auto flex max-w-[600px] items-center justify-between py-[0.88rem] px-5">
         <Image
-          src="/icons/line-md_chevron-left.svg"
+          src="/icons/arrow_back_ios.svg"
           alt="뒤로가기"
-          width={35}
-          height={35}
+          width={24}
+          height={24}
           onClick={() => router.back()}
           className="cursor-pointer"
         />
       </div>
       {/* 제목 */}
-      <h1 className="my-2 flex-grow px-5 pt-[0.88rem] text-left text-[1.25rem] font-bold text-white">
+      <h1 className="mt-[0.88rem] flex-grow px-5 py-2 text-left text-subtitle-20-bold text-white">
         {title}에서의
         <br />
         경험을 공유해주세요!
