@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
-import { userProfileState } from '@/context/recoil-context';
+import { userProfileState, isBusinessState } from '@/context/recoil-context';
 
 const MyEventHeader = ({ type = 'upcoming' }: { type?: 'upcoming' | 'past' | 'my-event' }) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
   const userProfile = useRecoilValue(userProfileState);
+  const isBusiness = useRecoilValue(isBusinessState);
   useEffect(() => {
     const checkLoginStatus = () => {
       const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
@@ -36,7 +37,7 @@ const MyEventHeader = ({ type = 'upcoming' }: { type?: 'upcoming' | 'past' | 'my
         </div>
         <div className="flex w-full items-center justify-between">
           <span className="text-subtitle-20-bold text-white">{getHeaderTitle()}</span>
-          {userProfile?.role === 'BUSINESS' ||
+          {isBusiness ||
             (userProfile?.role === 'ADMIN' && (
               <span
                 onClick={() => router.push('/myevent/past')}

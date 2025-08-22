@@ -10,9 +10,10 @@ import { EventType } from './EventContainer';
 interface EventSearchResultsProps {
   startDate: string;
   endDate: string;
+  keyword?: string; // keyword prop 추가
 }
 
-export default function EventSearchResults({ startDate, endDate }: EventSearchResultsProps) {
+export default function EventSearchResults({ startDate, endDate, keyword = '' }: EventSearchResultsProps) {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -40,7 +41,7 @@ export default function EventSearchResults({ startDate, endDate }: EventSearchRe
 
       try {
         setLoading(true);
-        const response = await searchEventsByPeriod(startDate, endDate, pageNum, 10, accessToken);
+        const response = await searchEventsByPeriod(startDate, endDate, pageNum, 10, accessToken, keyword);
 
         if (response.data?.eventResponseDTOS) {
           const newEvents = response.data.eventResponseDTOS;
@@ -65,7 +66,7 @@ export default function EventSearchResults({ startDate, endDate }: EventSearchRe
         setLoading(false);
       }
     },
-    [startDate, endDate, accessToken, loading],
+    [startDate, endDate, accessToken, loading, keyword],
   );
 
   // 페이지 변경 시 이벤트 검색

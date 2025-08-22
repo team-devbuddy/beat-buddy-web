@@ -12,6 +12,7 @@ import {
   followMapState,
   otherFollowCountState,
   myFollowCountState,
+  isBusinessState,
 } from '@/context/recoil-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
@@ -94,7 +95,7 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
   const [followMap, setFollowMap] = useRecoilState(followMapState);
   const [otherFollowCount, setOtherFollowCount] = useRecoilState(otherFollowCountState);
   const [myFollowCount, setMyFollowCount] = useRecoilState(myFollowCountState);
-
+  const isBusiness = useRecoilValue(isBusinessState);
   const liked = likeMap[post.id] ?? false;
   const scrapped = scrapMap[post.id] ?? false;
   const isFollowing = followMap[post.writerId] ?? post.isFollowing;
@@ -275,7 +276,7 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
                 }}
               />
             </div>
-            {post.role === 'BUSINESS' && !post.isAnonymous && (
+            {isBusiness && !post.isAnonymous && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"

@@ -3,13 +3,14 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   accessTokenState,
   followMapState,
   followCountState,
   myFollowCountState,
   otherFollowCountState,
+  isBusinessState,
 } from '@/context/recoil-context';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
@@ -61,7 +62,7 @@ export default function BoardProfileInfo({
   const [myFollowCount, setMyFollowCount] = useRecoilState(myFollowCountState);
   const [otherFollowCount, setOtherFollowCount] = useRecoilState(otherFollowCountState);
   const [loadingFollow, setLoadingFollow] = useState(false);
-
+  const isBusiness = useRecoilValue(isBusinessState);
   // 로컬 상태로 팔로잉/팔로워 수 관리 (실시간 업데이트를 위해)
   const [localFollowerCount, setLocalFollowerCount] = useState(followerCount);
   const [localFollowingCount, setLocalFollowingCount] = useState(followingCount);
@@ -211,7 +212,9 @@ export default function BoardProfileInfo({
   };
 
   const handleFollowerClick = () => {
-    router.push(`/board/profile/follow?userId=${memberId}&postProfileNickname=${encodeURIComponent(postProfileNickname)}&tab=followers`);
+    router.push(
+      `/board/profile/follow?userId=${memberId}&postProfileNickname=${encodeURIComponent(postProfileNickname)}&tab=followers`,
+    );
   };
 
   const handleFollowingClick = () => {
@@ -232,7 +235,7 @@ export default function BoardProfileInfo({
             height={60}
             className="h-full w-full rounded-full object-cover"
           />
-          {role === 'BUSINESS' && (
+          {isBusiness && (
             <Image
               src="/icons/businessMark.svg"
               alt="business-mark"
@@ -244,7 +247,7 @@ export default function BoardProfileInfo({
         </div>
         <div className="flex flex-row items-center gap-2">
           <div className="text-subtitle-20-bold">{postProfileNickname}</div>
-          {role === 'BUSINESS' && (
+          {isBusiness && (
             <div className="rounded-[0.5rem] bg-sub2 px-[0.5rem] pb-1 pt-[0.19rem] text-body-11-medium text-main">
               비즈니스
             </div>

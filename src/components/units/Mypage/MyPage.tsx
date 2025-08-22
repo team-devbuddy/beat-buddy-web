@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
 import { GetNickname } from '@/lib/action';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { accessTokenState, userProfileState } from '@/context/recoil-context';
+import { accessTokenState, userProfileState, isBusinessState } from '@/context/recoil-context';
 import BusinessMyPage from './BusinessMyPage';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -69,7 +69,7 @@ export default function MyPageComponent() {
     return tagMap[tag] || tag;
   };
   // 사용자 타입 확인
-  const isBusiness = userProfile?.role === 'BUSINESS';
+  const isBusiness = useRecoilValue(isBusinessState);
 
   // 비즈니스 회원인 경우 비즈니스 마이페이지 렌더링
   if (isBusiness) {
@@ -172,14 +172,14 @@ export default function MyPageComponent() {
                 className="mb-[0.62rem] ml-5 mr-1 mt-5 rounded-[0.625rem] p-5"
                 style={{
                   background:
-                    userProfile?.role === 'BUSINESS'
+                    isBusiness
                       ? `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(210, 30, 30, 0.50) 0%, rgba(210, 30, 30, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(255, 0, 68, 0.50) 0%, rgba(255, 0, 68, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(255, 0, 17, 0.50) 0%, rgba(255, 0, 17, 0.00) 100%), rgba(40, 41, 42, 1)`
                       : `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(238, 17, 113, 0.50) 0%, rgba(34, 0, 255, 0) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.00) 100%), rgba(40, 41, 42, 1)`,
                 }}>
                 <div className="flex h-full flex-col justify-between">
                   {/* 프로필 정보 */}
                   <div
-                    className={`${userProfile?.role === 'BUSINESS' ? 'mb-[1.56rem]' : 'mb-[1.12rem]'} flex items-start justify-between`}>
+                    className={`${isBusiness ? 'mb-[1.56rem]' : 'mb-[1.12rem]'} flex items-start justify-between`}>
                     <div className="flex items-center gap-3">
                       <div className="h-12 w-12 rounded-full bg-gray700">
                         <Image
@@ -194,7 +194,7 @@ export default function MyPageComponent() {
                       <div className="flex flex-col items-start justify-center">
                         <div className="flex items-center gap-2">
                           <span className="text-button-bold text-white">
-                            {userProfile?.role === 'BUSINESS'
+                            {isBusiness
                               ? userProfile?.businessName
                               : userProfile?.nickname || nickname}
                           </span>
@@ -207,7 +207,7 @@ export default function MyPageComponent() {
                           />
                         </div>
                         <span className="text-body3-12-medium text-white/70">
-                          {userProfile?.role === 'BUSINESS' ? '비즈니스 회원' : '일반 회원'}
+                          {isBusiness ? '비즈니스 회원' : '일반 회원'}
                         </span>
                       </div>
                     </div>
@@ -217,7 +217,7 @@ export default function MyPageComponent() {
                   </div>
 
                   {/* 내 취향 태그 또는 주최이벤트 관리 */}
-                  {userProfile?.role === 'BUSINESS' ? (
+                  {isBusiness ? (
                     <div className="">
                       <div className="flex items-center gap-[0.31rem]">
                         <div

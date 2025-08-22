@@ -11,6 +11,7 @@ import {
   postLikeState,
   postScrapState,
   postCommentCountState,
+  isBusinessState,
 } from '@/context/recoil-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
@@ -72,7 +73,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
   const [likeMap, setLikeMap] = useRecoilState(postLikeState);
   const [scrapMap, setScrapMap] = useRecoilState(postScrapState);
   const [commentCountMap, setCommentCountMap] = useRecoilState(postCommentCountState);
-
+  const isBusiness = useRecoilValue(isBusinessState);
   // 🔥 렌더링 시점에 상태를 파생시켜 불필요한 재렌더링을 방지
   const liked = likeMap[post.id] ?? post.liked;
   const scrapped = scrapMap[post.id] ?? post.scrapped;
@@ -245,7 +246,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
                 style={{ aspectRatio: '1/1' }}
               />
             </div>
-            {post.role === 'BUSINESS' && !post.isAnonymous && (
+            {isBusiness && !post.isAnonymous && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"

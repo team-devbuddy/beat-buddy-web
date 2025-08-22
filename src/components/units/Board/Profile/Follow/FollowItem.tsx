@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { accessTokenState, followMapState, userProfileState } from '@/context/recoil-context';
+import { accessTokenState, followMapState, userProfileState, isBusinessState } from '@/context/recoil-context';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
 
@@ -30,7 +30,7 @@ export default function FollowItem({ user, isFollower = false, sortPriority }: F
   const accessToken = useRecoilValue(accessTokenState) || '';
   const [followMap, setFollowMap] = useRecoilState(followMapState);
   const userProfile = useRecoilValue(userProfileState);
-
+  const isBusiness = useRecoilValue(isBusinessState);
   const isFollowing = followMap[user.memberId] ?? user.isFollowing;
 
   // 맞팔로우 상태 확인: 사용자가 나를 팔로우하고 있지만 나는 걔를 팔로우하지 않는 상황
@@ -91,7 +91,7 @@ export default function FollowItem({ user, isFollower = false, sortPriority }: F
                 style={{ aspectRatio: '1/1' }}
               />
             </div>
-            {user.role === 'BUSINESS' && (
+            {isBusiness && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"
@@ -104,7 +104,7 @@ export default function FollowItem({ user, isFollower = false, sortPriority }: F
 
           <div className="cursor-pointer">
             <p className="text-body-13-bold text-white">{user.postProfileNickname}</p>
-            {user.role === 'BUSINESS' && <p className="text-body-11-medium text-gray300">비즈니스</p>}
+            {isBusiness && <p className="text-body-11-medium text-gray300">비즈니스</p>}
           </div>
         </div>
 

@@ -5,7 +5,7 @@ import BoardImageModal from './BoardImageModal';
 import { useState, useEffect } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
-import { accessTokenState, postLikeState, postScrapState } from '@/context/recoil-context';
+import { accessTokenState, postLikeState, postScrapState, isBusinessState } from '@/context/recoil-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
 import { deletePostLike } from '@/lib/actions/post-interaction-controller/deleteLike';
@@ -105,7 +105,7 @@ export default function BoardThread({ postId, post }: PostProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
   const [clickedFollow, setClickedFollow] = useState(false);
-
+  const isBusiness = useRecoilValue(isBusinessState);
   // 게시판 프로필 관련 상태
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -288,7 +288,7 @@ export default function BoardThread({ postId, post }: PostProps) {
                 style={{ aspectRatio: '1/1' }}
               />
             </div>
-            {post.role === 'BUSINESS' && !post.isAnonymous && (
+            {isBusiness && !post.isAnonymous && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"

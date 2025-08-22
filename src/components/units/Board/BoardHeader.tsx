@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRecoilValue } from 'recoil';
-import { userProfileState, accessTokenState } from '@/context/recoil-context';
+import { userProfileState, accessTokenState, isBusinessState } from '@/context/recoil-context';
 import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -21,7 +21,7 @@ const BoardHeader = ({ postProfileImageUrl }: BoardHeaderProps) => {
   const accessToken = useRecoilValue(accessTokenState) || '';
   const defaultProfileImage = '/icons/default-profile.svg';
   const [showProfileModal, setShowProfileModal] = useState(false);
-
+  const isBusiness = useRecoilValue(isBusinessState);
   // 게시판 프로필 존재 여부 확인
   // 게시판 프로필 존재 여부 확인
   const checkBoardProfile = async () => {
@@ -73,7 +73,7 @@ const BoardHeader = ({ postProfileImageUrl }: BoardHeaderProps) => {
             style={{ aspectRatio: '1/1' }}
           />
           {/* 비즈니스 유저인 경우 마크 표시 */}
-          {userProfile?.role === 'BUSINESS' && (
+          {isBusiness && (
             <Image
               src="/icons/businessMark.svg"
               alt="business-mark"

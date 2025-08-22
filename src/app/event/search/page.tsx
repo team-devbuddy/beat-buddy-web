@@ -195,11 +195,18 @@ export default function EventSearchPage() {
         if (i === events.length - 1) {
           return (
             <div ref={lastEventRef} key={event.eventId}>
-              <EventSearchResults startDate={event.startDate} endDate={event.endDate} />
+              <EventSearchResults startDate={event.startDate} endDate={event.endDate} keyword={keyword} />
             </div>
           );
         } else {
-          return <EventSearchResults key={event.eventId} startDate={event.startDate} endDate={event.endDate} />;
+          return (
+            <EventSearchResults
+              key={event.eventId}
+              startDate={event.startDate}
+              endDate={event.endDate}
+              keyword={keyword}
+            />
+          );
         }
       })}
 
