@@ -271,7 +271,7 @@ export default function CouponCard({ venueId }: { venueId: number }) {
               <div className="w-full">
                 <div className="flex flex-col items-start">
                   <div className="relative mb-3 flex w-full items-center justify-center">
-                    <p className="text-[0.75rem] text-gray200">
+                    <p className="text-body1-16-medium text-gray100">
                       {clubDetail?.englishName || clubDetail?.koreanName || '클럽'}
                     </p>
                     <Image

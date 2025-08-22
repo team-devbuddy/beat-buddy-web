@@ -10,6 +10,7 @@ import { accessTokenState } from '@/context/recoil-context';
 import { getNotifications, NotificationItem } from '@/lib/actions/notification-controller/getNotifications';
 import { markNotificationRead } from '@/lib/actions/notification-controller/markNotificationRead';
 import { formatNotificationTime } from '@/lib/utils/timeUtils';
+import NoResults from '@/components/units/Search/NoResult';
 
 // 알림 타입별 아이콘 매핑
 const iconMap: Record<string, string> = {
@@ -185,8 +186,8 @@ export default function AlertList() {
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
-    }
-  };
+      }
+    };
   }, [handleIntersection]);
 
   if (loading && notifications.length === 0) {
@@ -214,72 +215,67 @@ export default function AlertList() {
   return (
     <div className="flex flex-col">
       <Prev url="/" onBack={() => router.back()} title="알림" />
-      <div className="mt-[-0.4rem] flex flex-col divide-y divide-gray500 border-b border-t border-gray500 bg-BG-black">
-        {notifications.length === 0 ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-gray200">알림이 없습니다.</div>
-          </div>
-        ) : (
-          <>
-            {notifications.map((notification, index) => (
-              <div
-                key={`${notification.id}-${index}`}
-                className={clsx(
-                  'flex w-full cursor-pointer items-start gap-[0.62rem] px-[1.25rem] py-[0.88rem] transition-colors',
-                  clickedNotificationId === notification.id
-                    ? 'bg-gray700'
-                    : notification.isRead
-                      ? 'hover:bg-gray600'
-                      : 'hover:bg-gray700',
-                )}
-                onClick={() => handleNotificationClick(notification)}>
-                <div className={clsx('flex h-6 w-6 items-center justify-center', notification.isRead && 'opacity-50')}>
-                  <Image
-                    src={iconMap[notification.type] || iconMap.default}
-                    alt={notification.type}
-                    width={24}
-                    height={24}
-                    className={clsx(notification.isRead && 'grayscale')}
-                  />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={clsx(
-                        'text-[0.875rem] font-bold',
-                        notification.isRead ? 'text-gray200' : 'text-white',
-                      )}>
-                      {notification.title}
-                    </div>
-                    <div className="whitespace-nowrap text-body3-12-medium text-gray200">
-                      {formatNotificationTime(notification.createdAt)}
-                    </div>
+      {notifications.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <NoResults text="알림이 없어요" />
+        </div>
+      ) : (
+        <div className="mt-[-0.4rem] flex flex-col divide-y divide-gray500 border-b border-t border-gray500 bg-BG-black">
+          {notifications.map((notification, index) => (
+            <div
+              key={`${notification.id}-${index}`}
+              className={clsx(
+                'flex w-full cursor-pointer items-start gap-[0.62rem] px-[1.25rem] py-[0.88rem] transition-colors',
+                clickedNotificationId === notification.id
+                  ? 'bg-gray700'
+                  : notification.isRead
+                    ? 'hover:bg-gray600'
+                    : 'hover:bg-gray700',
+              )}
+              onClick={() => handleNotificationClick(notification)}>
+              <div className={clsx('flex h-6 w-6 items-center justify-center', notification.isRead && 'opacity-50')}>
+                <Image
+                  src={iconMap[notification.type] || iconMap.default}
+                  alt={notification.type}
+                  width={24}
+                  height={24}
+                  className={clsx(notification.isRead && 'grayscale')}
+                />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <div
+                    className={clsx('text-[0.875rem] font-bold', notification.isRead ? 'text-gray200' : 'text-white')}>
+                    {notification.title}
                   </div>
-                  {notification.message && (
-                    <div
-                      className={clsx(
-                        'mt-[0.22rem] text-[0.75rem]',
-                        notification.isRead ? 'text-gray200' : 'text-gray200',
-                      )}>
-                      {notification.message.split('\n').map((line, idx) => (
-                        <div key={idx}>{line}</div>
-                      ))}
-                    </div>
-                  )}
+                  <div className="whitespace-nowrap text-body3-12-medium text-gray200">
+                    {formatNotificationTime(notification.createdAt)}
+                  </div>
                 </div>
-                {!notification.isRead && <div className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-main"></div>}
+                {notification.message && (
+                  <div
+                    className={clsx(
+                      'mt-[0.22rem] text-[0.75rem]',
+                      notification.isRead ? 'text-gray200' : 'text-gray200',
+                    )}>
+                    {notification.message.split('\n').map((line, idx) => (
+                      <div key={idx}>{line}</div>
+                    ))}
+                  </div>
+                )}
               </div>
-            ))}
+              {!notification.isRead && <div className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-main"></div>}
+            </div>
+          ))}
 
-            {/* 무한 스크롤 로딩 인디케이터 */}
-            {hasMore && (
-              <div ref={loadingRef} className="flex items-center justify-center py-4">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray300 border-t-main"></div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+          {/* 무한 스크롤 로딩 인디케이터 */}
+          {hasMore && (
+            <div ref={loadingRef} className="flex items-center justify-center py-4">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray300 border-t-main"></div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

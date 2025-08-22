@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { GetOnBoardingStatus, PostRefresh } from '@/lib/action';
 import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
+import { getUserProfile } from '@/lib/actions/member-controller/getUserProfile';
 
 const KakaoRedirect: React.FC = () => {
   const searchParams = useSearchParams();
@@ -49,6 +50,19 @@ const KakaoRedirect: React.FC = () => {
         // console.log(refreshTokenResponse);
 
         console.log('KakaoRedirect - isBusiness 상태:', isBusiness);
+
+        // getUserProfile로 BUSINESS_NOT 역할 체크 (가장 먼저!)
+        try {
+          const userProfileData = await getUserProfile(access);
+          if (userProfileData?.role === 'BUSINESS_NOT') {
+            console.log('BUSINESS_NOT 사용자 -> /signup/business/pending로 이동');
+            setAccessToken(access);
+            router.push('/signup/business/pending');
+            return;
+          }
+        } catch (error) {
+          console.error('getUserProfile 조회 실패:', error);
+        }
 
         const response = await GetOnBoardingStatus(access);
         if (response.ok) {

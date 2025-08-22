@@ -72,9 +72,6 @@ export default function MyPageComponent() {
   const isBusiness = useRecoilValue(isBusinessState);
 
   // 비즈니스 회원인 경우 비즈니스 마이페이지 렌더링
-  if (isBusiness) {
-    return <BusinessMyPage />;
-  }
 
   // 문의사항 모달 핸들러
   const handleInquiryClick = (e: React.MouseEvent) => {
@@ -171,32 +168,19 @@ export default function MyPageComponent() {
               <div
                 className="mb-[0.62rem] ml-5 mr-1 mt-5 rounded-[0.625rem] p-5"
                 style={{
-                  background:
-                    isBusiness
-                      ? `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(210, 30, 30, 0.50) 0%, rgba(210, 30, 30, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(255, 0, 68, 0.50) 0%, rgba(255, 0, 68, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(255, 0, 17, 0.50) 0%, rgba(255, 0, 17, 0.00) 100%), rgba(40, 41, 42, 1)`
-                      : `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(238, 17, 113, 0.50) 0%, rgba(34, 0, 255, 0) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.00) 100%), rgba(40, 41, 42, 1)`,
+                  background: isBusiness
+                    ? `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(210, 30, 30, 0.50) 0%, rgba(210, 30, 30, 0.00) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(255, 0, 68, 0.50) 0%, rgba(255, 0, 68, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(255, 0, 17, 0.50) 0%, rgba(255, 0, 17, 0.00) 100%), rgba(40, 41, 42, 1)`
+                    : `radial-gradient(127.07% 71.54% at 0% 82.92%, rgba(238, 17, 113, 0.50) 0%, rgba(34, 0, 255, 0) 100%), radial-gradient(72.73% 59.06% at 97.01% 32.92%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.10) 100%), radial-gradient(44.88% 90.82% at 46.12% -18.01%, rgba(238, 17, 113, 0.50) 0%, rgba(238, 17, 113, 0.00) 100%), rgba(40, 41, 42, 1)`,
                 }}>
                 <div className="flex h-full flex-col justify-between">
                   {/* 프로필 정보 */}
-                  <div
-                    className={`${isBusiness ? 'mb-[1.56rem]' : 'mb-[1.12rem]'} flex items-start justify-between`}>
+                  <div className={`${isBusiness ? 'mb-[1.81rem]' : 'mb-[1.12rem]'} flex items-start justify-between`}>
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-full bg-gray700">
-                        <Image
-                          src={userProfile?.profileImageUrl || '/icons/mypage-profile.svg'}
-                          alt="프로필"
-                          width={50}
-                          height={50}
-                          className="rounded-full object-cover"
-                          style={{ aspectRatio: '1/1' }}
-                        />
-                      </div>
+                      
                       <div className="flex flex-col items-start justify-center">
                         <div className="flex items-center gap-2">
                           <span className="text-button-bold text-white">
-                            {isBusiness
-                              ? userProfile?.businessName
-                              : userProfile?.nickname || nickname}
+                            {isBusiness ? userProfile?.businessName : userProfile?.nickname || nickname}
                           </span>
                           <Image
                             onClick={() => router.push(`/mypage/manage`)}
@@ -211,7 +195,7 @@ export default function MyPageComponent() {
                         </span>
                       </div>
                     </div>
-                    <button className="rounded-[0.5rem] bg-white/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white/80">
+                    <button className="rounded-[0.5rem] bg-[#131415]/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white/80">
                       메인 프로필
                     </button>
                   </div>
@@ -243,7 +227,7 @@ export default function MyPageComponent() {
                                 .map((tag: string, index: number) => (
                                   <span
                                     key={index}
-                                    className="rounded-[0.5rem] bg-[#131415]/30 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white">
+                                    className="rounded-[0.5rem] bg-[#131415]/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white">
                                     {translateTag(tag)}
                                   </span>
                                 ))
@@ -302,7 +286,7 @@ export default function MyPageComponent() {
                       </div>
                     </div>
                     {userProfile?.isPostProfileCreated && (
-                      <button className="rounded-[0.5rem] bg-white/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white/80">
+                      <button className="rounded-[0.5rem] bg-[#131415]/20 px-2 pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-white/80">
                         게시판 프로필
                       </button>
                     )}
@@ -327,13 +311,15 @@ export default function MyPageComponent() {
         </div>
 
         {/* My Coupon (왼쪽 가변, 오른쪽 고정) */}
-        <div className="mx-5 mb-[0.62rem] rounded-[0.63rem] cursor-pointer" onClick={() => router.push('/mypage/coupon')}>
+        <div
+          className="mx-5 mb-[0.62rem] cursor-pointer rounded-[0.63rem]"
+          onClick={() => router.push('/mypage/coupon')}>
           <div className="relative w-full" style={{ height: COUPON_HEIGHT }}>
             {/* 왼쪽(가변) 레이어: 오른쪽 폭만큼 비워두고 나머지 전부 채움 */}
             <div
-              className="absolute inset-y-0 left-0"
+              className="absolute inset-y-0 left-0 z-10"
               style={{
-                right: rightWidth,
+                right: rightWidth - 4, // 틈을 메우기 위해 4px 겹침
               }}
               aria-hidden>
               <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
@@ -342,7 +328,7 @@ export default function MyPageComponent() {
             </div>
 
             {/* 오른쪽(고정) 레이어: 실제 비율대로 폭 고정 */}
-            <div className="absolute inset-y-0 right-0" style={{ width: rightWidth }} aria-hidden>
+            <div className="absolute inset-y-0 right-0 z-20" style={{ width: rightWidth }} aria-hidden>
               <div className="relative h-full w-full">
                 <Image
                   key={rightSprite} // 소스 바뀌면 재측정 유도
@@ -360,7 +346,7 @@ export default function MyPageComponent() {
 
             {/* 내용 오버레이: 오른쪽 폭만큼 패딩 확보 */}
             <div
-              className="absolute inset-0 flex items-center justify-between px-4"
+              className="absolute inset-0 z-30 flex items-center justify-between px-4"
               style={{ paddingRight: Math.max(12, rightWidth + 8) }}>
               <div className="flex flex-col">
                 <h3 className="text-body-15-bold text-white">My Coupon</h3>
