@@ -31,7 +31,7 @@ export default function MyPageComponent() {
 
   // 사용 중인 스킨(필요 시 상태에 따라 교체 가능)
   const leftSprite = '/coupon-disavailable-left.svg';
-  const rightSprite = '/coupon-disavailable-right.svg';
+  const rightSprite = '/icons/mypage-coupon-right.svg';
 
   const handleRightLoaded = ({ naturalWidth, naturalHeight }: { naturalWidth: number; naturalHeight: number }) => {
     const w = Math.round((COUPON_HEIGHT * naturalWidth) / naturalHeight);
@@ -327,7 +327,7 @@ export default function MyPageComponent() {
         </div>
 
         {/* My Coupon (왼쪽 가변, 오른쪽 고정) */}
-        <div className="mx-5 mb-[0.62rem] rounded-[0.63rem]" onClick={() => router.push('/mypage/coupon')}>
+        <div className="mx-5 mb-[0.62rem] rounded-[0.63rem] cursor-pointer" onClick={() => router.push('/mypage/coupon')}>
           <div className="relative w-full" style={{ height: COUPON_HEIGHT }}>
             {/* 왼쪽(가변) 레이어: 오른쪽 폭만큼 비워두고 나머지 전부 채움 */}
             <div

@@ -15,7 +15,7 @@ export default function FollowHeader({ postProfileNickname }: FollowHeaderProps)
   };
 
   return (
-    <div className="flex items-center justify-between bg-BG-black px-[1.25rem] pb-[0.88rem] pt-[0.62rem]">
+    <div className="flex items-center justify-between bg-BG-black px-[1.25rem] py-[0.87rem]">
       <button onClick={handleBack} className="flex items-center justify-center" title="뒤로가기">
         <Image src="/icons/arrow_back_ios.svg" alt="back" width={24} height={24} />
       </button>

@@ -19,7 +19,7 @@ const ReviewWriteHeader = ({ title, currentStep, totalSteps }: ReviewWriteHeader
 
   return (
     <>
-      <div className="relative mx-auto flex max-w-[600px] items-center justify-between py-[0.88rem] px-5">
+      <div className="relative mx-auto flex max-w-[600px] items-center justify-between px-5 py-[0.88rem]">
         <Image
           src="/icons/arrow_back_ios.svg"
           alt="뒤로가기"

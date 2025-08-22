@@ -132,7 +132,7 @@ export default function BoardProfileHeader({
   if (isFixed) {
     return (
       <header className="fixed left-0 right-0 top-0 z-50 transform bg-BG-black transition-transform duration-500 ease-in-out">
-        <div className="mx-auto flex max-w-[600px] items-center justify-between px-[1.25rem] pb-[0.88rem] pt-[0.62rem] text-white">
+        <div className="mx-auto flex max-w-[600px] items-center justify-between px-[1.25rem] py-[0.87rem] text-white">
           {/* 왼쪽: 뒤로가기 + 프로필 정보 */}
           <div className="flex items-center">
             <Image

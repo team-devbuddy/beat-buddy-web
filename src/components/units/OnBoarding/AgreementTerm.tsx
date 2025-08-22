@@ -28,7 +28,13 @@ export default function AgreementTerm() {
   // 초기 로드 시 terms가 비어있으면 기본값으로 초기화
   useEffect(() => {
     if (terms.length === 0) {
+      console.log('📍 약관 상태 초기화 - 기본값 설정');
       setTerms(termsData);
+    } else {
+      console.log(
+        '📍 약관 상태 복원됨:',
+        terms.map((t) => ({ id: t.id, checked: t.checked })),
+      );
     }
   }, [terms, setTerms]);
 
@@ -79,6 +85,13 @@ export default function AgreementTerm() {
     // 모든 약관이 선택되었는지 확인하여 allChecked 상태 업데이트
     const allTermsChecked = terms.every((t) => t.checked);
     setAllChecked(allTermsChecked);
+
+    console.log('📍 약관 상태 업데이트:', {
+      totalTerms: terms.length,
+      checkedTerms: terms.filter((t) => t.checked).length,
+      allChecked: allTermsChecked,
+      buttonEnabled: requiredTermsChecked,
+    });
   }, [terms]);
 
   const handleCheckboxClick = (id: number) => {
@@ -97,28 +110,63 @@ export default function AgreementTerm() {
   };
 
   const requestLocationPermission = () => {
+    console.log('📍 위치 권한 요청 시작');
+
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log('위치 권한 허용됨:', position);
-          // 권한이 허용되면 위치정보 약관 체크 유지 (이미 체크되어 있음)
-        },
-        (error) => {
-          console.error('위치 권한 거부됨:', error);
-          // 권한이 거부되면 위치정보 약관만 체크 해제
-          setTerms((prev) => prev.map((term) => (term.id === 3 ? { ...term, checked: false } : term)));
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 60000,
-        },
-      );
+      // 권한 상태 확인
+      if ('permissions' in navigator) {
+        navigator.permissions
+          .query({ name: 'geolocation' })
+          .then((permissionStatus) => {
+            console.log('📍 현재 위치 권한 상태:', permissionStatus.state);
+
+            if (permissionStatus.state === 'granted') {
+              console.log('📍 이미 위치 권한이 허용됨');
+              // 권한이 이미 허용되어 있으면 체크 유지
+            } else if (permissionStatus.state === 'denied') {
+              console.log('📍 위치 권한이 거부됨');
+              // 권한이 거부되어 있으면 위치정보 약관 체크 해제
+              setTerms((prev) => prev.map((term) => (term.id === 3 ? { ...term, checked: false } : term)));
+            } else {
+              // 권한이 prompt 상태이면 getCurrentPosition 호출
+              console.log('📍 위치 권한 prompt 상태, getCurrentPosition 호출');
+              callGetCurrentPosition();
+            }
+          })
+          .catch((error) => {
+            console.error('📍 권한 상태 확인 실패:', error);
+            // 권한 상태 확인 실패 시 getCurrentPosition 시도
+            callGetCurrentPosition();
+          });
+      } else {
+        // permissions API가 지원되지 않는 경우 직접 getCurrentPosition 호출
+        console.log('📍 permissions API 미지원, 직접 getCurrentPosition 호출');
+        callGetCurrentPosition();
+      }
     } else {
-      console.error('Geolocation이 지원되지 않습니다.');
+      console.error('📍 Geolocation이 지원되지 않습니다.');
       // 지원되지 않으면 위치정보 약관만 체크 해제
       setTerms((prev) => prev.map((term) => (term.id === 3 ? { ...term, checked: false } : term)));
     }
+  };
+
+  const callGetCurrentPosition = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log('📍 위치 권한 허용됨:', position);
+        // 권한이 허용되면 위치정보 약관 체크 유지 (이미 체크되어 있음)
+      },
+      (error) => {
+        console.error('📍 위치 권한 거부됨:', error);
+        // 권한이 거부되면 위치정보 약관만 체크 해제
+        setTerms((prev) => prev.map((term) => (term.id === 3 ? { ...term, checked: false } : term)));
+      },
+      {
+        enableHighAccuracy: false, // 정확도 낮춤으로써 권한 요청이 더 잘 작동하도록
+        timeout: 15000, // 타임아웃 증가
+        maximumAge: 300000, // 5분으로 증가
+      },
+    );
   };
 
   const handleAllCheckboxClick = () => {
@@ -164,8 +212,8 @@ export default function AgreementTerm() {
         setLoading(true);
         const response = await PostAgree(accessToken, requestData);
         if (response.ok) {
-          // 성공 시 약관 상태 초기화
-          setTerms(termsData.map((term) => ({ ...term, checked: false })));
+          // 성공 시 약관 상태 초기화하지 않음 (recoil-persist로 유지)
+          // setTerms(termsData.map((term) => ({ ...term, checked: false })));
 
           // ✅ recoil state에 따라 라우팅
           if (isBusiness) {

@@ -278,13 +278,13 @@ export default function BoardWrite() {
   return (
     <div className="flex flex-col bg-BG-black pb-[140px] text-white">
       {/* 헤더 */}
-      <header className="flex items-center justify-between py-[0.53rem] pl-[0.62rem] pr-5">
+      <header className="flex items-center justify-between py-[0.87rem] px-5">
         <Image
           onClick={() => router.back()}
-          src="/icons/line-md_chevron-left.svg"
+          src="/icons/arrow_back_ios.svg"
           alt="뒤로가기"
-          width={35}
-          height={35}
+          width={24}
+          height={24}
         />
         <h1
           onClick={handleUpload}
@@ -308,7 +308,7 @@ export default function BoardWrite() {
           />
         </div>
 
-        <hr className="mb-5 mt-5 h-[0.0625rem] border-gray500" />
+        <hr className="mb-4 mt-4 h-[0.0625rem] border-gray500" />
 
         <textarea
           ref={textareaRef}

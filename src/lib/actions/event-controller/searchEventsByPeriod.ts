@@ -4,6 +4,7 @@ export const searchEventsByPeriod = async (
   page: number = 1,
   size: number = 10,
   accessToken: string,
+  keyword: string,
 ) => {
   try {
     // 날짜를 yyyy-MM-dd 형식으로 변환
@@ -17,7 +18,7 @@ export const searchEventsByPeriod = async (
     const formattedStartDate = formatDateForAPI(startDate);
     const formattedEndDate = formatDateForAPI(endDate);
 
-    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/events/search/period?startDate=${formattedStartDate}&endDate=${formattedEndDate}&page=${page}&size=${size}`;
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/events/search?keyword=${keyword}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&page=${page}&size=${size}`;
 
     const response = await fetch(url, {
       method: 'GET',

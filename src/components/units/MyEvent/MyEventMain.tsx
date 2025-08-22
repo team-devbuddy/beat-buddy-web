@@ -495,7 +495,7 @@ export default function MyEventMain({ type = 'upcoming' }: MyEventMainProps) {
     <div className="flex w-full flex-col">
       <div className="flex-grow bg-BG-black">
         <header className="flex flex-col bg-BG-black px-[1.25rem]">
-          <div className="flex w-full items-center py-[0.62rem]">
+          <div className="flex w-full items-center py-[0.87rem]">
             <div onClick={() => router.push('/mypage')} className="flex items-start">
               <Image src="/icons/arrow_back_ios.svg" alt="뒤로가기" width={24} height={24} />
             </div>

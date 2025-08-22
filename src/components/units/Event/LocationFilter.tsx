@@ -40,7 +40,7 @@ export default function LocationFilter() {
       {/* 상단 필터 헤더 */}
       <div className="flex items-center justify-between">
         <button
-          className={`text-body-14-medium rounded-[0.5rem] px-[0.62rem] pt-[0.25rem] pb-[0.31rem] focus:outline-none ${
+          className={`rounded-[0.5rem] px-[0.62rem] pb-[0.31rem] pt-[0.25rem] text-body-14-medium focus:outline-none ${
             selectedRegions.length > 0 ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
           }`}
           onClick={() => setShowFilter(!showFilter)}>
@@ -51,14 +51,14 @@ export default function LocationFilter() {
         {activeTab === 'upcoming' && (
           <div className="relative inline-block text-left">
             <button
-              className="text-body-14-medium flex items-center gap-[0.25rem] whitespace-nowrap text-gray300"
+              className="flex items-center whitespace-nowrap text-body-13-medium text-gray300"
               onClick={() => setSortOpen(!sortOpen)}>
               {selectedSort}
               <Image
-                src="/icons/chevron.forward.svg"
+                src="/icons/keyboard_arrow_down.svg"
                 alt="arrow_down"
-                width={12}
-                height={12}
+                width={20}
+                height={20}
                 className="text-gray300"
               />
             </button>
@@ -75,7 +75,7 @@ export default function LocationFilter() {
                   />
 
                   <motion.div
-                    className="bg-gray800 absolute right-0 z-10 mt-2 w-[6.5rem] overflow-hidden rounded-[0.5rem] shadow-lg"
+                    className="bg-gray800 absolute right-0 z-10 mt-2 w-[6.5rem] overflow-hidden rounded-[0.5rem] bg-gray500 shadow-lg"
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
@@ -84,8 +84,8 @@ export default function LocationFilter() {
                       <button
                         key={option}
                         onClick={() => handleSortSelect(option)}
-                        className={`text-body-13-medium block w-full py-[0.56rem] text-center hover:bg-gray700 ${
-                          selectedSort === option ? 'bg-gray500 text-main' : 'bg-gray500 text-gray100'
+                        className={`block w-full py-[0.56rem] text-center text-body-13-medium hover:bg-gray700 ${
+                          selectedSort === option ? 'bg-gray500 font-bold text-main' : 'bg-gray500 text-gray100'
                         }`}>
                         {option}
                       </button>
@@ -125,7 +125,7 @@ export default function LocationFilter() {
                     );
                   }}
                   whileTap={{ scale: 1.1 }}
-                  className={`text-body-14-medium rounded-[0.5rem] px-[0.63rem] pt-[0.25rem] pb-[0.31rem] focus:outline-none ${
+                  className={`rounded-[0.5rem] px-[0.63rem] pb-[0.31rem] pt-[0.25rem] text-body-14-medium focus:outline-none ${
                     isSelected ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
                   }`}
                   transition={{ type: 'spring', stiffness: 300 }}>

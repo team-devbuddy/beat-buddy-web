@@ -127,13 +127,13 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
 
   return (
     <main className="relative bg-BG-black text-white">
-      <div className="flex items-center justify-between py-[0.53rem] pl-[0.62rem] pr-4">
+      <div className="flex items-center justify-between py-[0.87rem] px-5">
         <Image
           onClick={() => router.back()}
-          src="/icons/line-md_chevron-left.svg"
+          src="/icons/arrow_back_ios.svg"
           alt="뒤로가기"
-          width={35}
-          height={35}
+          width={24}
+          height={24}
           className="cursor-pointer"
         />
       </div>

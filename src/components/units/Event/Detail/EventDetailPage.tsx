@@ -240,7 +240,7 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
                 />
                 <div className="flex flex-col">
                   <h1 className="max-w-[200px] text-button-bold text-white">{eventDetail.title}</h1>
-                </div>  
+                </div>
               </div>
 
               {/* 오른쪽: 좋아요와 메뉴 버튼 */}

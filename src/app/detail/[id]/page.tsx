@@ -69,6 +69,15 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
   const [clickedHeart, setClickedHeart] = useState(false);
   const isBusiness = useRecoilValue(isBusinessState);
   const accessToken = useRecoilValue(accessTokenState);
+
+  // 디버깅 로그 추가
+  useEffect(() => {
+    console.log('🔍 DetailPage - isBusiness 상태:', {
+      isBusiness,
+      timestamp: new Date().toISOString(),
+    });
+  }, [isBusiness]);
+
   // activeTab을 항상 'info'로 초기화 (이전 방문 탭 기억하지 않음)
   const [activeTab, setActiveTab] = useState<'info' | 'review' | 'event'>('info');
   const isModalOpen = useRecoilValue(reviewCompleteModalState);
@@ -405,12 +414,20 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
           />
         )}
         {activeTab === 'event' && venue && isBusiness && (
-          <EventWriteButton
-            venueEngName={venue.englishName}
-            venueId={params.id}
-            onClick={() => {}}
-            isDisabled={false}
-          />
+          <>
+            {console.log('🔍 EventWriteButton 렌더링 조건:', {
+              activeTab,
+              venue: !!venue,
+              isBusiness,
+              venueName: venue?.englishName,
+            })}
+            <EventWriteButton
+              venueEngName={venue.englishName}
+              venueId={params.id}
+              onClick={() => {}}
+              isDisabled={false}
+            />
+          </>
         )}
       </div>
       <ReviewCompleteModal isOpen={isModalOpen} onClose={handleModalClose} venueName={venue?.englishName || ''} />

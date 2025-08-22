@@ -11,6 +11,7 @@ import { EventType } from '@/components/units/Event/EventContainer';
 import Image from 'next/image';
 import BoardSearchHeader from '@/components/units/Board/Search/BoardSearchHeader';
 import BoardRecentTerm from '@/components/units/Board/Search/BoardRecentTerm';
+import Loading from '@/app/loading';
 
 export default function EventSearchResultsPage() {
   const searchParams = useSearchParams();
@@ -28,7 +29,7 @@ export default function EventSearchResultsPage() {
 
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
-
+  const keyword = searchParams.get('q') ?? '';
   const regionOptions = ['이태원', '홍대', '압구정로데오', '강남 · 신사', '기타'];
 
   const sortOptions = ['다가오는 순', '인기순'];
@@ -98,7 +99,7 @@ export default function EventSearchResultsPage() {
         setLoading(true);
         setError(null);
 
-        const response = await searchEventsByPeriod(startDate!, endDate!, page, 10, accessToken);
+        const response = await searchEventsByPeriod(startDate!, endDate!, page, 10, accessToken, keyword);
 
         if (response.data?.eventResponseDTOS) {
           const newEvents = response.data.eventResponseDTOS;
@@ -128,7 +129,7 @@ export default function EventSearchResultsPage() {
     };
 
     fetchSearchResults();
-  }, [parsedStartDate, parsedEndDate, accessToken, startDate, endDate, page]);
+  }, [parsedStartDate, parsedEndDate, accessToken, startDate, endDate, page, keyword]);
 
   // 날짜 범위 변경 시 초기화
   useEffect(() => {
@@ -138,12 +139,7 @@ export default function EventSearchResultsPage() {
   }, [startDate, endDate]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-BG-black text-white">
-        <div className="mb-6 h-16 w-16 animate-spin rounded-full border-4 border-gray300 border-t-main"></div>
-        <p className="text-body2-15-medium text-gray300">검색 결과를 불러오는 중...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -166,7 +162,7 @@ export default function EventSearchResultsPage() {
           <div className="flex items-center gap-2">
             {/* 지역 필터 */}
             <button
-              className={`text-body-14-medium rounded-[0.5rem] px-[0.62rem] pb-[0.31rem] pt-[0.25rem] focus:outline-none ${
+              className={`rounded-[0.5rem] px-[0.62rem] pb-[0.31rem] pt-[0.25rem] text-body-14-medium focus:outline-none ${
                 selectedRegions.length > 0 ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
               }`}
               onClick={() => setShowRegionFilter(!showRegionFilter)}>
@@ -194,7 +190,7 @@ export default function EventSearchResultsPage() {
           {/* 오른쪽 정렬 옵션 */}
           <div className="relative">
             <button
-              className="text-body-14-medium flex items-center gap-2 text-gray300"
+              className="flex items-center gap-2 text-body-14-medium text-gray300"
               onClick={() => setSortOpen(!sortOpen)}>
               {selectedSort}
               <Image
@@ -227,7 +223,7 @@ export default function EventSearchResultsPage() {
                       <button
                         key={option}
                         onClick={() => handleSortSelect(option)}
-                        className={`text-body-13-medium block w-full py-[0.56rem] text-center hover:bg-gray700 ${
+                        className={`block w-full py-[0.56rem] text-center text-body-13-medium hover:bg-gray700 ${
                           selectedSort === option ? 'bg-gray500 font-bold text-main' : 'bg-gray500 text-gray100'
                         }`}>
                         {option}
@@ -257,7 +253,7 @@ export default function EventSearchResultsPage() {
                     key={region}
                     onClick={() => handleRegionToggle(region)}
                     whileTap={{ scale: 1.1 }}
-                    className={`text-body-14-medium rounded-[0.38rem] px-[0.62rem] pb-[0.31rem] pt-[0.25rem] focus:outline-none ${
+                    className={`rounded-[0.38rem] px-[0.62rem] pb-[0.31rem] pt-[0.25rem] text-body-14-medium focus:outline-none ${
                       isSelected ? 'bg-sub2 text-main' : 'bg-gray700 text-gray300'
                     }`}
                     transition={{ type: 'spring', stiffness: 300 }}>

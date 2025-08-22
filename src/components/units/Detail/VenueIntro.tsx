@@ -177,21 +177,21 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
         <div className="flex flex-row items-start gap-1">
           <Image src="/icons/database.svg" alt="coin" width={20} height={20} />
           <div className="flex flex-col">
-            <p className={`text-[0.875rem] ${entranceFee ? 'text-white' : 'text-main'}`}>
+            <p className={`text-body-14-medium ${entranceFee ? 'text-white' : 'text-main'}`}>
               {entranceFee ? `입장료 ${entranceFee.toLocaleString()}원` : '무료입장'}
             </p>
-            <p className="text-[0.875rem]">{entranceNotice || '입장료 관련 특이사항이 없습니다.'}</p>
+            <p className="text-body-14-medium text-gray100">{entranceNotice || '입장료 관련 특이사항이 없습니다.'}</p>
           </div>
         </div>
 
         {/* 주소 */}
         <div className="flex items-center gap-1">
-          <Image src="/icons/detail_location.svg" alt="location" width={20} height={20} />
-          <p className="text-[0.875rem] text-gray100">
+          <Image src="/icons/location_on.svg" alt="location" width={20} height={20} />
+          <p className="text-body-14-medium text-gray100">
             {address}{' '}
             <a
               href={`https://map.naver.com/v5/search/${encodeURIComponent(address)}`}
-              className="ml-1 mt-1 text-[0.75rem] text-main"
+              className="ml-1 mt-1 text-body3-12-medium text-main"
               target="_blank"
               rel="noopener noreferrer">
               길찾기

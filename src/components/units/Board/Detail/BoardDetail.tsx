@@ -350,16 +350,16 @@ export default function BoardDetail({ postId, post }: PostProps) {
             <span className="min-w-[0.45rem] text-left">{scraps}</span>
           </span>
         </div>
-        <div className="flex items-end gap-[0.5rem]">
+        <div className="flex items-end gap-[0.63rem]">
           <p className="text-body3-12-medium text-gray300">조회 {post.views}회</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}
-            src="/icons/dot-vertical.svg"
+            src="/icons/dot-vertical-row.svg"
             alt="bookmark"
-            width={20}
+            width={19}
             height={20}
-            className="rotate-90 cursor-pointer"
+            className=" cursor-pointer"
           />
         </div>
       </div>

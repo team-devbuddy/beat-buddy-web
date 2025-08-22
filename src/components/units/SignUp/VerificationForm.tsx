@@ -59,7 +59,6 @@ export default function VerificationForm() {
     try {
       await verifyBusinessCode(code, accessToken || '');
       setVerifyCode(code);
-      alert('인증 성공!');
       router.push('/signup/business/info');
     } catch (err: any) {
       alert(err?.message || '인증 실패');
