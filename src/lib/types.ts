@@ -8,17 +8,22 @@ export interface Term {
 
 // src/lib/types.ts
 export interface Club {
-  isHeartbeat: boolean;
+  id: number;
+  venueId?: number; // 하트비트 상태와 매핑을 위한 필드 추가
+  entranceFee: number;
+  entranceNotice: string;
+  isHeartbeat?: boolean; // optional로 변경
   tagList: any;
   createdAt: string;
   updatedAt: string;
-  venueId: number;
   englishName: string;
   koreanName: string;
   region: string;
   phoneNum?: string;
   description: string | null;
   address: string;
+  latitude?: number;
+  longitude?: number;
   instaId: string;
   instaUrl: string;
   operationHours: {
@@ -28,6 +33,9 @@ export interface Club {
   backgroundUrl: string[];
   heartbeatNum: number;
   smokingAllowed: boolean;
+  freeEntrance?: boolean; // API 응답에 있는 필드 추가
+  endTime?: string;
+  startTime?: string;
 }
 
 export interface ClubProps {
@@ -52,6 +60,7 @@ export interface SearchHeaderProps {
 
 export interface SearchResultsProps {
   filteredClubs: Club[];
+  searchQuery?: string;
 }
 
 export interface RecentTermProps {
@@ -100,8 +109,89 @@ export interface HeartBeat {
   isHeartbeat: boolean;
 }
 export interface MapClub {
+  id: number;
   address: string;
   englishName: string;
   tagList?: string[];
-  isHeartbeat: boolean;
+  isHeartbeat?: boolean;
+}
+
+export interface MagazineProps {
+  magazineId: number;
+  thumbImageUrl: string;
+  title: string;
+  content: string;
+  totalCount: number;
+  orderInHome: number;
+  isLiked: boolean;
+  currentIndex: number;
+  picked: boolean;
+}
+
+export interface UserProfile {
+  memberId: number;
+  nickname: string;
+  profileImageUrl: string;
+  role: string;
+  postCount: number;
+  followerCount: number;
+  followingCount: number;
+  businessName?: string;
+  isPostProfileCreated: boolean;
+  postProfileNickname: string;
+  postProfileImageUrl: string;
+}
+
+export interface EventDetail {
+  eventId: number;
+  title: string;
+  content: string;
+  images: string[];
+  liked: boolean;
+  likes: number;
+  views: number;
+  startDate: string;
+  endDate: string;
+  receiveInfo: boolean;
+  receiveName: boolean;
+  receiveGender: boolean;
+  receivePhoneNumber: boolean;
+  receiveSNSId: boolean;
+  receiveAccompany: boolean;
+  receiveMoney: boolean;
+  depositAccount: string;
+  depositAmount: number;
+  entranceFee: number;
+  entranceNotice: string;
+  notice: string;
+  region: string;
+  isFreeEntrance: boolean;
+  location: string;
+  isAttending: boolean;
+  isAuthor: boolean;
+  memberName?: string;
+  memberId?: number;
+  isAnonymous?: boolean;
+}
+
+export interface Participant {
+  eventId: number;
+  memberId: number;
+  name: string;
+  gender: string;
+  phoneNumber: string;
+  isPaid: boolean;
+  totalMember: number;
+  createdAt: string;
+}
+
+export interface EventForm {
+  title: string;
+  content: string;
+  images: string[];
+  liked: boolean;
+  likes: number;
+  views: number;
+  startDate: string;
+  endDate: string;
 }

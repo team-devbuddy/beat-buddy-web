@@ -14,6 +14,7 @@ import { CustomToast, CustomToastContainer } from '@/components/common/toast/Cus
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { heartAnimation } from '@/lib/animation';
+import BoardImageModal from '@/components/units/Board/BoardImageModal';
 
 const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   const router = useRouter();
@@ -22,7 +23,9 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
   const sliderRef = useRef<Slider>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [clickedHeart, setClickedHeart] = useState(false); // 추가된 상태
+  const [clickedHeart, setClickedHeart] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const defaultImage = '/images/DefaultImage.png';
 
@@ -32,9 +35,9 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   useEffect(() => {
     setLikedClubs((prevLikedClubs) => ({
       ...prevLikedClubs,
-      [venue.venueId]: isHeartbeat,
+      [venue.id]: isHeartbeat,
     }));
-  }, [isHeartbeat, setLikedClubs, venue.venueId]);
+  }, [isHeartbeat, setLikedClubs, venue.id]);
 
   useEffect(() => {
     const firstSlideVideo = document.querySelector<HTMLVideoElement>('.slick-slide.slick-active video');
@@ -45,21 +48,33 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
 
   const handleHeartClickWrapper = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    setClickedHeart(true); // 하트 클릭 애니메이션 상태 설정
-    await handleHeartClick(e, venue.venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
-    setTimeout(() => setClickedHeart(false), 500); // 애니메이션 상태 초기화
+    setClickedHeart(true);
+    await handleHeartClick(e, venue.id, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
+    setTimeout(() => setClickedHeart(false), 500);
+  };
+
+  const handleImageClick = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsModalOpen(true);
   };
 
   const handleShareClick = () => {
     const url = window.location.href;
-    navigator.clipboard
-      .writeText(url)
-      .then(() => {
-        toast(<CustomToast>링크가 복사되었어요!</CustomToast>);
-      })
-      .catch((err) => {
-        console.error('Failed to copy: ', err);
-      });
+    const title = venue.englishName || 'BeatBuddy';
+    const text = `${venue.englishName} - BeatBuddy에서 확인해보세요!`;
+
+    if (navigator.share) {
+      navigator.share({ title, text, url }).catch(() => fallbackShare());
+    } else {
+      fallbackShare();
+    }
+  };
+
+  const fallbackShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).catch((err) => {
+      console.error('Failed to copy: ', err);
+    });
   };
 
   const settings = {
@@ -71,20 +86,20 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
     autoplay: false,
     arrows: false,
     draggable: true,
-    beforeChange: (current: number, next: number) => {
+    swipe: true,
+    touchMove: true,
+    touchThreshold: 5,
+    swipeToSlide: true,
+    beforeChange: () => {
       const videos = document.querySelectorAll<HTMLVideoElement>('.slick-slide video');
       videos.forEach((video) => {
-        if (!video.paused) {
-          video.pause();
-        }
+        if (!video.paused) video.pause();
       });
     },
     afterChange: (current: number) => {
       setCurrentSlide(current);
       const video = document.querySelector<HTMLVideoElement>(`.slick-slide[data-index="${current}"] video`);
-      if (video) {
-        video.play();
-      }
+      if (video) video.play();
     },
   };
 
@@ -121,39 +136,48 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
   };
 
   const translateTag = (tag: string) => {
-    const translatedTag = atmosphereMap[tag] || genresMap[tag] || locationsMap[tag] || tag;
-    return translatedTag;
+    return atmosphereMap[tag] || genresMap[tag] || locationsMap[tag] || tag;
   };
 
   return (
-    <div className="relative flex h-[17.5rem] w-full flex-col justify-between">
+    <div className="relative flex h-[21.875rem] w-full flex-col justify-between">
       <CustomToastContainer />
-      <div className="absolute z-20 flex w-full items-start justify-between px-[1rem] py-[1rem]">
-        <button onClick={() => router.back()} aria-label="뒤로가기" className="text-white">
-          <Image src="/icons/ArrowLeft.svg" alt="back icon" width={24} height={24} />
+      {/* 상단 헤더 (overlay) */}
+      <div className="pointer-events-none absolute z-20 flex w-full items-start justify-between pb-[0.87rem] pl-5 pr-4 pt-[0.88rem]">
+        <button onClick={() => router.back()} aria-label="뒤로가기" className="pointer-events-auto text-white">
+          <Image src="/icons/arrow_back_ios.svg" alt="back icon" width={24} height={24} />
         </button>
-        <div className="flex items-center space-x-[1.25rem]">
-          <div onClick={handleShareClick} className="cursor-pointer">
-            <Image src="/icons/share.svg" alt="share icon" width={32} height={32} />
+        <div className="flex items-center space-x-3">
+          <div onClick={handleShareClick} className="pointer-events-auto cursor-pointer">
+            <Image src="/icons/share.svg" alt="share icon" width={26} height={26} />
           </div>
           <motion.div
             onClick={handleHeartClickWrapper}
-            className="cursor-pointer"
+            className="pointer-events-auto cursor-pointer"
             variants={heartAnimation}
             initial="initial"
             animate={clickedHeart ? 'clicked' : 'initial'}>
             <Image
-              src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+              src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart-detail.svg'}
               alt="heart icon"
-              width={32}
-              height={32}
+              width={26}
+              height={26}
             />
           </motion.div>
         </div>
       </div>
-      <Slider ref={sliderRef} {...settings} className="absolute inset-0 z-10 h-full w-full">
+
+      {/* 슬라이더 */}
+      <Slider ref={sliderRef} {...settings} className="absolute inset-0 z-10 h-full w-full touch-pan-x">
         {media.map((url, index) => (
-          <div key={index} className="relative h-[17.5rem] w-full">
+          // 🔧 래퍼에 onClick 부여 (오버레이 포함 전체를 클릭 타겟으로)
+          <div
+            key={index}
+            className="relative h-[21.875rem] w-full"
+            onClick={() => handleImageClick(index)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleImageClick(index)}>
             {url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i) ? (
               <Image src={url} alt={`Background ${index}`} fill className="object-cover object-center" />
             ) : url.match(/\.mp4|MOV$/i) ? (
@@ -170,14 +194,16 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
                 className="object-cover object-center"
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"></div>
+
+            {/* 🔧 오버레이가 클릭을 막지 않도록 pointer-events-none 추가 */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"></div>
           </div>
         ))}
       </Slider>
-      <div className="absolute bottom-0 z-20 flex w-full flex-col items-start gap-[1rem] px-[1rem] py-[1.25rem] text-white">
-        <h1 className="w-4/5 text-title-24-bold">
-          {venue.englishName} {venue.koreanName}
-        </h1>
+
+      {/* 하단 정보 (overlay) */}
+      <div className="pointer-events-none absolute bottom-0 z-20 flex w-full flex-col items-start gap-[0.38rem] px-[1rem] py-[1.25rem] text-white">
+        <h1 className="w-4/5 text-title-24-bold">{venue.englishName}</h1>
         <div className="flex w-full items-end justify-between">
           <div className="flex w-4/5 flex-wrap gap-2">
             {tagList && tagList.length > 0 ? (
@@ -186,21 +212,26 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
                 return (
                   <span
                     key={index}
-                    className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                    className="rounded-[0.5rem] border border-gray500 bg-gray500 px-[0.5rem] py-[0.25rem] text-body-13-medium text-gray300">
                     {translatedTag}
                   </span>
                 );
               })
             ) : (
-              <span className="text-body3-12-medium text-gray100">No tags available</span>
+              <span className="text-body-13-medium text-gray300">No tags available</span>
             )}
           </div>
 
-          <div className="rounded-[1rem] bg-gray700 px-[0.75rem] py-[0.25rem] text-body3-12-bold text-white">
-            {currentSlide + 1}&nbsp; /&nbsp; {media.length}
+          <div className="rounded-[0.5rem] bg-[#17181CB2]/70 px-[0.5rem] py-[0.19rem] text-body-11-medium text-gray300">
+            {currentSlide + 1}/{media.length}
           </div>
         </div>
       </div>
+
+      {/* 이미지 모달 */}
+      {isModalOpen && (
+        <BoardImageModal images={media} initialIndex={currentImageIndex} onClose={() => setIsModalOpen(false)} />
+      )}
     </div>
   );
 };

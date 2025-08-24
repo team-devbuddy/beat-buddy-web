@@ -54,6 +54,13 @@ function Dropdown({
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleOptionClick = (option: string) => {
+    console.log('🎯 드롭다운 옵션 클릭:', {
+      label,
+      option,
+      selectedOption,
+      timestamp: new Date().toLocaleTimeString(),
+    });
+
     if (option === selectedOption) {
       setSelectedOption(''); // 선택된 옵션을 다시 클릭하면 선택 해제
     } else {
@@ -68,11 +75,11 @@ function Dropdown({
         <button
           ref={buttonRef}
           type="button"
-          className={`inline-flex w-full cursor-pointer justify-between rounded-sm py-[0.25rem] pl-[0.62rem] pr-[0.5rem] text-body2-15-medium focus:outline-none ${
+          className={`inline-flex w-full cursor-pointer justify-between rounded-[0.5rem] py-[0.25rem] pl-[0.5rem] pr-[0.25rem]  text-[0.8125rem] focus:outline-none ${
             isThirdDropdown
               ? 'border-transparent bg-transparent text-gray300'
               : selectedOption
-                ? 'border-sub2 bg-sub2 text-main2'
+                ? 'border-sub2 bg-sub2 text-main'
                 : 'border-gray700 bg-gray700 text-gray300'
           }`}
           onClick={toggleDropdown}>
@@ -80,7 +87,9 @@ function Dropdown({
             <span>{selectedOption || label}</span>
             <Image
               src={
-                selectedOption && !isThirdDropdown ? '/icons/chevron.forward-pink.svg' : '/icons/chevron.forward.svg'
+                selectedOption && !isThirdDropdown
+                  ? '/icons/keyboard_arrow_down-pink.svg'
+                  : '/icons/keyboard_arrow_down.svg'
               }
               alt="arrow down"
               width={16}
@@ -93,7 +102,7 @@ function Dropdown({
         {isOpen && (
           <>
             <motion.div
-              className="fixed inset-0 bg-black bg-opacity-30 z-40"
+              className="fixed inset-0 z-40 bg-black bg-opacity-30"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -104,36 +113,19 @@ function Dropdown({
               animate="open"
               exit="closed"
               variants={dropdownVariants}
-              className={`absolute ${dropdownTop ? 'top-full' : 'bottom-full'} ${isThirdDropdown ? 'right-0 w-[6.25rem]' : 'left-0 w-[13.75rem]'} z-50 mt-2 origin-top-right rounded-md bg-gray700 shadow-lg`}>
-              {!isThirdDropdown && (
-                <div className="flex items-center gap-[0.5rem] border-b-[0.5px] border-gray400 px-[0.75rem] py-[0.5rem] text-body1-16-bold text-gray-400">
-                  <Image src="/icons/OpenArrow.svg" alt="arrow down" width={24} height={24} />
-                  <div>{label}</div>
-                </div>
-              )}
-              <div className="flex flex-col overflow-y-auto max-h-52"> 
+              className={`absolute whitespace-nowrap ${dropdownTop ? 'top-full' : 'bottom-full'} ${isThirdDropdown ? 'right-0' : 'left-0'} z-50 mt-2 origin-top-right rounded-md bg-gray700 shadow-lg`}>
+              <div className="flex max-h-52 flex-col overflow-y-auto hide-scrollbar">
                 {options.map((option, index) => (
                   <button
                     key={index}
-                    className={`block w-full text-left text-body1-16-medium ${
-                      isThirdDropdown ? 'text-gray300 ' : 'text-white'
-                    } ${option === selectedOption ? (isThirdDropdown ? 'text-white' : 'bg-gray500') : ''}`}
+                    className={`block text-center text-[0.8125rem] text-gray100 ${
+                      option === selectedOption ? 'font-bold text-main' : ''
+                    }`}
                     onClick={() => handleOptionClick(option)}>
                     <div
-                      className={`flex items-center gap-[0.25rem] px-[0.75rem] py-[0.75rem] hover:bg-gray500 ${
-                        index === 0
-                          ? 'rounded-t-md'
-                          : index === options.length - 1
-                          ? 'rounded-b-md'
-                          : ''
+                      className={`flex items-center justify-center px-[1.12rem] py-[0.56rem] hover:bg-gray500 ${
+                        index === 0 ? 'rounded-t-md' : index === options.length - 1 ? 'rounded-b-md' : ''
                       }`}>
-                      {!isThirdDropdown && (
-                        <div className="flex h-[28px] w-[28px] py-[0.5rem] items-center justify-center">
-                          {option === selectedOption && (
-                            <Image src="/icons/checkmark.svg" alt="checked" width={16} height={16} />
-                          )}
-                        </div>
-                      )}
                       <span>{option}</span>
                     </div>
                   </button>

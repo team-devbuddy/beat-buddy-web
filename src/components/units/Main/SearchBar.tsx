@@ -14,7 +14,7 @@ export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
   const accessToken = useRecoilValue(accessTokenState);
-  const inputRef = useRef<HTMLInputElement>(null); 
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isMainPage) {
@@ -51,44 +51,50 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="flex w-full items-center justify-between bg-main px-[1rem] pb-[0.5rem] pt-[0.75rem]">
-      {isMainPage ? (
-        <div className="relative w-full">
-          <Link href="/search" className="block w-full">
-            <div className="relative w-full">
-              <input
-                className="w-full cursor-pointer border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
-                placeholder="지금 가장 인기있는 클럽은?"
-                readOnly
-                style={{ WebkitAppearance: 'none', borderRadius: 0 }}
-              />
-              <Image
-                src="/icons/red-search.svg"
-                alt="search icon"
-                width={20}
-                height={20}
-                className="absolute bottom-3 right-[1rem]"
-              />
-            </div>
-          </Link>
-        </div>
-      ) : (
-        <div className="relative w-full">
-          <input
-            ref={inputRef} 
-            className="w-full border-b-2 border-black bg-transparent py-[0.5rem] pl-[0.25rem] pr-[1rem] text-BG-black placeholder:text-BG-black focus:outline-none"
-            placeholder="지금 가장 인기있는 클럽은?"
-            value={searchQuery}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            autoFocus // 모바일에서 자동으로 키패드 올라오게 autoFocus 추가
-            style={{ WebkitAppearance: 'none', borderRadius: 0 }}
-          />
-          <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
-            <Image src="/icons/red-search.svg" alt="search icon" width={20} height={20} />
+    <div className="scrollbar-none px-5">
+      <div className="flex w-full items-center justify-between rounded-[0.5rem] bg-gray700">
+        {isMainPage ? (
+          <div className="relative w-full">
+            <Link href="/search" className="block w-full">
+              <div className="relative w-full">
+                <input
+                  className="w-full cursor-pointer bg-transparent px-[0.88rem] py-[0.81rem] text-body-13-medium text-gray300 safari-input-fix placeholder:text-gray300 focus:outline-none"
+                  placeholder="지금 인기 있는 베뉴를 검색해보세요"
+                  readOnly
+                  style={{ WebkitAppearance: 'none', borderRadius: 0 }}
+                />
+                <Image
+                  src="/icons/search-01-gray.svg"
+                  alt="search icon"
+                  width={22}
+                  height={22}
+                  className="absolute bottom-[0.81rem] right-[1rem]"
+                />
+              </div>
+            </Link>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="relative w-full">
+            <input
+              ref={inputRef}
+              className="w-full cursor-pointer bg-transparent px-[0.88rem] py-[0.81rem] text-body-13-medium text-white safari-input-fix placeholder:text-gray300 focus:outline-none"
+              placeholder="지금 인기 있는 베뉴를 검색해보세요"
+              value={searchQuery}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              autoFocus // 모바일에서 자동으로 키패드 올라오게 autoFocus 추가
+              style={{ WebkitAppearance: 'none', borderRadius: 0 }}
+            />
+            <div onClick={handleSearch} className="absolute bottom-[0.81rem] right-[1rem] cursor-pointer">
+              {searchQuery ? (
+                <Image src="/icons/search-01-pink.svg" alt="search icon" width={22} height={22} />
+              ) : (
+                <Image src="/icons/search-01-gray.svg" alt="search icon" width={22} height={22} />
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

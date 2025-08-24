@@ -1,112 +1,397 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link'; // Next.js Link import
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Link from 'next/link';
 import dayjs from 'dayjs';
+import { getVenueEvents } from '@/lib/actions/venue-controller/getVenueEvents';
+import { postLikeEvent } from '@/lib/actions/event-controller/postLikeEvent';
+import { deleteLikeEvent } from '@/lib/actions/event-controller/deleteLikeEvent';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { accessTokenState, likedEventsState, likeCountState } from '@/context/recoil-context';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { heartAnimation } from '@/lib/animation';
+import Loading from '@/app/loading';
 
 interface NewsItem {
-  id: string;
+  eventId: number;
   title: string;
-  dateRange: string;
-  imageUrl: string;
+  content: string;
+  thumbImage: string;
+  liked: boolean;
+  location: string;
+  likes: number;
+  views: number;
+  startDate: string;
+  endDate: string;
+  region: string;
+  isFreeEntrance: boolean;
+  isAttending: boolean;
+  isAuthor: boolean;
 }
 
 interface NewsContentsProps {
   newsList: NewsItem[];
+  venueId: string;
+  sortType: 'latest' | 'popular';
 }
 
 const truncateText = (text: string, maxLength: number) => {
   return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 };
 
-const calculateDday = (dateRange: string) => {
-  const today = dayjs();
-  const endDate = dayjs(dateRange.split('~')[1]?.trim());
+// 이미지 로딩을 위한 컴포넌트
+const SafeImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
+  const [imageSrc, setImageSrc] = useState(src || '/images/DefaultImage.png');
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  if (!endDate.isValid()) {
-    return 'END';
+  useEffect(() => {
+    setImageSrc(src || '/images/DefaultImage.png');
+    setHasError(false);
+    setIsLoading(true);
+  }, [src]);
+
+  const handleLoad = () => {
+    setIsLoading(false);
+    setHasError(false);
+  };
+
+  const handleError = () => {
+    console.log('Image load error, falling back to default image');
+    setImageSrc('/images/DefaultImage.png');
+    setHasError(true);
+    setIsLoading(false);
+  };
+
+  return (
+    <div className="relative h-full w-full">
+      {isLoading && (
+        <div className="bg-gray800 absolute inset-0 flex items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray600 border-t-main"></div>
+        </div>
+      )}
+      <Image
+        src={imageSrc}
+        alt={alt}
+        fill
+        className={`object-cover object-top ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300 ${className || ''}`}
+        sizes="(max-width: 768px) 50vw, 25vw"
+        onLoad={handleLoad}
+        onError={handleError}
+        priority={false}
+        unoptimized={hasError}
+        style={{ willChange: 'auto' }}
+      />
+    </div>
+  );
+};
+
+const calculateDday = (startDate: string, endDate: string) => {
+  const today = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  // 날짜만 비교하기 위해 시간을 00:00:00으로 설정
+  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const startDateOnly = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const endDateOnly = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+  // 이벤트가 이미 종료된 경우
+  if (todayDate > endDateOnly) {
+    return null;
   }
 
-  const diff = endDate.diff(today, 'day');
-  return diff < 0 ? 'END' : `D-${diff}`;
+  // 이벤트가 진행 중인 경우 (오늘이 시작일과 종료일 사이)
+  if (todayDate >= startDateOnly && todayDate <= endDateOnly) {
+    return 0; // D-0 (진행중)
+  }
+
+  // 이벤트 시작까지 남은 일수 계산
+  const diff = Math.ceil((startDateOnly.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24));
+  return diff >= 0 ? diff : null;
+};
+
+const formatDateRange = (startDate: string, endDate: string) => {
+  const start = dayjs(startDate).format('YYYY-MM-DD');
+  const end = dayjs(endDate).format('YYYY-MM-DD');
+  return `${start} ~ ${end}`;
 };
 
 const sortNewsByDday = (newsList: NewsItem[]) => {
   return [...newsList].sort((a, b) => {
-    const getDdayValue = (dDay: string) => {
-      if (dDay === 'END') {
-        return Number.MAX_SAFE_INTEGER; // END는 항상 마지막
-      }
-      if (dDay.startsWith('D-')) {
-        return parseInt(dDay.split('-')[1], 10); // D-숫자에서 숫자만 추출
-      }
-      return 0; // 기타 값은 최소값으로 설정
-    };
+    const aDday = calculateDday(a.startDate, a.endDate);
+    const bDday = calculateDday(b.startDate, b.endDate);
 
-    const aDday = calculateDday(a.dateRange);
-    const bDday = calculateDday(b.dateRange);
+    // null(끝난 이벤트)과 진행중인 이벤트 구분
+    const aIsEnded = aDday === null;
+    const bIsEnded = bDday === null;
 
-    return getDdayValue(aDday) - getDdayValue(bDday);
+    // 진행중인 이벤트를 먼저, 끝난 이벤트를 뒤로
+    if (aIsEnded && !bIsEnded) return 1;
+    if (!aIsEnded && bIsEnded) return -1;
+
+    // 둘 다 진행중인 경우: 좋아요 수로 정렬 (높은 순)
+    if (!aIsEnded && !bIsEnded) {
+      return (b.likes || 0) - (a.likes || 0);
+    }
+
+    // 둘 다 끝난 경우: 좋아요 수로 정렬 (높은 순)
+    return (b.likes || 0) - (a.likes || 0);
   });
 };
 
-const NewsContents = ({ newsList }: NewsContentsProps) => {
-  const sortedNewsList = sortNewsByDday(newsList);
+const EmptyNews = () => {
+  return (
+    <div className="flex flex-col items-center justify-center pb-[7rem] pt-20 text-center">
+      <Image src="/icons/blackLogo.svg" alt="BeatBuddy Logo" width={50} height={47} className="mb-2" />
+      <p className="text-body-14-bold text-gray300">아직 등록된 이벤트가 없어요</p>
+    </div>
+  );
+};
 
-  const itemsPerPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
+const NewsContents = ({ newsList, venueId, sortType }: NewsContentsProps) => {
+  const [events, setEvents] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [clickedHeart, setClickedHeart] = useState<{ [key: number]: boolean }>({});
+  const accessToken = useRecoilValue(accessTokenState);
+  const [likedEvents, setLikedEvents] = useRecoilState(likedEventsState);
+  const [likeCounts, setLikeCounts] = useRecoilState(likeCountState);
 
-  const totalPages = Math.ceil(sortedNewsList.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = sortedNewsList.slice(startIndex, startIndex + itemsPerPage);
+  // 무한 스크롤을 위한 Intersection Observer
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useRef<HTMLDivElement>(null);
 
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+  // 무한 스크롤 콜백
+  const handleIntersection = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && !loading && events.length > visibleCount) {
+        setVisibleCount((prev) => prev + 6);
+      }
+    },
+    [loading, events.length],
+  );
+
+  // 좋아요 핸들러
+  const handleHeartClick = async (e: React.MouseEvent, eventId: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!accessToken) return;
+
+    // 애니메이션 시작
+    setClickedHeart((prev) => ({ ...prev, [eventId]: true }));
+
+    try {
+      const currentLiked = likedEvents[eventId] || false;
+      const currentCount = likeCounts[eventId] || 0;
+
+      if (currentLiked) {
+        // 좋아요 취소
+        await deleteLikeEvent(eventId, accessToken);
+        setLikedEvents((prev) => ({ ...prev, [eventId]: false }));
+        setLikeCounts((prev) => ({ ...prev, [eventId]: currentCount - 1 }));
+      } else {
+        // 좋아요 추가
+        await postLikeEvent(eventId, accessToken);
+        setLikedEvents((prev) => ({ ...prev, [eventId]: true }));
+        setLikeCounts((prev) => ({ ...prev, [eventId]: currentCount + 1 }));
+      }
+    } catch (error) {
+      console.error('좋아요 처리 중 오류가 발생했습니다:', error);
+    } finally {
+      // 애니메이션 종료 (좋아요 추가와 취소 모두에 적용)
+      setTimeout(() => {
+        setClickedHeart((prev) => ({ ...prev, [eventId]: false }));
+      }, 500);
+    }
   };
 
-  const getDdayStyle = (dDay: string) => {
-    if (dDay === 'END') {
+  // API에서 이벤트 데이터 가져오기
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!accessToken) {
+        setError('Access token is not available');
+        setLoading(false);
+        return;
+      }
+
+      if (!venueId || venueId === 'undefined') {
+        setError('Invalid venue ID');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        console.log('Fetching events for venue:', venueId, 'sortType:', sortType);
+        const data = await getVenueEvents(venueId, sortType, accessToken);
+        console.log('Received events data:', data);
+        setEvents(Array.isArray(data) ? data : []);
+
+        // 좋아요 상태 초기화
+        if (Array.isArray(data)) {
+          const initialLikedState: { [key: number]: boolean } = {};
+          const initialLikeCount: { [key: number]: number } = {};
+
+          data.forEach((event) => {
+            initialLikedState[event.eventId] = event.liked;
+            initialLikeCount[event.eventId] = event.likes;
+          });
+
+          setLikedEvents((prev) => ({ ...prev, ...initialLikedState }));
+          setLikeCounts((prev) => ({ ...prev, ...initialLikeCount }));
+        }
+      } catch (err) {
+        console.error('Error fetching events:', err);
+        const errorMessage = err instanceof Error ? err.message : '이벤트를 불러오는데 실패했습니다.';
+        setError(errorMessage);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [venueId, sortType, accessToken]);
+
+  // Intersection Observer 설정
+  useEffect(() => {
+    if (loadingRef.current) {
+      observerRef.current = new IntersectionObserver(handleIntersection, {
+        threshold: 0.1,
+      });
+      observerRef.current.observe(loadingRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [handleIntersection, events.length]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center pb-[7rem] pt-20 text-center">
+        <Image src="/icons/grayLogo.svg" alt="BeatBuddy Logo" className="mb-6 h-16 w-16" />
+        <p className="text-body2-15-medium text-gray300">{error}</p>
+      </div>
+    );
+  }
+
+  if (events.length === 0) {
+    return <EmptyNews />;
+  }
+
+  const sortedEvents = sortNewsByDday(events);
+  const visibleEvents = sortedEvents.slice(0, visibleCount);
+
+  const getDdayStyle = (dDay: number | null) => {
+    if (dDay === null) {
       return 'bg-gray500 text-gray200';
     }
-    if (dDay.startsWith('D-')) {
-      const dayNumber = parseInt(dDay.split('-')[1], 10);
-      return dayNumber <= 7 ? 'bg-main text-white' : 'bg-gray500 text-gray200';
+    if (dDay === 0) {
+      return 'bg-FooterBlack text-main';
     }
-    return 'bg-gray500 text-gray200';
+    return dDay <= 7 ? 'bg-main text-white' : 'bg-gray500 text-gray200';
   };
 
   return (
-    <div className="px-4 py-4">
+    <div className="px-5 pb-[7rem] pt-[0.88rem]">
       {/* 뉴스 목록 */}
       <div className="grid grid-cols-2 gap-4">
-        {currentItems.map((news) => (
-          <Link key={news.id} href={`/news/${news.id}`} passHref>
-            <div className="flex cursor-pointer flex-col overflow-hidden rounded-[0.25rem]">
+        {visibleEvents.map((news) => (
+          <Link key={news.eventId} href={`/event/${news.eventId}`} passHref>
+            <div className="flex cursor-pointer flex-col overflow-hidden rounded-[0.5rem]">
               {/* 이미지 */}
-              <div className="h-[160px] w-full rounded-[0.25rem] overflow-hidden">
-                <img src={news.imageUrl} alt={news.title} className="h-full w-full object-cover object-top" />
+              <div className="relative h-[160px] w-full overflow-hidden rounded-[0.5rem]">
+                <SafeImage
+                  src={news.thumbImage || '/images/DefaultImage.png'}
+                  alt={news.title}
+                  className="object-cover object-top"
+                />
+                {/* 지난 이벤트 오버레이 */}
+                {calculateDday(news.startDate, news.endDate) === null && (
+                  <div
+                    className="absolute inset-0 bg-black/30"
+                    style={{
+                      background:
+                        'linear-gradient(0deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%), linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.56) 59.6%)',
+                    }}
+                  />
+                )}
+                {/* 디데이 - 이미지 위에 좌측 상단 (끝난 이벤트는 표시하지 않음) */}
+                {calculateDday(news.startDate, news.endDate) !== null && (
+                  <div className="absolute left-[0.62rem] top-[0.62rem]">
+                    <span
+                      className={`rounded-[0.5rem] px-[0.38rem] py-[0.25rem] text-center text-[0.75rem] leading-[160%] ${getDdayStyle(
+                        calculateDday(news.startDate, news.endDate),
+                      )}`}
+                      style={{
+                        whiteSpace: 'nowrap',
+                      }}>
+                      {(() => {
+                        const dday = calculateDday(news.startDate, news.endDate);
+                        if (dday === 0) return 'D-DAY';
+                        return `D-${dday}`;
+                      })()}
+                    </span>
+                  </div>
+                )}
+
+                {/* 좋아요 개수 - 이미지 위에 좌측 하단 */}
+                <div className="absolute bottom-[0.62rem] left-[0.62rem] flex items-center space-x-[0.25rem]">
+                  <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15} height={13} />
+                  <span className="text-[0.75rem] text-gray300">
+                    {String(likeCounts[news.eventId] !== undefined ? likeCounts[news.eventId] : news.likes).padStart(
+                      3,
+                      '0',
+                    )}
+                  </span>
+                </div>
+
+                {/* 좋아요 버튼 - 이미지 위에 우측 하단 */}
+                <motion.div
+                  className={`absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer`}
+                  onClick={(e) => handleHeartClick(e, news.eventId)}
+                  variants={heartAnimation}
+                  initial="initial"
+                  animate={clickedHeart[news.eventId] ? 'clicked' : 'initial'}
+                  style={{ transformOrigin: 'center' }}>
+                  <Image
+                    className="cursor-pointer safari-icon-fix"
+                    src={likedEvents[news.eventId] ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
+                    alt="heart icon"
+                    width={27}
+                    height={24}
+                    priority={false}
+                    unoptimized={true}
+                  />
+                </motion.div>
               </div>
 
               {/* 뉴스 정보 */}
-              <div className="flex flex-col p-4">
+              <div className="flex flex-col pt-3">
                 <div className="flex items-center">
-                  <h3 className="max-w-[70%] truncate text-body1-16-bold text-white">{truncateText(news.title, 12)}</h3>
-                  <span
-                    className={`ml-[0.38rem] w-[2.5rem] flex-shrink-0 rounded-xs px-[0.38rem] py-[0.13rem] text-center text-body3-12-medium ${getDdayStyle(
-                      calculateDday(news.dateRange),
-                    )}`}
-                    style={{
-                      whiteSpace: 'nowrap',
-                    }}>
-                    {calculateDday(news.dateRange)}
-                  </span>
+                  <h3 className="max-w-[100%] truncate text-[0.875rem] font-bold leading-[160%] text-white">
+                    {truncateText(news.title, 12)}
+                  </h3>
                 </div>
                 <span
-                  className="text-body3-12-medium text-gray300"
+                  className="text-[0.625rem] text-gray100"
                   style={{
                     whiteSpace: 'nowrap',
                   }}>
-                  {news.dateRange}
+                  {formatDateRange(news.startDate, news.endDate)}
                 </span>
               </div>
             </div>
@@ -114,35 +399,12 @@ const NewsContents = ({ newsList }: NewsContentsProps) => {
         ))}
       </div>
 
-      {/* 페이지네이션 */}
-      <div className="mt-6 flex items-center justify-center space-x-2">
-        <button
-          onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
-          disabled={currentPage === 1}
-          className={`flex h-8 w-8 items-center justify-center rounded-full ${
-            currentPage > 1 ? 'text-main' : 'text-gray500'
-          }`}>
-          &lt;
-        </button>
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => handlePageChange(index + 1)}
-            className={`flex h-8 w-8 items-center justify-center ${
-              currentPage === index + 1 ? 'text-main' : 'text-gray300 hover:bg-gray500'
-            }`}>
-            {index + 1}
-          </button>
-        ))}
-        <button
-          onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className={`flex h-8 w-8 items-center justify-center rounded-full ${
-            currentPage < totalPages ? 'text-main' : 'text-gray500'
-          }`}>
-          &gt;
-        </button>
-      </div>
+      {/* 무한 스크롤 로딩 인디케이터 */}
+      {visibleCount < sortedEvents.length && (
+        <div ref={loadingRef} className="flex justify-center py-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray300 border-t-main"></div>
+        </div>
+      )}
     </div>
   );
 };

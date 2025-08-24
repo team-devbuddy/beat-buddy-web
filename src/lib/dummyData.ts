@@ -1,24 +1,34 @@
-export const dummyPosts = [
+import { RawHotPost } from "./actions/post-controller/getHotPost";
+
+export const dummyPosts: RawHotPost[] = [
   {
     id: 1,
     title: '이따 헨즈 양홍원 보러 갈 사람?',
-    description: '여자 2명 있고 성별 상관 없어 아무나 같이 가서 놀 사람 댓글이나 채팅 고고',
-    createdAt: new Date(new Date().getTime() - 60 * 1000).toISOString(), // 1분 전
+    content: '여자 2명 있고 성별 상관 없어 아무나 같이 가서 놀 사람 댓글이나 채팅 고고',
+    createAt: new Date(new Date().getTime() - 60 * 1000).toISOString(), // 1분 전
     likes: 12,
     comments: 28,
-    boardName: '자유게시판',
+    hashtags: ['뮤직', '압구정로데오'],
+    nickname: '익명',
+    thumbImage: '/images/thumbnail.png',
+    role: 'user',
+    scraps: 3,
   },
   {
     id: 2,
     title: '합정 지금 만나실 분',
-    description:
-      '간단하게 술 먹고 이태원 넘어가서 놀자 친구 데려와도 됨 ㅋㅋㅋ 활발하면 좋고 남녀 상관 X 대신 술 잘 마...',
-    createdAt: new Date(new Date().getTime() - 3 * 3600 * 1000).toISOString(), // 3시간 전
+    content: '간단하게 술 먹고 이태원 넘어가서 놀자 친구 데려와도 됨 ㅋㅋㅋ 활발하면 좋고 남녀 상관 X 대신 술 잘 마...',
+    createAt: new Date(new Date().getTime() - 3 * 3600 * 1000).toISOString(), // 3시간 전
     likes: 32,
     comments: 91,
-    boardName: '자유게시판',
+    hashtags: ['홍대', '노태일ㅋㅋㅋ'],
+    nickname: '익명',
+    thumbImage: '/images/thumbnail.png',
+    role: 'business',
+    scraps: 1,
   },
 ];
+
 
 export const mockReviews = [
   {
@@ -29,6 +39,7 @@ export const mockReviews = [
     content: '꾸준히 재밌어요. 친구들이랑 놀기 좋아요!',
     likeCount: 12,
     images: ['/images/Review1.png', '/images/Review2.png'],
+    venueId: 70  // FREAX
   },
   {
     id: '2',
@@ -181,6 +192,7 @@ export const mockNewsList = [
 
 ※ 원활한 추가 티켓 오픈을 위해 2024년 8월 14일(수) 3:00PM~5:59:59PM까지 예매가 일시 중지됩니다. 관객 여러분의 양해 부탁드립니다.`,
     location: '서울특별시 마포구 와우산로 17길',
+    venueId: 53  // Arga
   },
   {
     id: '2',
@@ -347,9 +359,11 @@ export const mockNewsList = [
 export const mockBoardData = [
   {
     id: '1',
+    authorId: 'user1',  // 게시글 작성자 ID
     author: '노태리',
     timestamp: '2024-05-28 05:50',
     venue: 'FREAX',
+    venueId: 70,
     status: '조각 마감',
     meetingDate: '2024-05-30',
     participants: '4-6명',
@@ -361,11 +375,13 @@ export const mockBoardData = [
     totalParticipants: 6,
     englishName: 'FREAX',
     koreanName: '프릭스',
-    isAuthor: true, // 작성자 본인 여부
+    isAuthor: true,
+    description: '같이 클럽가자 1~2명까지만 구함 본인 남자고 평소에 클럽마니가는데 오늘 놀 친구 없어서 구해봄 적당히 잘 노는 사람 환영 ㄱㄱ'
   },
   {
     id: '2',
-    author: '작성자 닉네임',
+    authorId: 'user2',  // 게시글 작성자 ID
+    author: '아르가ㅏㅏㅏ',
     timestamp: '2024-05-28 05:50',
     venue: 'Arga',
     status: '조각 모집 중',
@@ -380,9 +396,12 @@ export const mockBoardData = [
     englishName: 'Arga',
     koreanName: '아르가',
     isAuthor: false,
+    venueId: 53,
+    description: '같이 클럽가자 1~2명까지만 구함 본인 남자고 평소에 클럽마니가는데 오늘 놀 친구 없어서 구해봄 적당히 잘 노는 사람 환영 ㄱㄱ'
   },
   {
     id: '3',
+    authorId: 'user1',  // 게시글 작성자 ID
     author: '작성자 닉네임',
     timestamp: '2024-05-28 05:50',
     title: '합정 지금 만나실 분',
@@ -393,10 +412,11 @@ export const mockBoardData = [
     boardType: '자유 게시판',
     englishName: '',
     koreanName: '',
-    isAuthor: true,
+    isAuthor: true
   },
   {
     id: '4',
+    authorId: 'user2',  // 게시글 작성자 ID
     author: '노랑이',
     timestamp: '2024-11-30 05:50',
     venue: 'FREAX',
@@ -412,6 +432,62 @@ export const mockBoardData = [
     englishName: 'FREAX',
     koreanName: '프릭스',
     isAuthor: false,
+    venueId: 70,
+    description: '같이 클럽가자 1~2명까지만 구함 본인 남자고 평소에 클럽마니가는데 오늘 놀 친구 없어서 구해봄 적당히 잘 노는 사람 환영 ㄱㄱ'
   },
 ];
+
+export const mockComments = [
+  {
+    id: '1',
+    postId: '1',
+    authorId: 'user1',  // 댓글 작성자 ID
+    author: '노태리',
+    profileImage: '/icons/profile.svg',
+    content: '제가 쓴 글에 제가 단 댓글입니다.',
+    timestamp: '2시간 전',
+    parentId: null,
+  },
+  {
+    id: '2',
+    postId: '1',
+    authorId: 'user2',  // 다른 사용자의 댓글
+    author: 'Jane Doe',
+    profileImage: '/icons/profile.svg',
+    content: '참여하고 싶습니다!',
+    timestamp: '1시간 전',
+    parentId: null,
+  },
+  {
+    id: '3',
+    postId: '1',
+    authorId: 'user1',
+    author: '노태리',  // 게시글 작성자
+    profileImage: '/icons/profile.svg',
+    content: '네 좋습니다~ 채팅 보내드릴게요',
+    timestamp: '30분 전',
+    parentId: '2',  // Jane Doe의 댓글에 대한 대댓글
+  },
+  {
+    id: '4',
+    postId: '2',
+    authorId: 'user2',  // 게시글 2번의 작성자
+    author: '아르가ㅏㅏㅏ',
+    profileImage: '/icons/profile.svg',
+    content: '댓글 남겨주시면 순서대로 연락드리겠습니다!',
+    timestamp: '3분 전',
+    parentId: null,
+  },
+  {
+    id: '5',
+    postId: '2',
+    authorId: 'user3',
+    author: '참여희망자',
+    profileImage: '/icons/profile.svg',
+    content: '저도 참여 가능할까요?',
+    timestamp: '1분 전',
+    parentId: null,
+  }
+];
+
 

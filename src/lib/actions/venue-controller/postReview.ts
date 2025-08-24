@@ -1,0 +1,48 @@
+export const postReview = async (venueId: string, content: string, images: (File | string)[], accessToken: string) => {
+  const formData = new FormData();
+  formData.append('venueReviewRequestDTO', JSON.stringify({ content }));
+
+  images.forEach((file, index) => {
+    if (file instanceof File) {
+      formData.append('images', file, file.name);
+    } else {
+      formData.append('images', new Blob([file]), file);
+    }
+  });
+
+  // 이미지 파일들 추가
+
+  const venueReviewRequestDTO = {
+    content,
+    images: images, // 이미지 URL 배열
+    likes: 0,
+    views: 0,
+    liked: false,
+    isAuthor: true,
+    isLiked: false,
+  };
+
+  formData.append('venueReviewRequestDTO', JSON.stringify(venueReviewRequestDTO));
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/venue-reviews/${venueId}`, {
+      method: 'POST',
+      headers: {
+        Access: `Bearer ${accessToken}`, // 인증 헤더 추가
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`리뷰 작성 실패: ${res.status} - ${errorText}`);
+    }
+
+    const result = await res.json();
+    return result; // 성공 시 결과 반환
+  } catch (error) {
+    console.error('리뷰 작성 에러:', error);
+    // 에러를 다시 throw해서 상위로 전파
+    throw error;
+  }
+};

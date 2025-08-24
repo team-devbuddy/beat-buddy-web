@@ -5,40 +5,46 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface NewsHeaderProps {
   venueName: string;
+  onSortChange: (sortType: 'latest' | 'popular') => void;
+  currentSort: 'latest' | 'popular';
 }
 
-const NewsHeader = ({ venueName}: NewsHeaderProps) => {
+const NewsHeader = ({ venueName, onSortChange, currentSort }: NewsHeaderProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  const [selectedSortOption, setSelectedSortOption] = React.useState('최신순');
 
   const sortOptions = ['최신순', '인기순'];
 
- 
+  const getSortType = (option: string) => {
+    return option === '최신순' ? 'latest' : 'popular';
+  };
+
+  const getSortOptionText = (sortType: 'latest' | 'popular') => {
+    return sortType === 'latest' ? '최신순' : '인기순';
+  };
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleSortOptionClick = (option: string) => {
-    setSelectedSortOption(option);
+    const newSortType = getSortType(option);
+    onSortChange(newSortType);
     setIsDropdownOpen(false);
   };
 
   return (
-    <div className="relative flex items-center justify-between bg-BG-black px-4 py-2 text-gray-100">
-      {/* 뉴스 제목 */}
+    <div className="relative flex items-center justify-end bg-BG-black px-5 pt-[0.88rem] text-gray100">
+      {/* 뉴스 
       <h2 className="text-body1-16-bold text-white">{venueName} NEWS</h2>
-
+제목 */}
       {/* 우측 옵션 */}
       <div className="relative flex items-center space-x-4">
-       
-
         {/* 드롭다운 */}
         <div className="relative">
-          <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body2-15-medium">
-            <span className={`${selectedSortOption ? 'text-main' : 'text-gray-200'}`}>{selectedSortOption}</span>
+          <button onClick={handleDropdownToggle} className="flex items-center text-body-13-medium">
+            <span className={`${currentSort ? 'text-gray300' : 'text-gray300'}`}>{getSortOptionText(currentSort)}</span>
             <img
-              src="/icons/chevron-down.svg"
+              src="/icons/keyboard_arrow_down-gray.svg"
               alt="드롭다운 화살표"
               className={`h-4 w-4 transform ${isDropdownOpen ? 'rotate-180' : ''}`}
             />
@@ -61,19 +67,19 @@ const NewsHeader = ({ venueName}: NewsHeaderProps) => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 z-20 mt-2 w-[6rem] rounded-md bg-gray700 shadow-lg">
+                  className="absolute right-0 z-20 mt-2 rounded-[0.5rem] bg-gray500 shadow-lg">
                   {sortOptions.map((option, index) => (
                     <button
                       key={option}
                       onClick={() => handleSortOptionClick(option)}
-                      className={`w-full px-4 py-2 text-center text-body2-15-medium hover:bg-gray500 ${
-                        option === selectedSortOption ? 'text-main' : 'text-gray-100'
+                      className={`w-full whitespace-nowrap px-[1.53rem] py-[0.56rem] text-center text-body-13-medium ${
+                        getSortType(option) === currentSort ? 'font-bold text-main' : 'text-gray100'
                       } ${
                         index === 0
                           ? 'rounded-t-md' // 첫 번째 옵션에만 top border-radius
                           : index === sortOptions.length - 1
-                          ? 'rounded-b-md' // 마지막 옵션에만 bottom border-radius
-                          : '' // 중간 옵션에는 border-radius 없음
+                            ? 'rounded-b-md' // 마지막 옵션에만 bottom border-radius
+                            : '' // 중간 옵션에는 border-radius 없음
                       }`}>
                       {option}
                     </button>

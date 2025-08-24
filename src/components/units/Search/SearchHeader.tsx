@@ -1,46 +1,64 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { useRecoilState } from 'recoil';
 import { generateLink } from '@/lib/utils/searchUtils';
-import { recentSearchState,isMapViewState } from '@/context/recoil-context';
+import { recentSearchState, isMapViewState, searchQueryState } from '@/context/recoil-context';
 import { addSearchTerm as addSearch } from '@/lib/utils/storage';
-
+import { usePathname } from 'next/navigation';
 const SearchHeader = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const pathname = usePathname();
+  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const [recentSearches, setRecentSearches] = useRecoilState(recentSearchState);
-  const [isLoading, setIsLoading] = useState(true);
   const [isMapView, setIsMapView] = useRecoilState(isMapViewState);
+  const [isLoading, setIsLoading] = useState(true);
+  const [inputValue, setInputValue] = useState(''); // 입력 필드 값 별도 관리
 
+  const hasQuery = !!searchParams.get('q');
+  const isVenue = pathname.includes('venue');
   useEffect(() => {
     const query = searchParams.get('q');
     if (query) {
+      // URL 쿼리가 있으면 항상 설정
       setSearchQuery(query);
+      setInputValue(query); // inputValue도 함께 설정
     }
     setIsLoading(false);
-  }, [searchParams]);
+    inputRef.current?.focus();
+  }, [searchParams, setSearchQuery]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+  // searchQuery가 변경될 때 inputValue도 동기화 (초기 로드 시에만)
+  useEffect(() => {
+    if (searchQuery && !inputValue) {
+      setInputValue(searchQuery);
+    }
+  }, [searchQuery]); // inputValue 의존성 제거
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue); // 빈 문자열('')을 포함한 모든 값 허용
   };
 
   const handleSearch = () => {
-    if (searchQuery.trim()) {
-      setRecentSearches((prevSearches) => {
-        const updatedSearches = [searchQuery, ...prevSearches.filter((search) => search !== searchQuery)];
-        addSearch(searchQuery);
-        return updatedSearches;
+    if (inputValue.trim()) {
+      // 검색 실행 시에만 searchQuery 업데이트
+      setSearchQuery(inputValue.trim());
+      setRecentSearches((prev) => {
+        const updated = [inputValue.trim(), ...prev.filter((s) => s !== inputValue.trim())];
+        addSearch(inputValue.trim());
+        return updated;
       });
-      router.push(generateLink('/search/results', searchQuery));
+      router.push(generateLink('/search/results', inputValue.trim()));
+      // 검색 후 입력 필드 유지 (사용자가 계속 검색 가능)
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       handleSearch();
     }
   };
@@ -49,42 +67,49 @@ const SearchHeader = () => {
     if (isMapView) {
       setIsMapView(false);
     } else {
-      router.push('/search');
+      // 뒤로가기 시 검색 쿼리 유지 (사용자가 계속 검색 가능)
+      router.back();
     }
   };
+
   return (
-    <header className="flex flex-col bg-BG-black">
-      <div className="flex w-full items-center justify-between px-[1rem] py-[0.68rem]">
-        <Image
-          src="/icons/ArrowLeft.svg"
-          alt="뒤로가기"
-          width={24}
-          height={24}
-          onClick={handleBackClick}
-          className="cursor-pointer"
-        />
-        <Link href="/mypage">
-          <Image
-            src="/icons/person.svg"
-            alt="프로필이미지"
-            width={32}
-            height={32}
-            className="cursor-pointer hover:brightness-125"
-          />
-        </Link>
-      </div>
-      <div className="flex w-full items-center justify-between bg-BG-black px-4 py-3">
-        <div className="relative w-full">
+    <header className="bg-BG-black px-5 pb-[0.88rem] pt-[0.63rem]">
+      <div className="relative w-full">
+        {/* 
+        {hasQuery && (🔙 Back icon */}
+        {isVenue ? null : (
+          <div className="absolute left-[0.88rem] top-1/2 z-10 -translate-y-1/2">
+            <Image
+              src="/icons/arrow_back_ios.svg"
+              alt="뒤로가기"
+              width={24}
+              height={24}
+              onClick={handleBackClick}
+              className="cursor-pointer"
+            />
+          </div>
+        )}
+
+        {/* 🔍 Search icon */}
+
+        {/* 🔤 Input */}
+        <div className="relative w-full rounded-[0.5rem] bg-gray700">
           <input
-            className="w-full border-b-2 border-white bg-transparent px-2 py-2 text-white placeholder:text-white focus:outline-none"
-            placeholder={isLoading ? "" : "지금 가장 인기있는 클럽은?"}
-            value={searchQuery}
+            ref={inputRef}
+            className={`w-full cursor-pointer bg-transparent ${isVenue ? 'pl-[0.88rem] pr-[3rem]' : 'pl-[2.37rem] pr-[3rem]'} text-white safari-input-fix placeholder:text-gray300 focus:outline-none ${inputValue ? 'py-[0.72rem] text-body-15-bold' : 'py-[0.81rem] text-body-13-medium'}`}
+            placeholder="지금 인기 있는 베뉴를 검색해보세요"
+            value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            autoFocus // 모바일에서 자동으로 키패드 올라오게 autoFocus 추가
             style={{ WebkitAppearance: 'none', borderRadius: 0 }}
           />
-          <div onClick={handleSearch} className="absolute bottom-3 right-[1rem] cursor-pointer">
-            <Image src="/icons/gray-search.svg" alt="search icon" width={20} height={20} />
+          <div onClick={handleSearch} className="absolute bottom-[0.72rem] right-[1rem] cursor-pointer">
+            {inputValue ? (
+              <Image src="/icons/search-01-pink.svg" alt="search icon" width={24} height={24} />
+            ) : (
+              <Image src="/icons/search-01.svg" alt="search icon" width={24} height={24} />
+            )}
           </div>
         </div>
       </div>

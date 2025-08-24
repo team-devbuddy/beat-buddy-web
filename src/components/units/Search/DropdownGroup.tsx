@@ -25,21 +25,21 @@ const DropdownGroup = ({
   setSelectedOrder,
 }: DropdownGroupProps) => {
   return (
-    <div className="flex w-full items-center justify-between space-x-[0.75rem] px-[1rem] py-[0.25rem]">
+    <div className="flex w-full items-center justify-between space-x-[0.5rem] px-5">
       <div className="flex space-x-[0.75rem]">
         <Dropdown options={genres} selectedOption={selectedGenre} setSelectedOption={setSelectedGenre} label="장르" />
         <Dropdown
           options={locations}
           selectedOption={selectedLocation}
           setSelectedOption={setSelectedLocation}
-          label="위치"
+          label="지역"
         />
       </div>
       <Dropdown
         options={criteria}
         selectedOption={selectedOrder}
         setSelectedOption={setSelectedOrder}
-        label="관련도 순"
+        label="가까운 순"
         isThirdDropdown
       />
     </div>

@@ -36,12 +36,12 @@ const LogoutCompleteModal: React.FC<LogoutCompleteModalProps> = ({ onClose }) =>
     <div
       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
       onClick={handleBackgroundClick}>
-      <div className="flex w-[21rem] flex-col items-center rounded-lg bg-BG-black pt-[3.75rem]">
-        <p className="text-xl font-bold text-white">로그아웃 완료</p>
-        <p className="mt-3 text-[0.93rem] text-gray300">다시 로그인해주세요.</p>
+      <div className="mx-5 flex w-full flex-col items-center rounded-[0.75rem] bg-BG-black px-5 pb-5 pt-[1.5rem]">
+        <p className="text-subtitle-20-bold text-white">로그아웃 완료</p>
+        <p className="mt-[0.38rem] text-body-14-medium text-gray300">다시 로그인해주세요</p>
         <button
           onClick={onClickLogout}
-          className="mt-10 w-full bg-main py-4 font-bold text-BG-black hover:brightness-90">
+          className="mt-5 w-full rounded-[0.5rem] bg-gray700 py-3 text-button-16-semibold text-main">
           로그인하기
         </button>
       </div>

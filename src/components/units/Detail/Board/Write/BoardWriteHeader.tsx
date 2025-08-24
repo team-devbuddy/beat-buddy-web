@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useRouter } from 'next/navigation';
 
 interface BoardWriteHeaderProps {
@@ -8,7 +9,7 @@ interface BoardWriteHeaderProps {
   totalSteps: number;
 }
 
-const BoardWriteHeader = ({ title, currentStep, totalSteps }: BoardWriteHeaderProps) => {
+const BoardWriteHeader = ({ title = '', currentStep, totalSteps }: BoardWriteHeaderProps) => {
   const router = useRouter();
 
   const handleBack = () => {
@@ -31,6 +32,15 @@ const BoardWriteHeader = ({ title, currentStep, totalSteps }: BoardWriteHeaderPr
           ))}
         </div>
       </div>
+
+      {/* 제목 영역 */}
+      {!title && (
+        <h1 className="mt-4 text-left text-title-24-bold text-white">
+          {title}에
+          <br />
+          새로운 글 게시하기
+        </h1>
+      )}
     </header>
   );
 };

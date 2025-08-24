@@ -11,14 +11,27 @@ interface ReviewTextAreaProps {
 const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const MAX_LENGTH = 400; // 최대 글자 수 제한
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(e.target.value);
+    const newValue = e.target.value;
 
-    // 높이 조정
+    // 글자 수 제한
+    if (newValue.length <= MAX_LENGTH) {
+      onChange(newValue);
+    }
+
+    // 높이 조정 (4줄 제한)
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'; // 기존 높이를 초기화
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 내용에 맞는 높이로 설정
+      const scrollHeight = textareaRef.current.scrollHeight;
+      const maxHeight = 6 * 16; // 6rem = 96px (4줄 제한)
+
+      if (scrollHeight <= maxHeight) {
+        textareaRef.current.style.height = `${scrollHeight}px`; // 내용에 맞는 높이로 설정
+      } else {
+        textareaRef.current.style.height = `${maxHeight}px`; // 최대 높이로 제한
+      }
     }
   };
 
@@ -27,43 +40,53 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
   };
 
   return (
-    <div className="my-[0.62rem] px-4">
+    <div className="my-[0.88rem] px-5">
       {/* 텍스트 영역 */}
-      <textarea
-        ref={textareaRef}
-        value={value}
-        onChange={handleChange}
-        maxLength={400}
-        rows={1} // 기본 높이 설정
-        placeholder="즐거웠던 경험을 공유해 주세요!"
-        className="w-full resize-none rounded-xs bg-gray500 px-4 py-3 text-body2-15-medium text-white placeholder-gray200 focus:outline-none focus:ring-2 focus:ring-main"
-        style={{ overflow: 'hidden' }} // 스크롤 숨기기
-      />
+      <div className="relative rounded-[0.5rem] bg-gray600">
+        <textarea
+          ref={textareaRef}
+          value={value}
+          onChange={handleChange}
+          className="w-full whitespace-pre-wrap border-none bg-transparent px-4 pb-[0.88rem] pt-[0.88rem] text-body-13-medium text-gray100 placeholder:text-body-13-bold placeholder:text-gray100 focus:outline-none"
+          style={{
+            minHeight: '2rem',
+            maxHeight: '7rem', // 4줄 제한 (1.5rem * 4)
+            resize: 'none',
+            overflowY: 'auto', // 4줄 이상일 때 스크롤
+          }}
+          placeholder="즐거웠던 경험을 공유해 주세요!"
+          maxLength={MAX_LENGTH}
+        />
 
-      {/* 글자 수 표시 */}
-      <div className="mt-1 flex justify-between">
-        <button className="text-sm text-gray400 underline" onClick={toggleBottomSheet}>
-          리뷰 작성 시 유의 사항
-        </button>
-        <span className={`text-sm ${value.length >= 400 ? 'text-red500' : 'text-gray300'}`}>{value.length}/400</span>
+        {/* 글자 수 표시 */}
+        <div className="absolute bottom-[0.88rem] right-4 flex text-body-13-medium text-gray100">
+          <p className={`${value.length > 0 ? 'text-body-13-bold text-gray100' : 'text-body-13-bold text-gray300'}`}>
+            {value.length}
+          </p>
+          <p className="text-body-13-bold text-gray300">/{MAX_LENGTH}</p>
+        </div>
+
+        {!value && (
+          <div className="mt-[-2.55rem] rounded-[0.5rem] pb-8 pl-4 pr-5 text-body-13-medium text-gray200">
+            광고, 비난, 도배성 글을 남기면 영구적으로 활동이 제한될 수 있어요
+          </div>
+        )}
       </div>
-
       {/* 배경 (고정) */}
       {isBottomSheetOpen && <div className="fixed inset-0 z-40 bg-black/60" onClick={toggleBottomSheet}></div>}
 
-      {/* 바텀시트 */}
+      {/* 바텀
       <CSSTransition in={isBottomSheetOpen} timeout={300} classNames="bottom-sheet" unmountOnExit>
         <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-lg bg-BG-black text-white">
-          {/* 헤더 */}
           <div className="flex justify-center pt-[0.88rem]">
             <div className="h-1 w-16 rounded bg-gray600"></div>
           </div>
-          <h3 className="px-4 pt-7 text-body1-16-bold">리뷰 작성 시 유의 사항</h3>
-          <p className="mt-3 px-4 text-body2-15-medium text-gray300">
+          <h3 className="px-5 pt-7 text-body1-16-bold">리뷰 작성 시 유의 사항</h3>
+          <p className="mt-3 px-5 text-body2-15-medium text-gray300">
             ※ 본 공연은 9월 20일(금) 오후 5시까지 예매 가능합니다. 취소마감시간은 아래와 같이 예매 시 유의해주시기
             바랍니다.
           </p>
-          <ul className="space-y-2 px-4 text-sm text-gray200">
+          <ul className="space-y-2 px-5 pb-5 text-sm text-gray200">
             <li>[취소마감시간]</li>
             <li>- 공연관람일이 화요일~토요일인 경우 전날 오후 5시</li>
             <li>- 공연관람일이 일요일~월요일인 경우 토요일 오전 11시</li>
@@ -71,13 +94,13 @@ const ReviewTextArea = ({ value, onChange }: ReviewTextAreaProps) => {
             <li> * 공휴일 전날이 평일인 경우 오후 5시</li>
             <li> * 공휴일 전날이 토요일, 일요일인 경우 토요일 오전 11시</li>
           </ul>
-          {/* 닫기 버튼 */}
+          {/* 닫기 
           <button className="mt-6 w-full bg-main py-4 text-sm font-bold text-white" onClick={toggleBottomSheet}>
             닫기
           </button>
         </div>
       </CSSTransition>
-
+       */}
       {/* 애니메이션 스타일 */}
       <style jsx global>{`
         .bottom-sheet-enter {

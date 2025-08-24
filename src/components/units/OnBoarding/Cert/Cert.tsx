@@ -21,7 +21,7 @@ export default function Cert() {
   useEffect(() => {
     const initializeIAMPORT = () => {
       if (window.IMP) {
-        window.IMP.init('imp25440561'); // 가맹점 식별코드를 입력하세요.
+        window.IMP.init('imp25440561'); // 가맹점 식별코드를 입력하세요
         console.log('IAMPORT loaded:', window.IMP); // IAMPORT 객체 확인
         setIsLoaded(true); // 스크립트 로드 상태 업데이트
       } else {

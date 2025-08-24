@@ -1,80 +1,113 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-interface Post {
-  id: number;
-  title: string;
-  description: string;
-  createdAt: string; // 데이터가 생성된 시각 (ISO string 형식)
-  likes: number;
-    comments: number;
-    boardName: string;
-}
+import { RawHotPost } from '@/lib/actions/post-controller/getHotPost';
+import { getProfileinfo } from '@/lib/actions/boardprofile-controller/getProfileinfo';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '@/context/recoil-context';
+import ProfileModal from '@/components/units/Common/ProfileModal';
 
 interface HotPostProps {
-  posts: Post[];
+  posts: RawHotPost[];
 }
 
 const HotPost = ({ posts }: HotPostProps) => {
   const [timeDiffs, setTimeDiffs] = useState<string[]>([]);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const accessToken = useRecoilValue(accessTokenState);
 
-  // 시간계산함수
   const calculateTimeDiff = (createdAt: string): string => {
-    const postTime = new Date(createdAt);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - postTime.getTime()) / 1000);
+    const postTime = new Date(createdAt).getTime(); // ms 단위
+    const now = Date.now();
+    const diffInSeconds = Math.floor((now - postTime) / 1000);
 
-    if (diffInSeconds < 60) {
-      return `${diffInSeconds}초 전`;
-    } else if (diffInSeconds < 3600) {
-      return `${Math.floor(diffInSeconds / 60)}분 전`;
-    } else if (diffInSeconds < 86400) {
-      return `${Math.floor(diffInSeconds / 3600)}시간 전`;
-    } else {
-      return `${Math.floor(diffInSeconds / 86400)}일 전`;
-    }
+    if (diffInSeconds < 60) return `${diffInSeconds}초 전`;
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}분 전`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}시간 전`;
+    return `${Math.floor(diffInSeconds / 86400)}일 전`;
   };
 
   useEffect(() => {
-    const diffs = posts.map((post) => calculateTimeDiff(post.createdAt));
+    const diffs = posts.map((post) => calculateTimeDiff(post.createAt));
     setTimeDiffs(diffs);
   }, [posts]);
 
-  return (
-    <div className="bg-gray500 px-4">
-      <div className="flex cursor-pointer items-center justify-between py-[0.5rem] hover:brightness-75">
-        <div className="flex flex-col justify-center">
-          <span className="font-queensides text-[1.375rem] text-main2">HotPost </span>
-          <span className="text-body2-15-medium text-gray200">버디끼리만 공유하는 핫한 정보!</span>
-        </div>
-        <Image src="/icons/ArrowHeadRight.svg" alt="Arrow head right icon" width={24} height={24} />
-      </div>
-      <div className="pb-[1.25rem] pt-[1.5rem] space-y-[0.62rem]">
-        {posts.map((post, index) => (
-          <div key={post.id} className=" rounded-sm bg-BG-black px-4 py-[1.25rem] ">
-            <div className="flex justify-between">
-              <p className="mb-[0.25rem] text-body2-15-bold text-white">{post.title}</p>
-              <span className="text-[0.6875rem] text-[#7C7F83]">{timeDiffs[index]}</span>
-            </div>
-            <p className="mb-[0.25rem] text-[0.75rem] text-[#BFBFBF]">{post.description}</p>
-            <div className="flex items-center justify-between">
-              <span className="text-[0.6875rem] text-[#7C7F83]">자유게시판</span>
+  const checkBoardProfile = async () => {
+    try {
+      if (!accessToken) return false;
+      const profileInfo = await getProfileinfo(accessToken);
+      return profileInfo && profileInfo.isPostProfileCreated;
+    } catch (error) {
+      console.error('Error checking board profile:', error);
+      return false;
+    }
+  };
 
-              <div className="flex items-center justify-between space-x-[0.5rem]">
-                <div className="flex space-x-[0.12rem]">
-                  <Image src="/icons/thumb-up.svg" alt="thumbs up icon" width={11} height={11} />
-                  <span className="text-[0.6875rem] text-[#EE1171]">{post.likes}</span>
+  const handlePostClick = async (e: React.MouseEvent, postId: number) => {
+    e.preventDefault();
+
+    if (!accessToken) {
+      // 로그인이 필요한 경우 처리
+      return;
+    }
+
+    const hasProfile = await checkBoardProfile();
+
+    if (!hasProfile) {
+      setShowProfileModal(true);
+      return;
+    }
+
+    // 프로필이 있으면 게시글로 이동
+    window.location.href = `/board/free/${postId}`;
+  };
+
+  return (
+    <div className="bg-BG-black">
+      <div className="flex flex-col">
+        <Image src="/Hot Post.svg" alt="Hot Post" width={77} height={27} className="my-[0.38rem]" />
+        <p className="pb-[0.88rem] text-body-13-medium text-gray300">실시간 인기 게시물을 확인하세요</p>
+      </div>
+      <div className="flex flex-col gap-y-2">
+        {posts.map((post, index) => (
+          <div
+            key={post.id}
+            className="cursor-pointer rounded-[0.5rem] bg-gray700 px-4 py-3"
+            onClick={(e) => handlePostClick(e, post.id)}>
+            <div className="flex justify-between">
+              <p className="text-body-14-bold text-white">{post.title}</p>
+              <span className="text-body-11-medium text-gray300">{timeDiffs[index]}</span>
+            </div>
+            <p className="mt-1 truncate text-body-12-medium text-gray300">{post.content}</p>
+
+            <div className="mt-[0.38rem] flex items-center justify-between">
+              {/* 왼쪽: 해시태그 */}
+              <div className="flex gap-1 text-body-11-medium text-gray300">
+                {post.hashtags.map((hashtag) => (
+                  <span key={hashtag}>#{hashtag}</span>
+                ))}
+              </div>
+
+              {/* 오른쪽: 좋아요 & 댓글 */}
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-[0.12rem]">
+                  <Image src="/icons/favorite.svg" alt="thumbs up icon" width={20} height={20} />
+                  <span className="text-body-12-medium text-gray300">{post.likes}</span>
                 </div>
-                <div className="flex space-x-[0.12rem]">
-                  <Image src="/icons/message-square.svg" alt="thumbs up icon" width={11} height={11} />
-                  <span className="text-[0.6875rem] text-[#BFBFBF]">{post.comments}</span>
+                <div className="flex items-center space-x-[0.12rem]">
+                  <Image src="/icons/maps_ugc.svg" alt="comment icon" width={20} height={20} />
+                  <span className="text-body-12-medium text-gray300">{post.comments}</span>
                 </div>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {/* 게시판 프로필 없음 모달 */}
+      <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
     </div>
   );
 };

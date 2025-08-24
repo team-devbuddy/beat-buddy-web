@@ -1,16 +1,37 @@
+'use client';
+
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface PrevProps {
-  url: string;
+  url?: string;
+  onBack?: () => void;
+  title?: string;
 }
 
-export default function Prev({ url }: PrevProps) {
+export default function Prev({ url, onBack, title }: PrevProps) {
+  const router = useRouter();
+
   return (
-    <nav className="w-full p-4">
-      <Link href={url}>
-        <Image src="/icons/backward.svg" alt="logo" width={24} height={24} className="cursor-pointer" />
-      </Link>
+    <nav className="w-full items-center py-[0.53rem] pl-[0.62rem]">
+      <button
+        type="button"
+        title="뒤로가기"
+        onClick={() => {
+          if (onBack) {
+            onBack(); // step 제어 함수 실행
+          } else if (url) {
+            router.push(url); // fallback URL 이동
+          } else {
+            router.back(); // 또는 브라우저 history 뒤로가기
+          }
+        }}
+        className="cursor-pointer">
+        <div className="flex items-center gap-[0.12rem]">
+          <Image src="/icons/line-md_chevron-left.svg" alt="뒤로가기" width={35} height={35} />
+          <span className="text-[1.125rem] font-bold text-white">{title}</span>
+        </div>
+      </button>
     </nav>
   );
 }

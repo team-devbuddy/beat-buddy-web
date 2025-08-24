@@ -15,7 +15,6 @@ function SearchPage() {
       <RecentTerm />
       <SearchGenre />
       <HotClubsList />
-      <Footer />
     </div>
   );
 }

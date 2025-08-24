@@ -1,7 +1,7 @@
 import { atom, selector, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
-import { HeartbeatProps,ClubProps,Club } from '@/lib/types';
+import { HeartbeatProps, ClubProps, Club, UserProfile, EventDetail, Term } from '@/lib/types';
 
 const { persistAtom } = recoilPersist();
 
@@ -101,4 +101,340 @@ export const clickedClubsState = atom<Club[]>({
 export const activePageState = atom({
   key: 'activePageState',
   default: 'home', // 초기값-home
+});
+
+export const signupBusinessState = atom({
+  key: 'signupBusinessState',
+  default: {
+    name: '',
+    ssnFront: '',
+    ssnBack: '',
+    telecom: '',
+    businessName: '',
+    nickname: '',
+  },
+});
+
+export const signupUserTypeState = atom<'general' | 'business' | null>({
+  key: 'signupUserTypeState',
+  default: null,
+});
+
+export const isBusinessState = atom<boolean>({
+  key: 'isBusinessState',
+  default: false,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const businessVerifyCodeState = atom<string>({
+  key: 'businessVerifyCodeState',
+  default: '',
+});
+
+export const recentSearchesState = atom<string[]>({
+  key: 'recentSearchesState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export interface PostLikeInfo {
+  [postId: number]: boolean;
+}
+
+export const postLikeState = atom<PostLikeInfo>({
+  key: 'postLikeState',
+  default: {},
+});
+
+export const postScrapState = atom<{ [postId: number]: boolean }>({
+  key: 'postScrapState',
+  default: {},
+});
+
+export const postCommentCountState = atom<{ [postId: number]: number }>({
+  key: 'postCommentCountState',
+  default: {},
+});
+
+export const boardRecentSearchState = atom<string[]>({
+  key: 'boardRecentSearchState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const likedEventsState = atom<{ [eventId: number]: boolean }>({
+  key: 'likedEventsState',
+  default: {},
+});
+
+// 좋아요 수 상태 (eventId → number)
+export const likeCountState = atom<{ [eventId: number]: number }>({
+  key: 'likeCountState',
+  default: {},
+});
+
+export const userProfileState = atom<UserProfile | null>({
+  key: 'userProfileState',
+  default: null,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const followMapState = atom<Record<number, boolean>>({
+  key: 'followMapState',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 팔로워/팔로잉 수 관리 state
+export interface FollowCountInfo {
+  followerCount: number;
+  followingCount: number;
+}
+
+// 자신의 팔로우 정보 (persist 유지)
+export const myFollowCountState = atom<FollowCountInfo>({
+  key: 'myFollowCountState',
+  default: { followerCount: 0, followingCount: 0 },
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 남의 팔로우 정보 (persist 없음, 임시 저장)
+export const otherFollowCountState = atom<Record<number, FollowCountInfo>>({
+  key: 'otherFollowCountState',
+  default: {},
+});
+
+// 기존 상태는 남의 정보용으로 사용
+export const followCountState = atom<Record<number, FollowCountInfo>>({
+  key: 'followCountState',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const isScrappedState = atom<boolean>({
+  key: 'isScrappedState',
+  default: false,
+});
+
+export const regionState = atom<string[]>({
+  key: 'regionState',
+  default: [],
+});
+
+export const sortState = atom<string>({
+  key: 'sortState',
+  default: 'latest',
+});
+
+export const eventState = atom<EventDetail | null>({
+  key: 'eventState',
+  default: null,
+});
+
+export const eventTabState = atom<'now' | 'upcoming' | 'past'>({
+  key: 'eventTabState',
+  default: 'upcoming',
+});
+
+export const eventDetailTabState = atom<'info' | 'qna'>({
+  key: 'eventDetailTabState',
+  default: 'info',
+});
+
+export const replyingToState = atom<{ parentId: number; parentName: string } | null>({
+  key: 'replyingToState',
+  default: null,
+});
+
+export const commentInputFocusState = atom<number>({
+  key: 'commentInputFocusState',
+  default: 0,
+});
+
+export const scrollToCommentState = atom<number | 'bottom' | null>({
+  key: 'scrollToCommentState',
+  default: null,
+});
+
+export const eventFormState = atom({
+  key: 'eventFormState',
+  default: {
+    venueId: 0,
+    title: '',
+    content: '', // intro → content 로 통일
+    startDate: '',
+    endDate: '',
+    startTime: '',
+    endTime: '',
+    location: '', // 장소 주소
+    region: '',
+    isFreeEntrance: false, // ✅ isFreeEntrance → freeEntrance
+    entranceFee: '', // string으로 입력 받고 숫자로 변환
+    entranceNotice: '',
+    notice: '',
+    receiveInfo: false,
+    receiveName: false,
+    receiveGender: false,
+    receivePhoneNumber: false,
+    receiveTotalCount: false,
+    receiveSNSId: false,
+    receiveMoney: false,
+    depositAccount: '',
+    depositAmount: '', // string으로 받고 숫자 변환
+    isAuthor: true,
+    isAttending: false,
+  },
+});
+
+export const isEventEditModeState = atom<boolean>({
+  key: 'isEventEditModeState',
+  default: false,
+});
+
+export interface ParticipateFormState {
+  name: string;
+  gender: string;
+  phoneNumber: string;
+  snsType: string;
+  snsId: string;
+  totalNumber: number;
+  isPaid: boolean;
+}
+
+export const participateFormState = atom<ParticipateFormState>({
+  key: 'participateFormState',
+  default: {
+    name: '',
+    gender: '',
+    phoneNumber: '',
+    snsType: '',
+    snsId: '',
+    totalNumber: 1,
+    isPaid: false,
+  },
+});
+
+export interface CouponInfo {
+  couponId: number;
+  couponName: string;
+  couponDescription: string;
+  isUsed: boolean;
+  isDownloaded: boolean;
+  expiredAt: string;
+  [key: string]: any;
+}
+
+export const couponState = atom<CouponInfo | null>({
+  key: 'couponState',
+  default: null,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const likedReviewsState = atom<{ [reviewId: string]: boolean }>({
+  key: 'likedReviewsState',
+  default: {},
+});
+
+export const reviewLikeCountState = atom<{ [reviewId: string]: number }>({
+  key: 'reviewLikeCountState',
+  default: {},
+});
+
+export const replyLikeState = atom<{ [replyId: number]: boolean }>({
+  key: 'replyLikeState',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const replyLikeCountState = atom<{ [replyId: number]: number }>({
+  key: 'replyLikeCountState',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const mainScrollYState = atom({
+  key: 'mainScrollYState',
+  default: 0,
+});
+
+// 약관 체크박스 상태 관리
+export const agreementTermsState = atom<Term[]>({
+  key: 'agreementTermsState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 온보딩 선택 값들 관리
+export const onboardingGenreState = atom<string[]>({
+  key: 'onboardingGenreState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const onboardingMoodState = atom<string[]>({
+  key: 'onboardingMoodState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const onboardingLocationState = atom<string[]>({
+  key: 'onboardingLocationState',
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+// Detail 페이지 tab 상태 관리
+export const detailTabState = atom<'info' | 'review' | 'event'>({
+  key: 'detailTabState',
+  default: 'info',
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 리뷰 완료 모달 상태 관리
+export const reviewCompleteModalState = atom<boolean>({
+  key: 'reviewCompleteModalState',
+  default: false,
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 읽지 않은 알람 상태 관리
+export const unreadAlarmState = atom<boolean>({
+  key: 'unreadAlarmState',
+  default: false,
+  effects_UNSTABLE: [persistAtom],
+});
+
+// 리뷰 수정 상태 관리
+export const reviewEditState = atom<{
+  isEditMode: boolean;
+  reviewId: string;
+  content: string;
+  imageUrls: string[];
+  venueId: string;
+  venueName: string;
+} | null>({
+  key: 'reviewEditState',
+  default: null,
+  effects_UNSTABLE: [
+    ({ onSet, setSelf }) => {
+      // localStorage에서 초기값 로드
+      const saved = localStorage.getItem('reviewEditState');
+      if (saved) {
+        try {
+          setSelf(JSON.parse(saved));
+        } catch (error) {
+          console.error('Failed to parse reviewEditState from localStorage:', error);
+        }
+      }
+
+      // 상태 변경 시 localStorage에 저장
+      onSet((newValue) => {
+        if (newValue) {
+          localStorage.setItem('reviewEditState', JSON.stringify(newValue));
+        } else {
+          localStorage.removeItem('reviewEditState');
+        }
+      });
+    },
+  ],
 });

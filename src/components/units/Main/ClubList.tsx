@@ -11,6 +11,9 @@ interface ClubsListProps {
   likedClubs: { [key: number]: boolean };
   heartbeatNums: { [key: number]: number };
   handleHeartClickWrapper: (e: React.MouseEvent, venueId: number) => void;
+  lastClubRef?: (node: HTMLDivElement | null) => void;
+  hasMore?: boolean;
+  isLoading?: boolean;
 }
 
 const clubTypes = ['club', 'pub', 'rooftop'];
@@ -73,8 +76,23 @@ const getImageSrc = (club: Club) => {
   return '/images/DefaultImage.png';
 };
 
-export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeartClickWrapper }: ClubsListProps) {
+export default function ClubList({
+  clubs,
+  likedClubs,
+  heartbeatNums,
+  handleHeartClickWrapper,
+  lastClubRef,
+  hasMore,
+  isLoading,
+}: ClubsListProps) {
   const [clickedHeart, setClickedHeart] = useState<{ [key: number]: boolean }>({});
+
+  console.log('🎯 ClubList 렌더링:', {
+    clubsLength: clubs.length,
+    hasMore,
+    isLoading,
+    lastClubRefExists: !!lastClubRef,
+  });
 
   const memoizedValues = useMemo(() => {
     return clubs.map((club) => ({
@@ -86,75 +104,83 @@ export default function ClubList({ clubs, likedClubs, heartbeatNums, handleHeart
   const handleHeartClick = (e: React.MouseEvent, venueId: number) => {
     setClickedHeart((prev) => ({ ...prev, [venueId]: true }));
     handleHeartClickWrapper(e, venueId);
-    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [venueId]: false })), 500); // 애니메이션이 끝난 후 상태를 리셋
+    setTimeout(() => setClickedHeart((prev) => ({ ...prev, [venueId]: false })), 500);
   };
 
   return (
-    <div className="flex w-full pb-[7rem] flex-col bg-BG-black">
-      <div className="mx-[0.5rem] my-[1.5rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
+    <div className="flex w-full flex-col bg-BG-black">
+      <div className="grid grid-cols-2 gap-x-[1rem] gap-y-[1.5rem] sm:grid-cols-2 md:grid-cols-3">
         {clubs.map((venue, index) => {
           const { firstImageUrl, filteredTags } = memoizedValues[index];
+          const isLastItem = index === clubs.length - 1;
+          const shouldSetRef = isLastItem && hasMore && !isLoading;
 
           return (
             <Link key={venue.venueId} href={`/detail/${venue.venueId}`} passHref>
               <motion.div
+                ref={shouldSetRef ? lastClubRef : undefined}
                 whileHover={{
                   y: -5,
-                  boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
-                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
-                className="relative flex h-full flex-col rounded-md p-2">
+                className="relative flex h-full flex-col rounded-[0.5rem]">
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={firstImageUrl}
                     alt={`${venue.koreanName} image`}
                     fill
                     objectFit="cover"
-                    className="rounded-sm"
+                    className="rounded-[0.5rem]"
                   />
+                  <motion.div
+                    className="absolute bottom-[0.62rem] left-[0.62rem] flex items-center space-x-[0.25rem]"
+                    initial="initial"
+                    animate="initial">
+                    <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={15.6} height={13.7} />
+                    <span className="text-body3-12-medium text-gray300">
+                      {heartbeatNums[venue.venueId!] !== undefined
+                        ? String(heartbeatNums[venue.venueId!]).padStart(3, '0')
+                        : '000'}
+                    </span>
+                  </motion.div>
                   <div className="club-gradient absolute inset-0"></div>
                   <motion.div
                     className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleHeartClick(e, venue.venueId);
+                      if (venue.venueId !== undefined) {
+                        handleHeartClick(e, venue.venueId);
+                      }
                     }}
                     variants={heartAnimation}
                     initial="initial"
-                    animate={clickedHeart[venue.venueId] ? 'clicked' : 'initial'}>
+                    animate={clickedHeart[venue.venueId!] ? 'clicked' : 'initial'}>
                     <Image
-                      src={likedClubs[venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
+                      src={likedClubs[venue.venueId!] ? '/icons/FilledHeart.svg' : '/icons/GrayHeart.svg'}
                       alt="heart icon"
-                      width={32}
-                      height={32}
+                      width={27}
+                      height={24}
                     />
                   </motion.div>
                 </div>
-                <div className="mt-[1rem] flex flex-grow flex-col justify-between">
+                <div className="mt-[0.75rem] flex flex-grow flex-col justify-between">
                   <div>
-                    <h3 className="text-ellipsis text-body1-16-bold text-white">{venue.englishName}</h3>
-                    <div className="mb-[1.06rem] mt-[0.75rem] flex w-4/5 flex-wrap gap-[0.5rem]">
+                    <h3 className="text-body-14-bold text-ellipsis text-white">{venue.englishName}</h3>
+                    <div className="mt-[0.38rem] flex flex-wrap gap-[0.25rem]">
                       {filteredTags.length > 0 ? (
                         filteredTags.map((tag, index) => (
                           <span
-                            key={index}
-                            className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                            key={`${venue.venueId}-${tag}-${index}`}
+                            className="text-body-11-medium rounded-[0.5rem] bg-gray700 px-[0.5rem] pt-[0.19rem] pb-[0.25rem] text-gray300">
                             {tag}
                           </span>
                         ))
                       ) : (
-                        <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
+                        <span
+                          key={`${venue.venueId}-no-tags`}
+                          className="text-body-11-medium rounded-[0.5rem] bg-gray700 px-[0.5rem] pt-[0.19rem] pb-[0.25rem] text-gray300">
                           No tagList
                         </span>
                       )}
-                    </div>
-                  </div>
-                  <div className="flex items-end">
-                    <div className="flex items-center space-x-[0.25rem] text-gray300">
-                      <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-                      <span className="text-body3-12-medium">
-                        {heartbeatNums[venue.venueId] !== undefined ? heartbeatNums[venue.venueId] : 0}
-                      </span>
                     </div>
                   </div>
                 </div>

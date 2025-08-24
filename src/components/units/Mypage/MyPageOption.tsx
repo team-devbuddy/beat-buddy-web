@@ -74,7 +74,11 @@ export default function MyPageOption() {
       </div>
 
       {showConfirmLogout && (
-        <ConfirmLogoutModal onConfirm={handleLogout} onCancel={() => setShowConfirmLogout(false)} />
+        <ConfirmLogoutModal 
+          isOpen={showConfirmLogout} 
+          onConfirm={handleLogout} 
+          onCancel={() => setShowConfirmLogout(false)} 
+        />
       )}
 
       {showLogoutComplete && <LogoutCompleteModal onClose={handleCloseLogoutComplete} />}

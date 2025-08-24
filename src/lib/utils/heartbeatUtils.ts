@@ -4,7 +4,7 @@ import { removeHeart } from '@/lib/actions/hearbeat-controller/removeHeartAction
 
 export const handleHeartClick = async (
   e: React.MouseEvent,
-  clubId: number,
+  id: number,
   likedClubs: { [key: number]: boolean },
   setLikedClubs: React.Dispatch<React.SetStateAction<{ [key: number]: boolean }>>,
   setHeartbeatNums: SetterOrUpdater<{ [key: number]: number }>,
@@ -17,25 +17,25 @@ export const handleHeartClick = async (
   }
 
   try {
-    if (likedClubs[clubId]) {
-      await removeHeart(clubId, accessToken);
+    if (likedClubs[id]) {
+      await removeHeart(id, accessToken);
       setLikedClubs((prev) => ({
         ...prev,
-        [clubId]: false,
+        [id]: false,
       }));
       setHeartbeatNums((prev) => ({
         ...prev,
-        [clubId]: (prev[clubId] || 1) - 1,
+        [id]: (prev[id] || 1) - 1,
       }));
     } else {
-      await addHeart(clubId, accessToken);
+      await addHeart(id, accessToken);
       setLikedClubs((prev) => ({
         ...prev,
-        [clubId]: true,
+        [id]: true,
       }));
       setHeartbeatNums((prev) => ({
         ...prev,
-        [clubId]: (prev[clubId] || 0) + 1,
+        [id]: (prev[id] || 0) + 1,
       }));
     }
   } catch (error: any) {

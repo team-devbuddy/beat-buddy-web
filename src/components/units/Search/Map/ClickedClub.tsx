@@ -4,125 +4,105 @@ import { clickedClubState } from '@/context/recoil-context';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import VenueHours from './VenueHours';
+import { useRouter } from 'next/navigation';
 
-const getFilteredTags = (tags: string[]) => {
-  const clubTypes = ['club', 'pub', 'rooftop'];
-  const regions = ['HONGDAE', 'ITAEWON', 'APGUJEONG', 'GANGNAM/SINSA', 'OTHERS'];
-  const regionTranslations: { [key: string]: string } = {
-    HONGDAE: '홍대',
-    ITAEWON: '이태원',
-    APGUJEONG: '압구정',
-    'GANGNAM/SINSA': '강남/신사',
-    OTHERS: '기타',
-  };
-  const genres = [
-    'HIPHOP',
-    'R&B',
-    'EDM',
-    'HOUSE',
-    'TECHNO',
-    'SOUL&FUNK',
-    'ROCK',
-    'LATIN',
-    'K-POP',
-    'POP',
-    'DEEP',
-    'COMMERCIAL',
-    'CHILL',
-    'EXOTIC',
-    'HUNTING',
-  ];
-
-  let selectedTags = [];
-
-  const clubType = tags.find((tag) => clubTypes.includes(tag.toLowerCase()));
-  if (clubType) selectedTags.push(clubType);
-
-  const region = tags.find((tag) => regions.includes(tag));
-  if (region) selectedTags.push(regionTranslations[region] || region);
-
-  const genre = tags.find((tag) => genres.includes(tag));
-  if (genre) selectedTags.push(genre);
-
-  return selectedTags.slice(0, 3);
-};
-
-interface ClickedClubDetailsProps {
+const ClickedClubDetails = ({
+  likedClubs,
+  heartbeatNums,
+  handleHeartClickWrapper,
+}: {
   likedClubs: { [key: number]: boolean };
   heartbeatNums: { [key: number]: number };
   handleHeartClickWrapper: (e: React.MouseEvent, venueId: number) => void;
-}
-
-const ClickedClubDetails = ({ likedClubs, heartbeatNums, handleHeartClickWrapper }: ClickedClubDetailsProps) => {
+}) => {
   const clickedClub = useRecoilValue(clickedClubState);
-
+  const router = useRouter();
   if (!clickedClub) return null;
 
-  const firstImageUrl =
-    clickedClub.venue.backgroundUrl.find((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i)) ||
-    clickedClub.venue.logoUrl ||
-    '/images/DefaultImage.png';
-
-  const filteredTags = getFilteredTags(clickedClub.tagList || []);
+  const imageUrls =
+    clickedClub.venue.backgroundUrl?.filter((url) => url.match(/\.(jpeg|jpg|gif|png|heic|jfif|webp)$/i)) || [];
+  const firstImageUrl = imageUrls[0] || clickedClub.venue.logoUrl || '/images/DefaultImage.png';
 
   return (
-    <Link key={clickedClub.venue.venueId} href={`/detail/${clickedClub.venue.venueId}`} passHref>
-      <div className="flex w-full cursor-pointer flex-col bg-BG-black p-4">
-        <motion.div
-          whileHover={{
-            y: -5,
-            boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.05)',
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          }}
-          className="relative flex flex-row gap-x-[1.25rem] rounded-md p-2">
-          <div className="relative h-40 w-40">
+    <div>
+      <motion.div
+        whileHover={{
+          boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.08)',
+          backgroundColor: 'rgba(0,0,0,0.4)',
+        }}
+        className="relative flex w-full cursor-pointer flex-col rounded-[0.5rem] bg-BG-black p-5">
+        {/* 상단: 클럽명 + 하트 */}
+        <div className="flex items-start justify-between">
+          <h2
+            className="text-title-24-bold text-white"
+            onClick={() => {
+              router.push(`/detail/${clickedClub.venue.venueId}`);
+            }}>
+            {clickedClub.venue.englishName}
+          </h2>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handleHeartClickWrapper(e, clickedClub.venue.venueId!);
+            }}
+            className="absolute right-5 top-5">
             <Image
-              src={firstImageUrl}
-              alt={`${clickedClub.venue.koreanName} image`}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-sm"
+              src={likedClubs[clickedClub.venue.venueId!] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
+              alt="heart"
+              width={28}
+              height={28}
             />
-            <div
-              className="absolute bottom-[0.62rem] right-[0.62rem] cursor-pointer"
-              onClick={(e) => {
-                handleHeartClickWrapper(e, clickedClub.venue.venueId);
-              }}>
-              <Image
-                src={likedClubs[clickedClub.venue.venueId] ? '/icons/FilledHeart.svg' : '/icons/PinkHeart.svg'}
-                alt="pink-heart icon"
-                width={32}
-                height={32}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <h3 className="text-ellipsis text-body1-16-bold text-white">{clickedClub.venue.englishName}</h3>
-            <div className="mb-[1.06rem] mt-[0.75rem] flex w-3/4 flex-wrap gap-[0.5rem]">
-              {filteredTags.length > 0 ? (
-                filteredTags.map((tag: string, index: number) => (
-                  <span
-                    key={index}
-                    className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                    {tag}
-                  </span>
-                ))
-              ) : (
-                <span className="rounded-xs border border-gray500 bg-gray500 px-[0.38rem] py-[0.13rem] text-body3-12-medium text-gray100">
-                  No tagList
-                </span>
-              )}
-            </div>
-            <div className="flex items-center space-x-[0.25rem] text-gray300">
-              <Image src="/icons/PinkHeart.svg" alt="pink-heart icon" width={20} height={16} />
-              <span className="text-body3-12-medium">
-                {heartbeatNums[clickedClub.venue.venueId] !== undefined ? heartbeatNums[clickedClub.venue.venueId] : 0}
+          </button>
+        </div>
+
+        {/* 태그 */}
+        <div className="mt-[0.38rem] flex flex-wrap gap-2">
+          {clickedClub.tagList?.length > 0 ? (
+            clickedClub.tagList.slice(0, 3).map((tag, idx) => (
+              <span key={idx} className="rounded-[0.5rem] bg-gray700 px-2 py-1 text-body-13-medium text-gray300">
+                {tag}
               </span>
+            ))
+          ) : (
+            <span className="rounded-[0.5rem] bg-gray700 px-2 py-1 text-body-13-medium text-gray200">No Tags</span>
+          )}
+        </div>
+
+        {/* 상태 & 주소 */}
+        <div className="mt-3 flex flex-col gap-1 text-body-12-medium text-gray300">
+          <VenueHours operationHours={clickedClub.venue.operationHours || {}} />
+          <p className="flex items-center gap-1 text-body-12-medium">
+            <Image src="/icons/location-map.svg" alt="location" width={12} height={12} />
+            <span>{clickedClub.venue.address}</span>
+            <span className="text-body-11-medium text-main">길찾기</span>
+          </p>
+        </div>
+
+        {/* 이미지 갤러리 */}
+        <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
+          {imageUrls.length > 0 ? (
+            imageUrls.map((url, idx) => (
+              <div key={idx} className="relative h-[10rem] w-[10rem] flex-shrink-0 rounded-[0.5rem] overflow-hidden">
+                <Image
+                  src={url}
+                  alt={`${clickedClub.venue.englishName} image ${idx}`}
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ width: '10rem', height: '10rem', objectFit: 'cover' }}
+                  className="rounded-[0.5rem] object-cover"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="relative h-[10rem] w-[10rem] flex-shrink-0 rounded-[0.5rem]">
+              <Image src={firstImageUrl} alt="default" layout="fill" objectFit="cover" className="rounded-md" />
             </div>
-          </div>
-        </motion.div>
-      </div>
-    </Link>
+          )}
+        </div>
+      </motion.div>
+    </div>
   );
 };
 

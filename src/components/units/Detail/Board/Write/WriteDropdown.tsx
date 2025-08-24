@@ -10,12 +10,15 @@ interface WriteDropdownProps {
   px?: string; // padding-x 값
   py?: string; // padding-y 값
   placeholder?: string; // 선택되지 않았을 때 표시될 기본 값
+  disabled?: boolean;
+  onTypeChange?: (value: string) => void;
 }
 
 const WriteDropdown: React.FC<WriteDropdownProps> = ({
   value,
   options,
   onChange,
+  onTypeChange,
   px = 'px-4',
   py = 'py-3',
   placeholder = '00',
@@ -25,15 +28,21 @@ const WriteDropdown: React.FC<WriteDropdownProps> = ({
   const toggleDropdown = () => setIsOpen((prev) => !prev);
   const closeDropdown = () => setIsOpen(false);
 
+  // value가 'venueEngName'이 아닐 때만 테두리 효과 적용
+  const shouldShowBorder = value && value !== 'venueEngName';
+
+  // 표시할 텍스트 결정
+  const displayText = value === 'venueEngName' ? placeholder : value || placeholder;
+
   return (
     <div className="relative flex items-center space-x-2">
       <div className="relative w-full">
         <button
           onClick={toggleDropdown}
           className={`flex w-full items-center justify-between rounded-xs border border-gray300 bg-gray700 ${px} ${py} text-gray300 focus:outline-none ${
-            value ? 'border border-main' : ''
+            shouldShowBorder ? 'border border-main' : ''
           }`}>
-          {value || placeholder}
+          {displayText}
           <img
             src="/icons/chevron-down.svg"
             alt="드롭다운"
@@ -48,7 +57,8 @@ const WriteDropdown: React.FC<WriteDropdownProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={closeDropdown}></motion.div>
+                onClick={closeDropdown}
+              />
               <motion.ul
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}

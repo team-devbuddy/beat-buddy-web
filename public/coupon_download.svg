@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="68" viewBox="0 0 335 68" fill="none" preserveAspectRatio="none">
+  <!-- 왼쪽 부분 (반응형) - 점선까지 -->
+  <rect x="0" y="0" width="268" height="68" fill="#28292A"/>
+  <rect x="0" y="0" width="268" height="68" fill="url(#paint1_linear_7190_36492)"/>
+  
+  <!-- 오른쪽 부분 (고정) - 점선부터 끝까지 -->
+  <path d="M268 0H329C332.314 0 335 2.68629 335 6V62C335 65.3137 332.314 68 329 68H268V0Z" fill="#28292A"/>
+  <path d="M268 0H329C332.314 0 335 2.68629 335 6V62C335 65.3137 332.314 68 329 68H268V0Z" fill="url(#paint0_linear_7190_36492)"/>
+  
+  <!-- 점선 패턴 (고정 위치) -->
+  <path d="M268 14.2001H267V12H268V14.2001ZM268 23H267V18.5997H268V23ZM268 31.7999H267V27.4003H268V31.7999ZM268 40.5997H267V36.2001H268V40.5997ZM268 49.4003H267V45H268V49.4003ZM268 56H267V53.7999H268V56Z" fill="#8F0B48"/>
+  
+  <defs>
+    <linearGradient id="paint0_linear_7190_36492" x1="268" y1="34.4096" x2="335" y2="34.4096" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EE1171" stop-opacity="0"/>
+      <stop offset="0.9" stop-color="#EE1171" stop-opacity="0.5"/>
+    </linearGradient>
+    <linearGradient id="paint1_linear_7190_36492" x1="247" y1="34.4096" x2="0" y2="34.4096" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EE1171" stop-opacity="0"/>
+      <stop offset="0.9" stop-color="#EE1171" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+</svg>

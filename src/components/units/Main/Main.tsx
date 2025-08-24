@@ -2,10 +2,10 @@
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { accessTokenState, likedClubsState, heartbeatNumsState } from '@/context/recoil-context';
+import { accessTokenState, likedClubsState, heartbeatNumsState, unreadAlarmState } from '@/context/recoil-context';
 import SearchBar from './SearchBar';
 import TrendBar from './TrendBar';
-import BeatBuddyPick from './BeatBuddyPick';
+import Magazine from './Magazine';
 import LoggedOutBanner from './LoggedOutBanner';
 import HotVenues from './Hot-Chart';
 import Footer from './MainFooter';
@@ -14,24 +14,68 @@ import { getHotChart } from '@/lib/actions/hearbeat-controller/getHotChart';
 import { getBBP } from '@/lib/actions/recommend-controller/getBBP';
 import { getUserName } from '@/lib/actions/user-controller/fetchUsername';
 import { handleHeartClick } from '@/lib/utils/heartbeatUtils';
-import { Club } from '@/lib/types';
+import { Club, MagazineProps } from '@/lib/types';
 import Loading from '@/app/loading';
 import HomeSkeleton from '@/components/common/skeleton/HomeSkeleton';
 import HotPost from './HotPost';
 import { dummyPosts } from '@/lib/dummyData';
 import NavigateFooter from './NavigateFooter';
+import { getMagazineList } from '@/lib/actions/magazine-controller/getMagazine';
+import VenueFor from './VenueFor';
+import { getHotPost, RawHotPost } from '@/lib/actions/post-controller/getHotPost';
+import { getNotifications } from '@/lib/actions/notification-controller/getNotifications';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import MainFooter from './MainFooter';
+
 const MainHeader = dynamic(() => import('./MainHeader'), { ssr: false });
 
 export default function Main() {
   const accessToken = useRecoilValue(accessTokenState);
   const [likedClubs, setLikedClubs] = useRecoilState(likedClubsState);
   const [heartbeatNums, setHeartbeatNums] = useRecoilState(heartbeatNumsState);
+  const [unreadAlarm, setUnreadAlarm] = useRecoilState(unreadAlarmState);
   const [hotClubs, setHotClubs] = useState<Club[]>([]);
   const [bbpClubs, setBbpClubs] = useState<Club[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [magazine, setMagazine] = useState<MagazineProps[]>([]);
+  const [hotPosts, setHotPosts] = useState<RawHotPost[]>([]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   useEffect(() => {
+    const fetchHotPost = async () => {
+      try {
+        if (accessToken) {
+          const data = await getHotPost(accessToken);
+          if (data.length === 0) {
+            setHotPosts(dummyPosts); // ✅ fallback
+          } else {
+            setHotPosts(data);
+          }
+        } else {
+          setHotPosts(dummyPosts); // ✅ fallback when not logged in
+        }
+      } catch (error) {
+        console.error('Error fetching hot post:', error);
+        setHotPosts(dummyPosts); // ✅ fallback on error
+      }
+    };
+
+    const fetchMagazine = async () => {
+      try {
+        if (accessToken) {
+          const data = await getMagazineList(accessToken);
+          setMagazine(data);
+          console.log(data);
+          console.log(data.length);
+          const totalCount = data.length;
+        }
+      } catch (error) {
+        console.error('Error fetching magazine:', error);
+      }
+    };
     const fetchHotClubs = async () => {
       try {
         if (accessToken) {
@@ -104,15 +148,34 @@ export default function Main() {
       }
     };
 
+    const fetchNotifications = async (token: string) => {
+      try {
+        const notifications = await getNotifications(token, 1, 10);
+        // 읽지 않은 알람이 있는지 확인
+        const hasUnread = notifications.data.content.some((notification) => !notification.isRead);
+        setUnreadAlarm(hasUnread);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+        setUnreadAlarm(false);
+      }
+    };
+
     const fetchData = async () => {
       if (accessToken) {
-        await Promise.all([fetchHotClubs(), fetchBBP(accessToken), fetchUserName(accessToken)]);
+        await Promise.all([
+          fetchHotClubs(),
+          fetchBBP(accessToken),
+          fetchUserName(accessToken),
+          fetchMagazine(),
+          fetchHotPost(),
+          fetchNotifications(accessToken),
+        ]);
         setLoading(false); // 모든 데이터 로드 완료
       }
     };
 
     fetchData();
-  }, [accessToken, setLikedClubs, setHeartbeatNums]);
+  }, [accessToken, setLikedClubs, setHeartbeatNums, setUnreadAlarm]);
 
   if (loading) {
     return <HomeSkeleton />;
@@ -123,29 +186,78 @@ export default function Main() {
   };
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex min-h-full w-full flex-col">
       <div className="flex-grow bg-BG-black">
         <MainHeader />
         <SearchBar />
-        <TrendBar />
-        <BeatBuddyPick
-          clubs={bbpClubs}
-          userName={userName}
-          likedClubs={likedClubs}
-          heartbeatNums={heartbeatNums}
-          handleHeartClickWrapper={handleHeartClickWrapper}
-        />
-        {!accessToken && <LoggedOutBanner />}
-        {/*<Heartbeat />*/}
-        <HotPost posts={dummyPosts} />
-        <HotVenues
-          clubs={hotClubs}
-          likedClubs={likedClubs}
-          heartbeatNums={heartbeatNums}
-          handleHeartClickWrapper={handleHeartClickWrapper}
-        />
+
+        {/* 👇 Swiper를 위한 Full-width 컨테이너 (좌우 패딩 없음) */}
+        <div className="flex w-full flex-col items-center justify-center py-[0.88rem]">
+          {magazine.length > 0 && (
+            <>
+              <Swiper
+                modules={[Autoplay]}
+                autoplay={{
+                  delay: 5000,
+                  disableOnInteraction: false,
+                }}
+                loop={true}
+                centeredSlides={true}
+                slidesPerView={1.2}
+                breakpoints={{
+                  320: { slidesPerView: 1.01 },
+                  360: { slidesPerView: 1.11 },
+                  375: { slidesPerView: 1.11 },
+                  440: { slidesPerView: 1.15 },
+                  480: { slidesPerView: 1.2 },
+                  600: { slidesPerView: 1.68 },
+                }}
+                spaceBetween={10}
+                watchOverflow={true}
+                observer={true}
+                observeParents={true}
+                allowTouchMove={true}
+                speed={300}
+                touchRatio={1}
+                threshold={10}
+                onSlideChange={(swiper) => {
+                  // loop가 활성화된 경우 realIndex 사용
+                  setCurrentSlideIndex(swiper.realIndex);
+                }}
+                className="magazine-swiper w-full max-w-[100vw]">
+                {magazine.map((item) => (
+                  <SwiperSlide key={item.magazineId}>
+                    <Magazine
+                      magazineId={item.magazineId}
+                      thumbImageUrl={item.thumbImageUrl}
+                      title={item.title}
+                      content={item.content}
+                      totalCount={magazine.length}
+                      orderInHome={item.orderInHome}
+                      picked={item.picked}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </>
+          )}
+        </div>
+
+        {/* 👇 나머지 콘텐츠를 위한 컨테이너 (좌우 패딩 적용) */}
+        <div className="flex flex-col gap-y-5 px-5">
+          <VenueFor userName={userName} />
+          {!accessToken && <LoggedOutBanner />}
+          <Heartbeat />
+          <HotPost posts={hotPosts} />
+          <HotVenues
+            clubs={hotClubs}
+            likedClubs={likedClubs}
+            heartbeatNums={heartbeatNums}
+            handleHeartClickWrapper={handleHeartClickWrapper}
+          />
+        </div>
       </div>
-      <NavigateFooter />
+      <MainFooter />
     </div>
   );
 }

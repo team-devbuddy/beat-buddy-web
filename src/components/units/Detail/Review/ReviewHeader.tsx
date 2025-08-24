@@ -7,16 +7,32 @@ interface ReviewHeaderProps {
   venueName: string;
   isPhotoOnly: boolean; // 포토 리뷰만 보기 상태
   setIsPhotoOnly: React.Dispatch<React.SetStateAction<boolean>>; // 포토 리뷰 상태 변경 함수
+  sortOption: 'latest' | 'popular'; // 정렬 옵션
+  setSortOption: (newSort: 'latest' | 'popular') => void; // 정렬 옵션 변경 함수
+  onPhotoFilterChange: (photoOnly: boolean) => void; // 포토 필터 변경 핸들러
 }
 
-const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderProps) => {
+const ReviewHeader = ({
+  venueName,
+  isPhotoOnly,
+  setIsPhotoOnly,
+  sortOption,
+  setSortOption,
+  onPhotoFilterChange,
+}: ReviewHeaderProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  const [selectedSortOption, setSelectedSortOption] = React.useState('최신순');
 
-  const sortOptions = ['최신순', '추천순'];
+  // 정렬 옵션을 한국어로 변환
+  const getSortOptionText = (sort: 'latest' | 'popular') => {
+    return sort === 'latest' ? '최신순' : '인기순';
+  };
+
+  const sortOptions = ['최신순', '인기순'];
 
   const handlePhotoToggle = () => {
-    setIsPhotoOnly(!isPhotoOnly);
+    const newPhotoOnly = !isPhotoOnly;
+    setIsPhotoOnly(newPhotoOnly);
+    onPhotoFilterChange(newPhotoOnly);
   };
 
   const handleDropdownToggle = () => {
@@ -24,22 +40,22 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
   };
 
   const handleSortOptionClick = (option: string) => {
-    setSelectedSortOption(option);
+    const newSort = option === '최신순' ? 'latest' : 'popular';
+    setSortOption(newSort);
     setIsDropdownOpen(false);
   };
 
   return (
-    <div className="relative flex items-center justify-between bg-BG-black px-4 py-2 text-gray-100">
+    <div className="flex items-end justify-end bg-BG-black px-5 pt-[0.88rem] text-gray100">
       {/* 리뷰 제목 */}
-      <h2 className="text-body1-16-bold text-white">{venueName} 리뷰</h2>
 
       {/* 우측 옵션 */}
-      <div className="relative flex items-center space-x-4">
+      <div className="flex items-center space-x-3">
         {/* 포토 리뷰만 보기 */}
         <div
           onClick={handlePhotoToggle}
-          className={`flex cursor-pointer items-center space-x-2 text-body2-15-medium ${
-            isPhotoOnly ? 'text-main' : 'text-gray-200'
+          className={`flex cursor-pointer items-center space-x-[0.12rem] text-body-13-medium ${
+            isPhotoOnly ? 'text-main' : 'text-gray300'
           }`}>
           <img
             src={isPhotoOnly ? '/icons/check-square-contained.svg' : '/icons/check-square-blanked.svg'}
@@ -47,14 +63,14 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
             className="h-4 w-4"
           />
           <span>포토 리뷰만 보기</span>
-        </div>
+        </div>  
 
         {/* 드롭다운 */}
         <div className="relative">
-          <button onClick={handleDropdownToggle} className="flex items-center space-x-2 text-body2-15-medium">
-            <span className={`${selectedSortOption ? 'text-main' : 'text-gray-200'}`}>{selectedSortOption}</span>
+          <button onClick={handleDropdownToggle} className="flex items-center text-body-13-medium">
+            <span className={`${sortOption ? 'text-gray300' : 'text-gray300'}`}>{getSortOptionText(sortOption)}</span>
             <img
-              src="/icons/chevron-down.svg"
+              src="/icons/keyboard_arrow_down-gray.svg"
               alt="드롭다운 화살표"
               className={`h-4 w-4 transform ${isDropdownOpen ? 'rotate-180' : ''}`}
             />
@@ -77,13 +93,13 @@ const ReviewHeader = ({ venueName, isPhotoOnly, setIsPhotoOnly }: ReviewHeaderPr
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 z-20 mt-2 w-[6rem] rounded-md bg-gray700 shadow-lg">
+                  className="absolute right-0 z-20 mt-2  rounded-[0.5rem] bg-gray500 px-[1.53rem] shadow-lg">
                   {sortOptions.map((option, index) => (
                     <button
                       key={option}
                       onClick={() => handleSortOptionClick(option)}
-                      className={`w-full px-4 py-2 text-center text-body2-15-medium hover:bg-gray500 ${
-                        option === selectedSortOption ? 'text-main' : 'text-gray-100'
+                      className={`w-full py-[0.56rem] text-center whitespace-nowrap text-body-13-medium ${
+                        option === getSortOptionText(sortOption) ? 'font-bold text-main' : 'text-gray100'
                       } ${
                         index === 0
                           ? 'rounded-t-md' // 첫 번째 옵션에만 top border-radius

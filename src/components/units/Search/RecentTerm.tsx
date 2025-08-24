@@ -27,10 +27,15 @@ const RecentTerm = () => {
     pressed: { scale: 0.95 },
   };
 
+  if (recentSearches.length === 0) return null;
+
   return (
-    <div className="flex w-full bg-main pb-[0.75rem] pl-[1rem] pt-[0.25rem]">
-      <div className="flex min-h-[1.9375rem] items-center gap-[0.5rem] overflow-x-auto whitespace-nowrap px-[0.25rem] scrollbar-hide">
-        <h3 className="flex-shrink-0 text-body3-12-bold text-sub1">최근 검색어</h3>
+    <div className="flex w-full flex-col bg-BG-black px-[1.25rem] py-[0.62rem]">
+      {/* 제목 */}
+      <h3 className="mb-[0.62rem] text-body-12-medium text-gray300">최근 검색어</h3>
+
+      {/* 리스트 */}
+      <div className="flex items-center gap-[0.38rem] overflow-x-auto whitespace-nowrap scrollbar-hide">
         <AnimatePresence>
           {recentSearches.map((search, index) => (
             <motion.div
@@ -41,8 +46,8 @@ const RecentTerm = () => {
               whileTap="pressed"
               variants={variants}
               transition={{ duration: 0.3 }}
-              className="flex flex-shrink-0 items-center rounded-sm bg-sub1 px-[0.62rem] py-[0.25rem] text-body2-15-medium text-white">
-              <span className="mr-[0.5rem] cursor-pointer" onClick={() => handleTermClick(search)}>
+              className="flex flex-shrink-0 flex-row items-center gap-x-[0.13rem] rounded-[0.5rem] bg-gray700 px-[0.5rem] py-[0.25rem] text-main">
+              <span className="cursor-pointer text-body-13-medium" onClick={() => handleTermClick(search)}>
                 {search}
               </span>
               <div className="cursor-pointer" onClick={() => handleRemoveSearchTerm(search)}>

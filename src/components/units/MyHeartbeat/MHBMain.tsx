@@ -9,7 +9,7 @@ import { Club, HeartbeatProps } from '@/lib/types';
 import MainFooter from '../Main/MainFooter';
 import MyHeartbeat from './MHBVenues';
 import MyHeartBeatSkeleton from '@/components/common/skeleton/MyHeartBeatSkeleton';
-
+import NoResults from '../Search/NoResult';
 const MyHeartbeatHeader = dynamic(() => import('./MHBHeader'), { ssr: false });
 
 export default function MyHeartbeatMain() {
@@ -24,12 +24,16 @@ export default function MyHeartbeatMain() {
       try {
         if (accessToken) {
           const data: HeartbeatProps[] = await getMyHearts(accessToken);
-          
+
           const clubs: Club[] = data.map((club) => ({
+            venueId: club.venueId,
+            entranceFee: 0,
+            entranceNotice: '',
+            isHeartbeat: club.isHeartbeat || false,
             tagList: club.tagList,
             createdAt: '',
             updatedAt: '',
-            venueId: club.venueId,
+            id: club.venueId,
             englishName: club.englishName,
             koreanName: club.koreanName,
             region: '',
@@ -42,7 +46,6 @@ export default function MyHeartbeatMain() {
             backgroundUrl: club.backgroundUrl || [],
             heartbeatNum: club.heartbeatNum,
             smokingAllowed: false,
-            isHeartbeat: club.isHeartbeat
           }));
 
           setMyHeartbeatClubs(clubs);
@@ -87,17 +90,20 @@ export default function MyHeartbeatMain() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex w-full flex-col pb-[64px]">
       <div className="flex-grow bg-BG-black">
         <MyHeartbeatHeader />
-        <MyHeartbeat
-          clubs={myHeartbeatClubs}
-          likedClubs={likedClubs}
-          heartbeatNums={heartbeatNums}
-          handleHeartClickWrapper={handleHeartClickWrapper}
-        />
+        {myHeartbeatClubs.length > 0 ? (
+          <MyHeartbeat
+            clubs={myHeartbeatClubs}
+            likedClubs={likedClubs}
+            heartbeatNums={heartbeatNums}
+            handleHeartClickWrapper={handleHeartClickWrapper}
+          />
+        ) : (
+          <NoResults text="아직 하트비트가 없어요!\n좋아하는 베뉴를 찾아보세요" fullHeight />
+        )}
       </div>
-      <MainFooter />
     </div>
   );
 }

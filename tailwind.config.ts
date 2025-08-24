@@ -9,8 +9,12 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      poppins: ['Poppins', 'sans-serif'],
+      poppins: ['poppins', 'sans-serif'],
       queensides: ['Queensides'],
+      suit: ['SUIT', 'sans-serif'],
+      paperlogy: ['Paperlogy', 'sans-serif'],
+      pretendard: ['Pretendard', 'sans-serif'],
+      sans: ['var(--font-pretendard)', 'sans-serif'],
     },
     extend: {
       scrollbarHide: {
@@ -26,6 +30,37 @@ const config: Config = {
       },
       screens: {
         sm: '440px',
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.3s ease-in-out',
+        slideDown: 'slideDown 0.3s ease-out',
+        slideUp: 'slideUp 0.3s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideDown: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(-10px) scale(0.95)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0) scale(1)',
+          },
+        },
+        slideUp: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(100%)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+        },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -60,13 +95,14 @@ const config: Config = {
           {
             fontWeight: '700',
             lineHeight: '150%',
+            letterSpacing: '-0.025rem',
           },
         ],
         'title-32': [
           '32px',
           {
-            lineHeight: '150%',
             fontWeight: '700',
+            lineHeight: '150%',
           },
         ],
         'title-24-bold': [
@@ -74,6 +110,7 @@ const config: Config = {
           {
             lineHeight: '150%',
             fontWeight: '700',
+            letterSpacing: '-0.03rem',
           },
         ],
         'title-24-medium': [
@@ -98,10 +135,10 @@ const config: Config = {
           },
         ],
         'button-bold': [
-          '18px',
+          '1.125rem',
           {
-            lineHeight: '150%',
             fontWeight: '700',
+            lineHeight: '150%',
           },
         ],
         'body1-16-bold': [
@@ -109,6 +146,7 @@ const config: Config = {
           {
             lineHeight: '160%',
             fontWeight: '700',
+            letterSpacing: '-0.02rem',
           },
         ],
         'body1-16-medium': [
@@ -130,6 +168,7 @@ const config: Config = {
           {
             lineHeight: '150%',
             fontWeight: '500',
+            letterSpacing: '-0.015rem',
           },
         ],
         'body3-12-bold': [
@@ -144,6 +183,7 @@ const config: Config = {
           {
             lineHeight: '160%',
             fontWeight: '500',
+            letterSpacing: '-0.015rem',
           },
         ],
         'now-hot': [
@@ -164,11 +204,146 @@ const config: Config = {
         ],
         'navigate-queen': [
           '0.6875rem',
-
           {
             lineHeight: '160%', // 1.1rem
             fontWeight: '700', // bold
             letterSpacing: '-0.01375rem', // letter spacing
+          },
+        ],
+
+        // 이미지에 맞는 새로운 스타일들
+        'subtitle-22-bold': [
+          '22px',
+          {
+            fontWeight: '700',
+            lineHeight: '140%',
+            letterSpacing: '-2%',
+          },
+        ],
+        'subtitle-22-medium': [
+          '22px',
+          {
+            fontWeight: '500',
+            lineHeight: '140%',
+            letterSpacing: '-2%',
+          },
+        ],
+        'body-15-medium': [
+          '15px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+            letterSpacing: '-0.01875rem',
+          },
+        ],
+        'body-15-bold': [
+          '15px',
+          {
+            fontWeight: '700',
+            lineHeight: '150%',
+            letterSpacing: '-0.01875rem',
+          },
+        ],
+        'body-14-bold': [
+          '14px',
+          {
+            fontWeight: '700',
+            lineHeight: '150%',
+            letterSpacing: '-0.0175rem',
+          },
+        ],
+        'body-14-semibold': [
+          '14px',
+          {
+            fontWeight: '600',
+            lineHeight: '150%',
+            letterSpacing: '-0.0175rem',
+          },
+        ],
+        'body-14-medium': [
+          '14px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+            letterSpacing: '-0.0175rem',
+          },
+        ],
+        'body-13-bold': [
+          '13px',
+          {
+            fontWeight: '700',
+            lineHeight: '150%',
+            letterSpacing: '-0.01625rem',
+          },
+        ],
+        'body-13-medium': [
+          '13px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+          },
+        ],
+        'body-12-medium': [
+          '12px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+            letterSpacing: '-0.015rem',
+          },
+        ],
+        'body-11-medium': [
+          '11px',
+          {
+            fontWeight: '500',
+            lineHeight: '150%',
+          },
+        ],
+        'body-10-medium': [
+          '10px',
+          {
+            fontWeight: '500',
+            lineHeight: '160%',
+            letterSpacing: '-0.0125rem',
+          },
+        ],
+        'calendar-date': [
+          '0.97513rem',
+          {
+            fontWeight: '500',
+            lineHeight: '155%',
+            letterSpacing: '-0.02438rem',
+          },
+        ],
+        'calendar-day-bold': [
+          '1rem',
+          {
+            fontWeight: '600',
+            lineHeight: '145%',
+            letterSpacing: '-0.025rem',
+          },
+        ],
+        'button-16-semibold': [
+          '1rem',
+          {
+            fontWeight: '600',
+            lineHeight: '135%',
+            letterSpacing: '-0.02rem',
+          },
+        ],
+        'paperlogy-1125-600': [
+          '1.125rem',
+          {
+            fontWeight: '600',
+            lineHeight: '150%',
+            letterSpacing: '-0.0225rem',
+          },
+        ],
+        'subtitle-2': [
+          '1.375rem',
+          {
+            fontWeight: '700',
+            lineHeight: '140%',
+            letterSpacing: '-0.0275rem',
           },
         ],
       },
@@ -203,6 +378,28 @@ const config: Config = {
           '&::-webkit-scrollbar': {
             display: 'none',
           },
+        },
+        // Safari 전용 유틸리티
+        '.safari-icon-fix': {
+          '-webkit-transform': 'translateZ(0)',
+          transform: 'translateZ(0)',
+          '-webkit-backface-visibility': 'hidden',
+          'backface-visibility': 'hidden',
+          '-webkit-font-smoothing': 'antialiased',
+          'image-rendering': 'auto',
+        },
+        '.safari-padding-fix': {
+          'padding-top': 'max(1rem, env(safe-area-inset-top))',
+          'padding-bottom': 'max(1rem, env(safe-area-inset-bottom))',
+        },
+        '.safari-input-fix': {
+          '-webkit-appearance': 'none',
+          appearance: 'none',
+          'border-radius': '0',
+          '-webkit-border-radius': '0',
+          'background-clip': 'padding-box',
+          'transform-origin': 'center',
+          zoom: '1',
         },
       });
     },

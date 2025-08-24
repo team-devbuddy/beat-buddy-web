@@ -10,6 +10,9 @@ import MainFooter from '../Main/MainFooter';
 import { getBBP } from '@/lib/actions/recommend-controller/getBBP';
 import VenueCard from './VenueCard';
 import BBPListSkeleton from '@/components/common/skeleton/BBPListSkeleton';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import Filter from './Filter';
 import { toast, ToastContainer } from 'react-toastify';
@@ -29,6 +32,9 @@ export default function BBPMain() {
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   const [showToast, setShowToast] = useState<boolean>(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [isFromOnboarding, setIsFromOnboarding] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const fetchUserName = async (token: string) => {
     try {
@@ -40,10 +46,46 @@ export default function BBPMain() {
   };
 
   useEffect(() => {
+    // 온보딩 후 바로 라우팅된 경우인지 확인
+    const checkIfFromOnboarding = () => {
+      // URL 파라미터 확인
+      const fromOnboarding = searchParams.get('fromOnboarding');
+      if (fromOnboarding === 'true') {
+        setIsFromOnboarding(true);
+        console.log('온보딩에서 온 것으로 감지됨');
+        return;
+      }
+
+      // sessionStorage에서 확인
+      const fromOnboardingStorage = sessionStorage.getItem('fromOnboarding');
+      if (fromOnboardingStorage === 'true') {
+        setIsFromOnboarding(true);
+        console.log('세션스토리지에서 온보딩 감지됨');
+        // 세션스토리지에서 제거
+        sessionStorage.removeItem('fromOnboarding');
+        return;
+      }
+
+      // URL referrer 확인 (클라이언트 사이드에서만)
+      if (typeof window !== 'undefined') {
+        const referrer = document.referrer;
+        console.log('현재 referrer:', referrer);
+        if (referrer.includes('/onBoarding/complete')) {
+          setIsFromOnboarding(true);
+          console.log('referrer에서 온보딩 감지됨');
+        }
+      }
+    };
+
+    checkIfFromOnboarding();
+  }, [searchParams]);
+
+  useEffect(() => {
     const fetchBBPClubs = async () => {
       try {
         if (accessToken) {
           const data = await getBBP(accessToken);
+          console.log(data);
           setBBPClubs(data);
           setFilteredClubs(data);
 
@@ -83,7 +125,7 @@ export default function BBPMain() {
 
     if (accessToken) {
       fetchBBPClubs().then(() => fetchLikedStatuses(accessToken));
-      fetchUserName(accessToken); 
+      fetchUserName(accessToken);
     }
   }, [accessToken, setLikedClubs, setHeartbeatNums]);
 
@@ -95,22 +137,35 @@ export default function BBPMain() {
     await handleHeartClick(e, venueId, likedClubs, setLikedClubs, setHeartbeatNums, accessToken);
   };
 
+  console.log('현재 isFromOnboarding 상태:', isFromOnboarding);
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-BG-black text-white">
-      <BBPickHeader username={userName} />
+      <BBPickHeader username={userName} isFromOnboarding={isFromOnboarding} />
       <Filter setFilteredClubs={setFilteredClubs} BBPClubs={BBPClubs} />
-      <main className="pt-[1.75rem]">
+      <main className="">
         {filteredClubs.length === 0 && filteredClubs !== BBPClubs ? (
-          <NoResults />
+          <NoResults text="조건에 맞는 추천 결과가 없어요\n취향을 다시 설정해볼까요?" fullHeight />
         ) : (
           <VenueCard
-              clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}
-              likedClubs={likedClubs}
-              heartbeatNums={heartbeatNums}
-              handleHeartClickWrapper={handleHeartClickWrapper}           />
+            clubs={filteredClubs.length > 0 ? filteredClubs : BBPClubs}
+            likedClubs={likedClubs}
+            heartbeatNums={heartbeatNums}
+            handleHeartClickWrapper={handleHeartClickWrapper}
+          />
         )}
       </main>
-      <MainFooter />
+
+      {/* 온보딩 후 바로 라우팅된 경우 홈으로가기 버튼 */}
+      {isFromOnboarding && (
+        <div className="fixed bottom-0 left-0 right-0 z-50">
+          <Link
+            href="/"
+            className="flex w-full items-center justify-center rounded-[0.5rem] bg-main py-[0.88rem] font-bold text-sub2">
+            홈으로 가기
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

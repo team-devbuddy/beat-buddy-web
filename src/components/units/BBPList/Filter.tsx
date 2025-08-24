@@ -80,9 +80,9 @@ const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
     const fetchFilteredClubs = async () => {
       if (selectedFilters.length > 0) {
         const filters = {
-          regionTags: selectedFilters.filter(tag => regionTags.includes(tag)),
-          moodTags: selectedFilters.filter(tag => moodTags.includes(tag)),
-          genreTags: selectedFilters.filter(tag => genreTags.includes(tag)),
+          regionTags: selectedFilters.filter((tag) => regionTags.includes(tag)),
+          moodTags: selectedFilters.filter((tag) => moodTags.includes(tag)),
+          genreTags: selectedFilters.filter((tag) => genreTags.includes(tag)),
         };
 
         try {
@@ -101,21 +101,21 @@ const Filter = ({ setFilteredClubs, BBPClubs }: FilterProps) => {
 
   const handleFilterClick = (filter: string) => {
     setSelectedFilters((prevFilters) =>
-      prevFilters.includes(filter) ? prevFilters.filter(f => f !== filter) : [...prevFilters, filter]
+      prevFilters.includes(filter) ? prevFilters.filter((f) => f !== filter) : [...prevFilters, filter],
     );
   };
 
   return (
-    <div className="mt-[1.75rem] w-6/7 flex flex-wrap gap-[0.5rem] bg-BG-black px-[1rem] text-body2-15-medium">
+    <div className="mt-[0.75rem] mb-5 flex flex-wrap gap-[0.38rem] bg-BG-black px-[1.25rem] text-body-13-medium">
       {preferences.length > 0 ? (
         preferences.map((filter, index) => (
           <button
             key={index}
-            className={`box-border rounded-sm px-[0.62rem] py-[0.25rem] ${
-              selectedFilters.includes(filter) ? 'bg-gray500 text-main2' : 'border-transparent bg-gray500 text-gray400'
-            } active:scale-95 transition-transform duration-150`}
+            className={`box-border rounded-[0.5rem] px-2 py-[0.19rem] text-body-13-medium ${
+              selectedFilters.includes(filter) ? 'bg-gray700 text-main' : 'border-transparent bg-gray700 text-gray300'
+            } transition-transform duration-100 active:scale-95`}
             onClick={() => handleFilterClick(filter)}>
-            {translateTag(filter)} 
+            {translateTag(filter)}
           </button>
         ))
       ) : (
