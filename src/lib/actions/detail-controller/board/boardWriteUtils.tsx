@@ -20,8 +20,6 @@ export async function createPost(
       anonymous: postData.isAnonymous,
     };
 
-    console.log('서버로 보내는 데이터:', JSON.stringify(requestBody, null, 2));
-
     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/post/${type}`, {
       method: 'POST',
       headers: {

@@ -50,7 +50,7 @@ interface PostProps {
   onRemove: () => void;
 }
 
-export function formatRelativeTime(isoString: string): string {
+export function formatRelativeTime(isoString: string, showTime: boolean = true): string {
   const now = new Date();
   const time = new Date(isoString);
   const diff = (now.getTime() - time.getTime()) / 1000; // 단위: 초
@@ -415,7 +415,7 @@ export default function BoardProfileScrapPosts({ postId, post, onRemove }: PostP
           </span>
         </div>
         <div className="flex items-end gap-[0.62rem]">
-          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
+          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt, false)}</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={(e) => {

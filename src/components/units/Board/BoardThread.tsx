@@ -46,7 +46,7 @@ interface PostProps {
   };
 }
 
-export function formatRelativeTime(isoString: string): string {
+export function formatRelativeTime(isoString: string, showTime: boolean = true): string {
   const now = new Date();
   const time = new Date(isoString);
   const diff = (now.getTime() - time.getTime()) / 1000; // 단위: 초
@@ -64,14 +64,20 @@ export function formatRelativeTime(isoString: string): string {
     const days = Math.floor(diff / 86400);
     return `${days}일 전`;
   } else {
-    // 일주일 이후: "25/03/01 23:01" 형식
+    // 일주일 이후: showTime에 따라 다르게 표시
     const year = time.getFullYear().toString().slice(-2); // "25"
     const month = String(time.getMonth() + 1).padStart(2, '0'); // "03"
     const day = String(time.getDate()).padStart(2, '0'); // "01"
-    const hours = String(time.getHours()).padStart(2, '0'); // "23"
-    const minutes = String(time.getMinutes()).padStart(2, '0'); // "01"
 
-    return `${year}/${month}/${day} ${hours}:${minutes}`; // "25/03/01 23:01"
+    if (showTime) {
+      // 게시판 상세에서는 시간까지 표시: "25/03/01 23:01"
+      const hours = String(time.getHours()).padStart(2, '0'); // "23"
+      const minutes = String(time.getMinutes()).padStart(2, '0'); // "01"
+      return `${year}/${month}/${day} ${hours}:${minutes}`;
+    } else {
+      // 게시판 메인 리스트에서는 날짜만 표시: "25/03/01"
+      return `${year}/${month}/${day}`;
+    }
   }
 }
 
@@ -165,6 +171,13 @@ export default function BoardThread({ postId, post }: PostProps) {
     });
   };
   const handleImageClick = (index: number) => {
+    // 동영상인 경우 detail 페이지로 이동하면서 이미지 모달 자동 열기
+    if (post.thumbImage && isVideo(post.thumbImage[index])) {
+      router.push(`/board/${post.id}?openModal=true&imageIndex=${index}`);
+      return;
+    }
+
+    // 이미지인 경우 모달 열기
     setCurrentImageIndex(index);
     setIsModalOpen(true);
   };
@@ -337,29 +350,102 @@ export default function BoardThread({ postId, post }: PostProps) {
         </p>
 
         {post.thumbImage && post.thumbImage.length > 0 && (
-          <div className="mt-[0.88rem] flex gap-[0.5rem] overflow-x-auto">
-            {post.thumbImage.map((url, index) => (
-              <div
-                key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleImageClick(index);
-                }}
-                className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
-                {isVideo(url) ? (
-                  <video src={url} className="h-[200px] w-auto object-cover" preload="metadata" muted />
-                ) : (
-                  <Image
-                    src={url}
-                    alt={`post-img-${index}`}
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
-                  />
-                )}
+          <div className="mt-[0.88rem]">
+            {post.thumbImage.length === 1 ? (
+              // 1장일 경우: 가로 패딩 px-5에 맞춰 세로 폭 상관없이
+              <div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleImageClick(0);
+                  }}
+                  className="cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                  {isVideo(post.thumbImage[0]) ? (
+                    <div className="relative">
+                      <video src={post.thumbImage[0]} className="w-full object-cover" preload="metadata" muted />
+                      {/* 재생 버튼 오버레이 */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                        <Image src="/icons/play.svg" alt="재생" width={48} height={48} className="text-white" />
+                      </div>
+                    </div>
+                  ) : (
+                    <Image
+                      src={post.thumbImage[0]}
+                      alt="post-img-0"
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      className="w-full object-cover"
+                    />
+                  )}
+                </div>
               </div>
-            ))}
+            ) : post.thumbImage.length === 2 ? (
+              // 2장일 경우: 최대 세로 450px, 가로 패딩 px-5에 맞춰 2장이 올라가도록
+              <div className="grid grid-cols-2 gap-[0.5rem]">
+                {post.thumbImage.map((url, index) => (
+                  <div
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleImageClick(index);
+                    }}
+                    className="cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                    {isVideo(url) ? (
+                      <div className="relative h-full w-full" style={{ maxHeight: '450px' }}>
+                        <video src={url} className="h-full w-full object-cover" preload="metadata" muted />
+                        {/* 재생 버튼 오버레이 */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                          <Image src="/icons/play.svg" alt="재생" width={40} height={40} className="text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <Image
+                        src={url}
+                        alt={`post-img-${index}`}
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        className="h-full w-full object-cover"
+                        style={{ maxHeight: '450px' }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // 3장 이상일 경우: 세로 220px에 맞춰 가로 폭 상관없이
+              <div className="flex gap-[0.5rem] overflow-x-auto">
+                {post.thumbImage.map((url, index) => (
+                  <div
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleImageClick(index);
+                    }}
+                    className="h-[220px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                    {isVideo(url) ? (
+                      <div className="relative h-full w-auto">
+                        <video src={url} className="h-full w-auto object-cover" preload="metadata" muted />
+                        {/* 재생 버튼 오버레이 */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                          <Image src="/icons/play.svg" alt="재생" width={32} height={32} className="text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <Image
+                        src={url}
+                        alt={`post-img-${index}`}
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        style={{ height: '220px', width: 'auto', objectFit: 'cover' }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -420,7 +506,7 @@ export default function BoardThread({ postId, post }: PostProps) {
           </span>
         </div>
         <div className="flex items-end gap-[0.62rem]">
-          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
+          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt, false)}</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}

@@ -25,6 +25,7 @@ export interface CommentType {
   isBlocked?: boolean; // 차단된 사용자인지 여부
   isDeleted?: boolean; // 삭제된 댓글인지 여부
   isPostWriter?: boolean; // 게시글 작성자인지 여부
+  isWithdrawn?: boolean; // 탈퇴한 사용자인지 여부
 }
 
 interface Props {
@@ -106,6 +107,7 @@ export default function BoardComments({ postId, comments, setComments, bottomRef
             isBlocked: comment.isBlocked,
             isDeleted: comment.isDeleted,
             isPostWriter: comment.isPostWriter,
+            isWithdrawn: comment.isWithdrawn,
           }));
 
           console.log('댓글 데이터 변환:', {

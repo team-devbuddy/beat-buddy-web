@@ -1,45 +1,30 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import { formatRelativeTime } from '../../Board/BoardThread';
-import { postComment } from '@/lib/actions/event-controller/postComment';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-import BoardDropDown from '../../Board/BoardDropDown';
 import { deleteEventComment } from '@/lib/actions/event-controller/deleteEventComment';
+import { postComment } from '@/lib/actions/event-controller/postComment';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
+import { formatRelativeTime } from '../../Board/BoardThread';
 
 // 일주일 이내는 상대적 시간, 일주일 이후는 날짜 형식: "25.08.05 09:57"
-const formatEventCommentDate = (isoString: string): string => {
+const formatEventCommentDate = (dateString: string) => {
+  const date = new Date(dateString);
   const now = new Date();
-  const date = new Date(isoString);
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffTime = Math.abs(now.getTime() - date.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  // 일주일(7일) 이내면 상대적 시간 표시
-  if (diffDays < 7) {
-    const diffSec = Math.floor(diffMs / 1000);
-    const diffMin = Math.floor(diffSec / 60);
-    const diffHours = Math.floor(diffMin / 60);
-
-    if (diffSec < 60) {
-      return '방금 전';
-    } else if (diffMin < 60) {
-      return `${diffMin}분 전`;
-    } else if (diffHours < 24) {
-      return `${diffHours}시간 전`;
-    } else {
-      return `${diffDays}일 전`;
-    }
+  if (diffDays <= 7) {
+    return formatRelativeTime(dateString);
   }
 
-  // 일주일 이후면 날짜 형식으로 표시
-  const year = String(date.getFullYear()).slice(-2); // "2025" -> "25"
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // "8" -> "08"
-  const day = String(date.getDate()).padStart(2, '0'); // "5" -> "05"
-  const hours = String(date.getHours()).padStart(2, '0'); // "9" -> "09"
-  const minutes = String(date.getMinutes()).padStart(2, '0'); // "57" -> "57"
+  const year = date.getFullYear().toString().slice(-2); // "2025" -> "25"
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // "8" -> "08"
+  const day = date.getDate().toString().padStart(2, '0'); // "5" -> "05"
+  const hours = date.getHours().toString().padStart(2, '0'); // "9" -> "09"
+  const minutes = date.getMinutes().toString().padStart(2, '0'); // "57" -> "57"
 
   return `${year}.${month}.${day} ${hours}:${minutes}`;
 };
@@ -155,21 +140,23 @@ export default function EventCommentItem({
   return (
     <div className="border-b border-gray500 pb-4">
       <div className="py-[0.88rem]">
-        <div className="text-body-13-bold flex items-center justify-between gap-[0.63rem] text-white">
+        <div className="flex items-center justify-between gap-[0.63rem] text-body-13-bold text-white">
           <div className="flex items-center gap-1">
             <span className={comment.isStaff ? 'text-main' : 'text-white'}>{comment.authorNickname}</span>
             <span className="text-body3-12-medium text-gray300">·</span>
             <span className="text-body3-12-medium text-gray300">{formatEventCommentDate(comment.createdAt)}</span>
           </div>
 
-          <button
-            onClick={() => handleDeleteDirectly(comment.commentId, false)}
-            className="text-body-12-medium text-gray100">
-            삭제
-          </button>
+          {comment.isAuthor && (
+            <button
+              onClick={() => handleDeleteDirectly(comment.commentId, false)}
+              className="text-body-12-medium text-gray100">
+              삭제
+            </button>
+          )}
         </div>
 
-        <div className="text-body-14-medium mt-1 whitespace-pre-wrap text-[#BFBFBF]">{comment.content}</div>
+        <div className="mt-1 whitespace-pre-wrap text-body-14-medium text-[#BFBFBF]">{comment.content}</div>
       </div>
 
       {/* 대댓글 목록 */}
@@ -179,7 +166,7 @@ export default function EventCommentItem({
             <Image src="/icons/arrow-curve-left-right-gray.svg" alt="arrow" width={18} height={18} />
           </div>
           <div className="flex flex-1 flex-col py-1 pl-3">
-            <div className="text-body-13-bold flex items-center justify-between gap-1">
+            <div className="flex items-center justify-between gap-1 text-body-13-bold">
               <div className="flex items-center gap-1">
                 <span className={`text-body-13-bold ${reply.isStaff ? 'text-main' : 'text-white'}`}>
                   {reply.authorNickname}
@@ -195,13 +182,13 @@ export default function EventCommentItem({
                 </button>
               ) : null}
             </div>
-            <div className="text-body-13-medium whitespace-pre-wrap pb-[0.88rem] text-[#BFBFBF]">{reply.content}</div>
+            <div className="whitespace-pre-wrap pb-[0.88rem] text-body-13-medium text-[#BFBFBF]">{reply.content}</div>
           </div>
         </div>
       ))}
 
-      {(comment.isAuthor || comment.isStaff) && (
-        <div className="relative">
+      {
+        /*(comment.isAuthor || comment.isStaff) && */ <div className="relative">
           <input
             type="text"
             className="w-full rounded-[0.5rem] bg-gray700 px-4 py-[0.66rem] pr-10 text-body3-12-medium text-gray100 placeholder-gray300 outline-none focus:outline-none"
@@ -217,7 +204,7 @@ export default function EventCommentItem({
             <Image src="/icons/send-01-pink.svg" alt="send" width={22} height={22} />
           </button>
         </div>
-      )}
+      }
 
       {/* 삭제 확인 모달 
       <AnimatePresence>

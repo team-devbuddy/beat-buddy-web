@@ -75,7 +75,7 @@ export default function LocationFilter() {
                   />
 
                   <motion.div
-                    className="bg-gray800 absolute right-0 z-10 mt-2 w-[6.5rem] overflow-hidden rounded-[0.5rem] bg-gray500 shadow-lg"
+                    className="bg-gray800 absolute right-0 z-10 mt-2 overflow-hidden rounded-[0.5rem] bg-gray500 shadow-lg"
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
@@ -84,7 +84,7 @@ export default function LocationFilter() {
                       <button
                         key={option}
                         onClick={() => handleSortSelect(option)}
-                        className={`block w-full py-[0.56rem] text-center text-body-13-medium hover:bg-gray700 ${
+                        className={`block w-full whitespace-nowrap py-[0.56rem] px-[1.12rem] text-center text-body-13-medium hover:bg-gray700 ${
                           selectedSort === option ? 'bg-gray500 font-bold text-main' : 'bg-gray500 text-gray100'
                         }`}>
                         {option}

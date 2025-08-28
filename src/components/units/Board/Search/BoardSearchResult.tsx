@@ -5,7 +5,13 @@ import BoardImageModal from '../BoardImageModal';
 import { useState, useEffect } from 'react';
 import { postFollow } from '@/lib/actions/follow-controller/postFollow';
 import { deleteFollow } from '@/lib/actions/follow-controller/deleteFollow';
-import { accessTokenState, postLikeState, postScrapState, followMapState, isBusinessState } from '@/context/recoil-context';
+import {
+  accessTokenState,
+  postLikeState,
+  postScrapState,
+  followMapState,
+  isBusinessState,
+} from '@/context/recoil-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { addPostLike } from '@/lib/actions/post-interaction-controller/addLike';
 import { deletePostLike } from '@/lib/actions/post-interaction-controller/deleteLike';
@@ -390,7 +396,7 @@ export default function BoardSearchResult({ postId, post }: PostProps) {
           </span>
         </div>
         <div className="flex items-end gap-[0.62rem]">
-          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
+          <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt, false)}</p>
           <Image
             ref={dropdownTriggerRef}
             onClick={openDropdown}

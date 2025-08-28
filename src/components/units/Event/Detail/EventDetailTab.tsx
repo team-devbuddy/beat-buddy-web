@@ -183,10 +183,8 @@ export default function EventDetailTab({ eventDetail }: { eventDetail: EventDeta
             <motion.button
               title="문의하기"
               onClick={() => setShowModal(true)}
-              className="flex h-14 w-14 items-center justify-center rounded-full bg-main text-white shadow-lg transition-all duration-300 ease-in-out active:scale-90"
-              animate={{
-                opacity: showButton ? 1 : 0.3,
-              }}
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-main text-white shadow-lg duration-300 ease-in-out active:scale-90"
+              animate={{}}
               transition={{ duration: 0.3 }}>
               <Image src="/icons/ic_baseline-plus.svg" alt="글쓰기" width={28} height={28} />
             </motion.button>

@@ -201,30 +201,22 @@ export default function VenueIntro({ venue }: VenueIntroProps) {
 
         {/* 지도 */}
         <div
-          className="h-[10rem] overflow-hidden rounded-[0.25rem] border-none focus:outline-none"
-          style={{ touchAction: 'none', pointerEvents: 'auto' }}
-          onTouchStart={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-          onTouchMove={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-          onTouchEnd={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-          onPointerDown={(e) => {
-            e.stopPropagation();
-          }}
-          onPointerMove={(e) => {
-            e.stopPropagation();
-          }}
-          onPointerUp={(e) => {
-            e.stopPropagation();
-          }}>
-          <NaverMap clubs={clubs} zoom={10} showLocationButton={false} showZoomControl={false} clickable={true} />
+          className="relative h-[10rem] overflow-hidden rounded-[0.25rem] border-none focus:outline-none"
+          style={{ touchAction: 'none', pointerEvents: 'auto' }}>
+          <div style={{ height: '100vh', overflow: 'hidden' }}>
+            <NaverMap
+              clubs={clubs}
+              height="11.1rem"
+              width="100%"
+              zoom={30}
+              showLocationButton={false}
+              showZoomControl={false}
+              clickable={true}
+              compensateCenter={true}
+              visibleHeight={160}
+              visibleWidth={window.innerWidth - 40}
+            />
+          </div>
         </div>
       </div>
     </div>

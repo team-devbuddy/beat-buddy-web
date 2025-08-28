@@ -41,7 +41,7 @@ export default function MyPageComponent() {
   // 영어 태그를 한글로 변환하는 함수
   const translateTag = (tag: string): string => {
     const tagMap: { [key: string]: string } = {
-      ROCK: '락',
+      ROCK: 'ROCK',
       ROOFTOP: '루프탑',
       ITAEWON: '이태원',
       HONGDAE: '홍대',
@@ -50,9 +50,9 @@ export default function MyPageComponent() {
       OTHERS: '기타',
       CLUB: '클럽',
       PUB: '펍',
-      HIPHOP: '힙합',
+      HIPHOP: 'HIPHOP',
       EDM: 'EDM',
-      LATIN: '라틴',
+      LATIN: 'LATIN',
       'K-POP': 'K-POP',
       POP: 'POP',
       DEEP: '딥한',
@@ -63,8 +63,8 @@ export default function MyPageComponent() {
       'BAR&CAFE': 'BAR&CAFE',
       'SOUL&FUNK': 'SOUL&FUNK',
       'R&B': 'R&B',
-      TECHNO: '테크노',
-      HOUSE: '하우스',
+      TECHNO: 'TECHNO',
+      HOUSE: 'HOUSE',
     };
     return tagMap[tag] || tag;
   };
@@ -146,6 +146,19 @@ export default function MyPageComponent() {
     fetchData();
   }, [access]);
 
+  const genresMap: { [key: string]: string } = {
+    HIPHOP: 'HIPHOP',
+    'R&B': 'R&B',
+    EDM: 'EDM',
+    TECHNO: 'TECHNO',
+    HOUSE: 'HOUSE',
+    'SOUL&FUNK': 'SOUL&FUNK',
+    ROCK: 'ROCK',
+    LATIN: 'LATIN',
+    'K-POP': 'K-POP',
+    POP: 'POP',
+  };
+
   return (
     <>
       <div className="flex flex-col">
@@ -176,7 +189,6 @@ export default function MyPageComponent() {
                   {/* 프로필 정보 */}
                   <div className={`${isBusiness ? 'mb-[1.81rem]' : 'mb-[1.12rem]'} flex items-start justify-between`}>
                     <div className="flex items-center gap-3">
-                      
                       <div className="flex flex-col items-start justify-center">
                         <div className="flex items-center gap-2">
                           <span className="text-button-bold text-white">

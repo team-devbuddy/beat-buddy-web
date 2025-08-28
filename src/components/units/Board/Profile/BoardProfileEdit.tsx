@@ -26,8 +26,6 @@ export default function BoardProfileEdit() {
   const searchParams = useSearchParams();
   const memberId = searchParams.get('memberId');
 
-  console.log('memberId', memberId);
-
   useEffect(() => {
     const initializeProfile = async () => {
       try {
@@ -121,7 +119,14 @@ export default function BoardProfileEdit() {
         }
       }
     } catch (error: any) {
-      setErrorMessage(error.message);
+      // 서버 에러 응답을 더 자세히 처리
+      if (error.serverError) {
+        // 서버에서 받은 에러 정보 사용
+        setErrorMessage(error.serverError.message || error.message);
+      } else {
+        // 일반 에러 메시지 사용
+        setErrorMessage(error.message);
+      }
     }
   };
 
@@ -149,7 +154,7 @@ export default function BoardProfileEdit() {
   const handleModalClose = () => {
     setShowSuccessModal(false);
     // 이전 페이지로 라우팅
-    //router.back();
+    router.back();
   };
 
   return (
@@ -191,15 +196,23 @@ export default function BoardProfileEdit() {
       {/* 안내 문구 - 에러 발생 시만 표시 */}
       {errorMessage && (
         <div className="ml-2 mt-3 text-body-13-medium text-main">
-          닉네임은 14일에 두번 변경 가능해요
-          <br />
-          {originalNickname &&
-            (() => {
-              // 에러메시지에서 숫자 추출 (예: "14일 뒤에 변경해주세요" -> 14)
-              const daysMatch = errorMessage.match(/(\d+)일/);
-              const days = daysMatch ? daysMatch[1] : '14';
-              return `${originalNickname}님은 ${days}일 뒤에 닉네임을 변경하실 수 있어요`;
-            })()}
+          {errorMessage.includes('이미 존재하는 닉네임입니다') || errorMessage.includes('NICKNAME_ALREADY_EXIST') ? (
+            // 중복 닉네임 에러일 때는 서버 메시지 표시
+            errorMessage
+          ) : (
+            // 그 외 에러일 때는 기존 메시지 표시
+            <>
+              닉네임은 14일에 두번 변경 가능해요
+              <br />
+              {originalNickname &&
+                (() => {
+                  // 에러메시지에서 숫자 추출 (예: "14일 뒤에 변경해주세요" -> 14)
+                  const daysMatch = errorMessage.match(/(\d+)일/);
+                  const days = daysMatch ? daysMatch[1] : '14';
+                  return `${originalNickname}님은 ${days}일 뒤에 닉네임을 변경하실 수 있어요`;
+                })()}
+            </>
+          )}
         </div>
       )}
 

@@ -372,16 +372,10 @@ export default function BoardImageModal({
         onTouchEnd={handleTouchEnd}
         onClick={(e) => e.stopPropagation()}>
         {/* 상단 헤더 */}
-        <div className="absolute left-0 right-0 top-0 z-10 flex w-full items-center justify-between py-[0.53rem] pl-[0.62rem] pr-4">
+        <div className="absolute left-0 right-0 top-0 z-10 flex w-full items-center justify-between px-5 py-[0.8rem]">
           <div className="flex items-center gap-3">
             <button onClick={onClose} className="flex items-center justify-center rounded-full" title="뒤로가기">
-              <Image
-                src="/icons/line-md_chevron-left.svg"
-                alt="뒤로가기"
-                width={35}
-                height={35}
-                className="text-white"
-              />
+              <Image src="/icons/arrow_back_ios.svg" alt="뒤로가기" width={24} height={24} className="text-white" />
             </button>
 
             {isReview && <span className="text-title-24-bold text-white">{clubName}</span>}
@@ -520,14 +514,10 @@ export default function BoardImageModal({
                 )}
               </div>
             ) : (
-              <div onClick={handleImageClick} className="cursor-pointer">
-                <Image
-                  src={currentUrl}
-                  alt={`modal-img-${currentIndex}`}
-                  width={1000}
-                  height={1000}
-                  className="h-auto max-h-[31.25rem] w-full object-cover"
-                />
+              <div
+                onClick={handleImageClick}
+                className="relative flex h-full w-full cursor-pointer items-center justify-center">
+                <Image src={currentUrl} alt={`modal-img-${currentIndex}`} fill className="object-contain" />
               </div>
             )}
           </motion.div>

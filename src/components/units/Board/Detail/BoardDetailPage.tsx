@@ -35,6 +35,7 @@ interface PostType {
   isFollowing: boolean;
   thumbImage?: string[];
   isAnonymous: boolean;
+  isWithdrawn: boolean;
 }
 
 export default function BoardDetailPage({ postId, category }: { postId: number; category: string }) {
@@ -127,9 +128,9 @@ export default function BoardDetailPage({ postId, category }: { postId: number; 
 
   return (
     <main className="relative bg-BG-black text-white">
-      <div className="flex items-center justify-between py-[0.87rem] px-5">
+      <div className="flex items-center justify-between px-5 py-[0.88rem]">
         <Image
-          onClick={() => router.back()}
+          onClick={() => router.push('/board')}
           src="/icons/arrow_back_ios.svg"
           alt="뒤로가기"
           width={24}

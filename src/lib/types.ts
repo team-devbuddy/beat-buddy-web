@@ -36,6 +36,7 @@ export interface Club {
   freeEntrance?: boolean; // API 응답에 있는 필드 추가
   endTime?: string;
   startTime?: string;
+  isWithdrawn?: boolean; // 탈퇴한 사용자인지 여부
 }
 
 export interface ClubProps {

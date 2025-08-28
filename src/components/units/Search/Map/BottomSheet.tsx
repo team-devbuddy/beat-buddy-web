@@ -72,7 +72,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(
     const [hasMore, setHasMore] = useState(externalHasMore ?? true);
     const [isLoadingMore, setIsLoadingMore] = useState(externalIsLoadingMore ?? false);
 
-    const genres = ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'];
+    const genres = ['HIPHOP', 'R&B', 'TECHNO', 'EDM', 'SOUL&FUNK', 'ROCK', 'HOUSE', 'POP', 'LATIN', 'K-POP'];
     const locations = ['홍대', '이태원', '강남 · 신사', '압구정로데오', '기타'];
     const sorts = ['가까운 순', '인기순'];
 
@@ -86,16 +86,16 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(
 
     // 매핑 객체들
     const genresMap: { [key: string]: string } = {
-      힙합: 'HIPHOP',
+      HIPHOP: 'HIPHOP',
       'R&B': 'R&B',
-      테크노: 'TECHNO',
+      TECHNO: 'TECHNO',
       EDM: 'EDM',
-      하우스: 'HOUSE',
-      라틴: 'LATIN',
-      '소울&펑크': 'SOUL&FUNK',
-      'K-POP': 'K-POP',
-      락: 'ROCK',
+      'SOUL&FUNK': 'SOUL&FUNK',
+      ROCK: 'ROCK',
+      HOUSE: 'HOUSE',
       POP: 'POP',
+      LATIN: 'LATIN',
+      'K-POP': 'K-POP',
     };
 
     const locationsMap: { [key: string]: string } = {
@@ -112,7 +112,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(
     };
 
     // 바텀시트 높이 설정
-    const snapPoints = clickedClub ? [height - 10, 400, 70] : [height - 10, 470, 70];
+    const snapPoints = clickedClub ? [height - 10, 400, 75] : [height - 10, 470, 75];
 
     useImperativeHandle(ref, () => ({
       close: () => setOpen(false),

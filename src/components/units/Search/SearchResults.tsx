@@ -85,7 +85,7 @@ export default function SearchResults({
   });
 
   const genres = useMemo(
-    () => ['힙합', 'R&B', '테크노', 'EDM', '소울&펑크', 'ROCK', '하우스', 'POP', '라틴', 'K-POP'],
+    () => ['HIPHOP', 'R&B', 'TECHNO', 'EDM', 'SOUL&FUNK', 'ROCK', 'HOUSE', 'POP', 'LATIN', 'K-POP'],
     [],
   );
   const locations = useMemo(() => ['홍대', '이태원', '강남 · 신사', '압구정로데오', '기타'], []);
@@ -130,6 +130,16 @@ export default function SearchResults({
           size: 10,
         };
 
+        console.log('🔍 performSearch 실행:', {
+          targetPage,
+          append,
+          searchQuery,
+          filters,
+          selectedGenre,
+          selectedLocation,
+          selectedOrder,
+        });
+
         // 가까운 순으로 정렬할 때는 위도/경도 추가
         if (filters.sortCriteria === '가까운 순') {
           try {
@@ -143,7 +153,7 @@ export default function SearchResults({
           }
         }
 
-        console.log('검색 실행:', { targetPage, append, filters });
+        console.log('🔍 API 호출 전 최종 filters:', filters);
         const response = await searchHomeDropdown(filters, accessToken);
         const clubs = response.clubs || response;
         const hasMoreData = response.hasMore ?? clubs.length === 10;
@@ -198,7 +208,7 @@ export default function SearchResults({
     const locationParam = searchParams.get('location');
     const queryParam = searchParams.get('q');
 
-    console.log('SearchResults - URL 파라미터 읽기:', { genreParam, locationParam, queryParam });
+    console.log('🔍 SearchResults - URL 파라미터 읽기:', { genreParam, locationParam, queryParam });
 
     if (genreParam) {
       setSelectedGenre(genreParam);
@@ -207,6 +217,7 @@ export default function SearchResults({
       setSelectedLocation(locationParam);
     }
     if (queryParam) {
+      console.log('🔍 URL에서 queryParam 설정:', queryParam);
       setSearchQuery(queryParam);
     }
   }, [searchParams, setSelectedGenre, setSelectedLocation, setSearchQuery]);
@@ -214,10 +225,24 @@ export default function SearchResults({
   // 초기 로딩 시 한 번만 실행
   useEffect(() => {
     setSelectedOrder('가까운 순');
-    performSearch(1);
+    initialLoadRef.current = true;
   }, []);
 
-  // 필터/정렬 변경 시 검색 재실행
+  // searchQuery 변경 시 검색 실행 (초기 로딩 후)
+  useEffect(() => {
+    if (searchQuery && !initialLoadRef.current) {
+      console.log('🔍 searchQuery 변경으로 인한 새 검색:', {
+        searchQuery,
+        initialLoadRef: initialLoadRef.current,
+        timestamp: new Date().toISOString(),
+      });
+      setPage(1);
+      setHasMore(true);
+      performSearch(1);
+    }
+  }, [searchQuery, performSearch]);
+
+  // 필터/정렬 변경 시 검색 재실행 (searchQuery 제외)
   useEffect(() => {
     if (initialLoadRef.current) {
       initialLoadRef.current = false;
@@ -231,9 +256,8 @@ export default function SearchResults({
       return;
     }
 
-    // 실제 필터 값이 변경되었는지 확인
+    // searchQuery 변경은 별도로 처리하므로 제외
     const hasFilterChanged =
-      prevFiltersRef.current.searchQuery !== searchQuery ||
       prevFiltersRef.current.selectedGenre !== selectedGenre ||
       prevFiltersRef.current.selectedLocation !== selectedLocation ||
       prevFiltersRef.current.selectedOrder !== selectedOrder;
@@ -260,7 +284,7 @@ export default function SearchResults({
     setPage(1);
     setHasMore(true);
     performSearch(1);
-  }, [searchQuery, selectedGenre, selectedLocation, selectedOrder]);
+  }, [selectedGenre, selectedLocation, selectedOrder]); // searchQuery 의존성 제거
 
   // 무한 스크롤을 위한 페이지 변경 시 실행
   useEffect(() => {

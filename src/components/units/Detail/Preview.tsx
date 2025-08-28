@@ -143,25 +143,30 @@ const Preview = ({ venue, isHeartbeat, tagList }: ClubProps) => {
     <div className="relative flex h-[21.875rem] w-full flex-col justify-between">
       <CustomToastContainer />
       {/* 상단 헤더 (overlay) */}
-      <div className="pointer-events-none absolute z-20 flex w-full items-start justify-between pb-[0.87rem] pl-5 pr-4 pt-[0.88rem]">
-        <button onClick={() => router.back()} aria-label="뒤로가기" className="pointer-events-auto text-white">
+      <div className="pointer-events-none absolute z-20 flex w-full items-start justify-between px-5 py-[0.88rem]">
+        <button
+          onClick={() => router.back()}
+          aria-label="뒤로가기"
+          className="pointer-events-auto flex items-center justify-center text-white">
           <Image src="/icons/arrow_back_ios.svg" alt="back icon" width={24} height={24} />
         </button>
         <div className="flex items-center space-x-3">
-          <div onClick={handleShareClick} className="pointer-events-auto cursor-pointer">
-            <Image src="/icons/share.svg" alt="share icon" width={26} height={26} />
+          <div
+            onClick={handleShareClick}
+            className="pointer-events-auto flex items-center justify-center ">
+            <Image src="/icons/share.svg" alt="share icon" width={28} height={28} />
           </div>
           <motion.div
             onClick={handleHeartClickWrapper}
-            className="pointer-events-auto cursor-pointer"
+            className="pointer-events-auto flex items-center justify-center "
             variants={heartAnimation}
             initial="initial"
             animate={clickedHeart ? 'clicked' : 'initial'}>
             <Image
-              src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart-detail.svg'}
+              src={likedClubs[venue.id] ? '/icons/FilledHeart.svg' : '/icons/whiteHeart.svg'}
               alt="heart icon"
-              width={26}
-              height={26}
+              width={28}
+              height={28}
             />
           </motion.div>
         </div>

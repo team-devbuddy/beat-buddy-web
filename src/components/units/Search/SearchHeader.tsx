@@ -45,15 +45,27 @@ const SearchHeader = () => {
 
   const handleSearch = () => {
     if (inputValue.trim()) {
-      // 검색 실행 시에만 searchQuery 업데이트
-      setSearchQuery(inputValue.trim());
+      const trimmedValue = inputValue.trim();
+
+      console.log('🔍 SearchHeader - 검색 실행:', { inputValue, trimmedValue });
+
+      // 이전 검색어와 다를 때만 상태 업데이트
+      if (trimmedValue !== searchQuery) {
+        console.log('🔍 SearchHeader - searchQuery 상태 업데이트:', { 이전: searchQuery, 새로: trimmedValue });
+        setSearchQuery(trimmedValue);
+      }
+
+      // 최근 검색어 업데이트
       setRecentSearches((prev) => {
-        const updated = [inputValue.trim(), ...prev.filter((s) => s !== inputValue.trim())];
-        addSearch(inputValue.trim());
+        const updated = [trimmedValue, ...prev.filter((s) => s !== trimmedValue)];
+        addSearch(trimmedValue);
         return updated;
       });
-      router.push(generateLink('/search/results', inputValue.trim()));
-      // 검색 후 입력 필드 유지 (사용자가 계속 검색 가능)
+
+      // URL 이동
+      const searchUrl = generateLink('/search/results', trimmedValue);
+      console.log('🔍 SearchHeader - URL 이동:', searchUrl);
+      router.push(searchUrl);
     }
   };
 
@@ -73,7 +85,7 @@ const SearchHeader = () => {
   };
 
   return (
-    <header className="bg-BG-black px-5 pb-[0.88rem] pt-[0.63rem]">
+    <header className="bg-transparent px-5 pb-[1.24rem] pt-[0.62rem]">
       <div className="relative w-full">
         {/* 
         {hasQuery && (🔙 Back icon */}

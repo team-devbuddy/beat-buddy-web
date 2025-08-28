@@ -19,7 +19,7 @@ import { deletePostLike } from '@/lib/actions/post-interaction-controller/delete
 import { addPostScrap } from '@/lib/actions/post-interaction-controller/addScrap';
 import { deletePostScrap } from '@/lib/actions/post-interaction-controller/deleteScrap';
 import BoardDropdown from '../BoardDropDown';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { formatRelativeTime } from '../BoardThread';
 
 interface PostProps {
@@ -45,6 +45,7 @@ interface PostProps {
     views: number;
     isFollowing: boolean;
     isAnonymous: boolean;
+    isWithdrawn: boolean;
   };
 }
 
@@ -55,8 +56,26 @@ const isVideo = (url: string): boolean => {
   return videoExtensions.some((ext) => lowerUrl.includes(ext));
 };
 
+// 탈퇴한 사용자 처리를 위한 유틸리티 함수
+const getDisplayName = (nickname: string, isWithdrawn?: boolean, isAnonymous?: boolean) => {
+  if (isAnonymous) return '익명';
+  if (isWithdrawn) return '(알 수 없음)';
+  return nickname;
+};
+
+const getDisplayImage = (imageUrl?: string, isWithdrawn?: boolean, isAnonymous?: boolean) => {
+  if (isAnonymous || isWithdrawn) return '/icons/default-profile.svg';
+  return imageUrl || '/icons/default-profile.svg';
+};
+
+const getDisplayStyle = (isWithdrawn?: boolean) => {
+  if (isWithdrawn) return 'text-gray200';
+  return 'text-white';
+};
+
 export default function BoardDetail({ postId, post }: PostProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [followMap, setFollowMap] = useRecoilState(followMapState);
@@ -168,6 +187,24 @@ export default function BoardDetail({ postId, post }: PostProps) {
     setIsModalOpen(true);
   };
 
+  // URL 파라미터를 확인하여 자동으로 모달 열기
+  useEffect(() => {
+    const openModal = searchParams.get('openModal');
+    const imageIndex = searchParams.get('imageIndex');
+
+    if (openModal === 'true' && imageIndex !== null && post.imageUrls) {
+      const index = parseInt(imageIndex, 10);
+      if (index >= 0 && index < post.imageUrls.length) {
+        setCurrentImageIndex(index);
+        setIsModalOpen(true);
+
+        // URL에서 파라미터 제거 (선택사항)
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      }
+    }
+  }, [searchParams, post.imageUrls]);
+
   const handleFollow = async () => {
     if (loadingFollow || !accessToken) return;
 
@@ -235,9 +272,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
           <div className="relative flex h-[37px] w-[37px] cursor-pointer items-center justify-center">
             <div className="h-full w-full overflow-hidden rounded-full bg-gray500" onClick={goToUserProfile}>
               <Image
-                src={
-                  post.isAnonymous ? '/icons/default-profile.svg' : post.profileImageUrl || '/icons/default-profile.svg'
-                }
+                src={getDisplayImage(post.profileImageUrl, post.isWithdrawn, post.isAnonymous)}
                 alt="profile"
                 width={37}
                 height={37}
@@ -246,7 +281,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
                 style={{ aspectRatio: '1/1' }}
               />
             </div>
-            {isBusiness && !post.isAnonymous && (
+            {isBusiness && !post.isAnonymous && !post.isWithdrawn && (
               <Image
                 src="/icons/businessMark.svg"
                 alt="business-mark"
@@ -257,7 +292,9 @@ export default function BoardDetail({ postId, post }: PostProps) {
             )}
           </div>
           <div>
-            <p className="text-body-14-bold text-white">{post.isAnonymous ? '익명' : post.nickname}</p>
+            <p className={`text-body-14-bold ${getDisplayStyle(post.isWithdrawn)}`}>
+              {getDisplayName(post.nickname, post.isWithdrawn, post.isAnonymous)}
+            </p>
             <p className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</p>
           </div>
         </div>
@@ -274,26 +311,93 @@ export default function BoardDetail({ postId, post }: PostProps) {
       <p className="whitespace-pre-wrap text-body-13-medium text-gray100">{post.content}</p>
 
       {post.imageUrls && post.imageUrls.length > 0 && (
-        <div className="mt-[0.75rem] flex gap-[0.5rem] overflow-x-auto">
-          {post.imageUrls.map((url, index) => (
-            <div
-              key={index}
-              onClick={() => handleImageClick(index)}
-              className="max-h-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
-              {isVideo(url) ? (
-                <video src={url} className="h-[200px] w-auto object-cover" preload="metadata" muted />
-              ) : (
-                <Image
-                  src={url}
-                  alt={`post-img-${index}`}
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  style={{ height: '200px', width: 'auto', objectFit: 'contain' }}
-                />
-              )}
+        <div className="mt-[0.75rem]">
+          {post.imageUrls.length === 1 ? (
+            // 1장일 경우: 가로 패딩 px-5에 맞춰 세로 폭 상관없이
+            <div>
+              <div
+                onClick={() => handleImageClick(0)}
+                className="cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                {isVideo(post.imageUrls[0]) ? (
+                  <div className="relative">
+                    <video src={post.imageUrls[0]} className="w-full object-cover" preload="metadata" muted />
+                    {/* 재생 버튼 오버레이 */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                      <Image src="/icons/play.svg" alt="재생" width={80} height={80} className="text-white" />
+                    </div>
+                  </div>
+                ) : (
+                  <Image
+                    src={post.imageUrls[0]}
+                    alt="post-img-0"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="w-full object-cover"
+                  />
+                )}
+              </div>
             </div>
-          ))}
+          ) : post.imageUrls.length === 2 ? (
+            // 2장일 경우: 최대 세로 450px, 가로 패딩 px-5에 맞춰 2장이 올라가도록
+            <div className="grid grid-cols-2 gap-[0.5rem]">
+              {post.imageUrls.map((url, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleImageClick(index)}
+                  className="cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                  {isVideo(url) ? (
+                    <div className="relative h-full w-full" style={{ maxHeight: '450px' }}>
+                      <video src={url} className="h-full w-full object-cover" preload="metadata" muted />
+                      {/* 재생 버튼 오버레이 */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                        <Image src="/icons/play.svg" alt="재생" width={60} height={60} className="text-white" />
+                      </div>
+                    </div>
+                  ) : (
+                    <Image
+                      src={url}
+                      alt={`post-img-${index}`}
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      className="h-full w-full object-cover"
+                      style={{ maxHeight: '450px' }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            // 3장 이상일 경우: 세로 220px에 맞춰 가로 폭 상관없이
+            <div className="flex gap-[0.5rem] overflow-x-auto">
+              {post.imageUrls.map((url, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleImageClick(index)}
+                  className="h-[220px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
+                  {isVideo(url) ? (
+                    <div className="relative h-full w-auto">
+                      <video src={url} className="h-full w-auto object-cover" preload="metadata" muted />
+                      {/* 재생 버튼 오버레이 */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                        <Image src="/icons/play.svg" alt="재생" width={32} height={32} className="text-white" />
+                      </div>
+                    </div>
+                  ) : (
+                    <Image
+                      src={url}
+                      alt={`post-img-${index}`}
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      style={{ height: '220px', width: 'auto', objectFit: 'cover' }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -360,7 +464,7 @@ export default function BoardDetail({ postId, post }: PostProps) {
             alt="bookmark"
             width={19}
             height={20}
-            className=" cursor-pointer"
+            className="cursor-pointer"
           />
         </div>
       </div>

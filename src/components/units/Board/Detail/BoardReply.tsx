@@ -26,6 +26,23 @@ interface Props {
   onCommentDeleted?: (commentId: number) => void; // 댓글 삭제 콜백 추가
 }
 
+// 탈퇴한 사용자 처리를 위한 유틸리티 함수
+const getDisplayName = (memberName: string, isWithdrawn?: boolean, isAnonymous?: boolean) => {
+  if (isAnonymous) return '익명';
+  if (isWithdrawn) return '(알 수 없음)';
+  return memberName;
+};
+
+const getDisplayImage = (imageUrl?: string, isWithdrawn?: boolean, isAnonymous?: boolean) => {
+  if (isAnonymous || isWithdrawn) return '/icons/default-profile.svg';
+  return imageUrl || '/icons/default-profile.svg';
+};
+
+const getDisplayStyle = (isWithdrawn?: boolean) => {
+  if (isWithdrawn) return 'text-gray200';
+  return 'text-white';
+};
+
 export default function BoardReply({
   postId,
   reply,
@@ -301,18 +318,22 @@ export default function BoardReply({
               <div className="flex items-center justify-between">
                 <div className="flex items-center justify-center gap-[0.37rem] text-body-13-medium text-white">
                   <Image
-                    src={
-                      reply.isAnonymous ? '/icons/default-profile.svg' : reply.imageUrl || '/icons/default-profile.svg'
-                    }
+                    src={getDisplayImage(reply.imageUrl, reply.isWithdrawn, reply.isAnonymous)}
                     alt="profile"
                     width={22}
                     height={22}
                     className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover"
                     onClick={handleProfileClick}
                   />
-                  {reply.isPostWriter && <span className="font-bold text-main">{reply.memberName}(작성자)</span>}
+                  {reply.isPostWriter && (
+                    <span className={`font-bold text-main ${getDisplayStyle(reply.isWithdrawn)}`}>
+                      {getDisplayName(reply.memberName, reply.isWithdrawn, reply.isAnonymous)}(작성자)
+                    </span>
+                  )}
                   {!reply.isPostWriter && (
-                    <span className="text-body-13-medium font-bold text-white">{reply.memberName}</span>
+                    <span className={`text-body-13-medium font-bold ${getDisplayStyle(reply.isWithdrawn)}`}>
+                      {getDisplayName(reply.memberName, reply.isWithdrawn, reply.isAnonymous)}
+                    </span>
                   )}
                   <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
                 </div>
@@ -393,18 +414,22 @@ export default function BoardReply({
             <div className="flex items-center justify-between">
               <div className="flex items-center justify-center gap-[0.37rem] text-body-13-medium text-white">
                 <Image
-                  src={
-                    reply.isAnonymous ? '/icons/default-profile.svg' : reply.imageUrl || '/icons/default-profile.svg'
-                  }
+                  src={getDisplayImage(reply.imageUrl, reply.isWithdrawn, reply.isAnonymous)}
                   alt="profile"
                   width={22}
                   height={22}
                   className="h-[22px] w-[22px] cursor-pointer rounded-full object-cover safari-icon-fix"
                   onClick={handleProfileClick}
                 />
-                {reply.isPostWriter && <span className="font-bold text-main">{reply.memberName}(작성자)</span>}
+                {reply.isPostWriter && (
+                  <span className={`font-bold text-main ${getDisplayStyle(reply.isWithdrawn)}`}>
+                    {getDisplayName(reply.memberName, reply.isWithdrawn, reply.isAnonymous)}(작성자)
+                  </span>
+                )}
                 {!reply.isPostWriter && (
-                  <span className="text-body-13-medium font-bold text-white">{reply.memberName}</span>
+                  <span className={`text-body-13-medium font-bold ${getDisplayStyle(reply.isWithdrawn)}`}>
+                    {getDisplayName(reply.memberName, reply.isWithdrawn, reply.isAnonymous)}
+                  </span>
                 )}
                 <span className="text-body3-12-medium text-gray200">· {formattedTime}</span>
               </div>

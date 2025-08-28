@@ -12,6 +12,7 @@ import { accessTokenState, clickedClubState, likedClubsState, heartbeatNumsState
 import NaverMap, { NaverMapHandle } from '@/components/common/NaverMap';
 import { getMyHearts } from '@/lib/actions/hearbeat-controller/getMyHearts';
 import CurrentLocationButton from '@/components/units/Search/Map/CurrentLocationButton';
+import MapButton from '@/components/units/Search/Map/MapButton';
 
 export default function MapView({ filteredClubs }: SearchResultsProps) {
   const sheetRef = useRef<BottomSheetRef>(null);
@@ -69,12 +70,20 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   const clubsToDisplay = currentFilteredClubs;
 
   // 디버깅: clubsToDisplay 업데이트 확인
-  console.log('🗺️ clubsToDisplay 상태:', {
-    'currentFilteredClubs.length': currentFilteredClubs.length,
-    'clubsToDisplay.length': clubsToDisplay.length,
-    isMapSearched: isMapSearched,
-    '필터링 결과': currentFilteredClubs.length === 0 ? '빈배열' : `${currentFilteredClubs.length}개 클럽`,
-  });
+  useEffect(() => {
+    console.log('🗺️ clubsToDisplay 상태:', {
+      'currentFilteredClubs.length': currentFilteredClubs.length,
+      'clubsToDisplay.length': clubsToDisplay.length,
+      isMapSearched: isMapSearched,
+      '필터링 결과': currentFilteredClubs.length === 0 ? '빈배열' : `${currentFilteredClubs.length}개 클럽`,
+    });
+
+    console.log('🗺️ BottomSheet에 전달되는 데이터:', {
+      'currentFilteredClubs.length': currentFilteredClubs.length,
+      isMapSearched: isMapSearched,
+      '전달되는 filteredClubs': currentFilteredClubs.length === 0 ? '빈배열' : `${currentFilteredClubs.length}개 클럽`,
+    });
+  }, [currentFilteredClubs, clubsToDisplay, isMapSearched]);
 
   // 🔍 지도 검색 버튼 클릭
   const handleMapSearchClick = async () => {
@@ -172,21 +181,9 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   };
 
   return (
-    <>
-      <SearchHeader />
-      <div
-        style={{
-          position: 'absolute',
-          top: '60px',
-          left: 0,
-          right: 0,
-          height: '50px',
-          background: 'linear-gradient(180deg, #17181C 20%, rgba(19, 20, 21, 0.00) 70%)',
-          zIndex: 10,
-          pointerEvents: 'none',
-        }}
-      />
-      <div style={{ height: 'calc(100vh - 100px)', overflow: 'hidden' }}>
+    <div className="relative">
+      {/* 지도 영역 - 예전 방식 */}
+      <div style={{ height: 'calc(100vh + 30px)', overflow: 'hidden', position: 'relative' }}>
         <NaverMap
           clubs={clubsToDisplay}
           minHeight="48.5rem"
@@ -194,18 +191,29 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
           bottomSheetRef={sheetRef}
           showLocationButton={false}
         />
-      </div>
-      <MapSearchButton onClick={handleMapSearchClick} />
-      <CurrentLocationButton onClick={handleCurrentLocationClick} />
-      <BottomSheetComponent ref={sheetRef} filteredClubs={currentFilteredClubs} isMapSearched={isMapSearched} />
 
-      {/* 디버깅: BottomSheet에 전달되는 데이터 확인 */}
-      {console.log('🗺️ BottomSheet에 전달되는 데이터:', {
-        'currentFilteredClubs.length': currentFilteredClubs.length,
-        isMapSearched: isMapSearched,
-        '전달되는 filteredClubs':
-          currentFilteredClubs.length === 0 ? '빈배열' : `${currentFilteredClubs.length}개 클럽`,
-      })}
-    </>
+        {/* SearchHeader를 지도 안에 오버랩 */}
+        <div
+          className="absolute left-0 right-0 top-0 z-20"
+          style={{
+            background: 'linear-gradient(180deg, #17181C 0%, rgba(23, 24, 28, 0.00) 100%)',
+            paddingBottom: '50px',
+          }}>
+          <SearchHeader />
+        </div>
+      </div>
+
+      {/* 지도 검색 버튼 */}
+      <MapSearchButton onClick={handleMapSearchClick} />
+
+      {/* 현재 위치 버튼 */}
+      <CurrentLocationButton onClick={handleCurrentLocationClick} />
+
+      {/* 목록보기/지도보기 버튼 */}
+      <MapButton />
+
+      {/* 바텀시트 */}
+      <BottomSheetComponent ref={sheetRef} filteredClubs={currentFilteredClubs} isMapSearched={isMapSearched} />
+    </div>
   );
 }

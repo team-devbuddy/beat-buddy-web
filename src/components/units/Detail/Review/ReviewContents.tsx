@@ -404,53 +404,171 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName, 
                 {/* 리뷰 이미지/동영상 */}
                 {review.imageUrls && review.imageUrls.length > 0 && (
                   <motion.div
-                    className="flex gap-2 overflow-x-auto"
+                    className="mt-[0.88rem]"
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.4 }}>
-                    {review.imageUrls.map((media, index) => {
-                      const isVideo =
-                        media.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i) ||
-                        media.includes('video') ||
-                        media.includes('blob:');
+                    {review.imageUrls.length === 1 ? (
+                      // 1장일 경우: 가로 패딩에 맞춰 세로 폭 상관없이
+                      <div>
+                        {(() => {
+                          const media = review.imageUrls[0];
+                          const isVideo =
+                            media.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i) ||
+                            media.includes('video') ||
+                            media.includes('blob:');
 
-                      return (
-                        <div key={index} className="mt-[0.88rem] flex-shrink-0">
-                          {isVideo ? (
+                          return (
                             <div
-                              className="relative h-[150px] w-auto cursor-pointer overflow-hidden rounded-[0.25rem]"
-                              onClick={() => handleMediaClick(review.imageUrls!, index, review)}>
-                              {/* 영상 썸네일 - 서버에서 제공하는 thumbnail 사용 */}
-                              <Image
-                                src={review.thumbImageUrls?.[index] || '/images/defaultImage.png'}
-                                alt="video thumbnail"
-                                className="h-full w-full object-cover"
-                                width={120}
-                                height={150}
-                                onError={(e) => {
-                                  // 썸네일 로드 실패 시 기본 이미지로 대체
-                                  const target = e.target as HTMLImageElement;
-                                  target.src = '/icons/video-thumbnail.svg';
-                                }}
-                              />
-                              {/* 재생 버튼 오버레이 */}
-                              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                                <Image src="/icons/play.svg" alt="play" width={40} height={40} className="opacity-80" />
-                              </div>
+                              className="cursor-pointer overflow-hidden rounded-[0.25rem] bg-gray600"
+                              onClick={() => handleMediaClick(review.imageUrls!, 0, review)}>
+                              {isVideo ? (
+                                <div className="relative">
+                                  <Image
+                                    src={review.thumbImageUrls?.[0] || '/images/defaultImage.png'}
+                                    alt="video thumbnail"
+                                    className="w-full object-cover"
+                                    width={0}
+                                    height={0}
+                                    sizes="100vw"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = '/icons/video-thumbnail.svg';
+                                    }}
+                                  />
+                                  {/* 재생 버튼 오버레이 */}
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                    <Image
+                                      src="/icons/play.svg"
+                                      alt="재생"
+                                      width={48}
+                                      height={48}
+                                      className="text-white"
+                                    />
+                                  </div>
+                                </div>
+                              ) : (
+                                <Image
+                                  src={media}
+                                  alt="리뷰 이미지"
+                                  width={0}
+                                  height={0}
+                                  sizes="100vw"
+                                  className="w-full object-cover"
+                                />
+                              )}
                             </div>
-                          ) : (
-                            <Image
-                              src={media}
-                              alt={`리뷰 미디어 ${index + 1}`}
-                              className="h-[150px] w-auto cursor-pointer rounded-[0.25rem] object-cover"
-                              width={120}
-                              height={120}
-                              onClick={() => handleMediaClick(review.imageUrls!, index, review)}
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
+                          );
+                        })()}
+                      </div>
+                    ) : review.imageUrls.length === 2 ? (
+                      // 2장일 경우: 최대 세로 450px, 2장이 올라가도록
+                      <div className="grid grid-cols-2 gap-[0.5rem]">
+                        {review.imageUrls.map((media, index) => {
+                          const isVideo =
+                            media.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i) ||
+                            media.includes('video') ||
+                            media.includes('blob:');
+
+                          return (
+                            <div
+                              key={index}
+                              className="cursor-pointer overflow-hidden rounded-[0.25rem] bg-gray600"
+                              onClick={() => handleMediaClick(review.imageUrls!, index, review)}>
+                              {isVideo ? (
+                                <div className="relative h-full w-full" style={{ maxHeight: '450px' }}>
+                                  <Image
+                                    src={review.thumbImageUrls?.[index] || '/images/defaultImage.png'}
+                                    alt="video thumbnail"
+                                    className="h-full w-full object-cover"
+                                    width={0}
+                                    height={0}
+                                    sizes="100vw"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = '/icons/video-thumbnail.svg';
+                                    }}
+                                  />
+                                  {/* 재생 버튼 오버레이 */}
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                    <Image
+                                      src="/icons/play.svg"
+                                      alt="재생"
+                                      width={40}
+                                      height={40}
+                                      className="text-white"
+                                    />
+                                  </div>
+                                </div>
+                              ) : (
+                                <Image
+                                  src={media}
+                                  alt={`리뷰 이미지 ${index + 1}`}
+                                  width={0}
+                                  height={0}
+                                  sizes="100vw"
+                                  className="h-full w-full object-cover"
+                                  style={{ maxHeight: '450px' }}
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      // 3장 이상일 경우: 세로 220px에 맞춰 가로 폭 상관없이 (가로 스크롤)
+                      <div className="flex gap-[0.5rem] overflow-x-auto">
+                        {review.imageUrls.map((media, index) => {
+                          const isVideo =
+                            media.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i) ||
+                            media.includes('video') ||
+                            media.includes('blob:');
+
+                          return (
+                            <div
+                              key={index}
+                              className="h-[220px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.25rem] bg-gray600"
+                              onClick={() => handleMediaClick(review.imageUrls!, index, review)}>
+                              {isVideo ? (
+                                <div className="relative h-full w-auto">
+                                  <Image
+                                    src={review.thumbImageUrls?.[index] || '/images/defaultImage.png'}
+                                    alt="video thumbnail"
+                                    className="h-full w-auto object-cover"
+                                    width={0}
+                                    height={0}
+                                    sizes="100vw"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = '/icons/video-thumbnail.svg';
+                                    }}
+                                  />
+                                  {/* 재생 버튼 오버레이 */}
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                    <Image
+                                      src="/icons/play.svg"
+                                      alt="재생"
+                                      width={32}
+                                      height={32}
+                                      className="text-white"
+                                    />
+                                  </div>
+                                </div>
+                              ) : (
+                                <Image
+                                  src={media}
+                                  alt={`리뷰 이미지 ${index + 1}`}
+                                  width={0}
+                                  height={0}
+                                  sizes="100vw"
+                                  className="h-full w-auto object-cover"
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </motion.div>
                 )}
 
@@ -501,7 +619,7 @@ const ReviewContents = ({ reviews = [], isPhotoOnly, onReviewDeleted, clubName, 
                   verticalAlign: 'top',
                 }}
               />
-              <div className="flex justify-between gap-2">
+              <div className="flex justify-between gap-3">
                 <button
                   onClick={() => {
                     setShowReportModal(false);

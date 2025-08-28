@@ -247,8 +247,8 @@ const ImageUploader = React.memo(({ onUpload, uploadedFiles, existingImages = []
       )}
 
       {/* 업로드 제한 안내 */}
-      {existingImages.length + uploadedFiles.length >= 20 && (
-        <p className="mt-2 text-start text-body3-12-medium text-main">최대 20장까지만 업로드 가능합니다</p>
+      {existingImages.length + uploadedFiles.length > 10 && (
+        <p className="mt-2 text-start text-body3-12-medium text-main">최대 10장까지만 업로드 가능합니다</p>
       )}
 
       {/* 에러 메시지 */}

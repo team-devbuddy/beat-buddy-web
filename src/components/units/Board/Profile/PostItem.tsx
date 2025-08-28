@@ -226,7 +226,7 @@ export default function PostItem({ post }: PostItemProps) {
 
         {/* 우측: 시간과 드롭다운 점 */}
         <div className="flex items-center gap-2">
-          <span className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt)}</span>
+          <span className="text-body3-12-medium text-gray200">{formatRelativeTime(post.createAt, false)}</span>
           <div className="relative">
             <button onClick={showDropdown} className="flex items-center justify-center" title="더보기">
               <Image src="/icons/dot-vertical.svg" alt="more" width={16} height={16} className="rotate-90" />

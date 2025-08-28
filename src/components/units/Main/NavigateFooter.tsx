@@ -15,6 +15,12 @@ const NavigateFooter = () => {
 
   // 직접 스크롤 감지
   useEffect(() => {
+    // /board 페이지가 아닌 경우 스크롤 감지하지 않음
+    if (!pathname.includes('board')) {
+      setShowFooter(true);
+      return;
+    }
+
     const handleScroll = () => {
       const scrollContainer = document.querySelector('.overflow-y-auto');
       let scrollTop = 0;
@@ -67,7 +73,7 @@ const NavigateFooter = () => {
       }
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [pathname]);
 
   // showFooter 상태 변경 확인
   useEffect(() => {

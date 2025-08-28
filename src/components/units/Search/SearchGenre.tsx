@@ -13,17 +13,17 @@ import { gridItemVariants } from '@/lib/animation';
 
 const atmospheres = ['클럽', '펍', '루프탑', '딥한', '커머셜한', '칠한', '이국적인', '헌팅', 'BAR&CAFE'];
 
-const genres = ['힙합', 'R&B', 'EDM', '하우스', '테크노', 'SOUL&FUNK', 'ROCK', 'LATIN', 'K-POP', 'POP'];
+const genres = ['HIPHOP', 'R&B', 'EDM', 'HOUSE', 'TECHNO', 'SOUL&FUNK', 'ROCK', 'LATIN', 'K-POP', 'POP'];
 
 const locations = ['홍대', '이태원', '압구정로데오', '강남 · 신사', '기타'];
 
 // API 스펙에 맞는 매핑
 const genresMap: { [key: string]: string } = {
-  힙합: 'HIPHOP',
+  HIPHOP: 'HIPHOP',
   'R&B': 'R&B',
   EDM: 'EDM',
-  하우스: 'HOUSE',
-  테크노: 'TECHNO',
+  HOUSE: 'HOUSE',
+  TECHNO: 'TECHNO',
   'SOUL&FUNK': 'SOUL&FUNK',
   ROCK: 'ROCK',
   LATIN: 'LATIN',

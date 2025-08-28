@@ -278,14 +278,8 @@ export default function BoardWrite() {
   return (
     <div className="flex flex-col bg-BG-black pb-[140px] text-white">
       {/* 헤더 */}
-      <header className="flex items-center justify-between py-[0.87rem] px-5">
-        <Image
-          onClick={() => router.back()}
-          src="/icons/arrow_back_ios.svg"
-          alt="뒤로가기"
-          width={24}
-          height={24}
-        />
+      <header className="flex items-center justify-between px-5 py-[0.87rem]">
+        <Image onClick={() => router.back()} src="/icons/arrow_back_ios.svg" alt="뒤로가기" width={24} height={24} />
         <h1
           onClick={handleUpload}
           className={`text-body-14-bold ${
@@ -440,7 +434,7 @@ export default function BoardWrite() {
             {/* 익명 토글 (오른쪽) */}
             <div className="flex cursor-pointer items-center gap-x-[0.12rem]" onClick={handleAnonymous}>
               <Image
-                src={anonymous ? '/icons/check_box.svg' : '/icons/check_box_outline_blank.svg'}
+                src={anonymous ? '/icons/check_box_pink.svg' : '/icons/check_box_outline_blank.svg'}
                 alt="익명"
                 width={18}
                 height={18}

@@ -5,7 +5,6 @@ import { PostLocation, GetNickname } from '@/lib/action';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, authState } from '@/context/recoil-context';
 import Image from 'next/image';
-import BlobLogo3D from './NeonBlobGlow';
 
 export default function OnBoardingLoading() {
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
@@ -44,20 +43,22 @@ export default function OnBoardingLoading() {
         맞춤 베뉴를 찾고 있어요
       </h1>
 
-      {/* GIF + 로고 */}
+      {/* 동영상 + 로고 */}
       <div className="relative mx-auto mb-8 mt-2 h-[250px] w-[250px]">
         {/* 부드러운 라디얼 그라디언트 */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(closest-side, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.03) 60%, rgba(255,255,255,0) 85%)',
-          }}
-        />
+        <div className="pointer-events-none absolute inset-0" />
 
-        {/* 배경 GIF */}
-        <div className="mx-auto ml-6 mb-8 mt-12">
-          <BlobLogo3D size={200} />
+        {/* 동영상 */}
+        <div className="mx-auto mb-8 ml-6 mt-12">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-[200px] w-[200px] rounded-full bg-transparent object-cover"
+            style={{ backgroundColor: 'transparent' }}>
+            <source src="/KakaoTalk_Video_2025-08-27-18-41-42.mp4" type="video/mp4" />
+          </video>
         </div>
       </div>
 

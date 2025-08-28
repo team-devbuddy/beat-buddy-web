@@ -91,13 +91,13 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
   }, [showDropdown]);
 
   return (
-    <div className="relative mx-auto flex max-w-[600px] items-center justify-between pl-[0.63rem] pr-4 pb-[0.53rem] pt-[0.53rem]">
+    <div className="relative mx-auto flex max-w-[600px] items-center justify-between px-5 py-[0.88rem]">
       {/* 왼쪽: 백버튼 */}
       <Image
-        src="/icons/participateBack.svg"
+        src="/icons/arrow_back_ios.svg"
         alt="뒤로가기"
-        width={35}
-        height={35}
+        width={24}
+        height={24}
         onClick={handleBackClick}
         className="cursor-pointer"
       />
@@ -107,9 +107,9 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
         {isAuthor && (
           <Image
             src="/icons/stylus.svg"
-            alt="메뉴"
-            width={24}
-            height={24}
+            alt="편집"
+            width={28}
+            height={28}
             className="cursor-pointer"
             ref={buttonRef}
             onClick={() => setShowDropdown((prev) => !prev)}
@@ -118,8 +118,8 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
         <Image
           src="/icons/upload.svg"
           alt="공유"
-          width={24}
-          height={24}
+          width={28}
+          height={28}
           className="cursor-pointer"
           onClick={handleShareClick}
         />
@@ -127,8 +127,8 @@ export default function EventDetailHeader({ handleBackClick }: { handleBackClick
         <Image
           src={event?.liked ? '/icons/FilledHeart.svg' : '/icons/eventHeart.svg'}
           alt="좋아요"
-          width={20.97}
-          height={18.4}
+          width={28}
+          height={28}
           className="cursor-pointer"
           onClick={handleLike}
         />

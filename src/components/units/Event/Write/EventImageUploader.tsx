@@ -103,8 +103,8 @@ const ImageUploader = ({ onUpload, uploadedImages, existingImages = [] }: ImageU
           )}
         </div>
       )}
-      {existingImages.length + uploadedImages.length >= 20 && (
-        <p className="mt-2 text-start text-body3-12-medium text-red-500">최대 20장까지만 업로드 가능합니다.</p>
+      {existingImages.length + uploadedImages.length > 10 && (
+        <p className="mt-2 text-start text-body3-12-medium text-red-500">최대 10장까지만 업로드 가능합니다.</p>
       )}
     </div>
   );

@@ -7,7 +7,7 @@ import { accessTokenState } from '@/context/recoil-context';
 import { userProfileState } from '@/context/recoil-context';
 import { useRouter } from 'next/navigation';
 import { eventState } from '@/context/recoil-context';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { getESsearch } from '@/lib/actions/event-controller/event-write-controller/getESsearch';
 
@@ -112,32 +112,20 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
           </div>
 
           {clubs.length > 0 && (
-            <div className="">
-              <div
-                className="h-[10rem] overflow-hidden rounded-[0.25rem] border-none focus:outline-none"
-                style={{ touchAction: 'none', pointerEvents: 'auto' }}
-                onTouchStart={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                onTouchMove={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                onTouchEnd={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                }}
-                onPointerMove={(e) => {
-                  e.stopPropagation();
-                }}
-                onPointerUp={(e) => {
-                  e.stopPropagation();
-                }}>
-                <NaverMap clubs={clubs} zoom={15} showLocationButton={false} showZoomControl={false} clickable={true} />
+            <div className="h-[10rem] overflow-hidden rounded-[0.25rem]">
+              <div style={{ height: '100vh', overflow: 'hidden' }}>
+                <NaverMap
+                  clubs={clubs}
+                  height="11.1rem"
+                  width="100%"
+                  zoom={30}
+                  showLocationButton={false}
+                  showZoomControl={false}
+                  clickable={true}
+                  compensateCenter={true}
+                  visibleHeight={160}
+                  visibleWidth={window.innerWidth - 40}
+                />
               </div>
             </div>
           )}
@@ -146,7 +134,7 @@ export default function EventInfo({ eventDetail }: { eventDetail: EventDetail })
 
       <section className="pb-24">
         <h3 className="text-body1-16-bold text-white">About</h3>
-        <div className="text-body-14-medium mt-3 rounded-md bg-gray700 px-[1rem] py-[1.25rem] text-gray300">
+        <div className="mt-3 rounded-md bg-gray700 px-[1rem] py-[1.25rem] text-body-14-medium text-gray300">
           {eventDetail.content}
         </div>
       </section>

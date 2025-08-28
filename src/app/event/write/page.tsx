@@ -25,6 +25,8 @@ export default function EventWritePage() {
   const event = useRecoilValue(eventState);
   const searchParams = useSearchParams();
   const eventId = searchParams.get('eventId');
+  const venueFromUrl = searchParams.get('venue');
+  const venueIdFromUrl = searchParams.get('venueId');
   const router = useRouter();
 
   // 디버깅 정보 추가
@@ -33,6 +35,10 @@ export default function EventWritePage() {
     isEditMode,
     event: event ? { eventId: event.eventId, title: event.title } : null,
     searchParams: searchParams.toString(),
+    venueFromUrl,
+    venueIdFromUrl,
+    currentLocation: eventForm.location,
+    currentVenueId: eventForm.venueId,
     startDate: eventForm.startDate,
     startTime: eventForm.startTime,
     endDate: eventForm.endDate,
@@ -49,6 +55,19 @@ export default function EventWritePage() {
       setIsEditMode(false);
     }
   }, [eventId, setIsEditMode]);
+
+  // ✅ 베뉴 상세페이지에서 온 경우 장소 정보 자동 설정
+  useEffect(() => {
+    if (!isEditMode && venueFromUrl && venueIdFromUrl) {
+      console.log('🏢 베뉴 정보 자동 설정:', { venueFromUrl, venueIdFromUrl });
+
+      setEventForm((prev) => ({
+        ...prev,
+        location: venueFromUrl,
+        venueId: parseInt(venueIdFromUrl, 10) || 0,
+      }));
+    }
+  }, [venueFromUrl, venueIdFromUrl, isEditMode, setEventForm]);
 
   // 수정 모드일 때만 이벤트 데이터 로드
   useEffect(() => {
@@ -110,8 +129,8 @@ export default function EventWritePage() {
         isAuthor: event.isAuthor || false,
         isAttending: event.isAttending || false,
       });
-    } else {
-      // 수정 모드가 아닌 경우 항상 폼 초기화 (초기 작성 모드)
+    } else if (!venueFromUrl) {
+      // 수정 모드가 아니고 베뉴 정보가 없는 경우만 폼 초기화
       setEventForm({
         venueId: 0,
         title: '',
@@ -139,7 +158,7 @@ export default function EventWritePage() {
         isAttending: false,
       });
     }
-  }, [isEditMode, event, eventId, setEventForm]);
+  }, [isEditMode, event, eventId, setEventForm, venueFromUrl]);
 
   const {
     title,

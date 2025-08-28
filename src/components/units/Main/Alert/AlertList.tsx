@@ -18,7 +18,7 @@ const iconMap: Record<string, string> = {
   POST_LIKE: '/icons/favorite-pink.svg',
   POST_SCRAP: '/icons/material-symbols_bookmark.svg',
   FOLLOW: '/icons/Frame 2087327575.svg',
-  EVENT_REMINDER: '/icons/favorite.svg',
+  EVENT_REMINDER: '/icons/favorite-pink.svg',
   PROMOTION: '/icons/Headers/Symbol.svg',
   NEW_POST: '/icons/favorite-pink.svg',
   INQUIRY: '/icons/maps_ugc.svg',
@@ -239,7 +239,7 @@ export default function AlertList() {
                   alt={notification.type}
                   width={24}
                   height={24}
-                  className={clsx(notification.isRead && 'grayscale')}
+                  className={clsx(notification.isRead ? 'grayscale' : '')}
                 />
               </div>
               <div className="flex-1">

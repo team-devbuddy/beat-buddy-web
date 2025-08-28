@@ -22,6 +22,10 @@ interface NaverMapProps {
   showLocationButton?: boolean;
   showZoomControl?: boolean;
   clickable?: boolean;
+  visibleContainerRef?: React.RefObject<HTMLElement>;
+  compensateCenter?: boolean;
+  visibleHeight?: number; // 실제 보이는 높이 (px)
+  visibleWidth?: number; // 실제 보이는 너비 (px)
 }
 
 // 영구 캐시 (localStorage 사용)
@@ -59,15 +63,20 @@ function toLatLng(coord: naver.maps.Coord): naver.maps.LatLng {
   return new window.naver.maps.LatLng(y, x);
 }
 
-/** ✅ 마커들을 화면 윗쪽에 오도록 맞추는 helper */
-function fitMarkersUpperArea(map: naver.maps.Map, markers: naver.maps.Marker[]) {
+/** ✅ 마커들을 적절한 위치에 맞추는 helper */
+function fitMarkersToView(
+  map: naver.maps.Map,
+  markers: naver.maps.Marker[],
+  compensateForViewport = false,
+  visibleHeight?: number,
+  visibleWidth?: number,
+) {
   if (markers.length === 0) return;
 
-  const size = map.getSize();
   const leftPad = 40;
   const rightPad = 40;
   const topPad = 40;
-  const bottomPad = Math.round(size.height * 0.45); // 하단 비우기
+  const bottomPad = compensateForViewport ? 40 : 40;
 
   if (markers.length === 1) {
     const pos = toLatLng(markers[0].getPosition());
@@ -78,10 +87,18 @@ function fitMarkersUpperArea(map: naver.maps.Map, markers: naver.maps.Marker[]) 
     if (z > 16) z = 16;
     map.setZoom(z);
 
-    // ✅ setCenter 후, panBy는 "처음 렌더"일 때만 실행
-    setTimeout(() => {
-      map.panBy(new window.naver.maps.Point(0, Math.round(size.height * 0.22)));
-    }, 100);
+    // ✅ 작은 컨테이너에서 마커 위치 보정 (즉시 실행, 애니메이션 최소화)
+    if (compensateForViewport && (visibleHeight || visibleWidth)) {
+      // 지도 렌더링 완료 후 즉시 보정
+      requestAnimationFrame(() => {
+        const size = map.getSize();
+        if (size.width > 0 && size.height > 0) {
+          const mapCenterOffsetY = visibleHeight ? (size.height - visibleHeight) / 2 : 0;
+          const mapCenterOffsetX = visibleWidth ? (size.width - visibleWidth) / 2 : 0;
+          map.panBy(new window.naver.maps.Point(-mapCenterOffsetX, -mapCenterOffsetY));
+        }
+      });
+    }
     return;
   }
 
@@ -92,7 +109,14 @@ function fitMarkersUpperArea(map: naver.maps.Map, markers: naver.maps.Marker[]) 
     b.extend(toLatLng(markers[i].getPosition()));
   }
 
-  map.fitBounds(b, { top: topPad, right: rightPad, bottom: bottomPad, left: leftPad });
+  if (compensateForViewport) {
+    // 작은 컨테이너에서는 하단 패딩을 크게 해서 마커들이 위쪽에 보이게
+    const size = map.getSize();
+    const adjustedBottomPad = Math.round(size.height * 0.8); // 더 크게 보정
+    map.fitBounds(b, { top: topPad, right: rightPad, bottom: adjustedBottomPad, left: leftPad });
+  } else {
+    map.fitBounds(b, { top: topPad, right: rightPad, bottom: bottomPad, left: leftPad });
+  }
 
   let z = map.getZoom();
   if (z < 11) z = 11;
@@ -112,6 +136,10 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
     showLocationButton = true,
     showZoomControl = true,
     clickable = true,
+    visibleContainerRef,
+    compensateCenter,
+    visibleHeight,
+    visibleWidth,
   },
   ref,
 ) {
@@ -151,12 +179,12 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
           {
             content: `
               <div class="custom-cluster" style="position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="/icons/Headers/markerCluster.svg" style="width: 32px; height: 44px;" alt="cluster" />
-                <span class="cluster-count" style="position: absolute; color: #480522; font-weight: 600; font-size: 0.8125rem; margin-top: -2px;"></span>
+                <img src="/icons/Headers/markerCluster.svg" style="width: 3.125rem; height: 3.125rem;" alt="cluster" />
+                <span class="cluster-count" style="position: absolute; color: #480522; font-weight: 700; font-size: 0.8125rem; margin-top: -2px; line-height: 1.25rem;"></span>
               </div>
             `,
-            size: new window.naver.maps.Size(40, 40),
-            anchor: new window.naver.maps.Point(20, 20),
+            size: new window.naver.maps.Size(50, 50),
+            anchor: new window.naver.maps.Point(25, 25),
           },
         ],
         // 🎨 클러스터 스타일링 함수
@@ -170,6 +198,17 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
       });
       setClusterer(clustererInstance);
     }
+
+    // 지도 로드 완료 이벤트 리스너 추가
+    window.naver.maps.Event.addListener(mapInstance, 'tilesloaded', () => {
+      // 지도 타일 로딩이 완료된 후 중앙 정렬 재실행
+      if (compensateCenter && markerRefs.current.length > 0) {
+        setTimeout(() => {
+          const markers = markerRefs.current.map((ref) => ref.marker);
+          fitMarkersToView(mapInstance, markers, compensateCenter, visibleHeight, visibleWidth);
+        }, 200);
+      }
+    });
 
     setMap(mapInstance);
 
@@ -255,19 +294,52 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
     const flush = () => {
       // 클러스터러에 일괄 반영
       if (clusterer.setMarkers) clusterer.setMarkers(markers);
-      // 뷰 보정: 마커를 화면 윗쪽에 보이게
-      fitMarkersUpperArea(map, markers);
 
-      // 초기 렌더링 누락 방지
-      window.requestAnimationFrame(() => {
+      // 지도가 완전히 로드된 후 안정적으로 실행
+      setTimeout(() => {
         window.naver.maps.Event.trigger(map, 'resize');
-        map.setCenter(map.getCenter());
-      });
+
+        const stabilizeMap = () => {
+          const size = map.getSize();
+          if (size.width > 0 && size.height > 0) {
+            // 뷰 보정: 마커들을 적절한 위치에 보이게
+            fitMarkersToView(map, markers, compensateCenter, visibleHeight, visibleWidth);
+          } else {
+            // 지도가 아직 준비되지 않았으면 다시 시도
+            setTimeout(stabilizeMap, 50);
+          }
+        };
+
+        stabilizeMap();
+      }, 100); // 클러스터러 설정 완료 대기
     };
 
     if (pending.length) Promise.all(pending).then(flush);
     else flush();
   }, [clubs, map, clusterer, bottomSheetRef, setClickedClub]);
+
+  // 높이/너비 변경 시 지도 리사이즈
+  useEffect(() => {
+    if (!map) return;
+
+    // 지도 리사이즈를 안정적으로 처리
+    const handleResize = () => {
+      window.naver.maps.Event.trigger(map, 'resize');
+      const currentCenter = map.getCenter();
+      if (currentCenter) {
+        map.setCenter(currentCenter);
+
+        // compensateCenter가 활성화된 경우 마커 위치 재조정
+        if (compensateCenter && markerRefs.current.length > 0) {
+          const markers = markerRefs.current.map((ref) => ref.marker);
+          fitMarkersToView(map, markers, compensateCenter, visibleHeight, visibleWidth);
+        }
+      }
+    };
+
+    // 즉시 실행
+    requestAnimationFrame(handleResize);
+  }, [map, width, height, compensateCenter, visibleHeight, visibleWidth]);
 
   // 외부에 노출하는 ref 메서드
   useImperativeHandle(ref, () => ({
@@ -306,10 +378,6 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
 
             map.setCenter(ll);
             if (map.getZoom() < 15) map.setZoom(15);
-
-            // 현재 위치도 윗쪽에 보이게 살짝 보정
-            const size = map.getSize();
-            map.panBy(new window.naver.maps.Point(0, Math.round(size.height * 0.18)));
 
             resolve({ lat, lng });
           },

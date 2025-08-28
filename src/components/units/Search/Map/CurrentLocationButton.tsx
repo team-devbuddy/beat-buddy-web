@@ -28,11 +28,11 @@ const CurrentLocationButton = ({ onClick }: CurrentLocationButtonProps) => {
 
   return (
     <div
-      className="absolute bottom-20 right-5 z-10 cursor-pointer"
+      className="absolute bottom-[7.7rem] right-5 z-10 cursor-pointer"
       onClick={onClick}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}>
-      <div className="flex h-10 w-10 items-center justify-center rounded-full border border-main bg-sub2">
+      <div className="flex p-[0.62rem] items-center justify-center rounded-full border border-main bg-sub2">
         <Image src={buttonIcon} alt="Current Location" width={24} height={24} className="current-location-button" />
       </div>
     </div>

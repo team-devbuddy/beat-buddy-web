@@ -292,15 +292,21 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             exit={{ opacity: 0, y: -100 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="fixed top-0 z-50 w-full max-w-[600px] bg-BG-black/95 backdrop-blur-sm">
-            <div className="flex items-center justify-between px-5 pb-[0.87rem] pt-[0.88rem]">
+            <div className="flex items-center justify-between px-5 py-[0.88rem]">
               <div className="flex items-center">
-                <button onClick={() => router.back()} className="text-white" aria-label="뒤로가기">
+                <button
+                  onClick={() => router.back()}
+                  className="flex items-center justify-center text-white"
+                  aria-label="뒤로가기">
                   <Image src="/icons/arrow_back_ios.svg" alt="back icon" width={24} height={24} />
                 </button>
                 <h1 className="truncate text-button-bold text-white">{venue.englishName}</h1>
               </div>
               <div className="flex items-center gap-3">
-                <button className="text-white" aria-label="공유하기" onClick={handleShareClick}>
+                <button
+                  className="flex items-center justify-center text-white"
+                  aria-label="공유하기"
+                  onClick={handleShareClick}>
                   <Image src="/icons/share.svg" alt="share icon" width={26} height={26} />
                 </button>
                 <motion.div
@@ -313,7 +319,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
                       setTimeout(() => setClickedHeart(false), 500);
                     }
                   }}
-                  className="cursor-pointer"
+                  className="flex cursor-pointer items-center justify-center"
                   variants={heartAnimation}
                   initial="initial"
                   animate={clickedHeart ? 'clicked' : 'initial'}>
