@@ -105,7 +105,7 @@ export default function EventPage() {
       style={{ touchAction: isSwiping ? 'pan-y' : 'auto' }}>
       <EventHeader />
       <EventTab />
-      <LocationFilter />
+      <LocationFilter isEvent={false} />
 
       <div className="relative min-h-[300px] p-5">
         <AnimatePresence mode="wait">
