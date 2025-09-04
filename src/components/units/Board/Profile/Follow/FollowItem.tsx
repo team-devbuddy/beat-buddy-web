@@ -35,6 +35,7 @@ export default function FollowItem({ user, isFollower = false, sortPriority }: F
 
   // 맞팔로우 상태 확인: 사용자가 나를 팔로우하고 있지만 나는 걔를 팔로우하지 않는 상황
   // 단, 나 자신인 경우는 제외
+  // isFollower가 true면 상대방이 나를 팔로우하고 있음
   const isMutualFollow = !isFollowing && isFollower && userProfile?.memberId !== user.memberId;
 
   // 정렬 우선순위 계산 (팔로잉: 1, 맞팔로우: 2, 팔로우: 3)
@@ -115,7 +116,22 @@ export default function FollowItem({ user, isFollower = false, sortPriority }: F
               isFollowing ? 'bg-gray500 text-main' : 'bg-main text-white'
             } `}
             disabled={loadingFollow}>
-            {isMutualFollow ? '맞팔로우' : isFollowing ? '팔로잉' : '팔로우'}
+            {(() => {
+              // 팔로워 목록에서의 버튼 로직 (isFollower = true)
+              if (isFollower) {
+                // 내가 상대방을 팔로우하고 있으면 '팔로잉' (서로 팔로우)
+                if (isFollowing) return '팔로잉';
+                // 내가 상대방을 팔로우하지 않으면 '맞팔로우' (상대방만 나를 팔로우)
+                return '맞팔로우';
+              }
+              // 팔로잉 목록에서의 버튼 로직 (isFollower = false)
+              else {
+                // 내가 상대방을 팔로우하고 있으면 '팔로잉'
+                if (isFollowing) return '팔로잉';
+                // 서로 팔로우하지 않으면 '팔로우'
+                return '팔로우';
+              }
+            })()}
           </button>
         ) : (
           <></>

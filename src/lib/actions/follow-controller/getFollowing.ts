@@ -26,7 +26,8 @@ export async function getFollowing(userId: number, accessToken: string, page: nu
     const result = await response.json();
     const followingData = result.data || [];
 
-    // 서버에서 받은 데이터를 그대로 사용 (이미 모든 정보가 포함되어 있음)
+    // 서버에서 받은 데이터를 그대로 사용
+    // 팔로잉 목록은 내가 팔로우한 사람들이므로 isFollowing: true
     const followingWithProfile = followingData.map((item: any) => ({
       memberId: item.memberId || item.followingId, // API 응답에 따라 적절한 필드 사용
       nickname: item.nickname,
@@ -34,8 +35,8 @@ export async function getFollowing(userId: number, accessToken: string, page: nu
       postProfileNickname: item.postProfileNickname,
       postProfileImageUrl: item.postProfileImageUrl,
       role: item.role || 'USER', // role이 없으면 기본값 설정
-      isFollowing: true, // 팔로잉 목록은 해당 사용자가 팔로우한 사람들이므로 true
-      following: item.following || true,
+      isFollowing: true, // 팔로잉 목록은 내가 팔로우한 사람들
+      following: true,
     }));
 
     return followingWithProfile;

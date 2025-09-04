@@ -242,14 +242,24 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
                   <h1 className="max-w-[200px] text-button-bold text-white">{eventDetail.title}</h1>
                 </div>
               </div>
-
               {/* 오른쪽: 좋아요와 메뉴 버튼 */}
               <div className="flex items-center gap-3">
+                {eventDetail.isAuthor && (
+                  <Image
+                    src="/icons/stylus.svg"
+                    alt="편집"
+                    width={28}
+                    height={28}
+                    className="cursor-pointer"
+                    ref={dropdownButtonRef}
+                    onClick={() => setShowDropdown((prev) => !prev)}
+                  />
+                )}
                 <Image
                   src="/icons/upload.svg"
                   alt="공유"
-                  width={24}
-                  height={24}
+                  width={28}
+                  height={28}
                   className="cursor-pointer"
                   onClick={handleShareClick}
                 />
@@ -257,24 +267,11 @@ export default function EventDetailPage({ eventId }: { eventId: string }) {
                 <Image
                   src={eventDetail.liked ? '/icons/FilledHeart.svg' : '/icons/eventHeart.svg'}
                   alt="좋아요"
-                  width={21}
-                  height={21}
+                  width={28}
+                  height={28}
                   className="cursor-pointer"
                   onClick={handleLike}
                 />
-
-                {/* 드롭다운 메뉴 */}
-                {eventDetail.isAuthor && (
-                  <Image
-                    src="/icons/dot-vertical-white.svg"
-                    alt="메뉴"
-                    width={9}
-                    height={20}
-                    className="cursor-pointer"
-                    onClick={() => setShowDropdown((prev) => !prev)}
-                    ref={dropdownButtonRef}
-                  />
-                )}
               </div>
             </div>
           </motion.div>

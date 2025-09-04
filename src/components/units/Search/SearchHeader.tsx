@@ -85,7 +85,11 @@ const SearchHeader = () => {
   };
 
   return (
-    <header className="bg-transparent px-5 pb-[1.24rem] pt-[0.62rem]">
+    <header
+      className="px-5 pb-[0.62rem] pt-[0.62rem]"
+      style={{
+        background: 'linear-gradient(180deg, #17181C 0%, rgba(23, 24, 28, 0.00) 100%)',
+      }}>
       <div className="relative w-full">
         {/* 
         {hasQuery && (🔙 Back icon */}

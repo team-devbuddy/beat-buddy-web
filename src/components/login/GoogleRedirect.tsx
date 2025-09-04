@@ -14,32 +14,7 @@ const GoogleRedirect: React.FC = () => {
   const router = useRouter();
   const [isAuth, setIsAuth] = useRecoilState(authState);
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-  const isBusiness = useRecoilValue(isBusinessState); // 비즈니스 상태 확인
-  const setIsBusiness = useSetRecoilState(isBusinessState); // 비즈니스 상태 설정
-
-  // 사용자 프로필에서 role을 확인하여 isBusinessState 업데이트
-  const updateBusinessState = async (token: string) => {
-    try {
-      const profileData = await getProfileinfo(token);
-      console.log('🔍 사용자 프로필 데이터:', profileData);
-      console.log('🔍 profileData.role:', profileData?.role);
-      console.log('🔍 profileData.role 타입:', typeof profileData?.role);
-
-      // role이 ADMIN 또는 BUSINESS인지 확인
-      const isBusinessUser =
-        profileData?.role === 'ADMIN' || profileData?.role === 'BUSINESS' || profileData?.role === 'BUSINESS_NOT';
-      console.log('🔍 비즈니스 사용자 여부:', isBusinessUser, 'role:', profileData?.role);
-      console.log('🔍 ADMIN 비교:', profileData?.role === 'ADMIN');
-      console.log('🔍 BUSINESS 비교:', profileData?.role === 'BUSINESS');
-      console.log('🔍 BUSINESS_NOT 비교:', profileData?.role === 'BUSINESS_NOT');
-
-      // isBusinessState 업데이트
-      setIsBusiness(isBusinessUser);
-      console.log('🔍 isBusinessState 설정 완료:', isBusinessUser);
-    } catch (error) {
-      console.error('❌ 사용자 프로필 조회 실패:', error);
-    }
-  };
+  const isBusiness = useRecoilValue(isBusinessState); // 비즈니스 상태는 appLayout.tsx에서 중앙 관리
 
   // 이 컴포넌트 진입시 access token이 있으면 recoil state에 저장 후 auth state를 true로 변경
   useEffect(() => {
@@ -73,12 +48,11 @@ const GoogleRedirect: React.FC = () => {
           setAccessToken(access);
           const responseJson = await response.json();
 
-          // 사용자 프로필에서 role을 확인하여 isBusinessState 업데이트
-          await updateBusinessState(access);
+          // 비즈니스 상태는 appLayout.tsx에서 자동으로 관리됨
 
-          // 비즈니스 쿼리 파라미터 준비 (업데이트된 isBusinessState 사용)
+          // 비즈니스 쿼리 파라미터 준비 (ADMIN 제외)
           const updatedIsBusiness = await getProfileinfo(access)
-            .then((data) => data?.role === 'ADMIN' || data?.role === 'BUSINESS' || data?.role === 'BUSINESS_NOT')
+            .then((data) => data?.role === 'BUSINESS')
             .catch(() => false);
 
           const businessQuery = updatedIsBusiness ? '?userType=business' : '';
@@ -115,7 +89,7 @@ const GoogleRedirect: React.FC = () => {
       }
     };
     fetchUserData();
-  }, [access, setAccessToken, setIsAuth, router, isBusiness, setIsBusiness]);
+  }, [access, setAccessToken, setIsAuth, router, isBusiness]);
 
   return <></>;
 };

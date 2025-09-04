@@ -28,7 +28,7 @@ export default function AdminLogin() {
         const data = await response.json();
         setAccess(data.access);
         setIsAuth(true);
-        setIsBusiness(true); // 어드민 로그인 시 business 상태를 true로 설정
+        // setIsBusiness(true); // ADMIN은 비즈니스가 아니므로 제거
         if (access) {
           const response2 = await GetOnBoardingStatus(access);
           if (response2.ok) {

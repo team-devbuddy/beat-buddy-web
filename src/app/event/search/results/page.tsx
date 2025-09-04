@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-import { searchEventsByPeriod } from '@/lib/actions/event-controller/searchEventsByPeriod';
+import { eventSearch } from '@/lib/actions/event-controller/eventSearch';
 import EventLists from '@/components/units/Event/EventLists';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EventType } from '@/components/units/Event/EventContainer';
@@ -99,21 +99,28 @@ export default function EventSearchResultsPage() {
         setLoading(true);
         setError(null);
 
-        const response = await searchEventsByPeriod(startDate!, endDate!, page, 10, accessToken, keyword);
+        // 날짜를 YYYY-MM-DD 형식으로 변환
+        const formatDateForAPI = (dateString: string) => {
+          const year = dateString.substring(0, 4);
+          const month = dateString.substring(4, 6);
+          const day = dateString.substring(6, 8);
+          return `${year}-${month}-${day}`;
+        };
 
-        if (response.data?.eventResponseDTOS) {
-          const newEvents = response.data.eventResponseDTOS;
+        const formattedStartDate = formatDateForAPI(startDate!);
+        const formattedEndDate = formatDateForAPI(endDate!);
 
+        const newEvents = await eventSearch(keyword, accessToken, page, 10, formattedStartDate, formattedEndDate);
+
+        if (newEvents && newEvents.length > 0) {
           if (page === 1) {
             setEvents(newEvents);
           } else {
             setEvents((prev) => [...prev, ...newEvents]);
           }
 
-          // totalSize와 현재 로드된 데이터 수를 비교하여 hasMore 결정
-          const totalSize = response.data.totalSize || 0;
-          const currentLoaded = page * 10;
-          setHasMore(currentLoaded < totalSize);
+          // totalSize는 API 응답에서 제공되지 않으므로, 반환된 데이터 길이로 판단
+          setHasMore(newEvents.length === 10); // 페이지 크기만큼 반환되면 더 있다고 가정
         } else {
           setEvents([]);
           setHasMore(false);
@@ -129,7 +136,7 @@ export default function EventSearchResultsPage() {
     };
 
     fetchSearchResults();
-  }, [parsedStartDate, parsedEndDate, accessToken, startDate, endDate, page, keyword]);
+  }, [parsedStartDate, parsedEndDate, accessToken, page, keyword]);
 
   // 날짜 범위 변경 시 초기화
   useEffect(() => {
@@ -206,7 +213,7 @@ export default function EventSearchResultsPage() {
               {sortOpen && (
                 <>
                   <motion.div
-                    className="fixed inset-0 z-0 bg-black bg-opacity-40"
+                    className="fixed inset-0 z-40 bg-black bg-opacity-40"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -214,7 +221,7 @@ export default function EventSearchResultsPage() {
                   />
 
                   <motion.div
-                    className="bg-gray800 absolute right-0 z-10 mt-2 w-[6.5rem] overflow-hidden rounded-[0.5rem] shadow-lg"
+                    className="bg-gray800 absolute right-0 z-50 mt-2 w-[6.5rem] overflow-hidden rounded-[0.5rem] shadow-lg"
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}

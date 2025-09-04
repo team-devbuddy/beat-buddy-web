@@ -8,8 +8,10 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
 
 interface CalendarModalProps {
-  onClose: () => void;
+  onClose: (dateRange?: { startDate: string; endDate: string }) => void;
   onSearchResults?: (results: any) => void;
+  initialStartDate?: string;
+  initialEndDate?: string;
 }
 
 interface SelectedDate {
@@ -18,7 +20,7 @@ interface SelectedDate {
   day: number;
 }
 
-const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) => {
+const BottomSheetCalendar = ({ onClose, onSearchResults, initialStartDate, initialEndDate }: CalendarModalProps) => {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -26,6 +28,44 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
   const [endDay, setEndDay] = useState<SelectedDate | null>(null);
   const [clickCount, setClickCount] = useState(0);
   const accessToken = useRecoilValue(accessTokenState);
+
+  // 초기 날짜 설정
+  useEffect(() => {
+    console.log('🔍 초기 날짜 설정:', { initialStartDate, initialEndDate });
+
+    if (initialStartDate && initialEndDate) {
+      const startDate = new Date(initialStartDate);
+      const endDate = new Date(initialEndDate);
+
+      console.log('🔍 Date 객체 변환:', { startDate, endDate });
+      console.log('🔍 Date 유효성:', {
+        startValid: !isNaN(startDate.getTime()),
+        endValid: !isNaN(endDate.getTime()),
+      });
+
+      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+        const startDay = {
+          year: startDate.getFullYear(),
+          month: startDate.getMonth(),
+          day: startDate.getDate(),
+        };
+
+        const endDay = {
+          year: endDate.getFullYear(),
+          month: endDate.getMonth(),
+          day: endDate.getDate(),
+        };
+
+        console.log('🔍 설정할 날짜:', { startDay, endDay });
+
+        setStartDay(startDay);
+        setEndDay(endDay);
+        setClickCount(2); // 두 날짜 모두 선택된 상태
+      } else {
+        console.error('🔍 날짜 변환 실패:', { initialStartDate, initialEndDate });
+      }
+    }
+  }, [initialStartDate, initialEndDate]);
 
   // 날짜를 YYYYMMDD 형식으로 변환하는 함수
   const formatDateForAPI = (date: SelectedDate) => {
@@ -35,28 +75,22 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
     return `${year}${month}${day}`;
   };
 
-  // 날짜 범위로 이벤트 검색
-  const searchEventsByDateRange = async () => {
-    if (!startDay || !endDay || !accessToken) return;
-
-    try {
-      const startDate = formatDateForAPI(startDay);
-      const endDate = formatDateForAPI(endDay);
-
-      console.log('Searching events from', startDate, 'to', endDate);
-
-      // 검색 결과 페이지로 이동
-      const searchUrl = `/event/search/results?startDate=${startDate}&endDate=${endDate}`;
-      window.location.href = searchUrl;
-    } catch (error) {
-      console.error('Error searching events by date range:', error);
-    }
-  };
-
-  // 바텀시트가 닫힐 때 검색 실행
+  // 바텀시트가 닫힐 때 선택된 날짜를 상위 컴포넌트로 전달
   const handleClose = () => {
     if (startDay && endDay) {
-      searchEventsByDateRange();
+      const startDate = formatDateForAPI(startDay);
+      const endDate = formatDateForAPI(endDay);
+      console.log('날짜가 선택됨:', startDate, '~', endDate);
+
+      // YYYY-MM-DD 형식으로 변환해서 전달
+      const formatToYYYYMMDD = (dateString: string) => {
+        return `${dateString.substring(0, 4)}-${dateString.substring(4, 6)}-${dateString.substring(6, 8)}`;
+      };
+
+      onClose({
+        startDate: formatToYYYYMMDD(startDate),
+        endDate: formatToYYYYMMDD(endDate),
+      });
     } else {
       onClose();
     }
@@ -160,7 +194,7 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
       days.push(
         <div
           key={`prev-${i}`}
-          className="text-calendar-date flex h-[45px] w-[45px] items-center justify-center font-suit text-gray-400">
+          className="flex h-[45px] w-[45px] items-center justify-center font-suit text-calendar-date text-gray-400">
           {prevMonthDays - i}
         </div>,
       );
@@ -201,7 +235,7 @@ const BottomSheetCalendar = ({ onClose, onSearchResults }: CalendarModalProps) =
       days.push(
         <div
           key={`next-${i}`}
-          className="text-calendar-date flex h-[45px] w-[45px] items-center justify-center font-suit text-gray-400">
+          className="flex h-[45px] w-[45px] items-center justify-center font-suit text-calendar-date text-gray-400">
           {i}
         </div>,
       );

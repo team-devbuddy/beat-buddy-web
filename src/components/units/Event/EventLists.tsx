@@ -64,11 +64,18 @@ export function formatDateRange(startDate: string, endDate: string) {
 
 // region의 언더스코어를 띄어쓰기로 변환하는 함수
 export function formatRegion(region: string) {
+  if (!region || typeof region !== 'string') {
+    return '';
+  }
   return region.replace(/_/g, ' ');
 }
 
 // 지역명을 화면 표시용으로 변환하는 함수
 function convertRegionForDisplay(region: string): string {
+  if (!region || typeof region !== 'string') {
+    return '';
+  }
+
   const conversionMap: { [key: string]: string } = {
     '압구정 로데오': '압구정로데오',
     '강남 신사': '강남 · 신사',
@@ -190,7 +197,7 @@ export default function EventLists({
 
                 {typeof dday === 'number' && (
                   <div
-                    className={`absolute left-[0.62rem] top-[0.62rem] z-10 rounded-[0.5rem] px-[0.38rem] pb-[0.19rem] pt-[0.12rem] text-body3-12-medium ${
+                    className={`absolute left-[0.62rem] top-[0.62rem] z-[5] rounded-[0.5rem] px-[0.38rem] pb-[0.19rem] pt-[0.12rem] text-body3-12-medium ${
                       dday === 0
                         ? 'bg-FooterBlack text-main'
                         : dday <= 7
@@ -208,9 +215,9 @@ export default function EventLists({
               </div>
 
               <div className="relative pb-5 pt-3 text-white">
-                <h3 className="text-body-14-bold truncate">{event.title}</h3>
+                <h3 className="truncate text-body-14-bold">{event.title}</h3>
                 <p className="text-body-10-medium text-gray100">{formatDateRange(event.startDate, event.endDate)}</p>
-                <div className="text-body-11-medium mt-[0.38rem] inline-block rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-[0.25rem] pt-[0.19rem] text-gray300">
+                <div className="mt-[0.38rem] inline-block rounded-[0.5rem] bg-gray700 px-[0.5rem] pb-[0.25rem] pt-[0.19rem] text-body-11-medium text-gray300">
                   {convertRegionForDisplay(formatRegion(event.region))}
                 </div>
               </div>

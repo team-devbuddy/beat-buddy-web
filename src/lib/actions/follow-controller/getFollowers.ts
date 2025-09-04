@@ -26,7 +26,8 @@ export async function getFollowers(userId: number, accessToken: string, page: nu
     const result = await response.json();
     const followersData = result.data || [];
 
-    // 서버에서 받은 데이터를 그대로 사용 (이미 모든 정보가 포함되어 있음)
+    // 서버에서 받은 데이터를 그대로 사용
+    // isFollowing은 클라이언트에서 followMap 상태로 관리됨
     const followersWithProfile = followersData.map((item: any) => ({
       memberId: item.memberId,
       nickname: item.nickname,
@@ -34,8 +35,8 @@ export async function getFollowers(userId: number, accessToken: string, page: nu
       postProfileNickname: item.postProfileNickname,
       postProfileImageUrl: item.postProfileImageUrl,
       role: item.role || 'USER', // role이 없으면 기본값 설정
-      isFollowing: item.isFollowing || false,
-      following: item.following || false,
+      isFollowing: false, // 클라이언트에서 followMap으로 관리
+      following: false,
     }));
 
     return followersWithProfile;

@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion'; // ✅ 추가
 import BottomSheetCalandar from '@/components/units/Board/Search/BottomSheetCalandar';
 import { usePathname } from 'next/navigation';
 interface Props {
-  onSearchSubmit: () => void;
+  onSearchSubmit: (searchQuery?: string, dateRange?: { startDate: string; endDate: string }) => void;
   placeholder: string;
   isEvent?: boolean;
 }
@@ -27,6 +27,7 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const [errorMessage, setErrorMessage] = useState(''); // ✅ 토스트 메시지
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [selectedDateRange, setSelectedDateRange] = useState<{ startDate: string; endDate: string } | null>(null);
   const pathname = usePathname();
   const isEventSearch = pathname.includes('/event/search');
   const isBoardSearch = pathname === '/board/search';
@@ -47,6 +48,8 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   };
 
   const handleSearch = () => {
+    console.log('🔍 BoardSearchHeader handleSearch 호출됨:', { searchQuery, onSearchSubmit });
+
     if (searchQuery.trim().length < 2) {
       setErrorMessage('2글자 이상 입력해주세요');
       setTimeout(() => setErrorMessage(''), 2000);
@@ -60,8 +63,15 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
       return updatedSearches;
     });
 
-    // ✅ URL을 변경해서 BoardSearchPage의 useSearchParams가 갱신되도록 유도
-    router.push(`/${isEvent ? 'event' : 'board'}/search?q=${encodeURIComponent(searchQuery)}`);
+    // onSearchSubmit prop이 있으면 그것을 호출 (현재 페이지에서 검색)
+    if (onSearchSubmit) {
+      console.log('🔍 onSearchSubmit 호출, 검색어:', searchQuery, '날짜 범위:', selectedDateRange);
+      onSearchSubmit(searchQuery, selectedDateRange || undefined);
+    } else {
+      // 없으면 기존처럼 페이지 이동
+      console.log('🔍 페이지 이동');
+      router.push(`/${isEvent ? 'event' : 'board'}/search?q=${encodeURIComponent(searchQuery)}`);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -85,11 +95,17 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
   };
 
   const handleCalendarClick = () => {
+    console.log('🔍 달력 열기, 현재 선택된 날짜:', selectedDateRange);
     setIsCalendarOpen(true);
   };
 
-  const handleCloseCalendar = () => {
+  const handleCloseCalendar = (dateRange?: { startDate: string; endDate: string }) => {
+    console.log('🔍 달력 닫기:', dateRange);
     setIsCalendarOpen(false);
+    if (dateRange) {
+      setSelectedDateRange(dateRange);
+      console.log('🔍 날짜 범위 저장됨:', dateRange);
+    }
   };
 
   return (
@@ -124,11 +140,11 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
             />
 
             {/* 🔍 Search icon - 검색창 내부 오른쪽 */}
-            <div className="absolute bottom-[0.72rem] right-[0.88rem] cursor-pointer">
+            <div className="absolute bottom-[0.56rem] right-[0.88rem] cursor-pointer">
               {isEvent ? (
                 <div className="flex items-center gap-1">
                   <Image
-                    src="/icons/uil_calender.svg"
+                    src={selectedDateRange ? '/icons/uil_calender-pink.svg' : '/icons/uil_calender.svg'}
                     alt="calendar icon"
                     width={28}
                     height={28}
@@ -197,7 +213,13 @@ const BoardSearchHeader = ({ onSearchSubmit, placeholder, isEvent }: Props) => {
           )}
         </AnimatePresence>
       </header>
-      {isCalendarOpen && <BottomSheetCalandar onClose={handleCloseCalendar} />}
+      {isCalendarOpen && (
+        <BottomSheetCalandar
+          onClose={handleCloseCalendar}
+          initialStartDate={selectedDateRange?.startDate}
+          initialEndDate={selectedDateRange?.endDate}
+        />
+      )}
     </>
   );
 };

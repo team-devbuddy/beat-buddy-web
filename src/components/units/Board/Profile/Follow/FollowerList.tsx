@@ -19,10 +19,9 @@ interface User {
 interface FollowerListProps {
   userId: number;
   accessToken: string;
-  currentUserId?: number; // 로그인한 사용자의 ID 추가
 }
 
-export default function FollowerList({ userId, accessToken, currentUserId }: FollowerListProps) {
+export default function FollowerList({ userId, accessToken }: FollowerListProps) {
   const [followers, setFollowers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -81,8 +80,8 @@ export default function FollowerList({ userId, accessToken, currentUserId }: Fol
 
   // 팔로워 정렬 우선순위 계산 함수
   const getFollowerSortPriority = (follower: User) => {
-    // 로그인한 사용자와 비교 (currentUserId 사용)
-    if (currentUserId === follower.memberId) return 0;
+    // 로그인한 사용자와 비교 (userProfile.memberId 사용)
+    if (userProfile?.memberId === follower.memberId) return 0;
     // isFollower가 true이므로 상대방이 나를 팔로우하고 있음
     if (follower.isFollowing) return 1; // 팔로잉 (맞팔로우)
     return 2; // 팔로우 (상대방만 나를 팔로우)

@@ -88,12 +88,15 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
   // 🔍 지도 검색 버튼 클릭
   const handleMapSearchClick = async () => {
     console.log('🔍 지도 검색 버튼 클릭됨');
+    console.log('🔍 mapRef.current:', mapRef.current);
     setClickedClub(null);
     setIsMapSearched(true);
 
     if (mapRef.current) {
       try {
+        console.log('🔍 getBounds 호출 시작');
         const bounds = await mapRef.current.getBounds();
+        console.log('🔍 getBounds 결과:', bounds);
         if (!bounds) {
           console.log('🗺️ bounds를 가져올 수 없음');
           setCurrentFilteredClubs([]);
@@ -138,6 +141,9 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
         console.error('🗺️ 지도 검색 중 오류:', err);
         setCurrentFilteredClubs([]);
       }
+    } else {
+      console.log('❌ mapRef.current가 null입니다');
+      setCurrentFilteredClubs([]);
     }
   };
 
@@ -193,12 +199,7 @@ export default function MapView({ filteredClubs }: SearchResultsProps) {
         />
 
         {/* SearchHeader를 지도 안에 오버랩 */}
-        <div
-          className="absolute left-0 right-0 top-0 z-20"
-          style={{
-            background: 'linear-gradient(180deg, #17181C 0%, rgba(23, 24, 28, 0.00) 100%)',
-            paddingBottom: '50px',
-          }}>
+        <div className="absolute left-0 right-0 top-0 z-20">
           <SearchHeader />
         </div>
       </div>

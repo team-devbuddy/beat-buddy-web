@@ -27,23 +27,17 @@ const ClickedClubDetails = ({
   return (
     <div>
       <motion.div
-        whileHover={{
-          boxShadow: '0px 5px 15px rgba(151, 154, 159, 0.08)',
-          backgroundColor: 'rgba(0,0,0,0.4)',
-        }}
-        className="relative flex w-full cursor-pointer flex-col rounded-[0.5rem] bg-BG-black p-5">
+        className="relative flex w-full cursor-pointer flex-col rounded-[0.5rem] bg-BG-black px-5 pb-5 pt-3"
+        onClick={() => {
+          router.push(`/detail/${clickedClub.venue.venueId}`);
+        }}>
         {/* 상단: 클럽명 + 하트 */}
         <div className="flex items-start justify-between">
-          <h2
-            className="text-title-24-bold text-white"
-            onClick={() => {
-              router.push(`/detail/${clickedClub.venue.venueId}`);
-            }}>
-            {clickedClub.venue.englishName}
-          </h2>
+          <h2 className="text-title-24-bold text-white">{clickedClub.venue.englishName}</h2>
           <button
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation(); // 상세페이지 이동 방지
               handleHeartClickWrapper(e, clickedClub.venue.venueId!);
             }}
             className="absolute right-5 top-5">
@@ -65,7 +59,7 @@ const ClickedClubDetails = ({
               </span>
             ))
           ) : (
-            <span className="rounded-[0.5rem] bg-gray700 px-2 py-1 text-body-13-medium text-gray200">No Tags</span>
+            <span className="rounded-[0.5rem] bg-gray700 px-2 py-1 text-body-13-medium text-gray300">No Tags</span>
           )}
         </div>
 
@@ -83,7 +77,7 @@ const ClickedClubDetails = ({
         <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
           {imageUrls.length > 0 ? (
             imageUrls.map((url, idx) => (
-              <div key={idx} className="relative h-[10rem] w-[10rem] flex-shrink-0 rounded-[0.5rem] overflow-hidden">
+              <div key={idx} className="relative h-[10rem] w-[10rem] flex-shrink-0 overflow-hidden rounded-[0.5rem]">
                 <Image
                   src={url}
                   alt={`${clickedClub.venue.englishName} image ${idx}`}

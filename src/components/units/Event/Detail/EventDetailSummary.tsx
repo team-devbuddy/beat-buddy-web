@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { EventDetail } from '@/lib/types';
 import { differenceInCalendarDays } from 'date-fns';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import BoardImageModal from '@/components/units/Board/BoardImageModal';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -12,7 +12,9 @@ import 'slick-carousel/slick/slick-theme.css';
 export default function EventDetailSummary({ eventDetail }: { eventDetail: EventDetail }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [isTitleMultiLine, setIsTitleMultiLine] = useState(false);
   const sliderRef = useRef<Slider>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const today = new Date();
   const start = new Date(eventDetail.startDate);
   const dDay = differenceInCalendarDays(start, today);
@@ -21,6 +23,17 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
   const images =
     eventDetail.images && eventDetail.images.length > 0 ? eventDetail.images : ['/images/DefaultImage.png'];
 
+  // 제목이 2줄 이상인지 확인하는 useEffect
+  useEffect(() => {
+    if (titleRef.current) {
+      const titleElement = titleRef.current;
+      const lineHeight = parseFloat(getComputedStyle(titleElement).lineHeight);
+      const height = titleElement.offsetHeight;
+      const isMultiLine = height > lineHeight * 1.5; // 1.5줄 이상이면 멀티라인으로 간주
+      setIsTitleMultiLine(isMultiLine);
+    }
+  }, [eventDetail.title]);
+
   // 디버깅용 로그
   console.log('EventDetailSummary Debug:', {
     originalImages: eventDetail.images,
@@ -28,6 +41,7 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
     processedImages: images,
     processedLength: images.length,
     currentIndex: currentImageIndex,
+    isTitleMultiLine,
   });
 
   // react-slick 슬라이더 설정 (Preview.tsx와 동일)
@@ -76,10 +90,12 @@ export default function EventDetailSummary({ eventDetail }: { eventDetail: Event
         {/* 텍스트 오버레이 (제목 + D-Day + 날짜 + 지역 전부 이미지 안에 위치) */}
         <div className="absolute bottom-0 left-0 z-10 w-full bg-gradient-to-t from-black/80 to-transparent px-5 py-5">
           {/* 제목 + 디데이 */}
-          <div className="flex items-center gap-2">
-            <h2 className="text-title-24-bold text-white">{eventDetail.title}</h2>
+          <div className={`flex items-center gap-2`}>
+            <h2 ref={titleRef} className="whitespace-pre-line text-title-24-bold text-white">
+              {eventDetail.title}
+            </h2>
             <div
-              className={`rounded-[0.5rem] px-2 py-1 text-body-13-medium ${
+              className={`whitespace-nowrap ${isTitleMultiLine ? 'mb-5' : ''} rounded-[0.5rem] px-2 py-1 text-body-13-medium ${
                 dDay <= 7 && dDay >= 0 ? 'bg-main text-white' : 'bg-gray500 text-gray100'
               }`}>
               {dDay > 0 ? `D-${dDay}` : dDay === 0 ? 'D-DAY' : `D-${Math.abs(dDay)}`}

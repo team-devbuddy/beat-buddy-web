@@ -169,7 +169,7 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
     if (window.MarkerClustering) {
       const clustererInstance = new window.MarkerClustering({
         minClusterSize: 2,
-        maxZoom: 30,
+        maxZoom: 18, // 클러스터링이 풀리는 최대 줌 레벨
         map: mapInstance,
         markers: [],
         disableClickZoom: false,
@@ -387,14 +387,26 @@ const NaverMap = forwardRef<NaverMapHandle, NaverMapProps>(function NaverMap(
       });
     },
     getBounds: async () => {
-      if (!map) return null;
-      const b = map.getBounds() as naver.maps.LatLngBounds;
-      return {
-        north: b.getNE().lat(),
-        east: b.getNE().lng(),
-        south: b.getSW().lat(),
-        west: b.getSW().lng(),
-      };
+      console.log('🔍 getBounds 호출됨, map 인스턴스:', map);
+      if (!map) {
+        console.log('❌ map 인스턴스가 null입니다');
+        return null;
+      }
+      try {
+        const b = map.getBounds() as naver.maps.LatLngBounds;
+        console.log('🔍 map.getBounds() 결과:', b);
+        const result = {
+          north: b.getNE().lat(),
+          east: b.getNE().lng(),
+          south: b.getSW().lat(),
+          west: b.getSW().lng(),
+        };
+        console.log('🔍 getBounds 최종 결과:', result);
+        return result;
+      } catch (error) {
+        console.error('❌ getBounds 오류:', error);
+        return null;
+      }
     },
   }));
 

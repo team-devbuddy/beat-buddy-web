@@ -47,9 +47,11 @@ export default function AgreementTerm() {
     console.log('AgreementTerm - URL userType:', userType);
     console.log('AgreementTerm - recoil isBusiness:', isBusiness);
 
-    // 쿼리 파라미터가 business이면 recoil state 업데이트
+    // 쿼리 파라미터가 business이면 recoil state 업데이트 (ADMIN은 제외)
     if (userType === 'business') {
       console.log('쿼리 파라미터에서 비즈니스 확인 -> recoil state 업데이트');
+      // 실제 사용자 role을 확인하여 ADMIN이 아닌 경우에만 비즈니스로 설정
+      // 이 로직은 나중에 실제 role 확인으로 대체되어야 함
       setIsBusiness(true);
     }
   }, [searchParams, setAccessToken, setIsBusiness]);

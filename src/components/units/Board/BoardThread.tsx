@@ -81,11 +81,20 @@ export function formatRelativeTime(isoString: string, showTime: boolean = true):
   }
 }
 
-// 파일 확장자로 이미지/영상 구분
+// 파일 확장자와 URL 패턴으로 이미지/영상 구분
 const isVideo = (url: string): boolean => {
   const videoExtensions = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv'];
   const lowerUrl = url.toLowerCase();
-  return videoExtensions.some((ext) => lowerUrl.includes(ext));
+
+  // 1. 파일 확장자로 확인
+  const hasVideoExtension = videoExtensions.some((ext) => lowerUrl.includes(ext));
+
+  // 2. URL의 마지막 부분(파일명)에서 'thumbnail'이 포함되어 있으면 동영상으로 간주
+  const urlParts = lowerUrl.split('/');
+  const fileName = urlParts[urlParts.length - 1];
+  const hasThumbnailInFileName = fileName.includes('thumbnail');
+
+  return hasVideoExtension || hasThumbnailInFileName;
 };
 
 export default function BoardThread({ postId, post }: PostProps) {
@@ -173,7 +182,7 @@ export default function BoardThread({ postId, post }: PostProps) {
   const handleImageClick = (index: number) => {
     // 동영상인 경우 detail 페이지로 이동하면서 이미지 모달 자동 열기
     if (post.thumbImage && isVideo(post.thumbImage[index])) {
-      router.push(`/board/${post.id}?openModal=true&imageIndex=${index}`);
+      router.push(`/board/${category}/${post.id}?openModal=true&imageIndex=${index}`);
       return;
     }
 
@@ -362,7 +371,14 @@ export default function BoardThread({ postId, post }: PostProps) {
                   className="cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
                   {isVideo(post.thumbImage[0]) ? (
                     <div className="relative">
-                      <video src={post.thumbImage[0]} className="w-full object-cover" preload="metadata" muted />
+                      <Image
+                        src={post.thumbImage[0]}
+                        alt="post-img-0"
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        className="w-full object-cover"
+                      />
                       {/* 재생 버튼 오버레이 */}
                       <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
                         <Image src="/icons/play.svg" alt="재생" width={48} height={48} className="text-white" />
@@ -393,7 +409,14 @@ export default function BoardThread({ postId, post }: PostProps) {
                     className="cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
                     {isVideo(url) ? (
                       <div className="relative h-full w-full" style={{ maxHeight: '450px' }}>
-                        <video src={url} className="h-full w-full object-cover" preload="metadata" muted />
+                        <Image
+                          src={url}
+                          alt={`post-img-${index}`}
+                          width={0}
+                          height={0}
+                          sizes="100vw"
+                          className="h-full w-full object-cover"
+                        />
                         {/* 재생 버튼 오버레이 */}
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
                           <Image src="/icons/play.svg" alt="재생" width={40} height={40} className="text-white" />
@@ -426,7 +449,14 @@ export default function BoardThread({ postId, post }: PostProps) {
                     className="h-[220px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[0.5rem] bg-gray600">
                     {isVideo(url) ? (
                       <div className="relative h-full w-auto">
-                        <video src={url} className="h-full w-auto object-cover" preload="metadata" muted />
+                        <Image
+                          src={url}
+                          alt={`post-img-${index}`}
+                          width={0}
+                          height={0}
+                          sizes="100vw"
+                          style={{ height: '220px', width: 'auto', objectFit: 'cover' }}
+                        />
                         {/* 재생 버튼 오버레이 */}
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
                           <Image src="/icons/play.svg" alt="재생" width={32} height={32} className="text-white" />

@@ -1,7 +1,13 @@
 'use client';
 
 import { RecoilRoot, useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil'; // useSetRecoilState 추가
-import { accessTokenState, authState, userProfileState, mainScrollYState } from '@/context/recoil-context'; // mainScrollYState 추가
+import {
+  accessTokenState,
+  authState,
+  userProfileState,
+  mainScrollYState,
+  isBusinessState,
+} from '@/context/recoil-context'; // isBusinessState 추가
 import { PostRefresh } from '@/lib/action';
 import { useEffect, useState, useRef } from 'react'; // useRef 추가
 import { useRouter, usePathname } from 'next/navigation'; // usePathname 사용
@@ -19,6 +25,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
   const userProfileValue = useRecoilValue(userProfileState);
   const setScrollY = useSetRecoilState(mainScrollYState);
+  const setIsBusiness = useSetRecoilState(isBusinessState);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,6 +62,18 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     setIsHydrated(true);
   }, []);
 
+  // 비즈니스 상태 업데이트 함수
+  const updateBusinessState = (profileData: any) => {
+    if (profileData?.role) {
+      const isBusinessUser = profileData.role === 'BUSINESS' || profileData.role === 'ADMIN';
+      console.log('🔍 중앙 비즈니스 상태 업데이트:', {
+        role: profileData.role,
+        isBusiness: isBusinessUser,
+      });
+      setIsBusiness(isBusinessUser);
+    }
+  };
+
   useEffect(() => {
     const refreshToken = async () => {
       try {
@@ -64,11 +83,14 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
             const data = await response.json();
             const userProfileData = await getProfileinfo(access);
             setUserProfile(userProfileData);
+            // 비즈니스 상태 업데이트
+            updateBusinessState(userProfileData);
             setAccess(data.access);
             setIsAuth(true);
           } else {
             setAccess(null);
             setIsAuth(false);
+            setIsBusiness(false); // 로그아웃 시 비즈니스 상태도 초기화
             router.push('/');
           }
         }
@@ -81,6 +103,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
         refreshToken();
       } else {
         setIsAuth(false);
+        setIsBusiness(false); // 토큰이 없으면 비즈니스 상태도 초기화
       }
     }
   }, [access, isHydrated]);

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '@/context/recoil-context';
-import { searchEventsByPeriod } from '@/lib/actions/event-controller/searchEventsByPeriod';
+import { eventSearch } from '@/lib/actions/event-controller/eventSearch';
 import EventLists from './EventLists';
 import { EventType } from './EventContainer';
 
@@ -19,6 +19,18 @@ export default function EventSearchResults({ startDate, endDate, keyword = '' }:
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const accessToken = useRecoilValue(accessTokenState);
+
+  // ISO 날짜 형식을 yyyy-MM-dd 형식으로 변환
+  const formatDateForAPI = (isoDate: string) => {
+    const date = new Date(isoDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const formattedStartDate = formatDateForAPI(startDate);
+  const formattedEndDate = formatDateForAPI(endDate);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
@@ -41,32 +53,31 @@ export default function EventSearchResults({ startDate, endDate, keyword = '' }:
 
       try {
         setLoading(true);
-        const response = await searchEventsByPeriod(startDate, endDate, pageNum, 10, accessToken, keyword);
+        const newEvents = await eventSearch(keyword, accessToken, pageNum, 10, formattedStartDate, formattedEndDate);
 
-        if (response.data?.eventResponseDTOS) {
-          const newEvents = response.data.eventResponseDTOS;
+        console.log('🔍 EventSearchResults - API 응답:', newEvents);
 
+        if (newEvents && newEvents.length > 0) {
           if (pageNum === 1) {
             setEvents(newEvents);
           } else {
             setEvents((prev) => [...prev, ...newEvents]);
           }
 
-          // totalSize와 현재 로드된 데이터 수를 비교하여 hasMore 결정
-          const totalSize = response.data.totalSize || 0;
-          const currentLoaded = pageNum * 10;
-          setHasMore(currentLoaded < totalSize);
+          // 반환된 데이터 길이로 hasMore 판단
+          setHasMore(newEvents.length === 10);
         } else {
+          console.log('🔍 EventSearchResults - 응답이 비어있음');
           setHasMore(false);
         }
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error('이벤트 게시글 로드 실패:', error);
         setHasMore(false);
       } finally {
         setLoading(false);
       }
     },
-    [startDate, endDate, accessToken, loading, keyword],
+    [formattedStartDate, formattedEndDate, accessToken, keyword],
   );
 
   // 페이지 변경 시 이벤트 검색

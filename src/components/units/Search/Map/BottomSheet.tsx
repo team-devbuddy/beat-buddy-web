@@ -55,6 +55,7 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(
     const [forceUpdateKey, setForceUpdateKey] = useState(0);
     const [currentSnapPoint, setCurrentSnapPoint] = useState<number>(2);
     const [currentFilteredClubs, setCurrentFilteredClubs] = useState(filteredClubs);
+    const router = useRouter();
 
     // filteredClubs prop이 변경될 때 currentFilteredClubs 업데이트
     useEffect(() => {
@@ -439,7 +440,16 @@ const BottomSheetComponent = forwardRef<BottomSheetRef, BottomSheetProps>(
               onClose={() => setOpen(true)}
               initialSnap={initialSnapPoint}
               snapPoints={snapPoints}
-              onSnap={(index) => setCurrentSnapPoint(index)}>
+              onSnap={(index) => {
+                setCurrentSnapPoint(index);
+                // clickedClub이 있을 때 드롭다운을 맨 위로 올렸을 때 상세페이지로 이동 (부드럽게)
+                if (clickedClub && index === 0) {
+                  // 약간의 딜레이를 주어 부드럽게 처리
+                  setTimeout(() => {
+                    router.push(`/detail/${clickedClub.venue.venueId}`);
+                  }, 300);
+                }
+              }}>
               <Sheet.Container className="relative h-full w-full !shadow-none">
                 <Sheet.Header className="relative flex w-full cursor-pointer flex-col justify-center rounded-t-lg bg-BG-black pt-[6px]">
                   <div className="flex justify-center">
